@@ -2819,15 +2819,6 @@
           'isolated_scripts': 'vulkan_swiftshader_isolated_scripts',
         },
       },
-      'Mac Builder (py2 less)': {
-        # Copied from 'Mac Builder'.
-        'additional_compile_targets': [
-          'all',
-        ],
-        'test_suites': {
-          'scripts': 'chromium_mac_scripts',
-        }
-      },
       # TODO(crbug.com/1260232): remove this after the migration.
       'Mac Builder (reclient compare)': {
         'additional_compile_targets': [
@@ -2973,6 +2964,19 @@
         ],
         'test_suites': {
           'scripts': 'chromium_win_scripts',
+        },
+      },
+      'Win10 Tests x64 (py2 less)': {
+        # Copied from
+        # https://source.chromium.org/chromium/chromium/src/+/main:testing/buildbot/waterfalls.pyl;l=6193;drc=e40c45d7cb85fa476e0946b56a0fdcbb7d764134
+        'mixins': [
+          'x86-64',
+          'win10',
+          'isolate_profile_data',
+        ],
+        'test_suites': {
+          'gtest_tests': 'chromium_win10_gtests',
+          'isolated_scripts': 'chromium_win_rel_isolated_scripts',
         },
       },
       'android-backuprefptr-arm-fyi-rel': {
