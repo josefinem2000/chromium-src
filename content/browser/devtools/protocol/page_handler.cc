@@ -797,11 +797,15 @@ void PageHandler::CaptureScreenshot(
   }
 
   if (capture_beyond_viewport.fromMaybe(false)) {
-    CaptureScreenshotBeyondViewport (widget_host, screenshot_format,
-                                    screenshot_quality, clip, callback);
+    CaptureScreenshotBeyondViewport(widget_host, screenshot_format,
+                                    screenshot_quality,
+                                    clip,
+                                    callback);
   } else {
     CaptureScreenshotWithinViewport(widget_host, screenshot_format,
-                                    screenshot_quality, clip, callback);
+                                    screenshot_quality,
+                                    clip,
+                                    callback);
   }
 }
 

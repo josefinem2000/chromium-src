@@ -22,6 +22,7 @@
 #include "content/browser/devtools/protocol/page.h"
 #include "content/browser/preloading/prerender/prerender_host.h"
 #include "content/browser/renderer_host/back_forward_cache_impl.h"
+#include "content/browser/renderer_host/render_widget_host_impl.h"
 #include "content/public/browser/download_manager.h"
 #include "content/public/browser/javascript_dialog_manager.h"
 #include "content/public/browser/render_widget_host.h"
@@ -144,11 +145,11 @@ class PageHandler : public DevToolsDomainHandler,
       Maybe<bool> capture_beyond_viewport,
       std::unique_ptr<CaptureScreenshotCallback> callback) override;
   void CaptureScreenshotBeyondViewport(
-    RenderWidgetHostImpl* widget_host,
-    std::string screenshot_format,
-    int screenshot_quality,
-    Maybe<Page::Viewport> clip,
-    std::unique_ptr<CaptureScreenshotCallback> callback);
+      RenderWidgetHostImpl* widget_host,
+      std::string screenshot_format,
+      int screenshot_quality,
+      Maybe<Page::Viewport> clip,
+      std::unique_ptr<CaptureScreenshotCallback> callback);
   void CaptureScreenshotWithinViewport(
       RenderWidgetHostImpl* widget_host,
       std::string screenshot_format,
