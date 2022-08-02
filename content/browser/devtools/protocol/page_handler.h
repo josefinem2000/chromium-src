@@ -149,14 +149,14 @@ class PageHandler : public DevToolsDomainHandler,
       RenderWidgetHostImpl* widget_host,
       std::string screenshot_format,
       int screenshot_quality,
-      Page::Viewport* clip,
+      Maybe<Page::Viewport> clip,
       std::unique_ptr<CaptureScreenshotCallback> callback);
   // clip & widget_host should live for the entirety of this method
   void CaptureScreenshotWithinViewport(
       RenderWidgetHostImpl* widget_host,
       std::string screenshot_format,
       int screenshot_quality,
-      Page::Viewport* clip,
+      Maybe<Page::Viewport> clip,
       std::unique_ptr<CaptureScreenshotCallback> callback);
   void CaptureSnapshot(
       Maybe<std::string> format,
