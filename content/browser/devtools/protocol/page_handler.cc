@@ -799,12 +799,12 @@ void PageHandler::CaptureScreenshot(
   if (capture_beyond_viewport.fromMaybe(false)) {
     CaptureScreenshotBeyondViewport(widget_host, screenshot_format,
                                     screenshot_quality,
-                                    clip,
+                                    std::move(clip),
                                     callback);
   } else {
     CaptureScreenshotWithinViewport(widget_host, screenshot_format,
                                     screenshot_quality,
-                                    clip,
+                                    &clip,
                                     callback);
   }
 }
@@ -813,7 +813,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     RenderWidgetHostImpl* widget_host,
     std::string screenshot_format,
     int screenshot_quality,
-    Maybe<Page::Viewport> clip,
+    Page::Viewport* clip,
     std::unique_ptr<CaptureScreenshotCallback> callback) {
   // Welcome to the neural net of capturing screenshot while emulating device
   // metrics!
@@ -934,7 +934,7 @@ void PageHandler::CaptureScreenshotWithinViewport(
     RenderWidgetHostImpl* widget_host,
     std::string screenshot_format,
     int screenshot_quality,
-    Maybe<Page::Viewport> clip,
+    Page::Viewport* clip,
     std::unique_ptr<CaptureScreenshotCallback> callback) {
   // Welcome to the neural net of capturing screenshot while emulating device
   // metrics!
