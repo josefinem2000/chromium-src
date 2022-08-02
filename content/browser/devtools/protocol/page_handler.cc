@@ -798,13 +798,11 @@ void PageHandler::CaptureScreenshot(
 
   if (capture_beyond_viewport.fromMaybe(false)) {
     CaptureScreenshotBeyondViewport(widget_host, screenshot_format,
-                                    screenshot_quality,
-                                    std::move(clip),
+                                    screenshot_quality, std::move(clip),
                                     std::move(callback));
   } else {
     CaptureScreenshotWithinViewport(widget_host, screenshot_format,
-                                    screenshot_quality,
-                                    std::move(clip),
+                                    screenshot_quality, std::move(clip),
                                     std::move(callback));
   }
 }
