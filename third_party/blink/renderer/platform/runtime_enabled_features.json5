@@ -575,7 +575,7 @@
     {
       name: "CSSGridTemplatePropertyInterpolation",
       depends_on: ["LayoutNGGridFragmentation"],
-      status: "experimental",
+      status: "stable",
     },
     {
       // This needs to be kept as a runtime flag as long as we need to forcibly
@@ -583,6 +583,10 @@
       // https://crrev.com/f311a84728272e30979432e8474089b3db3c67df
       name: "CSSHexAlphaColor",
       status: "stable",
+    },
+    {
+      name: "CSSIcUnit",
+      status: "experimental",
     },
     {
       name: "CSSIndependentTransformProperties",
@@ -1278,6 +1282,11 @@
       name: "LayoutNGForeignObject",
       depends_on: ["LayoutNG"],
       status: "stable",
+    },
+    {
+      // crbug.com/1346221
+      name: "LayoutNGFrameSet",
+      depends_on: ["LayoutNG"],
     },
     {
       // Block fragmentation support in the grid layout algorithm.

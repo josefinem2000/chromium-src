@@ -1105,6 +1105,49 @@ TEST_F(SavedDeskTest, SaveDeskButtonsEnabledDisabled) {
   }
 }
 
+// Tests that pressing `Enter` on save desk buttons does not save anything when
+// disabled.
+TEST_F(SavedDeskTest, SaveDeskButtonsPressEnterWhenDisabled) {
+  // Prepare the test environment, like creating an app window which should be
+  // supported.
+  auto no_app_id_window = CreateAppWindow();
+  aura::Window* root_window = Shell::GetPrimaryRootWindow();
+  auto* delegate = Shell::Get()->desks_templates_delegate();
+  ASSERT_TRUE(
+      delegate->IsWindowSupportedForDeskTemplate(no_app_id_window.get()));
+
+  // Toggle overview and set the save desk buttons to disabled.
+  ToggleOverview();
+  WaitForDesksTemplatesUI();
+  auto* save_as_template_button =
+      GetSaveDeskAsTemplateButtonForRoot(root_window);
+  auto* save_for_later_button = GetSaveDeskForLaterButtonForRoot(root_window);
+  save_as_template_button->SetEnabled(false);
+  save_for_later_button->SetEnabled(false);
+  ASSERT_FALSE(save_as_template_button->GetEnabled());
+  ASSERT_FALSE(save_for_later_button->GetEnabled());
+
+  // Press `Enter` when `Save desk for later` button is highlighted.
+  SendKey(ui::VKEY_TAB, ui::EF_SHIFT_DOWN);
+  ASSERT_TRUE(save_for_later_button->IsViewHighlighted());
+  ASSERT_FALSE(save_for_later_button->GetEnabled());
+  SendKey(ui::VKEY_RETURN);
+  SavedDeskPresenterTestApi(
+      GetOverviewGridList()[0]->overview_session()->saved_desk_presenter())
+      .MaybeWaitForModel();
+  ASSERT_FALSE(GetOverviewGridList()[0]->IsShowingDesksTemplatesGrid());
+
+  // Press `Enter` when `Save desk as a template` button is highlighted.
+  SendKey(ui::VKEY_TAB, ui::EF_SHIFT_DOWN);
+  ASSERT_TRUE(save_as_template_button->IsViewHighlighted());
+  ASSERT_FALSE(save_as_template_button->GetEnabled());
+  SendKey(ui::VKEY_RETURN);
+  SavedDeskPresenterTestApi(
+      GetOverviewGridList()[0]->overview_session()->saved_desk_presenter())
+      .MaybeWaitForModel();
+  ASSERT_FALSE(GetOverviewGridList()[0]->IsShowingDesksTemplatesGrid());
+}
+
 // Tests that clicking the save desk as template button shows the templates
 // grid.
 TEST_F(SavedDeskTest, SaveDeskAsTemplateButtonShowsDesksTemplatesGrid) {
@@ -2615,6 +2658,61 @@ TEST_F(SavedDeskTest, TemplatesNameHitTest) {
     // Exit overview for the next run.
     ToggleOverview();
   }
+}
+
+// Tests that it can unfocus the desk name view and saved desk name view from
+// active status on clicking library button when we stay in templates grid.
+TEST_F(SavedDeskTest, UnFocusNameChangeOnClickingLibrary) {
+  // Save an entry in the templates grid.
+  AddEntry(base::GUID::GenerateRandomV4(), "template", base::Time::Now(),
+           DeskTemplateType::kTemplate);
+
+  OpenOverviewAndShowTemplatesGrid();
+  // Expect we stay in the templates grid.
+  auto* overview_grid = GetOverviewSession()->GetGridWithRootWindow(
+      Shell::GetPrimaryRootWindow());
+  ASSERT_TRUE(overview_grid->IsShowingDesksTemplatesGrid());
+
+  DeskNameView* desk_name_view =
+      overview_grid->desks_bar_view()->mini_views().back()->desk_name_view();
+  // Tests if the desk name view rename can work correctly.
+  // Click the new desk name view which will be focused.
+  ClickOnView(desk_name_view);
+  EXPECT_TRUE(overview_grid->IsDeskNameBeingModified());
+  EXPECT_TRUE(desk_name_view->HasFocus());
+  EXPECT_TRUE(desk_name_view->HasSelection());
+
+  // Click Library button again to unfocus the desk name view when we stay in
+  // the templates grid.
+  ASSERT_TRUE(overview_grid->IsShowingDesksTemplatesGrid());
+  ShowDesksTemplatesGrids();
+  ASSERT_TRUE(overview_grid->IsShowingDesksTemplatesGrid());
+  EXPECT_TRUE(overview_grid->IsDesksBarViewActive());
+  EXPECT_FALSE(desk_name_view->HasFocus());
+
+  // Tests if the saved desk name view rename can work correctly.
+  // Click the desk name view at first, and then click the saved desk name view,
+  // and finally click the Library button.
+  ClickOnView(desk_name_view);
+  EXPECT_TRUE(overview_grid->IsDeskNameBeingModified());
+  EXPECT_TRUE(desk_name_view->HasFocus());
+  EXPECT_TRUE(desk_name_view->HasSelection());
+
+  SavedDeskNameView* saved_name_view =
+      GetItemViewFromTemplatesGrid(0)->name_view();
+  ClickOnView(saved_name_view);
+  EXPECT_TRUE(overview_grid->IsTemplateNameBeingModified());
+  EXPECT_TRUE(saved_name_view->HasFocus());
+  EXPECT_TRUE(saved_name_view->HasSelection());
+
+  ASSERT_TRUE(overview_grid->IsShowingDesksTemplatesGrid());
+  ShowDesksTemplatesGrids();
+
+  // Check if the desk name view and the saved desk name view are all unfocused.
+  ASSERT_TRUE(overview_grid->IsShowingDesksTemplatesGrid());
+  EXPECT_TRUE(overview_grid->IsDesksBarViewActive());
+  EXPECT_FALSE(desk_name_view->HasFocus());
+  EXPECT_FALSE(saved_name_view->HasFocus());
 }
 
 // Tests that accessibility overrides are set as expected.

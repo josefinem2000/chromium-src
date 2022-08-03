@@ -12,7 +12,8 @@
 
 namespace ash {
 
-AutozoomControllerImpl::AutozoomControllerImpl() {
+AutozoomControllerImpl::AutozoomControllerImpl()
+    : nudge_controller_(std::make_unique<AutozoomNudgeController>(this)) {
   Shell::Get()->session_controller()->AddObserver(this);
 }
 
@@ -36,6 +37,14 @@ void AutozoomControllerImpl::Toggle() {
   SetState(state_ == cros::mojom::CameraAutoFramingState::OFF
                ? cros::mojom::CameraAutoFramingState::ON_SINGLE
                : cros::mojom::CameraAutoFramingState::OFF);
+}
+
+void AutozoomControllerImpl::AddObserver(AutozoomObserver* observer) {
+  observers_.AddObserver(observer);
+}
+
+void AutozoomControllerImpl::RemoveObserver(AutozoomObserver* observer) {
+  observers_.RemoveObserver(observer);
 }
 
 void AutozoomControllerImpl::OnActiveUserPrefServiceChanged(
@@ -62,8 +71,11 @@ void AutozoomControllerImpl::Refresh() {
 
   auto* camera_hal_dispatcher = media::CameraHalDispatcherImpl::GetInstance();
   if (camera_hal_dispatcher) {
-    camera_hal_dispatcher->SetAutoFramingState(GetState());
+    camera_hal_dispatcher->SetAutoFramingState(state_);
   }
+
+  for (auto& observer : observers_)
+    observer.OnAutozoomStateChanged(state_);
 }
 
 void AutozoomControllerImpl::StartWatchingPrefsChanges() {

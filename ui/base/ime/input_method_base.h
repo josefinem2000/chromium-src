@@ -56,7 +56,7 @@ class COMPONENT_EXPORT(UI_BASE_IME) InputMethodBase
   void SetFocusedTextInputClient(TextInputClient* client) override;
   void DetachTextInputClient(TextInputClient* client) override;
   TextInputClient* GetTextInputClient() const override;
-  void SetOnScreenKeyboardBounds(const gfx::Rect& new_bounds) override;
+  void SetVirtualKeyboardBounds(const gfx::Rect& new_bounds) override;
 
   // If a derived class overrides this method, it should call parent's
   // implementation.
@@ -68,6 +68,8 @@ class COMPONENT_EXPORT(UI_BASE_IME) InputMethodBase
   void RemoveObserver(InputMethodObserver* observer) override;
 
   VirtualKeyboardController* GetVirtualKeyboardController() override;
+  void SetVirtualKeyboardControllerForTesting(
+      std::unique_ptr<VirtualKeyboardController> controller) override;
 
  protected:
   explicit InputMethodBase(ImeKeyEventDispatcher* ime_key_event_dispatcher);
@@ -118,7 +120,7 @@ class COMPONENT_EXPORT(UI_BASE_IME) InputMethodBase
   // Screen bounds of a on-screen keyboard.
   gfx::Rect keyboard_bounds_;
 
-  std::unique_ptr<VirtualKeyboardController> const keyboard_controller_;
+  std::unique_ptr<VirtualKeyboardController> keyboard_controller_;
 };
 
 }  // namespace ui

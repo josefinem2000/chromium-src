@@ -8,6 +8,9 @@
 #include "ash/ash_export.h"
 
 #include "ash/public/cpp/session/session_observer.h"
+#include "ash/system/camera/autozoom_nudge_controller.h"
+#include "ash/system/camera/autozoom_observer.h"
+#include "base/observer_list.h"
 #include "components/prefs/pref_change_registrar.h"
 #include "components/prefs/pref_registry_simple.h"
 #include "components/prefs/pref_service.h"
@@ -35,6 +38,9 @@ class ASH_EXPORT AutozoomControllerImpl : public SessionObserver {
 
   void Toggle();
 
+  void AddObserver(AutozoomObserver* observer);
+  void RemoveObserver(AutozoomObserver* observer);
+
   // SessionObserver:
   void OnActiveUserPrefServiceChanged(PrefService* pref_service) override;
 
@@ -59,6 +65,10 @@ class ASH_EXPORT AutozoomControllerImpl : public SessionObserver {
   std::unique_ptr<PrefChangeRegistrar> pref_change_registrar_;
 
   cros::mojom::CameraAutoFramingState state_;
+
+  base::ObserverList<AutozoomObserver> observers_;
+
+  std::unique_ptr<AutozoomNudgeController> nudge_controller_;
 };
 
 }  // namespace ash

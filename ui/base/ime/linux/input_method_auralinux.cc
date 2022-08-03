@@ -438,6 +438,9 @@ bool InputMethodAuraLinux::IsCandidatePopupOpen() const {
 
 VirtualKeyboardController*
 InputMethodAuraLinux::GetVirtualKeyboardController() {
+  // This should only be not null when set via testing.
+  if (auto* controller = InputMethodBase::GetVirtualKeyboardController())
+    return controller;
   return context_->GetVirtualKeyboardController();
 }
 
@@ -545,6 +548,11 @@ void InputMethodAuraLinux::OnSetAutocorrectRange(const gfx::Range& range) {
     return;
   text_input_client->SetAutocorrectRange(range);
 #endif
+}
+
+void InputMethodAuraLinux::OnSetVirtualKeyboardOccludedBounds(
+    const gfx::Rect& screen_bounds) {
+  SetVirtualKeyboardBounds(screen_bounds);
 }
 
 // Overridden from InputMethodBase.

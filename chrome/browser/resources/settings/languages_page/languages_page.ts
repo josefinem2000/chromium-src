@@ -125,12 +125,8 @@ export class SettingsLanguagesPageElement extends
        enableDesktopDetailedLanguageSettings_: {
          type: Boolean,
          value: function() {
-           let enabled = false;
-           // <if expr="not chromeos_lacros">
-           enabled =
-               loadTimeData.getBoolean('enableDesktopDetailedLanguageSettings');
-           // </if>
-           return enabled;
+           return loadTimeData.getBoolean(
+              'enableDesktopDetailedLanguageSettings');
          },
        },
     };
@@ -318,13 +314,6 @@ export class SettingsLanguagesPageElement extends
   private showMoveDown_(): boolean {
     return this.languages !== undefined &&
         !this.isNthLanguage_(this.languages.enabled.length - 1);
-  }
-
-  /**
-   * @return True if there are less than 2 languages.
-   */
-  private isHelpTextHidden_(): boolean {
-    return this.languages !== undefined && this.languages.enabled.length <= 1;
   }
 
   /**

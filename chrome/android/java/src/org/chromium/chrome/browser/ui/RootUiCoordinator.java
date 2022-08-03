@@ -125,9 +125,11 @@ import org.chromium.chrome.browser.ui.appmenu.AppMenuBlocker;
 import org.chromium.chrome.browser.ui.appmenu.AppMenuCoordinator;
 import org.chromium.chrome.browser.ui.appmenu.AppMenuCoordinatorFactory;
 import org.chromium.chrome.browser.ui.appmenu.AppMenuDelegate;
+import org.chromium.chrome.browser.ui.appmenu.AppMenuObserver;
 import org.chromium.chrome.browser.ui.messages.snackbar.SnackbarManager;
 import org.chromium.chrome.browser.ui.system.StatusBarColorController;
 import org.chromium.chrome.browser.ui.system.StatusBarColorController.StatusBarColorProvider;
+import org.chromium.chrome.browser.util.ChromeAccessibilityUtil;
 import org.chromium.chrome.browser.vr.VrModuleProvider;
 import org.chromium.chrome.features.start_surface.StartSurface;
 import org.chromium.components.browser_ui.accessibility.PageZoomCoordinator;
@@ -245,7 +247,7 @@ public class RootUiCoordinator
     private final ObservableSupplier<BookmarkBridge> mBookmarkBridgeSupplier;
     private final ObservableSupplier<TabBookmarker> mTabBookmarkerSupplier;
     private final OneshotSupplierImpl<AppMenuCoordinator> mAppMenuSupplier;
-    private BottomSheetObserver mContextualSearchSuppressor;
+    private BottomSheetObserver mBottomSheetObserver;
     private final Supplier<ContextualSearchManager> mContextualSearchManagerSupplier;
     protected final CallbackController mCallbackController;
     protected final BrowserControlsManager mBrowserControlsManager;
@@ -295,9 +297,8 @@ public class RootUiCoordinator
     @Nullable
     private final BackPressManager mBackPressManager;
     @Nullable
-    private final Runnable mUnblockDrawForOverviewPageRunnable;
-    @Nullable
     private PageZoomCoordinator mPageZoomCoordinator;
+    private AppMenuObserver mAppMenuObserver;
 
     /**
      * Create a new {@link RootUiCoordinator} for the given activity.
@@ -342,10 +343,6 @@ public class RootUiCoordinator
      * @param ephemeralTabCoordinatorSupplier Supplies the {@link EphemeralTabCoordinator}.
      * @param initializeUiWithIncognitoColors Whether to initialize the UI with incognito colors.
      * @param backPressManager The {@link BackPressManager} handling back press.
-     * @param unblockDrawForOverviewPageRunnable The runnable for unblocking the {@link
-     *                                           AppLaunchDrawBlocker} which is specifically for
-     *                                           blocking draw on launch when overview page
-     *                                           is showing during startup.
      */
     public RootUiCoordinator(@NonNull AppCompatActivity activity,
             @Nullable Callback<Boolean> onOmniboxFocusChangedListener,
@@ -383,8 +380,7 @@ public class RootUiCoordinator
             @NonNull IntentRequestTracker intentRequestTracker,
             @NonNull OneshotSupplier<TabReparentingController> tabReparentingControllerSupplier,
             @NonNull Supplier<EphemeralTabCoordinator> ephemeralTabCoordinatorSupplier,
-            boolean initializeUiWithIncognitoColors, @Nullable BackPressManager backPressManager,
-            @Nullable Runnable unblockDrawForOverviewPageRunnable) {
+            boolean initializeUiWithIncognitoColors, @Nullable BackPressManager backPressManager) {
         mJankTracker = jankTracker;
         mCallbackController = new CallbackController();
         mActivity = activity;
@@ -412,7 +408,6 @@ public class RootUiCoordinator
         mTabReparentingControllerSupplier = tabReparentingControllerSupplier;
         mInitializeUiWithIncognitoColors = initializeUiWithIncognitoColors;
         mBackPressManager = backPressManager;
-        mUnblockDrawForOverviewPageRunnable = unblockDrawForOverviewPageRunnable;
 
         mMenuOrKeyboardActionController = menuOrKeyboardActionController;
         mMenuOrKeyboardActionController.registerMenuOrKeyboardActionHandler(this);
@@ -563,6 +558,10 @@ public class RootUiCoordinator
         if (mAppMenuCoordinator != null) {
             mAppMenuCoordinator.unregisterAppMenuBlocker(this);
             mAppMenuCoordinator.unregisterAppMenuBlocker(mAppMenuBlocker);
+
+            if (mAppMenuObserver != null) {
+                mAppMenuCoordinator.getAppMenuHandler().removeObserver(mAppMenuObserver);
+            }
             mAppMenuCoordinator.destroy();
         }
 
@@ -581,8 +580,8 @@ public class RootUiCoordinator
 
         if (mBottomSheetManager != null) mBottomSheetManager.onDestroy();
         if (mBottomSheetController != null) {
-            if (mContextualSearchSuppressor != null) {
-                mBottomSheetController.removeObserver(mContextualSearchSuppressor);
+            if (mBottomSheetObserver != null) {
+                mBottomSheetController.removeObserver(mBottomSheetObserver);
             }
             BottomSheetControllerFactory.detach(mBottomSheetController);
             mBottomSheetController.destroy();
@@ -663,7 +662,7 @@ public class RootUiCoordinator
     public void onPostInflationStartup() {
         initAppMenu();
         initDirectActionInitializer();
-        initContextualSearchSuppressor();
+        initBottomSheetObserver();
         if (mAppMenuCoordinator != null && mModalDialogManagerSupplier.hasValue()) {
             mModalDialogManagerObserver = new ModalDialogManagerObserver() {
                 @Override
@@ -824,8 +823,9 @@ public class RootUiCoordinator
                 }
             };
 
-            mHistoryClustersCoordinator = new HistoryClustersCoordinator(
-                    profile, mActivity, TemplateUrlServiceFactory.get(), historyClustersDelegate);
+            mHistoryClustersCoordinator = new HistoryClustersCoordinator(profile, mActivity,
+                    TemplateUrlServiceFactory.get(), historyClustersDelegate,
+                    ChromeAccessibilityUtil.get());
             mHistoryClustersCoordinatorSupplier.set(mHistoryClustersCoordinator);
         }
     }
@@ -1011,6 +1011,11 @@ public class RootUiCoordinator
                     if (mFindToolbarManager != null) {
                         mFindToolbarManager.hideToolbar(false);
                     }
+
+                    if (mPageZoomCoordinator != null) {
+                        // On show overlay panel, hide page zoom dialog
+                        mPageZoomCoordinator.hide();
+                    }
                 }
 
                 @Override
@@ -1120,8 +1125,7 @@ public class RootUiCoordinator
                     mSnackbarManagerSupplier.get(), mJankTracker,
                     getMerchantTrustSignalsCoordinatorSupplier(), mTabReparentingControllerSupplier,
                     mOmniboxPedalDelegate, mEphemeralTabCoordinatorSupplier,
-                    mInitializeUiWithIncognitoColors, mBackPressManager,
-                    mUnblockDrawForOverviewPageRunnable);
+                    mInitializeUiWithIncognitoColors, mBackPressManager);
             if (!mSupportsAppMenuSupplier.getAsBoolean()) {
                 mToolbarManager.getToolbar().disableMenuButton();
             }
@@ -1232,6 +1236,19 @@ public class RootUiCoordinator
             mAppMenuCoordinator.registerAppMenuBlocker(mAppMenuBlocker);
 
             mAppMenuSupplier.set(mAppMenuCoordinator);
+
+            mAppMenuObserver = new AppMenuObserver() {
+                @Override
+                public void onMenuVisibilityChanged(boolean isVisible) {
+                    if (isVisible && mPageZoomCoordinator != null) {
+                        mPageZoomCoordinator.hide();
+                    }
+                }
+
+                @Override
+                public void onMenuHighlightChanged(boolean highlighting) {}
+            };
+            mAppMenuCoordinator.getAppMenuHandler().addObserver(mAppMenuObserver);
         }
     }
 
@@ -1414,12 +1431,12 @@ public class RootUiCoordinator
     }
 
     /**
-     * Initializes a glue logic that suppresses Contextual Search while a Bottom Sheet feature is
-     * in action.
+     * Initializes a glue logic that suppresses Contextual Search and hides the Page Zoom slider
+     * while a Bottom Sheet feature is in action.
      */
-    private void initContextualSearchSuppressor() {
+    private void initBottomSheetObserver() {
         if (mBottomSheetController == null) return;
-        mContextualSearchSuppressor = new EmptyBottomSheetObserver() {
+        mBottomSheetObserver = new EmptyBottomSheetObserver() {
             private boolean mOpened;
 
             @Override
@@ -1434,6 +1451,9 @@ public class RootUiCoordinator
                                     mContextualSearchManagerSupplier.get();
                             if (manager != null) manager.onBottomSheetVisible(true);
                         }
+
+                        // On visible bottom sheet, hide page zoom dialog
+                        mPageZoomCoordinator.hide();
                         break;
                     case SheetState.HIDDEN:
                         mOpened = false;
@@ -1443,7 +1463,7 @@ public class RootUiCoordinator
                 }
             }
         };
-        mBottomSheetController.addObserver(mContextualSearchSuppressor);
+        mBottomSheetController.addObserver(mBottomSheetObserver);
     }
 
     public OneshotSupplier<IncognitoReauthController> getIncognitoReauthControllerSupplier() {

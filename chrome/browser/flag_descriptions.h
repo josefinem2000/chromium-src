@@ -95,6 +95,9 @@ extern const char kCSSContainerQueriesDescription[];
 extern const char kContentLanguagesInLanguagePickerName[];
 extern const char kContentLanguagesInLanguagePickerDescription[];
 
+extern const char kCustomizeChromeSidePanelName[];
+extern const char KCustomizeChromeSidePanelDescription[];
+
 extern const char kDebugHistoryInterventionNoUserActivationName[];
 extern const char kDebugHistoryInterventionNoUserActivationDescription[];
 
@@ -211,6 +214,9 @@ extern const char kAutofillEnableFIDOProgressDialogDescription[];
 
 extern const char kAutofillEnableManualFallbackForVirtualCardsName[];
 extern const char kAutofillEnableManualFallbackForVirtualCardsDescription[];
+
+extern const char kAutofillEnableCardProductNameName[];
+extern const char kAutofillEnableCardProductNameDescription[];
 
 extern const char kAutofillEnableOfferNotificationForPromoCodesName[];
 extern const char kAutofillEnableOfferNotificationForPromoCodesDescription[];
@@ -2483,6 +2489,9 @@ extern const char kUseAngleGL[];
 extern const char kEnableBiometricAuthenticationInSettingsName[];
 extern const char kEnableBiometricAuthenticationInSettingsDescription[];
 
+extern const char kBiometricAuthenticationForFillingName[];
+extern const char kBiometricAuthenticationForFillingDescription[];
+
 #endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC)
 
 // ChromeOS -------------------------------------------------------------------
@@ -2710,6 +2719,9 @@ extern const char kGuestOSGenericInstallerDescription[];
 
 extern const char kBruschettaName[];
 extern const char kBruschettaDescription[];
+
+extern const char kCameraAppDocScanDlcName[];
+extern const char kCameraAppDocScanDlcDescription[];
 
 extern const char kCompactBubbleLauncherName[];
 extern const char kCompactBubbleLauncherDescription[];
@@ -3410,6 +3422,9 @@ extern const char kIntentChipSkipsPickerDescription[];
 extern const char kIntentChipAppIconName[];
 extern const char kIntentChipAppIconDescription[];
 
+extern const char kKioskEnableAppServiceName[];
+extern const char kKioskEnableAppServiceDescription[];
+
 extern const char kLinkCapturingAutoDisplayIntentPickerName[];
 extern const char kLinkCapturingAutoDisplayIntentPickerDescription[];
 
@@ -3467,10 +3482,6 @@ extern const char kSideSearchDSESupportDescription[];
 
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX) || \
     BUILDFLAG(IS_FUCHSIA)
-
-extern const char kDesktopDetailedLanguageSettingsName[];
-extern const char kDesktopDetailedLanguageSettingsDescription[];
-
 extern const char kQuickCommandsName[];
 extern const char kQuickCommandsDescription[];
 
@@ -3587,6 +3598,9 @@ extern const char kElasticOverscrollDescription[];
     BUILDFLAG(IS_MAC) || BUILDFLAG(IS_FUCHSIA)
 extern const char kUIDebugToolsName[];
 extern const char kUIDebugToolsDescription[];
+
+extern const char kDesktopDetailedLanguageSettingsName[];
+extern const char kDesktopDetailedLanguageSettingsDescription[];
 #endif
 
 #if defined(WEBRTC_USE_PIPEWIRE)

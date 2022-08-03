@@ -406,6 +406,7 @@ static_library("browser") {
     "defaults.h",
     "device_reauth/chrome_biometric_authenticator_common.cc",
     "device_reauth/chrome_biometric_authenticator_common.h",
+    "device_reauth/chrome_biometric_authenticator_factory.cc",
     "device_reauth/chrome_biometric_authenticator_factory.h",
     "dips/cookie_access_filter.cc",
     "dips/cookie_access_filter.h",
@@ -2939,8 +2940,6 @@ static_library("browser") {
       "crash_upload_list/crash_upload_list_android.h",
       "device_reauth/android/biometric_authenticator_android.cc",
       "device_reauth/android/biometric_authenticator_android.h",
-      "device_reauth/android/biometric_authenticator_android_factory.cc",
-      "device_reauth/android/biometric_authenticator_android_factory.h",
       "device_reauth/android/biometric_authenticator_bridge.h",
       "device_reauth/android/biometric_authenticator_bridge_impl.cc",
       "device_reauth/android/biometric_authenticator_bridge_impl.h",
@@ -3587,6 +3586,7 @@ static_library("browser") {
       "banners/app_banner_manager_desktop.h",
       "bookmarks/bookmark_html_writer.cc",
       "bookmarks/bookmark_html_writer.h",
+      "bookmarks/url_and_id.h",
       "cart/cart_db.cc",
       "cart/cart_db.h",
       "cart/cart_discount_fetcher.cc",
@@ -5036,6 +5036,8 @@ static_library("browser") {
       "speech/tts_controller_delegate_impl.h",
       "support_tool/ash/network_routes_data_collector.cc",
       "support_tool/ash/network_routes_data_collector.h",
+      "support_tool/ash/shill_data_collector.cc",
+      "support_tool/ash/shill_data_collector.h",
       "support_tool/ash/ui_hierarchy_data_collector.cc",
       "support_tool/ash/ui_hierarchy_data_collector.h",
       "sync/desk_sync_service_factory.cc",
@@ -5470,6 +5472,8 @@ static_library("browser") {
       "lacros/feedback_util.h",
       "lacros/field_trial_observer.cc",
       "lacros/field_trial_observer.h",
+      "lacros/float_controller_lacros.cc",
+      "lacros/float_controller_lacros.h",
       "lacros/for_which_extension_type.cc",
       "lacros/for_which_extension_type.h",
       "lacros/force_installed_tracker_lacros.cc",
@@ -5521,10 +5525,14 @@ static_library("browser") {
       "lacros/standalone_browser_test_controller.h",
       "lacros/sync/sync_explicit_passphrase_client_lacros.cc",
       "lacros/sync/sync_explicit_passphrase_client_lacros.h",
+      "lacros/sync/sync_user_settings_client_lacros.cc",
+      "lacros/sync/sync_user_settings_client_lacros.h",
       "lacros/system_logs/lacros_system_log_fetcher.cc",
       "lacros/system_logs/lacros_system_log_fetcher.h",
       "lacros/task_manager_lacros.cc",
       "lacros/task_manager_lacros.h",
+      "lacros/ui_throughput_recorder_lacros.cc",
+      "lacros/ui_throughput_recorder_lacros.h",
       "lacros/vpn_extension_tracker_lacros.cc",
       "lacros/vpn_extension_tracker_lacros.h",
       "lacros/web_app_provider_bridge_lacros.cc",
@@ -6236,6 +6244,13 @@ static_library("browser") {
       "//chrome/browser/ui/webui/connectors_internals:mojo_bindings",
       "//components/policy/proto:proto",
       "//services/data_decoder/public/cpp",
+    ]
+  }
+
+  if (is_mac) {
+    sources += [
+      "enterprise/connectors/device_trust/browser/mac_device_trust_connector_service.cc",
+      "enterprise/connectors/device_trust/browser/mac_device_trust_connector_service.h",
     ]
   }
 

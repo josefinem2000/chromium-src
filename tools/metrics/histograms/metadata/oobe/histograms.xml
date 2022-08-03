@@ -339,6 +339,33 @@ chromium-metrics-reviews@google.com.
   <token key="OOBEGestureNavigationPage" variants="OOBEGestureNavigationPage"/>
 </histogram>
 
+<histogram
+    name="OOBE.HidDetectionScreen.BluetoothPairing.Duration.{PairingResult}"
+    units="ms" expires_after="2023-05-06">
+  <owner>gordonseto@google.com</owner>
+  <owner>cros-connectivity@google.com</owner>
+  <summary>
+    Records how long it takes for a pairing attempt, initiated automatically
+    during the OOBE HID detection screen, to finish. If the user needed to go
+    through an auth process during pairing, the time the user took to confirm
+    that is included.
+  </summary>
+  <token key="PairingResult">
+    <variant name="Failure"/>
+    <variant name="Success"/>
+  </token>
+</histogram>
+
+<histogram name="OOBE.HidDetectionScreen.BluetoothPairing.Result"
+    enum="BooleanSuccess" expires_after="2023-05-06">
+  <owner>gordonseto@google.com</owner>
+  <owner>cros-connectivity@google.com</owner>
+  <summary>
+    Records success or failure of a pairing attempt (initiated automatically by
+    the OOBE HID detection screen) to a HID.
+  </summary>
+</histogram>
+
 <histogram name="OOBE.HidDetectionScreen.BluetoothPairingAttempts"
     units="attempts" expires_after="2023-05-06">
   <owner>gordonseto@google.com</owner>
@@ -377,7 +404,7 @@ chromium-metrics-reviews@google.com.
 
 <histogram
     name="OOBE.MarketingOptInScreen.BackendConnector.{OOBEMarketingCountry}"
-    enum="MarketingOptInBackendConnectorEvent" expires_after="2022-11-30">
+    enum="MarketingOptInBackendConnectorEvent" expires_after="2023-08-01">
   <owner>rrsilva@google.com</owner>
   <owner>cros-oac@google.com</owner>
   <summary>
@@ -390,7 +417,7 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="OOBE.MarketingOptInScreen.Event.{OOBEMarketingCountry}"
-    enum="MarketingOptInScreenEvent" expires_after="2022-04-24">
+    enum="MarketingOptInScreenEvent" expires_after="2023-08-01">
   <owner>rrsilva@google.com</owner>
   <owner>cros-oac@google.com</owner>
   <summary>
@@ -401,7 +428,7 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="OOBE.MarketingOptInScreen.GeolocationResolve"
-    enum="MarketingOptInGeolocationEvent" expires_after="2022-11-30">
+    enum="MarketingOptInGeolocationEvent" expires_after="2023-08-01">
   <owner>rrsilva@google.com</owner>
   <owner>cros-oac@google.com</owner>
   <summary>

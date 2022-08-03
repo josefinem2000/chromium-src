@@ -177,6 +177,7 @@
 #include "third_party/blink/renderer/core/scroll/scrollbar_theme.h"
 #include "third_party/blink/renderer/core/scroll/smooth_scroll_sequencer.h"
 #include "third_party/blink/renderer/core/style/computed_style_constants.h"
+#include "third_party/blink/renderer/core/style/toggle_root_list.h"
 #include "third_party/blink/renderer/core/svg/svg_a_element.h"
 #include "third_party/blink/renderer/core/svg/svg_animated_href.h"
 #include "third_party/blink/renderer/core/svg/svg_element.h"
@@ -2555,6 +2556,8 @@ void Element::showPopUp(ExceptionState& exception_state) {
       document.SetPopupHintShowing(this);
     }
   }
+  DCHECK(!document.AllOpenPopUps().Contains(this));
+  document.AllOpenPopUps().insert(this);
 
   // Fire the show event (bubbles, not cancelable).
   Event* event = Event::CreateBubble(event_type_names::kShow);
@@ -2584,6 +2587,12 @@ void Element::showPopUp(ExceptionState& exception_state) {
   // Make the popup match :top-layer:
   GetPopupData()->setVisibilityState(PopupVisibilityState::kShowing);
   PseudoStateChanged(CSSSelector::kPseudoTopLayer);
+
+  // Queue a delayed hide event, if necessary.
+  if (!GetDocument().HoverElement() ||
+      !IsNodePopUpDescendant(*GetDocument().HoverElement())) {
+    MaybeQueuePopupHideEvent();
+  }
 
   SetPopupFocusOnShow();
 }
@@ -2626,7 +2635,7 @@ void Element::HideAllPopupsUntil(const Element* endpoint,
     DCHECK(!endpoint || endpoint->PopupType() == PopupValueType::kAuto);
     const Element* hint_ancestor = nullptr;
     if (document.PopupHintShowing()) {
-      // If there is a hint showing that is a descendent of something on the
+      // If there is a hint showing that is a descendant of something on the
       // stack, then the hint should be hidden before that ancestor is hidden,
       // regardless of popup_independence.
       hint_ancestor = NearestOpenAncestralPopup(document.PopupHintShowing());
@@ -2674,7 +2683,7 @@ void Element::hidePopUp(ExceptionState& exception_state) {
 // Hiding a pop-up happens in phases, to facilitate animations and
 // transitions:
 // 1. Capture any already-running animations via getAnimations(), including
-//    animations on descendent elements.
+//    animations on descendant elements.
 // 2. Remove the :top-layer pseudo class.
 // 3. Fire the 'hide' event.
 // 4. If the hidePopup() call is *not* the result of the pop-up being "forced
@@ -2716,6 +2725,7 @@ void Element::HidePopUpInternal(HidePopupFocusBehavior focus_behavior,
       document.SetPopupHintShowing(nullptr);
     }
   }
+  document.AllOpenPopUps().erase(this);
   document.PopupsWaitingToHide().insert(this);
 
   bool force_hide = forcing_level == HidePopupForcingLevel::kHideImmediately;
@@ -2908,6 +2918,8 @@ const Element* NearestOpenAncestralPopupRecursive(
     if (auto* form_control = DynamicTo<HTMLFormControlElement>(element)) {
       recurse_and_update(form_control->popupTargetElement().element);
     }
+    if (auto* hover_popup_element = element->HoverPopupElement())
+      recurse_and_update(hover_popup_element);
     // Include the anchor elements for all showing pop-ups.
     if (anchors_to_popups.Contains(element)) {
       recurse_and_update(anchors_to_popups.at(element));
@@ -2939,6 +2951,7 @@ const Element* NearestOpenAncestralPopupRecursive(
 // starting pop- up will be returned.
 const Element* Element::NearestOpenAncestralPopup(const Node* node,
                                                   bool inclusive) {
+  DCHECK(RuntimeEnabledFeatures::HTMLPopupAttributeEnabled());
   DCHECK(node);
   // popup_positions is a map from all showing (or about-to-show) pop-ups to
   // their position in the pop-up stack.
@@ -3061,55 +3074,164 @@ Element* Element::anchorElement() const {
   return GetTreeScope().getElementById(anchor_id);  // may be null
 }
 
-void Element::MaybeTriggerHoverPopup(Element* popup_element) {
+Element* Element::HoverPopupElement() const {
   DCHECK(RuntimeEnabledFeatures::HTMLPopupAttributeEnabled());
+  if (!FastHasAttribute(html_names::kHoverpopupAttr))
+    return nullptr;
+  Element* popup_element = GetTreeScope().getElementById(
+      FastGetAttribute(html_names::kHoverpopupAttr));
   if (!popup_element || !popup_element->HasValidPopupAttribute())
+    return nullptr;
+  return popup_element;
+}
+
+// Must be called on an Element that is a pop-up. Returns true if |node| is a
+// descendant of this pop-up. This includes the case where |node| is contained
+// within another pop-up, and the container pop-up is a descendant of this
+// pop_up. For the special case of popup=manual pop-ups, which do not have
+// ancestral relationships, this function checks pure DOM tree descendants of
+// popup=manual pop-ups. This is important for the `hover-pop-up-hide-delay` CSS
+// property, which works for all pop-up types, and needs to keep pop-ups open
+// when a descendant is hovered.
+bool Element::IsNodePopUpDescendant(const Node& node) const {
+  DCHECK(RuntimeEnabledFeatures::HTMLPopupAttributeEnabled());
+  DCHECK(HasValidPopupAttribute());
+  if (PopupType() == PopupValueType::kManual) {
+    for (const Node& ancestor : FlatTreeTraversal::InclusiveAncestorsOf(node)) {
+      if (ancestor == this)
+        return true;
+    }
+  } else {
+    for (const Element* ancestor =
+             NearestOpenAncestralPopup(&node, /*inclusive*/ true);
+         ancestor; ancestor = NearestOpenAncestralPopup(ancestor)) {
+      if (ancestor == this)
+        return true;
+    }
+  }
+  return false;
+}
+
+void Element::MaybeQueuePopupHideEvent() {
+  DCHECK(RuntimeEnabledFeatures::HTMLPopupAttributeEnabled());
+  DCHECK(HasValidPopupAttribute());
+  // If the pop-up isn't showing, or it has an infinite HoverPopUpHideDelay, do
+  // nothing.
+  if (GetPopupData()->visibilityState() == PopupVisibilityState::kHidden)
     return;
-  // Remove this element from hoverPopupTasks always.
-  popup_element->GetPopupData()->hoverPopupTasks().erase(this);
-  // Only trigger the pop-up if the hoverpopup attribute still points to the
-  // same pop-up, and the pop-up is in the tree and still not showing.
-  if (popup_element->IsInTreeScope() && !popup_element->popupOpen() &&
-      popup_element == GetTreeScope().getElementById(
-                           FastGetAttribute(html_names::kHoverpopupAttr))) {
-    popup_element->showPopUp(ASSERT_NO_EXCEPTION);
+  float hide_delay_seconds = GetComputedStyle()->HoverPopUpHideDelay();
+  // If the value is infinite or NaN, don't hide the pop-up.
+  if (!std::isfinite(hide_delay_seconds))
+    return;
+  // Queue the task to hide this pop-up.
+  GetPopupData()->setHoverHideTask(PostDelayedCancellableTask(
+      *GetExecutionContext()->GetTaskRunner(TaskType::kInternalDefault),
+      FROM_HERE,
+      WTF::Bind(
+          [](Element* pop_up) {
+            // Always remove this element from hoverPopupTasks.
+            if (pop_up->GetPopupData())
+              pop_up->GetPopupData()->hoverPopupTasks().erase(pop_up);
+            if (pop_up->popupOpen()) {
+              DCHECK(pop_up->IsInTreeScope());
+              pop_up->HidePopUpInternal(
+                  HidePopupFocusBehavior::kFocusPreviousElement,
+                  HidePopupForcingLevel::kHideAfterAnimations);
+            }
+          },
+          WrapWeakPersistent(this)),
+      base::Seconds(hide_delay_seconds)));
+}
+
+// static
+void Element::HoveredElementChanged(Element* old_element,
+                                    Element* new_element) {
+  if (!RuntimeEnabledFeatures::HTMLPopupAttributeEnabled())
+    return;
+  if (old_element) {
+    // For the previously-hovered element: loop through all showing popups
+    // (including popup=manual) and see if the element that just lost focus was
+    // an ancestor. If so, queue a task to hide it after a delay.
+    for (auto& pop_up : old_element->GetDocument().AllOpenPopUps()) {
+      if (pop_up->IsNodePopUpDescendant(*old_element))
+        pop_up->MaybeQueuePopupHideEvent();
+    }
+  }
+  // It is possible that both old_element and new_element are descendants of
+  // the same open pop_up, in which case we'll queue a hide task and then
+  // immediately cancel it, resulting in no change.
+  if (new_element) {
+    // For the newly-hovered element: loop through all showing popups and see if
+    // the newly-focused element is an ancestor. If so, cancel that pop-up's
+    // hide-after-delay task.
+    for (auto& pop_up : new_element->GetDocument().AllOpenPopUps()) {
+      if (pop_up->IsNodePopUpDescendant(*new_element))
+        pop_up->GetPopupData()->setHoverHideTask(TaskHandle());
+    }
   }
 }
 
 void Element::HandlePopupHovered(bool hovered) {
   if (!RuntimeEnabledFeatures::HTMLPopupAttributeEnabled())
     return;
-  if (!FastHasAttribute(html_names::kHoverpopupAttr) || !IsInTreeScope())
-    return;
-  Element* popup_element = GetTreeScope().getElementById(
-      FastGetAttribute(html_names::kHoverpopupAttr));
-  if (!popup_element || !popup_element->HasValidPopupAttribute())
+  if (!IsInTreeScope())
     return;
   if (hovered) {
-    auto& hover_tasks = popup_element->GetPopupData()->hoverPopupTasks();
-    DCHECK(!hover_tasks.Contains(this));
+    // If we've just hovered an element (or the descendant of an element), see
+    // if it has a hoverpopup attribute that points to a valid pop-up element.
+    // If so, queue a task to show the pop-up after a timeout.
+    if (Element* popup_element = HoverPopupElement()) {
+      auto& hover_tasks = popup_element->GetPopupData()->hoverPopupTasks();
+      DCHECK(!hover_tasks.Contains(this));
 
-    // When we enter an element, we'll post a delayed task for the pop-up we're
-    // targeting. It's possible that multiple nested elements have hoverpopup
-    // attributes pointing to the same pop-up, and in that case, we want to
-    // trigger on the first of them that reaches its timeout threshold.
-    hover_tasks.insert(
-        this,
-        PostDelayedCancellableTask(
-            *GetExecutionContext()->GetTaskRunner(TaskType::kInternalDefault),
-            FROM_HERE,
-            WTF::Bind(&Element::MaybeTriggerHoverPopup,
-                      WrapWeakPersistent(this),
-                      WrapWeakPersistent(popup_element)),
-            base::Seconds(GetComputedStyle()->HoverPopUpDelay())));
+      float hover_delay_seconds = GetComputedStyle()->HoverPopUpDelay();
+      // If the value is infinite or NaN, don't queue a task at all.
+      DCHECK_GE(hover_delay_seconds, 0);
+      if (std::isfinite(hover_delay_seconds)) {
+        // It's possible that multiple nested elements have hoverpopup
+        // attributes pointing to the same pop-up, and in that case, we want to
+        // trigger on the first of them that reaches its timeout threshold.
+        hover_tasks.insert(
+            this,
+            PostDelayedCancellableTask(
+                *GetExecutionContext()->GetTaskRunner(
+                    TaskType::kInternalDefault),
+                FROM_HERE,
+                WTF::Bind(
+                    [](Element* trigger_element, Element* popup_element) {
+                      if (!popup_element ||
+                          !popup_element->HasValidPopupAttribute())
+                        return;
+                      // Remove this element from hoverPopupTasks always.
+                      popup_element->GetPopupData()->hoverPopupTasks().erase(
+                          trigger_element);
+                      // Only trigger the pop-up if the hoverpopup attribute
+                      // still points to the same pop-up, and the pop-up is in
+                      // the tree and still not showing.
+                      if (popup_element->IsInTreeScope() &&
+                          !popup_element->popupOpen() &&
+                          popup_element ==
+                              trigger_element->GetTreeScope().getElementById(
+                                  trigger_element->FastGetAttribute(
+                                      html_names::kHoverpopupAttr))) {
+                        popup_element->InvokePopup(trigger_element);
+                      }
+                    },
+                    WrapWeakPersistent(this),
+                    WrapWeakPersistent(popup_element)),
+                base::Seconds(hover_delay_seconds)));
+      }
+    }
   } else {
-    // If we have a task still waiting, cancel it.
-    popup_element->GetPopupData()->hoverPopupTasks().Take(this).Cancel();
-    // TODO(masonf): Still need to implement the code to hide this pop-up after
-    // a configurable delay. That needs to work even if the pop-up wasn't
-    // triggered by a hoverpopup attribute. E.g. a regular pop-up that gets
-    // hidden after it has not been hovered for n seconds. This should connect
-    // to the HoverPopUpHideDelay() computed style value.
+    // If we have a hoverpopup task still waiting, cancel it. Based on this
+    // logic, if you hover a hoverpopup element, then remove the hoverpopup
+    // attribute, there will be no way to stop the pop-up from being shown after
+    // the delay, even if you subsequently de-hover the element.
+    if (Element* hover_pop_up = HoverPopupElement()) {
+      auto& hover_tasks = hover_pop_up->GetPopupData()->hoverPopupTasks();
+      if (hover_tasks.Contains(this))
+        hover_tasks.Take(this).Cancel();
+    }
   }
 }
 
@@ -5448,6 +5570,30 @@ bool Element::hasAttributeNS(const AtomicString& namespace_uri,
   return GetElementData()->Attributes().Find(q_name);
 }
 
+void Element::DefaultEventHandler(Event& event) {
+  if (event.type() == event_type_names::kDOMActivate) {
+    // IsFocusableStyleAfterUpdate() may change the result of
+    // GetComputedStyle(), but it's also potentially expensive and we only
+    // want to call it if we have a toggle-trigger.
+    if (const ComputedStyle* style_before_update = GetComputedStyle()) {
+      if (style_before_update->ToggleTrigger() &&
+          IsFocusableStyleAfterUpdate() &&
+          !IsClickableControl(event.target()->ToNode())) {
+        if (const ComputedStyle* style = GetComputedStyle()) {
+          if (const ToggleTriggerList* toggle_triggers =
+                  style->ToggleTrigger()) {
+            for (const ToggleTrigger& trigger : toggle_triggers->Triggers()) {
+              FireToggleActivation(trigger);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ContainerNode::DefaultEventHandler(event);
+}
+
 bool Element::DelegatesFocus() const {
   return AuthorShadowRoot() && AuthorShadowRoot()->delegatesFocus();
 }
@@ -5809,6 +5955,23 @@ bool Element::IsAutofocusable() const {
   // https://svgwg.org/svg2-draft/struct.html#autofocusattribute
   return (IsHTMLElement() || IsSVGElement()) &&
          FastHasAttribute(html_names::kAutofocusAttr);
+}
+
+bool Element::IsClickableControl(Node* node) {
+  auto* element = DynamicTo<Element>(node);
+  if (!element)
+    return false;
+  if (element->IsFormControlElement())
+    return true;
+  Element* host = element->OwnerShadowHost();
+  if (host && host->IsFormControlElement())
+    return true;
+  while (node && this != node) {
+    if (node->HasActivationBehavior())
+      return true;
+    node = node->ParentOrShadowHostNode();
+  }
+  return false;
 }
 
 bool Element::ActivateDisplayLockIfNeeded(DisplayLockActivationReason reason) {
@@ -8844,6 +9007,317 @@ const ComputedStyle* Element::StyleForPositionFallback(unsigned index) {
   if (!style)
     return nullptr;
   return base_style->AddCachedPositionFallbackStyle(std::move(style), index);
+}
+
+ToggleData* Element::GetToggleData() {
+  return HasRareData() ? GetElementRareData()->GetToggleData() : nullptr;
+}
+
+ToggleData& Element::EnsureToggleData() {
+  return EnsureElementRareData().EnsureToggleData();
+}
+
+void Element::CreateToggles(const ToggleRootList* toggle_roots) {
+  const auto& roots = toggle_roots->Roots();
+  DCHECK(!roots.IsEmpty());
+
+  auto& toggles = EnsureToggleData().Toggles();
+  for (const ToggleRoot& root : roots) {
+    // NOTE: The intent of this code is that we leave the table unmodified if
+    // the key is already present, as described in
+    // https://tabatkins.github.io/css-toggle/#toggle-creation and
+    // https://tabatkins.github.io/css-toggle/#toggles .  This is exactly what
+    // HashMap::insert() does.
+    toggles.insert(root.Name(), Toggle(root));
+  }
+}
+
+std::pair<Toggle*, Element*> Element::FindToggleInScope(
+    const AtomicString& name) {
+  Element* element = this;
+  bool allow_narrow_scope = true;
+  while (true) {
+    if (ToggleData* toggle_data = element->GetToggleData()) {
+      ToggleMap& toggles = toggle_data->Toggles();
+      auto iter = toggles.find(name);
+      if (iter != toggles.end()) {
+        Toggle& toggle = iter->value;
+        // TODO(https://github.com/tabatkins/css-toggle/issues/20): Should we
+        // allow the current toggle specifier (if any) on the element to
+        // override the stored one, like it does for other aspects?
+        if (allow_narrow_scope || toggle.Scope() == ToggleScope::kWide) {
+          return std::make_pair(&toggle, element);
+        }
+      }
+    }
+
+    if (Element* sibling = ElementTraversal::PreviousSibling(*element)) {
+      allow_narrow_scope = false;
+      element = sibling;
+      continue;
+    }
+
+    allow_narrow_scope = true;
+    element = element->parentElement();
+
+    if (!element)
+      return std::make_pair(nullptr, nullptr);
+  }
+}
+
+void Element::FireToggleActivation(const ToggleTrigger& activation) {
+  const AtomicString& name = activation.Name();
+  auto [toggle, element] = FindToggleInScope(name);
+  if (!toggle)
+    return;
+
+  const ToggleRoot* toggle_specifier = nullptr;
+  if (const ComputedStyle* style = element->GetComputedStyle()) {
+    if (const ToggleRootList* toggle_root = style->ToggleRoot()) {
+      for (const auto& item : toggle_root->Roots()) {
+        if (item.Name() == name) {
+          toggle_specifier = &item;
+        }
+      }
+    }
+  }
+
+  ChangeToggle(element, toggle, activation, toggle_specifier);
+  element->FireToggleChangeEvent(toggle);
+}
+
+static std::pair<Element*, ToggleScope> FindToggleGroupElement(
+    Element* toggle_element,
+    const AtomicString& name) {
+  Element* element = toggle_element;
+  bool allow_narrow_scope = true;
+  do {
+    Element* parent = element->parentElement();
+    if (!parent) {
+      // An element is in the root's group if we don't find any other group.
+      //
+      // TODO(https://github.com/tabatkins/css-toggle/issues/23): See if the
+      // spec ends up describing it this way.
+      return std::make_pair(element, ToggleScope::kNarrow);
+    }
+
+    if (const ComputedStyle* style = element->GetComputedStyle()) {
+      if (const ToggleGroupList* toggle_groups = style->ToggleGroup()) {
+        for (const auto& group : toggle_groups->Groups()) {
+          if (group.Name() == name &&
+              (allow_narrow_scope || group.Scope() == ToggleScope::kWide)) {
+            return std::make_pair(element, group.Scope());
+          }
+        }
+      }
+    }
+
+    if (Element* sibling = ElementTraversal::PreviousSibling(*element)) {
+      allow_narrow_scope = false;
+      element = sibling;
+      continue;
+    }
+
+    allow_narrow_scope = true;
+
+    element = parent;
+  } while (true);
+}
+
+static void MakeRestOfToggleGroupZero(Element* toggle_element,
+                                      const AtomicString& name) {
+  // We do not attempt to maintain any persistent state representing toggle
+  // groups, since doing so without noticeable overhead would require a decent
+  // amount of code.  Instead, we will simply find the elements in the toggle
+  // group here.  If this turns out to be too slow, we could try to maintain
+  // data structures to represent groups, but doing so requires monitoring
+  // style changes on *elements*.
+
+  using State = ToggleRoot::State;
+
+  auto [toggle_group_element, toggle_scope] =
+      FindToggleGroupElement(toggle_element, name);
+  Element* stay_within;
+  switch (toggle_scope) {
+    case ToggleScope::kNarrow:
+      stay_within = toggle_group_element;
+      break;
+    case ToggleScope::kWide:
+      stay_within = toggle_group_element->parentElement();
+      break;
+  }
+
+  Element* e = toggle_group_element;
+  do {
+    if (e == toggle_element) {
+      e = ElementTraversal::Next(*e, stay_within);
+      continue;
+    }
+    if (e != toggle_group_element) {
+      // Skip descendants in a different group.
+      //
+      // TODO(dbaron): What if style is null?  See
+      // https://github.com/tabatkins/css-toggle/issues/24 .
+      if (const ComputedStyle* style = e->GetComputedStyle()) {
+        if (const ToggleGroupList* toggle_groups = style->ToggleGroup()) {
+          bool found_group = false;  // to continue the outer loop
+          for (const ToggleGroup& group : toggle_groups->Groups()) {
+            if (group.Name() == name) {
+              // TODO(https://github.com/tabatkins/css-toggle/issues/25):
+              // Consider multiple occurrences of the same name.
+              switch (group.Scope()) {
+                case ToggleScope::kWide:
+                  if (e != stay_within && e->parentElement()) {
+                    e = ElementTraversal::NextSkippingChildren(
+                        *e->parentElement(), stay_within);
+                  } else {
+                    e = nullptr;
+                  }
+                  break;
+                case ToggleScope::kNarrow:
+                  e = ElementTraversal::NextSkippingChildren(*e, stay_within);
+                  break;
+              }
+              found_group = true;
+              break;
+            }
+          }
+          if (found_group)
+            continue;
+        }
+      }
+    }
+    if (ToggleData* toggle_data = e->GetToggleData()) {
+      ToggleMap& toggles = toggle_data->Toggles();
+      auto iter = toggles.find(name);
+      if (iter != toggles.end()) {
+        Toggle& toggle = iter->value;
+        if (toggle.IsGroup()) {
+          toggle.SetValue(State(0u));
+        }
+      }
+    }
+    e = ElementTraversal::Next(*e, stay_within);
+  } while (e);
+}
+
+// Implement https://tabatkins.github.io/css-toggle/#change-a-toggle
+void Element::ChangeToggle(Element* toggle_element,
+                           Toggle* t,
+                           const ToggleTrigger& action,
+                           const ToggleRoot* override_spec) {
+  using State = ToggleRoot::State;
+
+  DCHECK(t);
+  if (!override_spec)
+    override_spec = t;
+  DCHECK_EQ(t->Name(), override_spec->Name());
+  const auto states = override_spec->StateSet();
+  const bool is_group = override_spec->IsGroup();
+  const auto overflow = override_spec->Overflow();
+
+  if (action.Mode() == ToggleTriggerMode::kSet) {
+    t->SetValue(action.Value());
+  } else {
+    using IntegerType = ToggleRoot::State::IntegerType;
+    DCHECK_EQ(std::numeric_limits<IntegerType>::lowest(), 0u);
+    const IntegerType infinity = std::numeric_limits<IntegerType>::max();
+    bool overflowed = false;
+
+    IntegerType index;
+    if (t->Value().IsInteger()) {
+      index = t->Value().AsInteger();
+    } else if (states.IsNames()) {
+      index = states.AsNames().Find(t->Value().AsName());
+      if (index == kNotFound) {
+        index = infinity;
+        overflowed = true;
+      }
+    } else {
+      index = infinity;
+      overflowed = true;
+    }
+
+    IntegerType max_index;
+    if (states.IsInteger()) {
+      max_index = states.AsInteger();
+    } else {
+      max_index = states.AsNames().size() - 1;
+    }
+
+    if (action.Mode() == ToggleTriggerMode::kNext) {
+      if (!overflowed) {
+        IntegerType new_index = index + action.Value().AsInteger();
+        if (new_index < index || new_index > max_index)
+          overflowed = true;
+        else
+          index = new_index;
+      }
+
+      if (overflowed) {
+        switch (overflow) {
+          case ToggleOverflow::kCycle:
+            index = 0u;
+            break;
+          case ToggleOverflow::kCycleOn:
+            index = 1u;
+            break;
+          case ToggleOverflow::kSticky:
+            index = max_index;
+            break;
+        }
+      }
+    } else {
+      DCHECK_EQ(action.Mode(), ToggleTriggerMode::kPrev);
+      bool overflowed_negative = false;
+      if (!overflowed) {
+        IntegerType new_index = index - action.Value().AsInteger();
+        if (new_index > index) {
+          overflowed = true;
+          overflowed_negative = true;
+        }
+        index = new_index;
+      }
+      switch (overflow) {
+        case ToggleOverflow::kCycle:
+          DCHECK_EQ(std::numeric_limits<IntegerType>::lowest(), 0u);
+          if (overflowed || index > max_index)
+            index = max_index;
+          break;
+        case ToggleOverflow::kCycleOn:
+          if (overflowed || index < 1u || index > max_index)
+            index = max_index;
+          break;
+        case ToggleOverflow::kSticky:
+          if (overflowed_negative)
+            index = 0u;
+          else if (overflowed || index > max_index)
+            index = max_index;
+          break;
+      }
+    }
+
+    if (t->StateSet().IsNames()) {
+      const auto& names = t->StateSet().AsNames();
+      if (index < names.size()) {
+        t->SetValue(State(names[index]));
+      } else {
+        t->SetValue(State(index));
+      }
+    } else {
+      t->SetValue(State(index));
+    }
+  }
+
+  // If t’s value does not match 0, and group is true, then set the value of
+  // all other toggles in the same toggle group as t to 0.
+  if (is_group && !t->ValueMatches(State(0u)))
+    MakeRestOfToggleGroupZero(toggle_element, t->Name());
+}
+
+void Element::FireToggleChangeEvent(Toggle* toggle) {
+  // TODO(https://crbug.com/1250716): Write code to add event classes and fire
+  // toggle change events.
 }
 
 }  // namespace blink

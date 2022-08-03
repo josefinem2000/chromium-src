@@ -76,7 +76,7 @@ TextInputClient* InputMethodBase::GetTextInputClient() const {
   return text_input_client_;
 }
 
-void InputMethodBase::SetOnScreenKeyboardBounds(const gfx::Rect& new_bounds) {
+void InputMethodBase::SetVirtualKeyboardBounds(const gfx::Rect& new_bounds) {
   keyboard_bounds_ = new_bounds;
   if (text_input_client_)
     text_input_client_->EnsureCaretNotInRect(keyboard_bounds_);
@@ -116,6 +116,11 @@ void InputMethodBase::RemoveObserver(InputMethodObserver* observer) {
 
 VirtualKeyboardController* InputMethodBase::GetVirtualKeyboardController() {
   return keyboard_controller_.get();
+}
+
+void InputMethodBase::SetVirtualKeyboardControllerForTesting(
+    std::unique_ptr<VirtualKeyboardController> controller) {
+  keyboard_controller_ = std::move(controller);
 }
 
 bool InputMethodBase::IsTextInputClientFocused(const TextInputClient* client) {

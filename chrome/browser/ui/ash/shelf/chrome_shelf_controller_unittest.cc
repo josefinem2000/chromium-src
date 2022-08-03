@@ -714,7 +714,8 @@ class ChromeShelfControllerTestBase : public BrowserWithTestWindowTest {
   void AppendPrefValue(base::ListValue* pref_value,
                        const std::string& extension_id) {
     base::DictionaryValue entry;
-    entry.SetKey(ChromeShelfPrefs::kPinnedAppsPrefAppIDKey, base::Value(extension_id));
+    entry.SetKey(ChromeShelfPrefs::kPinnedAppsPrefAppIDKey,
+                 base::Value(extension_id));
     pref_value->Append(std::move(entry));
   }
 
@@ -1242,7 +1243,8 @@ class ChromeShelfControllerLacrosTest : public ChromeShelfControllerTestBase {
 
     // Login a user. The "email" must match the TestingProfile's
     // GetProfileUserName() so that profile() will be the primary profile.
-    const AccountId account_id = AccountId::FromUserEmail("testing_profile");
+    const AccountId account_id =
+        AccountId::FromUserEmail("testing_profile@test");
     fake_user_manager->AddUser(account_id);
     fake_user_manager->LoginUser(account_id);
 
@@ -1357,7 +1359,7 @@ class V2App {
     // calling chrome.app.window.create. For unit testing purposes, just passing
     // in a random RenderFrameHost is Good Enough™.
     window_->Init(GURL(std::string()),
-                  new extensions::AppWindowContentsImpl(window_),
+                  std::make_unique<extensions::AppWindowContentsImpl>(window_),
                   creator_web_contents_->GetPrimaryMainFrame(), params);
   }
 

@@ -75,8 +75,6 @@ using password_manager::PasswordScriptsFetcher;
 using password_manager::metrics_util::PasswordCheckScriptsCacheState;
 using ui::TimeFormat;
 
-using InsecureCredentialsView =
-    password_manager::InsecureCredentialsManager::CredentialsView;
 using SavedPasswordsView =
     password_manager::SavedPasswordsPresenter::SavedPasswordsView;
 using State = password_manager::BulkLeakCheckService::State;
@@ -282,12 +280,6 @@ PasswordCheckDelegate::PasswordCheckDelegate(
       &insecure_credentials_manager_);
   observed_bulk_leak_check_service_.Observe(
       BulkLeakCheckServiceFactory::GetForProfile(profile_));
-
-  // Instructs the provider to initialize and build its cache.
-  // This will soon after invoke OnCompromisedCredentialsChanged(). Calls to
-  // GetCompromisedCredentials() that might happen until then will return an
-  // empty list.
-  insecure_credentials_manager_.Init();
 }
 
 PasswordCheckDelegate::~PasswordCheckDelegate() = default;
@@ -385,8 +377,8 @@ void PasswordCheckDelegate::StartPasswordCheck(
     return;
   }
 
-  // Also return early if the check is already running.
-  if (is_check_running_ ||
+  // Also return early if the check is already running or scripts are fetching.
+  if (are_scripts_fetching_ ||
       bulk_leak_check_service_adapter_.GetBulkLeakCheckState() ==
           State::kRunning) {
     std::move(callback).Run(State::kRunning);
@@ -395,10 +387,10 @@ void PasswordCheckDelegate::StartPasswordCheck(
 
   // If automated password change from password check in settings is enabled,
   // we make sure that the cache is warm prior to analyzing passwords.
-  is_check_running_ = true;
   if (base::FeatureList::IsEnabled(
           password_manager::features::kPasswordChange)) {
     if (GetPasswordScriptsFetcher()->IsCacheStale()) {
+      are_scripts_fetching_ = true;
       // The UMA metric for a stale cache is recorded on callback.
       GetPasswordScriptsFetcher()->RefreshScriptsIfNecessary(
           base::BindOnce(&PasswordCheckDelegate::OnPasswordScriptsFetched,
@@ -415,6 +407,8 @@ void PasswordCheckDelegate::StartPasswordCheck(
 
 void PasswordCheckDelegate::OnPasswordScriptsFetched(
     StartPasswordCheckCallback callback) {
+  DCHECK(are_scripts_fetching_);
+  are_scripts_fetching_ = false;
   if (PasswordsPrivateEventRouter* event_router =
           PasswordsPrivateEventRouterFactory::GetForProfile(profile_)) {
     // Only update if at least one credential now has a startable script.
@@ -438,9 +432,6 @@ void PasswordCheckDelegate::OnPasswordScriptsFetched(
 
 void PasswordCheckDelegate::StartPasswordAnalyses(
     StartPasswordCheckCallback callback) {
-  // This is set as soon as the script availability fetching is started.
-  DCHECK(is_check_running_);
-
   // Start the weakness check, and notify observers once done.
   insecure_credentials_manager_.StartWeakCheck(base::BindOnce(
       &PasswordCheckDelegate::RecordAndNotifyAboutCompletedWeakPasswordCheck,

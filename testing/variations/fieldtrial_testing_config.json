@@ -962,6 +962,28 @@
             ]
         }
     ],
+    "AutofillEnableNameSurenameParsing": [
+        {
+            "platforms": [
+                "android",
+                "android_webview",
+                "chromeos",
+                "chromeos_lacros",
+                "ios",
+                "linux",
+                "mac",
+                "windows"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "AutofillEnableNameSurenameParsing"
+                    ]
+                }
+            ]
+        }
+    ],
     "AutofillEnableProfileDeduplication": [
         {
             "platforms": [
@@ -3092,6 +3114,21 @@
             ]
         }
     ],
+    "CrosDeviceActiveCountingMonthlyCheckMembership": [
+        {
+            "platforms": [
+                "chromeos"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "DeviceActiveClientMonthlyCheckMembership"
+                    ]
+                }
+            ]
+        }
+    ],
     "CrosLazyLoginWebUI": [
         {
             "platforms": [
@@ -3395,6 +3432,36 @@
                     ],
                     "disable_features": [
                         "NtpShoppingTasksModule"
+                    ]
+                }
+            ]
+        }
+    ],
+    "DesktopOmniboxPostAutocompletion": [
+        {
+            "platforms": [
+                "android",
+                "chromeos_lacros",
+                "chromeos",
+                "ios",
+                "linux",
+                "mac",
+                "windows"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "params": {
+                        "AutocompleteStabilityAsyncProvidersFirst": "true",
+                        "AutocompleteStabilityDontCopyDoneProviders": "true",
+                        "AutocompleteStabilityPreserveDefaultAfterTransfer": "true",
+                        "AutocompleteStabilityPreserveDefaultForAsyncUpdates": "false",
+                        "AutocompleteStabilityPreserveDefaultForSyncUpdates": "true"
+                    },
+                    "enable_features": [
+                        "OmniboxAutocompleteStability",
+                        "OmniboxDocumentProviderDedupingOptimization",
+                        "OmniboxStrippedGurlOptimization"
                     ]
                 }
             ]
@@ -3830,9 +3897,9 @@
             ],
             "experiments": [
                 {
-                    "name": "Enabled_MovementThreshold_24_20220711",
+                    "name": "Enabled_MovementThreshold_60_20220802",
                     "params": {
-                        "DragAndDropMovementThresholdDipParam": "24"
+                        "DragAndDropMovementThresholdDipParam": "60"
                     },
                     "enable_features": [
                         "ContextMenuPopupStyle",
@@ -4718,21 +4785,6 @@
                     },
                     "enable_features": [
                         "HappinessTrackingSystemPerformance"
-                    ]
-                }
-            ]
-        }
-    ],
-    "HardwareToolbar": [
-        {
-            "platforms": [
-                "android"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled",
-                    "enable_features": [
-                        "ToolbarUseHardwareBitmapDraw"
                     ]
                 }
             ]
@@ -6371,28 +6423,6 @@
             ]
         }
     ],
-    "OmniboxStrippedGurlOptimizations": [
-        {
-            "platforms": [
-                "android",
-                "chromeos_lacros",
-                "chromeos",
-                "ios",
-                "linux",
-                "mac",
-                "windows"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled",
-                    "enable_features": [
-                        "OmniboxDocumentProviderDedupingOptimization",
-                        "OmniboxStrippedGurlOptimization"
-                    ]
-                }
-            ]
-        }
-    ],
     "OnDemandAT": [
         {
             "platforms": [
@@ -6731,10 +6761,6 @@
                 "android",
                 "android_weblayer",
                 "android_webview",
-                "chromeos",
-                "chromeos_lacros",
-                "linux",
-                "mac",
                 "windows"
             ],
             "experiments": [
@@ -7188,6 +7214,30 @@
                     "name": "Enabled",
                     "enable_features": [
                         "PreloadCookies"
+                    ]
+                }
+            ]
+        }
+    ],
+    "Prerender2Desktop": [
+        {
+            "platforms": [
+                "windows",
+                "mac",
+                "linux",
+                "chromeos",
+                "chromeos_lacros"
+            ],
+            "experiments": [
+                {
+                    "name": "EnabledPrerenderSpecRulesAndDUI_20220804",
+                    "enable_features": [
+                        "OmniboxTriggerForPrerender2",
+                        "Prerender2"
+                    ],
+                    "disable_features": [
+                        "OmniboxTriggerForNoStatePrefetch",
+                        "SupportSearchSuggestionForPrerender2"
                     ]
                 }
             ]
@@ -7725,6 +7775,25 @@
             ]
         }
     ],
+    "SCTAuditingPersistReports": [
+        {
+            "platforms": [
+                "chromeos",
+                "chromeos_lacros",
+                "linux",
+                "mac",
+                "windows"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "SCTAuditingPersistReports"
+                    ]
+                }
+            ]
+        }
+    ],
     "SafeBrowsingCSDAndroid": [
         {
             "platforms": [
@@ -8194,8 +8263,10 @@
                     ]
                 },
                 {
-                    "name": "SideSearchDesktopWithIPHWithFeedback",
+                    "name": "Enabled_Profile_1",
                     "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "1",
+                        "SideSearchPageActionLabelAnimationType": "Profile",
                         "availability": "any",
                         "event_trigger": "name:side_search_iph_tgr;comparator:==0;window:90;storage:360",
                         "event_used": "name:side_search_opened;comparator:==0;window:90;storage:360",
@@ -8205,9 +8276,98 @@
                         "IPH_SideSearch",
                         "SidePanelImprovedClobbering",
                         "SideSearch",
-                        "SideSearchClearCacheWhenClosed",
                         "SideSearchDSESupport",
-                        "SideSearchFeedback"
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Profile_3",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "3",
+                        "SideSearchPageActionLabelAnimationType": "Profile",
+                        "availability": "any",
+                        "event_trigger": "name:side_search_iph_tgr;comparator:==0;window:90;storage:360",
+                        "event_used": "name:side_search_opened;comparator:==0;window:90;storage:360",
+                        "session_rate": "<3"
+                    },
+                    "enable_features": [
+                        "IPH_SideSearch",
+                        "SidePanelImprovedClobbering",
+                        "SideSearch",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Window_1",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "1",
+                        "SideSearchPageActionLabelAnimationType": "Window",
+                        "availability": "any",
+                        "event_trigger": "name:side_search_iph_tgr;comparator:==0;window:90;storage:360",
+                        "event_used": "name:side_search_opened;comparator:==0;window:90;storage:360",
+                        "session_rate": "<3"
+                    },
+                    "enable_features": [
+                        "IPH_SideSearch",
+                        "SidePanelImprovedClobbering",
+                        "SideSearch",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Window_3",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "3",
+                        "SideSearchPageActionLabelAnimationType": "Window",
+                        "availability": "any",
+                        "event_trigger": "name:side_search_iph_tgr;comparator:==0;window:90;storage:360",
+                        "event_used": "name:side_search_opened;comparator:==0;window:90;storage:360",
+                        "session_rate": "<3"
+                    },
+                    "enable_features": [
+                        "IPH_SideSearch",
+                        "SidePanelImprovedClobbering",
+                        "SideSearch",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Tab_1",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "1",
+                        "SideSearchPageActionLabelAnimationType": "Tab",
+                        "availability": "any",
+                        "event_trigger": "name:side_search_iph_tgr;comparator:==0;window:90;storage:360",
+                        "event_used": "name:side_search_opened;comparator:==0;window:90;storage:360",
+                        "session_rate": "<3"
+                    },
+                    "enable_features": [
+                        "IPH_SideSearch",
+                        "SidePanelImprovedClobbering",
+                        "SideSearch",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Tab_3",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "3",
+                        "SideSearchPageActionLabelAnimationType": "Tab",
+                        "availability": "any",
+                        "event_trigger": "name:side_search_iph_tgr;comparator:==0;window:90;storage:360",
+                        "event_used": "name:side_search_opened;comparator:==0;window:90;storage:360",
+                        "session_rate": "<3"
+                    },
+                    "enable_features": [
+                        "IPH_SideSearch",
+                        "SidePanelImprovedClobbering",
+                        "SideSearch",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
                     ]
                 }
             ]
@@ -8224,6 +8384,78 @@
                     "enable_features": [
                         "SidePanelImprovedClobbering",
                         "SideSearchDSESupport"
+                    ]
+                },
+                {
+                    "name": "Enabled_Profile_1",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "1",
+                        "SideSearchPageActionLabelAnimationType": "Profile"
+                    },
+                    "enable_features": [
+                        "SidePanelImprovedClobbering",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Profile_3",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "3",
+                        "SideSearchPageActionLabelAnimationType": "Profile"
+                    },
+                    "enable_features": [
+                        "SidePanelImprovedClobbering",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Window_1",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "1",
+                        "SideSearchPageActionLabelAnimationType": "Window"
+                    },
+                    "enable_features": [
+                        "SidePanelImprovedClobbering",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Window_3",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "3",
+                        "SideSearchPageActionLabelAnimationType": "Window"
+                    },
+                    "enable_features": [
+                        "SidePanelImprovedClobbering",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Tab_1",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "1",
+                        "SideSearchPageActionLabelAnimationType": "Tab"
+                    },
+                    "enable_features": [
+                        "SidePanelImprovedClobbering",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
+                    ]
+                },
+                {
+                    "name": "Enabled_Tab_3",
+                    "params": {
+                        "SideSearchPageActionLabelAnimationMaxCount": "3",
+                        "SideSearchPageActionLabelAnimationType": "Tab"
+                    },
+                    "enable_features": [
+                        "SidePanelImprovedClobbering",
+                        "SideSearchDSESupport",
+                        "SideSearchPageActionLabelAnimation"
                     ]
                 }
             ]

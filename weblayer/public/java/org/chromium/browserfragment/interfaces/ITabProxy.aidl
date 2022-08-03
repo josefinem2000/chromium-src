@@ -4,8 +4,9 @@
 
 package org.chromium.browserfragment.interfaces;
 
+import org.chromium.browserfragment.interfaces.ITabNavigationControllerProxy;
+
 interface ITabProxy {
-  // TODO(swestphal): Move this to the navigationController when we expose one.
-  void navigate(in String url) = 1;
-  void setActive() = 2;
+  void setActive() = 1;
+  ITabNavigationControllerProxy getNavigationController() = 2;
 }

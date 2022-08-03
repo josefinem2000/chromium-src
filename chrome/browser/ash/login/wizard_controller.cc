@@ -694,7 +694,7 @@ WizardController::CreateScreens() {
       base::BindRepeating(&WizardController::OnPinSetupScreenExit,
                           weak_factory_.GetWeakPtr())));
   append(std::make_unique<FingerprintSetupScreen>(
-      oobe_ui->GetView<FingerprintSetupScreenHandler>(),
+      oobe_ui->GetView<FingerprintSetupScreenHandler>()->AsWeakPtr(),
       base::BindRepeating(&WizardController::OnFingerprintSetupScreenExit,
                           weak_factory_.GetWeakPtr())));
   append(std::make_unique<GestureNavigationScreen>(
@@ -778,7 +778,7 @@ WizardController::CreateScreens() {
                             weak_factory_.GetWeakPtr())));
 
     append(std::make_unique<GuestTosScreen>(
-        oobe_ui->GetView<GuestTosScreenHandler>(),
+        oobe_ui->GetView<GuestTosScreenHandler>()->AsWeakPtr(),
         base::BindRepeating(&WizardController::OnGuestTosScreenExit,
                             weak_factory_.GetWeakPtr())));
   }

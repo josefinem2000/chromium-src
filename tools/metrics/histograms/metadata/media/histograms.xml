@@ -3254,9 +3254,9 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="Media.MediaFoundation.VideoColorSpace.TransferID"
-    enum="VideoColorSpace.TransferID" expires_after="2022-08-30">
+    enum="VideoColorSpace.TransferID" expires_after="2023-08-02">
   <owner>dalecurtis@chromium.org</owner>
-  <owner>macrabil@microsoft.com</owner>
+  <owner>wicarr@microsoft.com</owner>
   <owner>media-dev@chromium.org</owner>
   <summary>
     Recorded when the VideoColorSpace TransferFunction value is passed to
@@ -6048,17 +6048,6 @@ chromium-metrics-reviews@google.com.
     Error encountered while parsing DIAL device description XML text. Recorded
     when utility process returns an invalid DIAL device description object to
     browser.
-  </summary>
-</histogram>
-
-<histogram name="MediaRouter.Dial.TerminateRoute"
-    enum="MediaRouterDialTerminateRouteResult" expires_after="2022-08-14">
-  <owner>takumif@chromium.org</owner>
-  <owner>mfoltz@chromium.org</owner>
-  <owner>openscreen-eng@google.com</owner>
-  <summary>
-    The result of a DIAL TerminateRoute request. Recorded the user requests to
-    terminate a DIAL media route.
   </summary>
 </histogram>
 
