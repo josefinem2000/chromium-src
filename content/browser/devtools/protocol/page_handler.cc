@@ -755,9 +755,9 @@ void PageHandler::CaptureScreenshot(
     Maybe<bool> capture_beyond_viewport,
     std::unique_ptr<CaptureScreenshotCallback> callback) {
   if (!may_capture_screenshots_not_from_surface_) {
-    return;
+    CHECK(false);
   }
-  return;
+  CHECK(false);
   // if (!host_ || !host_->GetRenderWidgetHost() ||
   //     !host_->GetRenderWidgetHost()->GetView()) {
   //   callback->sendFailure(Response::InternalError());
