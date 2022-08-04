@@ -754,61 +754,57 @@ void PageHandler::CaptureScreenshot(
     Maybe<bool> from_surface,
     Maybe<bool> capture_beyond_viewport,
     std::unique_ptr<CaptureScreenshotCallback> callback) {
-  if (!may_capture_screenshots_not_from_surface_) {
-    CHECK(false);
+  if (!host_ || !host_->GetRenderWidgetHost() ||
+      !host_->GetRenderWidgetHost()->GetView()) {
+    callback->sendFailure(Response::InternalError());
+    return;
   }
-  CHECK(false);
-  // if (!host_ || !host_->GetRenderWidgetHost() ||
-  //     !host_->GetRenderWidgetHost()->GetView()) {
-  //   callback->sendFailure(Response::InternalError());
-  //   return;
-  // }
-  // if (!CanExecuteGlobalCommands(this, callback))
-  //   return;
-  // if (clip.isJust()) {
-  //   if (clip.fromJust()->GetWidth() == 0) {
-  //     callback->sendFailure(
-  //         Response::ServerError("Cannot take screenshot with 0 width."));
-  //     return;
-  //   }
-  //   if (clip.fromJust()->GetHeight() == 0) {
-  //     callback->sendFailure(
-  //         Response::ServerError("Cannot take screenshot with 0 height."));
-  //     return;
-  //   }
-  // }
+  if (!CanExecuteGlobalCommands(this, callback))
+    return;
+  if (clip.isJust()) {
+    if (clip.fromJust()->GetWidth() == 0) {
+      callback->sendFailure(
+          Response::ServerError("Cannot take screenshot with 0 width."));
+      return;
+    }
+    if (clip.fromJust()->GetHeight() == 0) {
+      callback->sendFailure(
+          Response::ServerError("Cannot take screenshot with 0 height."));
+      return;
+    }
+  }
 
-  // RenderWidgetHostImpl* widget_host = host_->GetRenderWidgetHost();
-  // std::string screenshot_format =
-  //     format.fromMaybe(Page::CaptureScreenshot::FormatEnum::Png);
-  // int screenshot_quality = quality.fromMaybe(kDefaultScreenshotQuality);
+  RenderWidgetHostImpl* widget_host = host_->GetRenderWidgetHost();
+  std::string screenshot_format =
+      format.fromMaybe(Page::CaptureScreenshot::FormatEnum::Png);
+  int screenshot_quality = quality.fromMaybe(kDefaultScreenshotQuality);
 
-  // // We don't support clip/emulation when capturing from window, bail out.
-  // if (!from_surface.fromMaybe(true)) {
-  //   if (!may_capture_screenshots_not_from_surface_) {
-  //     callback->sendFailure(
-  //         Response::ServerError("Only screenshots from surface are allowed."));
-  //     return;
-  //   }
-  //   widget_host->GetSnapshotFromBrowser(
-  //       base::BindOnce(&PageHandler::ScreenshotCaptured,
-  //                      weak_factory_.GetWeakPtr(), std::move(callback),
-  //                      screenshot_format, screenshot_quality, gfx::Size(),
-  //                      gfx::Size(), blink::DeviceEmulationParams(),
-  //                      absl::nullopt),
-  //       false);
-  //   return;
-  // }
+  // We don't support clip/emulation when capturing from window, bail out.
+  if (!from_surface.fromMaybe(true)) {
+    if (!may_capture_screenshots_not_from_surface_) {
+      callback->sendFailure(
+          Response::ServerError("Only screenshots from surface are allowed."));
+      return;
+    }
+    widget_host->GetSnapshotFromBrowser(
+        base::BindOnce(&PageHandler::ScreenshotCaptured,
+                       weak_factory_.GetWeakPtr(), std::move(callback),
+                       screenshot_format, screenshot_quality, gfx::Size(),
+                       gfx::Size(), blink::DeviceEmulationParams(),
+                       absl::nullopt),
+        false);
+    return;
+  }
 
-  // if (capture_beyond_viewport.fromMaybe(false)) {
-  //   CaptureScreenshotBeyondViewport(widget_host, screenshot_format,
-  //                                   screenshot_quality, std::move(clip),
-  //                                   std::move(callback));
-  // } else {
-  //   CaptureScreenshotWithinViewport(widget_host, screenshot_format,
-  //                                   screenshot_quality, std::move(clip),
-  //                                   std::move(callback));
-  // }
+  if (capture_beyond_viewport.fromMaybe(false)) {
+    CaptureScreenshotBeyondViewport(widget_host, screenshot_format,
+                                    screenshot_quality, std::move(clip),
+                                    std::move(callback));
+  } else {
+    CaptureScreenshotWithinViewport(widget_host, screenshot_format,
+                                    screenshot_quality, std::move(clip),
+                                    std::move(callback));
+  }
 }
 
 void PageHandler::CaptureScreenshotBeyondViewport(
