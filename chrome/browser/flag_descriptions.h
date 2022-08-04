@@ -81,6 +81,9 @@ extern const char kAriaElementReflectionDescription[];
 extern const char kAttributionReportingDebugModeName[];
 extern const char kAttributionReportingDebugModeDescription[];
 
+extern const char kBatchFetchRequestsName[];
+extern const char kBatchFetchRequestsDescription[];
+
 extern const char kBrokerFileOperationsOnDiskCacheInNetworkServiceName[];
 extern const char kBrokerFileOperationsOnDiskCacheInNetworkServiceDescription[];
 
@@ -2582,6 +2585,9 @@ extern const char kAshEnablePipRoundedCornersDescription[];
 extern const char kAshEnableUnifiedDesktopName[];
 extern const char kAshEnableUnifiedDesktopDescription[];
 
+extern const char kAudioHFPMicSRName[];
+extern const char kAudioHFPMicSRDescription[];
+
 extern const char kAudioSettingsPageName[];
 extern const char kAudioSettingsPageDescription[];
 
@@ -3353,9 +3359,6 @@ extern const char kLauncherGameSearchDescription[];
 
 extern const char kLauncherHideContinueSectionName[];
 extern const char kLauncherHideContinueSectionDescription[];
-
-extern const char kLauncherPulsingBlocksRefreshName[];
-extern const char kLauncherPulsingBlocksRefreshDescription[];
 
 extern const char kMacAddressRandomizationName[];
 extern const char kMacAddressRandomizationDescription[];

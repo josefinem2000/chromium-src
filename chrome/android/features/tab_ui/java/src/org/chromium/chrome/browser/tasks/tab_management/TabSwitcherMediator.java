@@ -522,7 +522,8 @@ class TabSwitcherMediator implements TabSwitcher.Controller, TabListRecyclerView
     private void updateTopControlsProperties() {
         // If the Start surface is enabled, it will handle the margins and positioning of the tab
         // switcher. So, we shouldn't do it here.
-        if (ReturnToChromeUtil.isStartSurfaceEnabled(mContext)) {
+        if (ReturnToChromeUtil.isStartSurfaceEnabled(mContext)
+                && !ReturnToChromeUtil.isTabSwitcherOnlyRefactorEnabled(mContext)) {
             mContainerViewModel.set(TOP_MARGIN, 0);
             mContainerViewModel.set(SHADOW_TOP_OFFSET, 0);
             return;
@@ -636,6 +637,15 @@ class TabSwitcherMediator implements TabSwitcher.Controller, TabListRecyclerView
     @Override
     public void removeTabSwitcherViewObserver(TabSwitcherViewObserver observer) {
         mObservers.removeObserver(observer);
+    }
+
+    @Override
+    public void prepareHideTabSwitcherView() {
+        if (mTabGridDialogController != null) {
+            // Don't wait until switcher container view hides.
+            // Hide dialog before GTS hides.
+            mTabGridDialogController.hideDialog(false);
+        }
     }
 
     @Override

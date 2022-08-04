@@ -776,6 +776,12 @@
   <message name="IDS_SETTINGS_PASSWORDS_IMPORT_SUCCESS_TIP" desc="Message is shown on the dialog for importing passwords, after a successful import. It is an advice for the user, that they should consider deleting the file, which they used for importing passwords from.">
     Consider deleting <ph name="FILENAME"><ex>file_name.csv</ex>$1</ph>, so others who use this device can't see your passwords.
   </message>
+  <message name="IDS_SETTINGS_PASSWORDS_IMPORT_ERROR_UNKNOWN" desc="Message is shown on the dialog for importing passwords if no passwords were imported and we don't know the cause of error. Probably error in the backend or in our systems.">
+    Something went wrong and your passwords weren't imported
+  </message>
+  <message name="IDS_SETTINGS_PASSWORDS_IMPORT_ERROR_BAD_FORMAT" desc="Message is shown on the dialog for importing passwords if no passwords were imported because file is not formated correctly">
+    Can't import passwords. Check <ph name="FILENAME"><ex>file_name.csv</ex>$1</ph> and make sure it's formatted correctly.
+  </message>
   <message name="IDS_SETTINGS_PASSWORDS_EXPORT_MENU_ITEM" desc="A menu item in the More Actions menu above the password list in Chrome's settings. Selecting this action will open a dialog, through which the user can export their passwords outside of Chrome.">
     Export passwords...
   </message>
@@ -1332,6 +1338,9 @@
     </message>
     <message name="IDS_SETTINGS_LANGUAGES_NO_LANGUAGES_ADDED" desc="Placeholder for language list settings when no languages have been added, on the Manage Languages page.">
       No languages added
+    </message>
+    <message name="IDS_SETTINGS_TRANSLATE_PAGE_TITLE" desc="Name of the settings page which displays translate preferences.">
+      Google Translate
     </message>
     <message name="IDS_SETTINGS_LANGUAGES_AUTOMATIC_TRANSLATE" desc="Title of Translation settings that lists languages that should be automatically translated.">
       Automatically translate these languages
@@ -2234,9 +2243,6 @@
   <message name="IDS_SETTINGS_SEARCH_ENGINES_NO_INACTIVE_SHORTCUTS" desc="Text shown when the 'Inactive Shortcuts' section is empty">
     No inactive shortcuts
   </message>
-  <message name="IDS_SETTINGS_SEARCH_ENGINES_OTHER_ENGINES" desc="Label for 'other' Search Engines section">
-    Other search engines
-  </message>
   <message name="IDS_SETTINGS_SEARCH_ENGINES_NO_OTHER_ENGINES" desc="Label shown when the 'other' Search engines section is empty">
     Other saved search engines will appear here
   </message>
@@ -2254,9 +2260,6 @@
   </message>
   <message name="IDS_SETTINGS_SEARCH_ENGINES_INACTIVE_SITE" desc="Label for a table column that holds the name of a site or page in the 'Inactive shortcuts' section">
     Inactive sites
-  </message>
-  <message name="IDS_SETTINGS_SEARCH_ENGINES_KEYWORD" desc="Label for Keyword column header for a search engine">
-    Keyword
   </message>
   <message name="IDS_SETTINGS_SEARCH_ENGINES_SHORTCUT" desc="Label for Shortcut column header for a search engine or site search entry">
     Shortcut

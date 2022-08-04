@@ -23,7 +23,6 @@ import android.view.ViewStub;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -226,6 +225,7 @@ public class ToolbarManager implements UrlFocusChangeListener, ThemeColorObserve
 
     private @StartSurfaceState int mStartSurfaceState = StartSurfaceState.NOT_SHOWN;
     private boolean mIsStartSurfaceEnabled;
+    private final boolean mIsStartSurfaceRefactorEnabled;
 
     private LayoutStateProvider mLayoutStateProvider;
     private LayoutStateProvider.LayoutStateObserver mLayoutStateObserver;
@@ -516,6 +516,8 @@ public class ToolbarManager implements UrlFocusChangeListener, ThemeColorObserve
 
         mActivityTabProvider = tabProvider;
         mIsStartSurfaceEnabled = ReturnToChromeUtil.isStartSurfaceEnabled(mActivity);
+        mIsStartSurfaceRefactorEnabled =
+                ReturnToChromeUtil.isTabSwitcherOnlyRefactorEnabled(mActivity);
 
         // clang-format off
         mToolbarTabController = new ToolbarTabControllerImpl(mLocationBarModel::getTab,
@@ -962,12 +964,17 @@ public class ToolbarManager implements UrlFocusChangeListener, ThemeColorObserve
 
         startSurfaceSupplier.onAvailable(mCallbackController.makeCancelable((startSurface) -> {
             mStartSurface = startSurface;
-            mStartSurfaceStateObserver = (newState, shouldShowToolbar) -> {
-                assert ReturnToChromeUtil.isStartSurfaceEnabled(mActivity);
-                mStartSurfaceState = newState;
-                mToolbar.updateStartSurfaceToolbarState(newState, shouldShowToolbar);
-            };
-            mStartSurface.addStateChangeObserver(mStartSurfaceStateObserver);
+            if (!mIsStartSurfaceRefactorEnabled) {
+                mStartSurfaceStateObserver = (newState, shouldShowToolbar) -> {
+                    assert ReturnToChromeUtil.isStartSurfaceEnabled(mActivity);
+                    mStartSurfaceState = newState;
+                    mToolbar.updateStartSurfaceToolbarState(newState, shouldShowToolbar, null);
+                };
+                // TODO(https://crbug.com/1315679): Remove |mStartSurfaceSupplier|,
+                // |mStartSurfaceState| and |mStartSurfaceStateObserver| after the refactor is
+                // enabled by default.
+                mStartSurface.addStateChangeObserver(mStartSurfaceStateObserver);
+            }
 
             mStartSurfaceHeaderOffsetChangeListener = (appbarLayout, verticalOffset) -> {
                 mToolbar.onStartSurfaceHeaderOffsetChanged(verticalOffset);
@@ -994,6 +1001,12 @@ public class ToolbarManager implements UrlFocusChangeListener, ThemeColorObserve
      * @param showToolbar Whether the toolbar should be shown.
      */
     private void updateForLayout(@LayoutType int layoutType, boolean showToolbar) {
+        if (mIsStartSurfaceRefactorEnabled) {
+            mToolbar.updateStartSurfaceToolbarState(null,
+                    layoutType == LayoutType.TAB_SWITCHER
+                            || (layoutType == LayoutType.START_SURFACE && !isUrlBarFocused()),
+                    layoutType);
+        }
         if (layoutType == LayoutType.TAB_SWITCHER) {
             mLocationBarModel.setIsShowingTabSwitcher(true);
             mToolbar.setTabSwitcherMode(true, showToolbar, false);
@@ -1033,7 +1046,9 @@ public class ToolbarManager implements UrlFocusChangeListener, ThemeColorObserve
                     } else {
                         client.run();
                     }
-                }, () -> identityDiscController.getForStartSurface(mStartSurfaceState),
+                }, () -> identityDiscController.getForStartSurface(mStartSurfaceState,
+                mLayoutStateProvider == null ? LayoutType.NONE
+                                             : mLayoutStateProvider.getActiveLayoutType()),
                 mCompositorViewHolder::getResourceManager,
                 mIsProgressBarVisibleSupplier, IncognitoUtils::isIncognitoModeEnabled,
                 isGridTabSwitcherEnabled, isTabletGtsPolishEnabled, isTabToGtsAnimationEnabled,
@@ -1041,7 +1056,7 @@ public class ToolbarManager implements UrlFocusChangeListener, ThemeColorObserve
                 HistoryManagerUtils::showHistoryManager,
                 PartnerBrowserCustomizations.getInstance()::isHomepageProviderAvailableAndEnabled,
                 DownloadUtils::downloadOfflinePage, initializeWithIncognitoColors, profileSupplier,
-                logoClickedCallback);
+                logoClickedCallback, mIsStartSurfaceRefactorEnabled);
         // clang-format on
         mHomepageStateListener = () -> {
             Boolean wasHomepageEnabled = mHomepageEnabledSupplier.get();
@@ -1126,10 +1141,14 @@ public class ToolbarManager implements UrlFocusChangeListener, ThemeColorObserve
             // Without this check, ToolbarPhone#computeVisualState may return
             // VisualState.NEW_TAB_NORMAL even if it's in start surface homepage, which leads
             // ToolbarPhone#getToolbarColorForVisualState to return transparent color.
-            if (ReturnToChromeUtil.isStartSurfaceEnabled(mActivity)
+            if (mIsStartSurfaceRefactorEnabled && mLayoutStateProvider != null
+                    && mLayoutStateProvider.getActiveLayoutType() == LayoutType.START_SURFACE) {
+                return false;
+            } else if (ReturnToChromeUtil.isStartSurfaceEnabled(mActivity)
                     && mStartSurfaceState == StartSurfaceState.SHOWN_HOMEPAGE) {
                 return false;
             }
+
             NewTabPage ntp = getNewTabPageForCurrentTab();
             return ntp != null && ntp.isLocationBarShownInNTP();
         }
@@ -1223,23 +1242,6 @@ public class ToolbarManager implements UrlFocusChangeListener, ThemeColorObserve
             if (nativePage instanceof NewTabPage) return (NewTabPage) nativePage;
         }
         return null;
-    }
-
-    /**
-     * Called when the contextual action bar's visibility has changed (i.e. the widget shown
-     * when you can copy/paste text after long press).
-     * @param visible Whether the contextual action bar is now visible.
-     */
-    public void onActionBarVisibilityChanged(boolean visible) {
-        ActionBar actionBar = mActionBarDelegate.getSupportActionBar();
-        if (!visible && actionBar != null) actionBar.hide();
-        if (DeviceFormFactor.isNonMultiDisplayContextOnTablet(mActivity)) {
-            if (visible) {
-                mActionModeController.startShowAnimation();
-            } else {
-                mActionModeController.startHideAnimation();
-            }
-        }
     }
 
     /**

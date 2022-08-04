@@ -179,13 +179,15 @@ void SimpleFontData::PlatformInit(bool subpixel_ascent_descent,
 }
 
 void SimpleFontData::PlatformGlyphInit() {
+  // Widths in |font_metrics_| should be initial values.
+  DCHECK(!font_metrics_.IdeographicFullWidth());
   const FontPlatformData& platform_data = PlatformData();
   SkTypeface* typeface = platform_data.Typeface();
+
   if (!typeface->countGlyphs()) {
     space_glyph_ = 0;
     space_width_ = 0;
     zero_glyph_ = 0;
-    font_metrics_.SetIdeographicFullWidth(absl::nullopt);
     return;
   }
 
@@ -216,17 +218,15 @@ void SimpleFontData::PlatformGlyphInit() {
 
   if (cjk_water_glyph)
     font_metrics_.SetIdeographicFullWidth(WidthForGlyph(cjk_water_glyph));
-  else
-    font_metrics_.SetIdeographicFullWidth(absl::nullopt);
 }
 
 void SimpleFontData::PlatformGlyphInitVerticalUpright(Glyph cjk_water_glyph) {
   DCHECK_EQ(PlatformData().Orientation(), FontOrientation::kVerticalUpright);
+  // Widths in |font_metrics_| should be initial values.
+  DCHECK(!font_metrics_.IdeographicFullWidth());
 
-  if (!cjk_water_glyph) {
-    font_metrics_.SetIdeographicFullWidth(absl::nullopt);
+  if (!cjk_water_glyph)
     return;
-  }
 
   // The vertical metrics is available only in |HarfBuzzFontData|, but it can't
   // be constructed while initializing |SimpleFontData|. See crbug.com/784389.
@@ -238,16 +238,10 @@ void SimpleFontData::PlatformGlyphInitVerticalUpright(Glyph cjk_water_glyph) {
       platform_data.GetHarfBuzzFace()->UnitsPerEmFromHeadTable();
   const float size_per_unit =
       platform_data.size() / (units_per_em ? units_per_em : 1);
-  // Use a value for |height_fallback| that can detect the "fallback" case.
-  constexpr int height_fallback = 0;
   vertical_data->SetScaleAndFallbackMetrics(
-      size_per_unit, metrics.FloatAscent(), height_fallback);
-  const float cjk_water_height = vertical_data->AdvanceHeight(cjk_water_glyph);
-  if (cjk_water_height == height_fallback) {
-    font_metrics_.SetIdeographicFullWidth(absl::nullopt);
-    return;
-  }
-  font_metrics_.SetIdeographicFullWidth(cjk_water_height);
+      size_per_unit, metrics.FloatAscent(), metrics.Height());
+  font_metrics_.SetIdeographicFullWidth(
+      vertical_data->AdvanceHeight(cjk_water_glyph));
 }
 
 const SimpleFontData* SimpleFontData::FontDataForCharacter(UChar32) const {

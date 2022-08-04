@@ -371,6 +371,11 @@
     "expiry_milestone": 110
   },
   {
+    "name": "audio-hfp-mic-sr",
+    "owners": [ "paulhsia", "cranelw", "chromeos-audio@google.com" ],
+    "expiry_milestone": 120
+  },
+  {
     "name": "audio-settings-page",
     "owners": [ "gordonseto", "michaelcheco", "cros-peripherals@google.com" ],
     "expiry_milestone": 113
@@ -624,6 +629,11 @@
     "expiry_milestone": 109
   },
   {
+    "name": "batch-fetch-requests",
+    "owners": ["pmeenan"],
+    "expiry_milestone": 120
+  },
+  {
     "name": "biometric-authentication-for-filling",
     "owners": ["sygiet@google.com", "vsemeniuk@google.com"],
     "expiry_milestone": 111
@@ -746,7 +756,7 @@
   {
     "name": "bypass-app-banner-engagement-checks",
     "owners": [ "dmurph" ],
-    "expiry_milestone": 95
+    "expiry_milestone": 120
   },
   {
     "name": "calculate-native-win-occlusion",
@@ -989,19 +999,9 @@
     "expiry_milestone": 110
   },
   {
-    "name": "content-suggestions-header-migration",
-    "owners": [ "thegreenfrog@google.com", "adamta@google.com" ],
-    "expiry_milestone": 105
-  },
-  {
     "name": "content-suggestions-ui-module-refresh",
     "owners": [ "thegreenfrog@google.com", "bling-flags@google.com" ],
     "expiry_milestone": 108
-  },
-  {
-    "name": "content-suggestions-uiviewcontroller-migration",
-    "owners": [ "thegreenfrog@google.com", "adamta@google.com" ],
-    "expiry_milestone": 106
   },
   {
     "name": "context-menu-popup-style",
@@ -4118,11 +4118,6 @@
     "expiry_milestone": 108
   },
   {
-    "name": "launcher-pulsing-blocks-refresh",
-    "owners": [ "anasalazar", "cros-system-ui-eng@google.com" ],
-    "expiry_milestone": 105
-  },
-  {
     "name": "lazily-create-web-state-on-restoration",
     "owners": ["olivierrobin", "sdefresne"],
     "expiry_milestone": 105
@@ -5838,11 +5833,6 @@
   {
     "name": "sim-lock-policy",
     "owners": [ "hsuregan@google.com", "cros-connectivity@google.com" ],
-    "expiry_milestone": 106
-  },
-  {
-    "name": "single-cell-content-suggestions",
-    "owners": [ "thegreenfrog@google.com", "sczs@google.com"],
     "expiry_milestone": 106
   },
   {

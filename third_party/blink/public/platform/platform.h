@@ -66,10 +66,6 @@ class SkBitmap;
 
 namespace base {
 class SingleThreadTaskRunner;
-
-namespace trace_event {
-class BlameContext;
-}  // namespace trace_event
 }  // namespace base
 
 namespace gfx {
@@ -134,7 +130,6 @@ class WebThemeEngine;
 class WebURLLoaderFactory;
 class WebVideoCaptureImplManager;
 struct WebContentSecurityPolicyHeader;
-using BlameContext = base::trace_event::BlameContext;
 
 namespace scheduler {
 class WebThreadScheduler;
@@ -356,10 +351,6 @@ class BLINK_PLATFORM_EXPORT Platform {
   // function is only called from the main thread.
   virtual void SetThreadType(base::PlatformThreadId, base::ThreadType) {}
 #endif
-
-  // Returns a blame context for attributing top-level work which does not
-  // belong to a particular frame scope.
-  virtual BlameContext* GetTopLevelBlameContext() { return nullptr; }
 
   // Resources -----------------------------------------------------------
 

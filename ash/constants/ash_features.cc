@@ -928,6 +928,10 @@ const base::Feature kInstantTethering{"InstantTethering",
 // Enables Jelly features.
 const base::Feature kJelly{"Jelly", base::FEATURE_DISABLED_BY_DEFAULT};
 
+// Enables IME button in the floating accessibility menu for the Kiosk session.
+const base::Feature kKioskEnableImeButton{"KioskEnableImeButton",
+                                          base::FEATURE_DISABLED_BY_DEFAULT};
+
 // Enables to use lacros-chrome as the only web browser on ChromeOS.
 // This works only when both LacrosSupport and LacrosPrimary below are enabled.
 // NOTE: Use crosapi::browser_util::IsAshWebBrowserEnabled() instead of checking
@@ -996,11 +1000,6 @@ const base::Feature kLauncherNudgeShortInterval{
 // user session.
 const base::Feature kLauncherNudgeSessionReset{
     "LauncherNudgeSessionReset", base::FEATURE_DISABLED_BY_DEFAULT};
-
-// If enabled, the new launcher pulsing blocks UI will show while syncing apps.
-const base::Feature kLauncherPulsingBlocksRefresh(
-    "LauncherPulsingBlocksRefresh",
-    base::FEATURE_ENABLED_BY_DEFAULT);
 
 // Enables new flow for license packaged devices with enterprise license.
 const base::Feature kLicensePackagedOobeFlow{"LicensePackagedOobeFlow",
@@ -1127,7 +1126,7 @@ const base::Feature kOnDeviceSpeechRecognition{
 // If enabled, EULA and ARC Terms of Service screens are skipped and merged
 // into Consolidated Consent Screen.
 const base::Feature kOobeConsolidatedConsent{"OobeConsolidatedConsent",
-                                             base::FEATURE_DISABLED_BY_DEFAULT};
+                                             base::FEATURE_ENABLED_BY_DEFAULT};
 
 // Enables or disables the ChromeOS OOBE HID Detection Revamp, which updates
 // the OOBE HID detection screen UI and related infrastructure. See
@@ -1676,7 +1675,7 @@ const base::FeatureParam<int> kDeviceForceScheduledRebootMaxDelay{
 // Enables or disables whether to store UMA logs per-user and whether metrics
 // consent is per-user.
 const base::Feature kPerUserMetrics{"PerUserMetricsConsent",
-                                    base::FEATURE_DISABLED_BY_DEFAULT};
+                                    base::FEATURE_ENABLED_BY_DEFAULT};
 
 // Allows Files App to find and execute tasks using App Service for Arc and
 // Guest OS apps.
@@ -2061,11 +2060,6 @@ bool IsLauncherNudgeShortIntervalEnabled() {
 bool IsLauncherNudgeSessionResetEnabled() {
   return IsProductivityLauncherEnabled() &&
          base::FeatureList::IsEnabled(kLauncherNudgeSessionReset);
-}
-
-bool IsLauncherPulsingBlocksRefreshEnabled() {
-  return IsProductivityLauncherEnabled() &&
-         base::FeatureList::IsEnabled(kLauncherPulsingBlocksRefresh);
 }
 
 bool IsLicensePackagedOobeFlowEnabled() {

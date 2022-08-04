@@ -591,11 +591,9 @@ class CONTENT_EXPORT RenderFrameImpl
   void PreloadSubresourceOptimizationsForOrigins(
       const std::vector<blink::WebSecurityOrigin>& origins) override;
   blink::WebMediaStreamDeviceObserver* MediaStreamDeviceObserver() override;
-  bool AllowRTCLegacyTLSProtocols() override;
   blink::WebEncryptedMediaClient* EncryptedMediaClient() override;
   blink::WebString UserAgentOverride() override;
   absl::optional<blink::UserAgentMetadata> UserAgentMetadataOverride() override;
-  blink::WebString DoNotTrackValue() override;
   blink::mojom::RendererAudioInputStreamFactory* GetAudioInputStreamFactory();
   bool AllowContentInitiatedDataUrlNavigations(
       const blink::WebURL& url) override;
@@ -825,7 +823,7 @@ class CONTENT_EXPORT RenderFrameImpl
       blink::mojom::FrameReplicationStatePtr replicated_frame_state,
       const blink::RemoteFrameToken& frame_token,
       blink::mojom::RemoteFrameInterfacesFromBrowserPtr remote_frame_interfaces,
-      mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces)
+      blink::mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces)
       override;
   void Delete(mojom::FrameDeleteIntention intent) override;
   void UndoCommitNavigation(
@@ -833,7 +831,7 @@ class CONTENT_EXPORT RenderFrameImpl
       blink::mojom::FrameReplicationStatePtr replicated_frame_state,
       const blink::RemoteFrameToken& frame_token,
       blink::mojom::RemoteFrameInterfacesFromBrowserPtr remote_frame_interfaces,
-      mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces)
+      blink::mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces)
       override;
   void BlockRequests() override;
   void ResumeBlockedRequests() override;
@@ -1085,7 +1083,7 @@ class CONTENT_EXPORT RenderFrameImpl
   // Debounces many updates in quick succession.
   void StartDelayedSyncTimer();
 
-  // Swaps out the RenderFrame, creating a new RenderFrameProxy and then
+  // Swaps out the RenderFrame, creating a new `blink::RemoteFrame` and then
   // swapping it into the frame tree to replace `this`. Returns false if
   // swapping out `this` ends up detaching this frame instead when running the
   // unload handlers, and true otherwise.
@@ -1096,7 +1094,7 @@ class CONTENT_EXPORT RenderFrameImpl
       blink::mojom::FrameReplicationStatePtr replicated_frame_state,
       const blink::RemoteFrameToken& frame_token,
       blink::mojom::RemoteFrameInterfacesFromBrowserPtr remote_frame_interfaces,
-      mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces);
+      blink::mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces);
 
   // Stores the WebLocalFrame we are associated with.  This is null from the
   // constructor until BindToFrame() is called, and it is null after
@@ -1143,10 +1141,10 @@ class CONTENT_EXPORT RenderFrameImpl
   //
   // When a frame is created by the browser process, it is for a pending
   // navigation. In this case, it is not immediately attached to the frame tree
-  // if there is a RenderFrameProxy for the same frame. It is inserted into the
-  // frame tree at the time the pending navigation commits.
-  // Frames added by the parent document are created from the renderer process
-  // and are immediately inserted in the frame tree.
+  // if there is a `blink::RemoteFrame` for the same frame. It is inserted into
+  // the frame tree at the time the pending navigation commits. Frames added by
+  // the parent document are created from the renderer process and are
+  // immediately inserted in the frame tree.
   // TODO(dcheng): Remove this once we have FrameTreeHandle and can use the
   // Blink Web* layer to check for provisional frames.
   bool in_frame_tree_;

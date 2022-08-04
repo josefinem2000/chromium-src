@@ -77,7 +77,7 @@ def fyi_ios_builder(*, name, **kwargs):
     kwargs.setdefault("cores", None)
     if kwargs.get("builderless", False):
         kwargs.setdefault("os", os.MAC_DEFAULT)
-    kwargs.setdefault("xcode", xcode.x13main)
+    kwargs.setdefault("xcode", xcode.x14main)
     return ci.builder(name = name, **kwargs)
 
 def fyi_mac_builder(*, name, **kwargs):
@@ -1001,7 +1001,7 @@ ci.builder(
     reclient_jobs = 250,
     os = os.MAC_DEFAULT,
     cores = None,
-    xcode = xcode.x13main,
+    xcode = xcode.x14main,
 )
 
 ci.builder(
@@ -1132,7 +1132,7 @@ The bot specs should be in sync with <a href="https://ci.chromium.org/p/chromium
     os = os.MAC_DEFAULT,
     cores = None,
     ssd = True,
-    xcode = xcode.x13main,
+    xcode = xcode.x14main,
 )
 
 # Build Perf builders use CQ reclient instance and high reclient jobs/cores and
@@ -1445,6 +1445,23 @@ fyi_mac_builder(
 )
 
 fyi_mac_builder(
+    name = "Mac12 Tests (py2 less)",
+    builder_spec = builder_config.copy_from("ci/Mac12 Tests", lambda spec: structs.evolve(
+        spec,
+        build_gs_bucket = "chromium-fyi-archive",
+    )),
+    console_view_entry = consoles.console_view_entry(
+        category = "mac",
+        short_name = "py3",
+    ),
+    description_html = "This is mirror of <a href=\"https://ci.chromium.org/p/chromium/builders/ci/Mac12%20Tests\">Mac12 Tests</a>, but runs on bots not having python2.",
+    experiments = {
+        "luci.buildbucket.omit_python2": 100,
+    },
+    triggered_by = ["ci/Mac Builder"],
+)
+
+fyi_mac_builder(
     name = "mac-arm64-on-arm64-rel-reclient",
 
     # same with mac-arm64-on-arm64-rel
@@ -1618,7 +1635,7 @@ fyi_coverage_builder(
     use_clang_coverage = True,
     coverage_exclude_sources = "ios_test_files_and_test_utils",
     coverage_test_types = ["overall", "unit"],
-    xcode = xcode.x13main,
+    xcode = xcode.x14main,
 )
 
 fyi_coverage_builder(
@@ -1854,7 +1871,6 @@ fyi_ios_builder(
         ),
     ],
     os = os.MAC_12,
-    xcode = xcode.x13betabots,
 )
 
 fyi_ios_builder(
@@ -1866,7 +1882,6 @@ fyi_ios_builder(
         ),
     ],
     os = os.MAC_12,
-    xcode = xcode.x13betabots,
 )
 
 fyi_ios_builder(

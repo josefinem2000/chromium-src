@@ -103,6 +103,10 @@ const char kAttributionReportingDebugModeDescription[] =
     "reporting delays and noise. Only works if the Attribution Reporting API "
     "is already enabled.";
 
+const char kBatchFetchRequestsName[] = "Batch Fetch Requests";
+const char kBatchFetchRequestsDescription[] =
+    "Process resource requests in batches while parsing a HTML document.";
+
 const char kBrokerFileOperationsOnDiskCacheInNetworkServiceName[] =
     "Broker file operations on disk cache in the Network Service";
 const char kBrokerFileOperationsOnDiskCacheInNetworkServiceDescription[] =
@@ -4504,6 +4508,11 @@ const char kAshEnableUnifiedDesktopDescription[] =
     "Enable unified desktop mode which allows a window to span multiple "
     "displays.";
 
+const char kAudioHFPMicSRName[] =
+    "Audio super-resolution Bluetooth HFP microphone";
+const char kAudioHFPMicSRDescription[] =
+    "Enable super-resolution Bluetooth HFP microphone recording.";
+
 const char kAudioSettingsPageName[] = "Audio Settings Page";
 const char kAudioSettingsPageDescription[] =
     "Enables the dedicated Audio Settings Page in system settings, which "
@@ -5841,11 +5850,6 @@ const char kLauncherHideContinueSectionName[] =
 const char kLauncherHideContinueSectionDescription[] =
     "Adds a 'Hide all suggestions' option to the continue section item "
     "right-click menus.";
-
-const char kLauncherPulsingBlocksRefreshName[] =
-    "Launcher pulsing blocks' new UI";
-const char kLauncherPulsingBlocksRefreshDescription[] =
-    "Show the new pulsing blocks' UI in launcher during initial apps sync.";
 
 const char kMacAddressRandomizationName[] = "MAC address randomization";
 const char kMacAddressRandomizationDescription[] =

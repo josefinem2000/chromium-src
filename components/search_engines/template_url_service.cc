@@ -744,7 +744,8 @@ bool TemplateURLService::CanMakeDefault(const TemplateURL* url) const {
               DefaultSearchManager::FROM_FALLBACK) &&
          (url != GetDefaultSearchProvider()) &&
          url->url_ref().SupportsReplacement(search_terms_data()) &&
-         (url->type() == TemplateURL::NORMAL);
+         (url->type() == TemplateURL::NORMAL) &&
+         (url->starter_pack_id() != TemplateURLStarterPackData::kTabs);
 }
 
 void TemplateURLService::SetUserSelectedDefaultSearchProvider(
@@ -927,6 +928,13 @@ void TemplateURLService::RepairStarterPackEngines() {
        i < actions.added_engines.end(); ++i) {
     Add(std::make_unique<TemplateURL>(*i));
   }
+}
+
+bool TemplateURLService::IsKeywordFromStarterPackTabSearch(
+    const std::u16string& keyword) {
+  const TemplateURL* turl = GetTemplateURLForKeyword(keyword);
+
+  return (turl && turl->starter_pack_id() == TemplateURLStarterPackData::kTabs);
 }
 
 void TemplateURLService::AddObserver(TemplateURLServiceObserver* observer) {

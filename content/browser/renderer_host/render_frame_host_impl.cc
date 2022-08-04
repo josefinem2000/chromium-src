@@ -31,6 +31,7 @@
 #include "base/numerics/safe_conversions.h"
 #include "base/process/kill.h"
 #include "base/ranges/algorithm.h"
+#include "base/state_transitions.h"
 #include "base/stl_util.h"
 #include "base/strings/strcat.h"
 #include "base/strings/string_number_conversions.h"
@@ -160,7 +161,6 @@
 #include "content/common/frame_messages.mojom.h"
 #include "content/common/navigation_client.mojom.h"
 #include "content/common/navigation_params_utils.h"
-#include "content/common/state_transitions.h"
 #include "content/public/browser/ax_event_notification_details.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/content_browser_client.h"
@@ -1829,7 +1829,7 @@ RenderFrameHostImpl::~RenderFrameHostImpl() {
   //    main RenderFrame.
   // 2. The RenderFrame can be unloaded. In this case, the browser sends a
   //    mojom::FrameNavigationControl::UnloadFrame message for the RenderFrame
-  //    to replace itself with a RenderFrameProxy and release its associated
+  //    to replace itself with a `blink::RemoteFrame`and release its associated
   //    resources. |lifecycle_state_| is advanced to
   //    LifecycleStateImpl::kRunningUnloadHandlers to track that this IPC is in
   //    flight.
@@ -3350,7 +3350,7 @@ bool RenderFrameHostImpl::CreateRenderFrame(
     RenderFrameProxyHost* proxy = RenderFrameProxyHost::FromFrameToken(
         GetProcess()->GetID(),
         previous_frame_token->GetAs<blink::RemoteFrameToken>());
-    // We have also created a RenderFrameProxy in CreateFrame above, so
+    // We have also created a `blink::RemoteFrame` in CreateFrame above, so
     // remember that.
     CHECK(proxy);
     proxy->SetRenderFrameProxyCreated(true);
@@ -4231,11 +4231,11 @@ void RenderFrameHostImpl::RemoveChild(FrameTreeNode* child) {
           // IPCs will only be processed after the renderer has already swapped
           // in the provisional RenderFrame and swapped out the provisional
           // frame's reference frame (which is either a RenderFrame or a
-          // RenderFrameProxy).
+          // `blink::RemoteFrame`).
           //
-          // Since the swapped out RenderFrame/RenderFrameProxy is already gone,
-          // a `DeleteRenderFrame()` (routed to the RenderFrame) or a
-          // `DetachAndDispose()` (routed to the RenderFrameProxy) won't do
+          // Since the swapped out `RenderFrame`/`blink::RemoteFrame` is already
+          // gone, a `DeleteRenderFrame()` (routed to the RenderFrame) or a
+          // `DetachAndDispose()` (routed to the `blink::RemoteFrame`) won't do
           // anything. The browser must also instruct the already-committed but
           // not-yet-acknowledged speculative RFH to detach itself as well.
           speculative_frame_host->DeleteRenderFrame(
@@ -4243,11 +4243,11 @@ void RenderFrameHostImpl::RemoveChild(FrameTreeNode* child) {
         } else {
           // Otherwise, the provisional RenderFrame has not yet been instructed
           // to swap in but is already associated with the RenderFrame or
-          // RenderFrameProxy it is expected to replace. The associated
-          // RenderFrame/RenderFrameProxy (which is still in the frame tree)
-          // will be responsible for tearing down any associated provisional
-          // RenderFrame, so the browser does not need to take any explicit
-          // cleanup actions.
+          // `blink::RemoteFrame` it is expected to replace. The associated
+          // `RenderFrame`/`blink::RemoteFrame` (which is still in the frame
+          // tree) will be responsible for tearing down any associated
+          // provisional RenderFrame, so the browser does not need to take any
+          // explicit cleanup actions.
         }
       }
       // No explicit cleanup is needed here for `RenderFrameProxyHost`s.
@@ -4760,8 +4760,8 @@ void RenderFrameHostImpl::Unload(RenderFrameProxyHost* proxy, bool is_loading) {
           proxy->frame_tree_node()->current_replication_state().Clone(),
           proxy->GetFrameToken(), proxy->CreateAndBindRemoteFrameInterfaces(),
           proxy->CreateAndBindRemoteMainFrameInterfaces());
-      // Remember that a RenderFrameProxy was created as part of processing the
-      // Unload message above.
+      // Remember that a `blink::RemoteFrame` was created as part of processing
+      // the Unload message above.
       proxy->SetRenderFrameProxyCreated(true);
     }
   } else {
@@ -7477,7 +7477,6 @@ void RenderFrameHostImpl::CreateNewWindow(
   bool wait_for_debugger =
       devtools_instrumentation::ShouldWaitForDebuggerInWindowOpen();
   mojom::CreateNewWindowReplyPtr reply = mojom::CreateNewWindowReply::New(
-      new_main_rfh->GetRenderViewHost()->GetRoutingID(),
       new_main_rfh->GetFrameToken(), new_main_rfh->GetRoutingID(),
       std::move(pending_frame_receiver), std::move(widget_params),
       std::move(page_broadcast_receiver), std::move(browser_interface_broker),
@@ -9241,10 +9240,11 @@ void RenderFrameHostImpl::SetUpMojoConnection() {
             impl->CreateMessageFilterForAssociatedReceiver(
                 mojom::FrameHost::Name_));
       };
-  associated_registry_->AddInterface(
+  associated_registry_->AddInterface<mojom::FrameHost>(
       base::BindRepeating(bind_frame_host_receiver, base::Unretained(this)));
 
-  associated_registry_->AddInterface(base::BindRepeating(
+  associated_registry_->AddInterface<
+      blink::mojom::BackForwardCacheControllerHost>(base::BindRepeating(
       [](RenderFrameHostImpl* impl,
          mojo::PendingAssociatedReceiver<
              blink::mojom::BackForwardCacheControllerHost> receiver) {
@@ -9257,26 +9257,30 @@ void RenderFrameHostImpl::SetUpMojoConnection() {
       },
       base::Unretained(this)));
 
-  associated_registry_->AddInterface(base::BindRepeating(
-      [](RenderFrameHostImpl* self,
-         mojo::PendingAssociatedReceiver<blink::mojom::PortalHost> receiver) {
-        Portal::BindPortalHostReceiver(self, std::move(receiver));
-      },
-      base::Unretained(this)));
+  associated_registry_->AddInterface<blink::mojom::PortalHost>(
+      base::BindRepeating(
+          [](RenderFrameHostImpl* self,
+             mojo::PendingAssociatedReceiver<blink::mojom::PortalHost>
+                 receiver) {
+            Portal::BindPortalHostReceiver(self, std::move(receiver));
+          },
+          base::Unretained(this)));
 
-  associated_registry_->AddInterface(base::BindRepeating(
-      [](RenderFrameHostImpl* impl,
-         mojo::PendingAssociatedReceiver<blink::mojom::LocalFrameHost>
-             receiver) {
-        impl->local_frame_host_receiver_.Bind(std::move(receiver));
-        impl->local_frame_host_receiver_.SetFilter(
-            impl->CreateMessageFilterForAssociatedReceiver(
-                blink::mojom::LocalFrameHost::Name_));
-      },
-      base::Unretained(this)));
+  associated_registry_->AddInterface<blink::mojom::LocalFrameHost>(
+      base::BindRepeating(
+          [](RenderFrameHostImpl* impl,
+             mojo::PendingAssociatedReceiver<blink::mojom::LocalFrameHost>
+                 receiver) {
+            impl->local_frame_host_receiver_.Bind(std::move(receiver));
+            impl->local_frame_host_receiver_.SetFilter(
+                impl->CreateMessageFilterForAssociatedReceiver(
+                    blink::mojom::LocalFrameHost::Name_));
+          },
+          base::Unretained(this)));
 
   if (base::FeatureList::IsEnabled(blink::features::kSharedStorageAPI)) {
-    associated_registry_->AddInterface(base::BindRepeating(
+    associated_registry_->AddInterface<
+        blink::mojom::SharedStorageDocumentService>(base::BindRepeating(
         [](RenderFrameHostImpl* impl,
            mojo::PendingAssociatedReceiver<
                blink::mojom::SharedStorageDocumentService> receiver) {
@@ -9297,36 +9301,39 @@ void RenderFrameHostImpl::SetUpMojoConnection() {
   }
 
   if (is_main_frame()) {
-    associated_registry_->AddInterface(base::BindRepeating(
-        [](RenderFrameHostImpl* impl,
-           mojo::PendingAssociatedReceiver<blink::mojom::LocalMainFrameHost>
-               receiver) {
-          impl->local_main_frame_host_receiver_.Bind(std::move(receiver));
-          impl->local_main_frame_host_receiver_.SetFilter(
-              impl->CreateMessageFilterForAssociatedReceiver(
-                  blink::mojom::LocalMainFrameHost::Name_));
-        },
-        base::Unretained(this)));
+    associated_registry_->AddInterface<blink::mojom::LocalMainFrameHost>(
+        base::BindRepeating(
+            [](RenderFrameHostImpl* impl,
+               mojo::PendingAssociatedReceiver<blink::mojom::LocalMainFrameHost>
+                   receiver) {
+              impl->local_main_frame_host_receiver_.Bind(std::move(receiver));
+              impl->local_main_frame_host_receiver_.SetFilter(
+                  impl->CreateMessageFilterForAssociatedReceiver(
+                      blink::mojom::LocalMainFrameHost::Name_));
+            },
+            base::Unretained(this)));
 
-    associated_registry_->AddInterface(base::BindRepeating(
-        [](RenderFrameHostImpl* impl,
-           mojo::PendingAssociatedReceiver<
-               blink::mojom::ManifestUrlChangeObserver> receiver) {
-          ManifestManagerHost::GetOrCreateForPage(impl->GetPage())
-              ->BindObserver(std::move(receiver));
-        },
-        base::Unretained(this)));
+    associated_registry_->AddInterface<blink::mojom::ManifestUrlChangeObserver>(
+        base::BindRepeating(
+            [](RenderFrameHostImpl* impl,
+               mojo::PendingAssociatedReceiver<
+                   blink::mojom::ManifestUrlChangeObserver> receiver) {
+              ManifestManagerHost::GetOrCreateForPage(impl->GetPage())
+                  ->BindObserver(std::move(receiver));
+            },
+            base::Unretained(this)));
   }
 
   // TODO(crbug.com/1047354): How to avoid binding if the
   // BINDINGS_POLICY_DOM_AUTOMATION policy is not set?
-  associated_registry_->AddInterface(base::BindRepeating(
-      [](RenderFrameHostImpl* impl,
-         mojo::PendingAssociatedReceiver<mojom::DomAutomationControllerHost>
-             receiver) {
-        impl->BindDomOperationControllerHostReceiver(std::move(receiver));
-      },
-      base::Unretained(this)));
+  associated_registry_->AddInterface<mojom::DomAutomationControllerHost>(
+      base::BindRepeating(
+          [](RenderFrameHostImpl* impl,
+             mojo::PendingAssociatedReceiver<mojom::DomAutomationControllerHost>
+                 receiver) {
+            impl->BindDomOperationControllerHostReceiver(std::move(receiver));
+          },
+          base::Unretained(this)));
 
   file_system_manager_.reset(new FileSystemManagerImpl(
       GetProcess()->GetID(),
@@ -9334,7 +9341,7 @@ void RenderFrameHostImpl::SetUpMojoConnection() {
       ChromeBlobStorageContext::GetFor(GetProcess()->GetBrowserContext())));
 
 #if BUILDFLAG(ENABLE_PLUGINS)
-  associated_registry_->AddInterface(base::BindRepeating(
+  associated_registry_->AddInterface<mojom::PepperHost>(base::BindRepeating(
       [](RenderFrameHostImpl* impl,
          mojo::PendingAssociatedReceiver<mojom::PepperHost> receiver) {
         impl->pepper_host_receiver_.Bind(std::move(receiver));
@@ -9345,40 +9352,44 @@ void RenderFrameHostImpl::SetUpMojoConnection() {
       base::Unretained(this)));
 #endif
 
-  associated_registry_->AddInterface(base::BindRepeating(
-      [](RenderFrameHostImpl* impl,
-         mojo::PendingAssociatedReceiver<media::mojom::MediaPlayerHost>
-             receiver) {
-        impl->delegate()->CreateMediaPlayerHostForRenderFrameHost(
-            impl, std::move(receiver));
-      },
-      base::Unretained(this)));
+  associated_registry_->AddInterface<media::mojom::MediaPlayerHost>(
+      base::BindRepeating(
+          [](RenderFrameHostImpl* impl,
+             mojo::PendingAssociatedReceiver<media::mojom::MediaPlayerHost>
+                 receiver) {
+            impl->delegate()->CreateMediaPlayerHostForRenderFrameHost(
+                impl, std::move(receiver));
+          },
+          base::Unretained(this)));
 
-  associated_registry_->AddInterface(base::BindRepeating(
-      [](RenderFrameHostImpl* impl,
-         mojo::PendingAssociatedReceiver<blink::mojom::DisplayCutoutHost>
-             receiver) {
-        impl->delegate()->BindDisplayCutoutHost(impl, std::move(receiver));
-      },
-      base::Unretained(this)));
+  associated_registry_->AddInterface<blink::mojom::DisplayCutoutHost>(
+      base::BindRepeating(
+          [](RenderFrameHostImpl* impl,
+             mojo::PendingAssociatedReceiver<blink::mojom::DisplayCutoutHost>
+                 receiver) {
+            impl->delegate()->BindDisplayCutoutHost(impl, std::move(receiver));
+          },
+          base::Unretained(this)));
 
-  associated_registry_->AddInterface(base::BindRepeating(
-      [](RenderFrameHostImpl* impl,
-         mojo::PendingAssociatedReceiver<blink::mojom::ConversionHost>
-             receiver) {
-        AttributionHost::BindReceiver(std::move(receiver), impl);
-      },
-      base::Unretained(this)));
+  associated_registry_->AddInterface<blink::mojom::ConversionHost>(
+      base::BindRepeating(
+          [](RenderFrameHostImpl* impl,
+             mojo::PendingAssociatedReceiver<blink::mojom::ConversionHost>
+                 receiver) {
+            AttributionHost::BindReceiver(std::move(receiver), impl);
+          },
+          base::Unretained(this)));
 
-  associated_registry_->AddInterface(base::BindRepeating(
-      [](RenderFrameHostImpl* impl,
-         mojo::PendingAssociatedReceiver<device::mojom::ScreenOrientation>
-             receiver) {
-        impl->delegate()->BindScreenOrientation(impl, std::move(receiver));
-      },
-      base::Unretained(this)));
+  associated_registry_->AddInterface<device::mojom::ScreenOrientation>(
+      base::BindRepeating(
+          [](RenderFrameHostImpl* impl,
+             mojo::PendingAssociatedReceiver<device::mojom::ScreenOrientation>
+                 receiver) {
+            impl->delegate()->BindScreenOrientation(impl, std::move(receiver));
+          },
+          base::Unretained(this)));
 
-  associated_registry_->AddInterface(
+  associated_registry_->AddInterface<blink::mojom::BroadcastChannelProvider>(
       base::BindRepeating(&RenderFrameHostImpl::CreateBroadcastChannelProvider,
                           base::Unretained(this)));
 
@@ -13670,7 +13681,7 @@ void RenderFrameHostImpl::SetLifecycleState(LifecycleStateImpl new_state) {
 // TODO(crbug.com/1256898): Consider associating expectations with each
 // transitions.
 #if DCHECK_IS_ON()
-  static const base::NoDestructor<StateTransitions<LifecycleStateImpl>>
+  static const base::NoDestructor<base::StateTransitions<LifecycleStateImpl>>
       allowed_transitions(
           // For a graph of state transitions, see
           // https://chromium.googlesource.com/chromium/src/+/HEAD/docs/render-frame-host-lifecycle-state.png
@@ -13678,7 +13689,7 @@ void RenderFrameHostImpl::SetLifecycleState(LifecycleStateImpl new_state) {
 
           // RenderFrameHost is only set speculative during its creation and no
           // transitions happen to this state during its lifetime.
-          StateTransitions<LifecycleStateImpl>({
+          base::StateTransitions<LifecycleStateImpl>({
               {LifecycleStateImpl::kSpeculative,
                {LifecycleStateImpl::kActive,
                 LifecycleStateImpl::kPendingCommit}},

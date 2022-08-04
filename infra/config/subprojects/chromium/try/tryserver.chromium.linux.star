@@ -206,6 +206,9 @@ try_.builder(
     executable = "recipe:chromium_libfuzzer_trybot",
     main_list_view = "try",
     tryjob = try_.job(),
+    experiments = {
+        "enable_weetbix_queries": 100,
+    },
 )
 
 try_.builder(
@@ -244,6 +247,7 @@ try_.orchestrator_builder(
     experiments = {
         "remove_src_checkout_experiment": 100,
         "enable_weetbix_queries": 100,
+        "retry_findit_exonerations": 100,
     },
     use_orchestrator_pool = True,
 )
@@ -297,6 +301,9 @@ try_.builder(
     builderless = not settings.is_main,
     main_list_view = "try",
     tryjob = try_.job(),
+    experiments = {
+        "enable_weetbix_queries": 100,
+    },
 )
 
 # b/236069482: Experimental builder to test reclient migration
@@ -360,6 +367,7 @@ try_.orchestrator_builder(
     ),
     experiments = {
         "remove_src_checkout_experiment": 100,
+        "enable_weetbix_queries": 100,
     },
     use_orchestrator_pool = True,
 )
@@ -520,6 +528,7 @@ try_.orchestrator_builder(
     tryjob = try_.job(),
     experiments = {
         "remove_src_checkout_experiment": 100,
+        "enable_weetbix_queries": 100,
     },
     use_orchestrator_pool = True,
 )

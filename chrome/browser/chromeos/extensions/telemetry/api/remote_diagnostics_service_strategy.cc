@@ -6,8 +6,8 @@
 
 #include <memory>
 
-#include "ash/webui/telemetry_extension_ui/mojom/diagnostics_service.mojom.h"
-#include "ash/webui/telemetry_extension_ui/services/diagnostics_service.h"
+#include "chrome/browser/ash/telemetry_extension/diagnostics_service_ash.h"
+#include "chromeos/crosapi/mojom/diagnostics_service.mojom.h"
 #include "mojo/public/cpp/bindings/remote.h"
 
 namespace chromeos {
@@ -18,22 +18,21 @@ class RemoteDiagnosticsServiceStrategyAsh
     : public RemoteDiagnosticsServiceStrategy {
  public:
   RemoteDiagnosticsServiceStrategyAsh()
-      : diagnostics_service_(ash::DiagnosticsService::Factory::Create(
+      : diagnostics_service_(ash::DiagnosticsServiceAsh::Factory::Create(
             remote_diagnostics_service_.BindNewPipeAndPassReceiver())) {}
 
   ~RemoteDiagnosticsServiceStrategyAsh() override = default;
 
   // RemoteDiagnosticsServiceStrategy override:
-  mojo::Remote<ash::health::mojom::DiagnosticsService>& GetRemoteService()
+  mojo::Remote<crosapi::mojom::DiagnosticsService>& GetRemoteService()
       override {
     return remote_diagnostics_service_;
   }
 
  private:
-  mojo::Remote<ash::health::mojom::DiagnosticsService>
-      remote_diagnostics_service_;
+  mojo::Remote<crosapi::mojom::DiagnosticsService> remote_diagnostics_service_;
 
-  std::unique_ptr<ash::health::mojom::DiagnosticsService> diagnostics_service_;
+  std::unique_ptr<crosapi::mojom::DiagnosticsService> diagnostics_service_;
 };
 
 }  // namespace

@@ -749,8 +749,7 @@ void AddLanguagesStrings(content::WebUIDataSource* html_source,
     {"searchLanguages", IDS_SETTINGS_LANGUAGE_SEARCH},
     {"languagesExpandA11yLabel",
      IDS_SETTINGS_LANGUAGES_EXPAND_ACCESSIBILITY_LABEL},
-    {"preferredLanguagesDesc",
-     IDS_SETTINGS_LANGUAGES_PREFERRED_LANGUAGES_DESC},
+    {"preferredLanguagesDesc", IDS_SETTINGS_LANGUAGES_PREFERRED_LANGUAGES_DESC},
     {"moveToTop", IDS_SETTINGS_LANGUAGES_LANGUAGES_LIST_MOVE_TO_TOP},
     {"moveUp", IDS_SETTINGS_LANGUAGES_LANGUAGES_LIST_MOVE_UP},
     {"moveDown", IDS_SETTINGS_LANGUAGES_LANGUAGES_LIST_MOVE_DOWN},
@@ -767,6 +766,7 @@ void AddLanguagesStrings(content::WebUIDataSource* html_source,
     {"offerToEnableTranslate",
      IDS_SETTINGS_LANGUAGES_OFFER_TO_ENABLE_TRANSLATE},
     {"noLanguagesAdded", IDS_SETTINGS_LANGUAGES_NO_LANGUAGES_ADDED},
+    {"translatePageTitle", IDS_SETTINGS_TRANSLATE_PAGE_TITLE},
     {"automaticallyTranslateLanguages",
      IDS_SETTINGS_LANGUAGES_AUTOMATIC_TRANSLATE},
     {"neverTranslateLanguages", IDS_SETTINGS_LANGUAGES_NEVER_LANGUAGES},
@@ -809,7 +809,7 @@ void AddLanguagesStrings(content::WebUIDataSource* html_source,
 #endif  // !BUILDFLAG(IS_CHROMEOS_ASH)
 #if BUILDFLAG(IS_CHROMEOS_ASH)
     {"openChromeOSLanguagesSettingsLabel",
-    IDS_SETTINGS_LANGUAGES_OPEN_CHROME_OS_SETTINGS_LABEL},
+     IDS_SETTINGS_LANGUAGES_OPEN_CHROME_OS_SETTINGS_LABEL},
 #endif
   };
   html_source->AddLocalizedStrings(kLocalizedStrings);
@@ -1095,6 +1095,10 @@ void AddAutofillStrings(content::WebUIDataSource* html_source,
       {"importPasswordsTitle", IDS_SETTINGS_PASSWORDS_IMPORT_TITLE},
       {"importPasswordsChooseFile", IDS_SETTINGS_PASSWORDS_IMPORT_CHOOSE_FILE},
       {"importPasswordsSuccessTip", IDS_SETTINGS_PASSWORDS_IMPORT_SUCCESS_TIP},
+      {"importPasswordsUnknownError",
+       IDS_SETTINGS_PASSWORDS_IMPORT_ERROR_UNKNOWN},
+      {"importPasswordsBadFormatError",
+       IDS_SETTINGS_PASSWORDS_IMPORT_ERROR_BAD_FORMAT},
       {"importPasswordsGenericDescription",
        IDS_SETTINGS_PASSWORDS_IMPORT_DESCRIPTION_GENERIC},
       {"exportMenuItem", IDS_SETTINGS_PASSWORDS_EXPORT_MENU_ITEM},
@@ -2022,7 +2026,6 @@ void AddSearchEnginesStrings(content::WebUIDataSource* html_source) {
        IDS_SETTINGS_SEARCH_ENGINES_INACTIVE_SHORTCUTS},
       {"searchEnginesNoInactiveShortcuts",
        IDS_SETTINGS_SEARCH_ENGINES_NO_INACTIVE_SHORTCUTS},
-      {"searchEnginesOther", IDS_SETTINGS_SEARCH_ENGINES_OTHER_ENGINES},
       {"searchEnginesNoOtherEngines",
        IDS_SETTINGS_SEARCH_ENGINES_NO_OTHER_ENGINES},
       {"searchEnginesExtension", IDS_SETTINGS_SEARCH_ENGINES_EXTENSION_ENGINES},
@@ -2032,7 +2035,6 @@ void AddSearchEnginesStrings(content::WebUIDataSource* html_source) {
       {"searchEnginesSearchEngine", IDS_SETTINGS_SEARCH_ENGINES_SEARCH_ENGINE},
       {"searchEnginesSiteOrPage", IDS_SETTINGS_SEARCH_ENGINES_SITE_OR_PAGE},
       {"searchEnginesInactiveSite", IDS_SETTINGS_SEARCH_ENGINES_INACTIVE_SITE},
-      {"searchEnginesKeyword", IDS_SETTINGS_SEARCH_ENGINES_KEYWORD},
       {"searchEnginesShortcut", IDS_SETTINGS_SEARCH_ENGINES_SHORTCUT},
       {"searchEnginesQueryURL", IDS_SETTINGS_SEARCH_ENGINES_QUERY_URL},
       {"searchEnginesQueryURLExplanation",
@@ -2060,8 +2062,6 @@ void AddSearchEnginesStrings(content::WebUIDataSource* html_source) {
        IDS_SETTINGS_SEARCH_ENGINES_ADDITIONAL_EXTENSIONS},
   };
   html_source->AddLocalizedStrings(kLocalizedStrings);
-  // TODO(crbug.com/1340259): Remove this and cleanup front-end code.
-  html_source->AddBoolean("isActiveSearchEnginesFlagEnabled", true);
 }
 
 void AddSiteSettingsStrings(content::WebUIDataSource* html_source,

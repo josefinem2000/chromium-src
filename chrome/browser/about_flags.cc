@@ -1111,6 +1111,15 @@ const FeatureEntry::FeatureVariation kJourneysOmniboxActionVariations[] = {
     {"Action Chips Enabled with Pedals", kJourneysOmniboxActionWithPedalsParams,
      std::size(kJourneysOmniboxActionWithPedalsParams), nullptr},
 };
+const FeatureEntry::FeatureParam kSidePanelJourneysOpensFromOmniboxParams[] = {
+    {"SidePanelJourneysOpensFromOmnibox", "true"},
+};
+const FeatureEntry::FeatureVariation
+    kSidePanelJourneysOpensFromOmniboxVariations[] = {
+        {"Omnibox opens Side Panel Journeys",
+         kSidePanelJourneysOpensFromOmniboxParams,
+         std::size(kSidePanelJourneysOpensFromOmniboxParams), nullptr},
+};
 const FeatureEntry::FeatureParam kJourneysLabelsWithEntitiesParams[] = {
     {"labels_from_entities", "true"},
 };
@@ -3535,6 +3544,9 @@ const FeatureEntry kFeatureEntries[] = {
     },
 #endif  // BUILDFLAG(ENABLE_WEBUI_TAB_STRIP) && BUILDFLAG(IS_CHROMEOS_ASH)
 #if BUILDFLAG(IS_CHROMEOS_ASH)
+    {"audio-hfp-mic-sr", flag_descriptions::kAudioHFPMicSRName,
+     flag_descriptions::kAudioHFPMicSRDescription, kOsCrOS,
+     PLATFORM_FEATURE_NAME_TYPE("CrOSLateBootAudioHFPMicSR")},
     {
         "audio-settings-page",
         flag_descriptions::kAudioSettingsPageName,
@@ -5533,7 +5545,10 @@ const FeatureEntry kFeatureEntries[] = {
     {flag_descriptions::kSidePanelJourneysFlagId,
      flag_descriptions::kSidePanelJourneysName,
      flag_descriptions::kSidePanelJourneysDescription, kOsDesktop,
-     FEATURE_VALUE_TYPE(features::kSidePanelJourneys)},
+     FEATURE_WITH_PARAMS_VALUE_TYPE(
+         features::kSidePanelJourneys,
+         kSidePanelJourneysOpensFromOmniboxVariations,
+         "SidePanelJourneys")},
 
     {flag_descriptions::kUnifiedSidePanelFlagId,
      flag_descriptions::kUnifiedSidePanelName,
@@ -7314,13 +7329,6 @@ const FeatureEntry kFeatureEntries[] = {
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
-    {"launcher-pulsing-blocks-refresh",
-     flag_descriptions::kLauncherPulsingBlocksRefreshName,
-     flag_descriptions::kLauncherPulsingBlocksRefreshDescription, kOsCrOS,
-     FEATURE_VALUE_TYPE(ash::features::kLauncherPulsingBlocksRefresh)},
-#endif  // BUILDFLAG(IS_CHROMEOS_ASH)
-
-#if BUILDFLAG(IS_CHROMEOS_ASH)
     {"mac-address-randomization",
      flag_descriptions::kMacAddressRandomizationName,
      flag_descriptions::kMacAddressRandomizationDescription, kOsCrOS,
@@ -9002,6 +9010,10 @@ const FeatureEntry kFeatureEntries[] = {
      kOsAll,
      FEATURE_VALUE_TYPE(
          autofill::features::kAutofillParseVcnCardOnFileStandaloneCvcFields)},
+
+    {"batch-fetch-requests", flag_descriptions::kBatchFetchRequestsName,
+     flag_descriptions::kBatchFetchRequestsDescription, kOsAll,
+     FEATURE_VALUE_TYPE(blink::features::kBatchFetchRequests)},
 
 #if !BUILDFLAG(IS_ANDROID)
     {"desktop-partial-translate",

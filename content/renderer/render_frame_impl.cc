@@ -464,7 +464,7 @@ void FillNavigationParamsRequest(
 
   // Set the request initiator origin, which is supplied by the browser
   // process. It is present in cases such as navigating a frame in a different
-  // process, which is routed through RenderFrameProxy and the origin is
+  // process, which is routed through `blink::RemoteFrame` and the origin is
   // required to correctly compute the effective origin in which the
   // navigation will commit.
   if (common_params.initiator_origin) {
@@ -1562,8 +1562,6 @@ void RenderFrameImpl::CreateFrame(
     render_frame = RenderFrameImpl::Create(
         agent_scheduling_group, routing_id, std::move(frame_receiver),
         std::move(browser_interface_broker), devtools_frame_token);
-    // Since `parent_web_frame` is remote we do not provide a parent_frame
-    // for initializing the BlameContext.
     render_frame->unique_name_helper_.set_propagated_name(
         replicated_state->unique_name);
     WebFrame* opener = nullptr;
@@ -2027,7 +2025,7 @@ void RenderFrameImpl::Unload(
     blink::mojom::FrameReplicationStatePtr replicated_frame_state,
     const blink::RemoteFrameToken& proxy_frame_token,
     blink::mojom::RemoteFrameInterfacesFromBrowserPtr remote_frame_interfaces,
-    mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces) {
+    blink::mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces) {
   TRACE_EVENT1("navigation,rail", "RenderFrameImpl::UnloadFrame", "id",
                routing_id_);
   DCHECK(!base::RunLoop::IsNestedOnCurrentThread());
@@ -2132,7 +2130,7 @@ void RenderFrameImpl::UndoCommitNavigation(
     blink::mojom::FrameReplicationStatePtr replicated_frame_state,
     const blink::RemoteFrameToken& proxy_frame_token,
     blink::mojom::RemoteFrameInterfacesFromBrowserPtr remote_frame_interfaces,
-    mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces) {
+    blink::mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces) {
   // The browser process asked `this` to commit a navigation but has now decided
   // to discard the speculative RenderFrameHostImpl instead, since the
   // associated navigation was cancelled or replaced. However, the browser
@@ -3954,7 +3952,7 @@ bool RenderFrameImpl::SwapOutAndDeleteThis(
     blink::mojom::FrameReplicationStatePtr replicated_frame_state,
     const blink::RemoteFrameToken& proxy_frame_token,
     blink::mojom::RemoteFrameInterfacesFromBrowserPtr remote_frame_interfaces,
-    mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces) {
+    blink::mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces) {
   TRACE_EVENT1("navigation,rail", "RenderFrameImpl::SwapOutAndDeleteThis", "id",
                routing_id_);
   DCHECK(!base::RunLoop::IsNestedOnCurrentThread());
@@ -3987,9 +3985,10 @@ bool RenderFrameImpl::SwapOutAndDeleteThis(
     // frame to cause them to become detached.
     DCHECK(success);
 
-    // The RenderFrameProxy being swapped in here has now been attached to the
-    // Page as its main frame and properly initialized by the WebFrame::Swap()
-    // call, so we can call WebView's DidAttachRemoteMainFrame().
+    // The `blink::RemoteFrame` being swapped in here has now been attached to
+    // the Page as its main frame and properly initialized by the
+    // WebFrame::Swap() call, so we can call WebView's
+    // DidAttachRemoteMainFrame().
     web_view->DidAttachRemoteMainFrame(
         std::move(remote_main_frame_interfaces->main_frame_host),
         std::move(remote_main_frame_interfaces->main_frame));
@@ -4320,10 +4319,6 @@ RenderFrameImpl::MediaStreamDeviceObserver() {
   return web_media_stream_device_observer_.get();
 }
 
-bool RenderFrameImpl::AllowRTCLegacyTLSProtocols() {
-  return GetRendererPreferences().webrtc_allow_legacy_tls_protocols;
-}
-
 blink::WebEncryptedMediaClient* RenderFrameImpl::EncryptedMediaClient() {
   return media_factory_.EncryptedMediaClient();
 }
@@ -4363,12 +4358,6 @@ bool RenderFrameImpl::ShouldUseUserAgentOverride() const {
       document_loader ? DocumentState::FromDocumentLoader(document_loader)
                       : nullptr;
   return document_state && document_state->is_overriding_user_agent();
-}
-
-blink::WebString RenderFrameImpl::DoNotTrackValue() {
-  if (GetWebView()->GetRendererPreferences().enable_do_not_track)
-    return WebString::FromUTF8("1");
-  return WebString();
 }
 
 blink::mojom::RendererAudioInputStreamFactory*
@@ -5796,22 +5785,28 @@ media::MediaPermission* RenderFrameImpl::GetMediaPermission() {
 
 void RenderFrameImpl::RegisterMojoInterfaces() {
   // TODO(dcheng): Fold this interface into mojom::Frame.
-  GetAssociatedInterfaceRegistry()->AddInterface(base::BindRepeating(
-      &RenderFrameImpl::BindAutoplayConfiguration, weak_factory_.GetWeakPtr()));
+  GetAssociatedInterfaceRegistry()
+      ->AddInterface<blink::mojom::AutoplayConfigurationClient>(
+          base::BindRepeating(&RenderFrameImpl::BindAutoplayConfiguration,
+                              weak_factory_.GetWeakPtr()));
 
-  GetAssociatedInterfaceRegistry()->AddInterface(base::BindRepeating(
-      &RenderFrameImpl::BindFrameBindingsControl, weak_factory_.GetWeakPtr()));
+  GetAssociatedInterfaceRegistry()->AddInterface<mojom::FrameBindingsControl>(
+      base::BindRepeating(&RenderFrameImpl::BindFrameBindingsControl,
+                          weak_factory_.GetWeakPtr()));
 
-  GetAssociatedInterfaceRegistry()->AddInterface(base::BindRepeating(
-      &RenderFrameImpl::BindNavigationClient, weak_factory_.GetWeakPtr()));
+  GetAssociatedInterfaceRegistry()->AddInterface<mojom::NavigationClient>(
+      base::BindRepeating(&RenderFrameImpl::BindNavigationClient,
+                          weak_factory_.GetWeakPtr()));
 
   // TODO(dcheng): Fold this interface into mojom::Frame.
-  GetAssociatedInterfaceRegistry()->AddInterface(base::BindRepeating(
-      &RenderFrameImpl::BindMhtmlFileWriter, base::Unretained(this)));
+  GetAssociatedInterfaceRegistry()->AddInterface<mojom::MhtmlFileWriter>(
+      base::BindRepeating(&RenderFrameImpl::BindMhtmlFileWriter,
+                          base::Unretained(this)));
 
-  GetAssociatedInterfaceRegistry()->AddInterface(base::BindRepeating(
-      &RenderAccessibilityManager::BindReceiver,
-      base::Unretained(render_accessibility_manager_.get())));
+  GetAssociatedInterfaceRegistry()
+      ->AddInterface<blink::mojom::RenderAccessibility>(base::BindRepeating(
+          &RenderAccessibilityManager::BindReceiver,
+          base::Unretained(render_accessibility_manager_.get())));
 }
 
 void RenderFrameImpl::BindMhtmlFileWriter(

@@ -9,13 +9,13 @@
 
 #include "base/containers/id_map.h"
 #include "base/memory/safe_ref.h"
+#include "base/state_transitions.h"
 #include "base/supports_user_data.h"
 #include "content/browser/browser_interface_broker_impl.h"
 #include "content/common/agent_scheduling_group.mojom.h"
 #include "content/common/associated_interfaces.mojom.h"
 #include "content/common/content_export.h"
 #include "content/common/renderer.mojom-forward.h"
-#include "content/common/state_transitions.h"
 #include "content/public/browser/render_process_host_observer.h"
 #include "content/public/common/content_features.h"
 #include "content/services/shared_storage_worklet/public/mojom/shared_storage_worklet_service.mojom-forward.h"
@@ -103,14 +103,6 @@ class CONTENT_EXPORT AgentSchedulingGroupHost
   mojom::RouteProvider* GetRemoteRouteProvider();
   void CreateFrame(mojom::CreateFrameParamsPtr params);
   void CreateView(mojom::CreateViewParamsPtr params);
-  void CreateRemoteMainFrame(
-      const blink::RemoteFrameToken& token,
-      const absl::optional<blink::FrameToken>& opener_frame_token,
-      int32_t view_routing_id,
-      blink::mojom::FrameReplicationStatePtr replicated_state,
-      const base::UnguessableToken& devtools_frame_token,
-      blink::mojom::RemoteFrameInterfacesFromBrowserPtr remote_frame_interfaces,
-      mojom::RemoteMainFrameInterfacesPtr remote_main_frame_interfaces);
   void CreateSharedStorageWorkletService(
       mojo::PendingReceiver<
           shared_storage_worklet::mojom::SharedStorageWorkletService> receiver);
@@ -141,7 +133,7 @@ class CONTENT_EXPORT AgentSchedulingGroupHost
     // kRenderProcessHostDestroyed is the terminal state of the state machine.
     kRenderProcessHostDestroyed,
   };
-  friend StateTransitions<LifecycleState>;
+  friend base::StateTransitions<LifecycleState>;
   friend std::ostream& operator<<(std::ostream& os, LifecycleState state);
 
   // IPC::Listener

@@ -83,6 +83,7 @@ import org.chromium.chrome.browser.merchant_viewer.MerchantTrustSignalsCoordinat
 import org.chromium.chrome.browser.messages.ChromeMessageAutodismissDurationProvider;
 import org.chromium.chrome.browser.messages.ChromeMessageQueueMediator;
 import org.chromium.chrome.browser.messages.MessageContainerCoordinator;
+import org.chromium.chrome.browser.messages.MessageContainerObserver;
 import org.chromium.chrome.browser.messages.MessagesResourceMapperInitializer;
 import org.chromium.chrome.browser.omnibox.OmniboxFocusReason;
 import org.chromium.chrome.browser.omnibox.geo.GeolocationHeader;
@@ -109,6 +110,7 @@ import org.chromium.chrome.browser.tab.Tab;
 import org.chromium.chrome.browser.tab.TabLaunchType;
 import org.chromium.chrome.browser.tabmodel.TabCreatorManager;
 import org.chromium.chrome.browser.tabmodel.TabModelSelector;
+import org.chromium.chrome.browser.tasks.ReturnToChromeUtil;
 import org.chromium.chrome.browser.tasks.tab_management.TabSwitcher;
 import org.chromium.chrome.browser.theme.TopUiThemeColorProvider;
 import org.chromium.chrome.browser.toolbar.ButtonDataProvider;
@@ -258,6 +260,7 @@ public class RootUiCoordinator
     protected ManagedMessageDispatcher mMessageDispatcher;
     @Nullable
     private MessageContainerCoordinator mMessageContainerCoordinator;
+    private MessageContainerObserver mMessageContainerObserver;
     @Nullable
     private ChromeMessageQueueMediator mMessageQueueMediator;
     private LayoutManagerImpl mLayoutManager;
@@ -524,6 +527,9 @@ public class RootUiCoordinator
         }
 
         if (mMessageContainerCoordinator != null) {
+            if (mMessageContainerObserver != null) {
+                mMessageContainerCoordinator.removeObserver(mMessageContainerObserver);
+            }
             mMessageContainerCoordinator.destroy();
             mMessageContainerCoordinator = null;
         }
@@ -672,8 +678,8 @@ public class RootUiCoordinator
             };
             mModalDialogManagerSupplier.get().addObserver(mModalDialogManagerObserver);
         }
-        mChromeActionModeHandler = new ChromeActionModeHandler(mActivityTabProvider,
-                mToolbarManager::onActionBarVisibilityChanged, (searchText) -> {
+        mChromeActionModeHandler =
+                new ChromeActionModeHandler(mActivityTabProvider, (searchText) -> {
                     if (mTabModelSelectorSupplier.get() == null) return;
 
                     String query = ActionModeCallbackHelper.sanitizeQuery(
@@ -736,6 +742,18 @@ public class RootUiCoordinator
             MessageContainer container = mActivity.findViewById(R.id.message_container);
             mMessageContainerCoordinator =
                     new MessageContainerCoordinator(container, mBrowserControlsManager);
+            mMessageContainerObserver = new MessageContainerObserver() {
+                @Override
+                public void onShowMessageContainer() {
+                    if (mPageZoomCoordinator != null) {
+                        mPageZoomCoordinator.hide();
+                    }
+                }
+
+                @Override
+                public void onHideMessageContainer() {}
+            };
+            mMessageContainerCoordinator.addObserver(mMessageContainerObserver);
             mMessageDispatcher = MessagesFactory.createMessageDispatcher(container,
                     mMessageContainerCoordinator::getMessageMaxTranslation,
                     new ChromeMessageAutodismissDurationProvider(),
@@ -1136,6 +1154,13 @@ public class RootUiCoordinator
                 mMicStateObserver = voiceToolbarButtonController::updateMicButtonState;
                 voiceRecognitionHandler.addObserver(mMicStateObserver);
             }
+
+            mSnackbarManagerSupplier.get().isShowingSupplier().addObserver((Boolean isShowing) -> {
+                if (isShowing && mPageZoomCoordinator != null) {
+                    // On show snackbar, hide page zoom dialog
+                    mPageZoomCoordinator.hide();
+                }
+            });
         }
     }
 
@@ -1241,6 +1266,7 @@ public class RootUiCoordinator
                 @Override
                 public void onMenuVisibilityChanged(boolean isVisible) {
                     if (isVisible && mPageZoomCoordinator != null) {
+                        // On show app menu, hide page zoom dialog
                         mPageZoomCoordinator.hide();
                     }
                 }
@@ -1363,7 +1389,9 @@ public class RootUiCoordinator
         mBottomSheetManager = new BottomSheetManager(mBottomSheetController, mActivityTabProvider,
                 mBrowserControlsManager, mModalDialogManagerSupplier,
                 this::getBottomSheetSnackbarManager, mTabObscuringHandlerSupplier.get(),
-                mOmniboxFocusStateSupplier, panelManagerSupplier, mStartSurfaceSupplier);
+                mOmniboxFocusStateSupplier, panelManagerSupplier, mStartSurfaceSupplier,
+                mLayoutStateProviderOneShotSupplier,
+                ReturnToChromeUtil.isTabSwitcherOnlyRefactorEnabled(mActivity));
 
         // TODO(crbug.com/1279941): Consider moving handler registration to feature code.
         if (BackPressManager.isEnabled()) {

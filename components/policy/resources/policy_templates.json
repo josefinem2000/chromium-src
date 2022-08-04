@@ -15312,7 +15312,7 @@
     },
     {
       'name': 'VirtualKeyboardEnabled',
-      'owners': ['file://components/policy/resources/OWNERS', 'rsorokin@chromium.org'],
+      'owners': ['shend@google.com','e14s-eng@google.com'],
       'type': 'main',
       'schema': { 'type': 'boolean' },
       'supported_on': ['chrome_os:34-'],
@@ -23017,7 +23017,6 @@
         'dynamic_refresh': True,
         'per_profile': True,
       },
-      'max_size': 1048576,
       'example_value': [{
         'url': 'https://www.google.com/maps',
         'default_launch_container': 'window',

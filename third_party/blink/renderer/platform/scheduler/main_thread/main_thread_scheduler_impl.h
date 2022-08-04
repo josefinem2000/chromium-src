@@ -56,6 +56,7 @@
 #include "third_party/perfetto/include/perfetto/tracing/traced_value_forward.h"
 
 namespace base {
+class LazyNow;
 class TaskObserver;
 }  // namespace base
 
@@ -186,8 +187,6 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
   void AddTaskObserver(base::TaskObserver* task_observer) override;
   void RemoveTaskObserver(base::TaskObserver* task_observer) override;
   void Shutdown() override;
-  void SetTopLevelBlameContext(
-      base::trace_event::BlameContext* blame_context) override;
   void AddRAILModeObserver(RAILModeObserver* observer) override;
   void RemoveRAILModeObserver(RAILModeObserver const* observer) override;
   void SetRendererProcessType(WebRendererProcessType type) override;
@@ -357,7 +356,7 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
       base::WeakPtr<MainThreadTaskQueue> queue,
       const base::sequence_manager::Task& task,
       base::sequence_manager::TaskQueue::TaskTiming* task_timing,
-      base::sequence_manager::LazyNow* lazy_now);
+      base::LazyNow* lazy_now);
 
   void UpdateIpcTracking();
   void SetOnIPCTaskPostedWhileInBackForwardCacheIfNeeded();

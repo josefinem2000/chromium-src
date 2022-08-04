@@ -821,6 +821,17 @@ AXObject* AXObjectCacheImpl::SafeGet(const Node* node,
   if (!node)
     return nullptr;
 
+#if DCHECK_IS_ON()
+  if (const Element* element = DynamicTo<Element>(node)) {
+    if (AccessibleNode* accessible_node = element->ExistingAccessibleNode()) {
+      DCHECK(!accessible_node_mapping_.Contains(accessible_node))
+          << "The accessible node directly attached to an element should not "
+             "have its own AXObject: "
+          << element;
+    }
+  }
+#endif
+
   LayoutObject* layout_object = node->GetLayoutObject();
 
   AXID layout_id = 0;
@@ -874,6 +885,17 @@ AXObject* AXObjectCacheImpl::Get(const Node* node) {
 
   if (has_been_disposed_)
     return SafeGet(node);
+
+#if DCHECK_IS_ON()
+  if (const Element* element = DynamicTo<Element>(node)) {
+    if (AccessibleNode* accessible_node = element->ExistingAccessibleNode()) {
+      DCHECK(!accessible_node_mapping_.Contains(accessible_node))
+          << "The accessible node directly attached to an element should not "
+             "have its own AXObject: "
+          << element;
+    }
+  }
+#endif
 
   LayoutObject* layout_object = node->GetLayoutObject();
 
@@ -997,9 +1019,26 @@ AXID AXObjectCacheImpl::GetAXID(Node* node) {
   return ax_object->AXObjectID();
 }
 
+AXID AXObjectCacheImpl::GetExistingAXID(Node* node) {
+  AXObject* ax_object = SafeGet(node);
+  if (!ax_object)
+    return 0;
+  return ax_object->AXObjectID();
+}
+
 AXObject* AXObjectCacheImpl::Get(AccessibleNode* accessible_node) {
   if (!accessible_node)
     return nullptr;
+
+  if (accessible_node->element()) {
+    DCHECK(!accessible_node_mapping_.Contains(accessible_node))
+        << "The accessible node directly attached to an element should not "
+           "have its own AXObject: "
+        << accessible_node->element();
+    // When the AccessibleNode is attached to an element, return the element's
+    // accessible object instead.
+    return SafeGet(accessible_node->element());
+  }
 
   auto it_ax = accessible_node_mapping_.find(accessible_node);
   AXID ax_id = it_ax != accessible_node_mapping_.end() ? it_ax->value : 0;
@@ -1011,7 +1050,7 @@ AXObject* AXObjectCacheImpl::Get(AccessibleNode* accessible_node) {
   AXObject* result = it_result != objects_.end() ? it_result->value : nullptr;
 #if DCHECK_IS_ON()
   DCHECK(result) << "Had AXID for accessible_node but no entry in objects_";
-  DCHECK(result->IsVirtualObject());
+  DCHECK(IsA<AXVirtualObject>(result));
   // Do not allow detached objects except when disposing entire tree.
   DCHECK(!result->IsDetached() || has_been_disposed_)
       << "Detached AXVirtualObject in map: "
@@ -1195,18 +1234,25 @@ bool AXObjectCacheImpl::IsRelevantPseudoElement(const Node& node) {
     return false;  // Is the clearfix hack: ignore pseudo element.
   }
 
-  // The only other pseudo elements that matter are ::first-letter.
-  // E.g. backdrop does not get an accessibility object.
-  if (!node.IsFirstLetterPseudoElement())
-    return false;
-
-  if (LayoutObject* layout_parent = node.GetLayoutObject()->Parent()) {
-    if (Node* layout_parent_node = layout_parent->GetNode()) {
-      if (layout_parent_node->IsPseudoElement())
-        return IsRelevantPseudoElement(*layout_parent_node);
-    }
+  // ::first-letter is relevant if and only if its parent layout object is a
+  // relevant pseudo element. If it's not a pseudo element, then this the
+  // ::first-letter text would end up being repeated in the AX Tree.
+  if (node.IsFirstLetterPseudoElement()) {
+    LayoutObject* layout_parent = node.GetLayoutObject()->Parent();
+    DCHECK(layout_parent);
+    Node* layout_parent_node = layout_parent->GetNode();
+    return layout_parent_node && layout_parent_node->IsPseudoElement() &&
+           IsRelevantPseudoElement(*layout_parent_node);
   }
 
+  // The remaining possible pseudo element types are not relevant.
+  if (node.IsBackdropPseudoElement())
+    return false;
+
+  // If this is reached, then a new pseudo element type was added and is not
+  // yet handled by accessibility. See  PseudoElementTagName() in
+  // pseudo_element.cc for all possible types.
+  SANITIZER_NOTREACHED() << "Unhandled type of pseudo element on: " << node;
   return false;
 }
 
@@ -1256,6 +1302,12 @@ AXObject* AXObjectCacheImpl::GetOrCreate(AccessibleNode* accessible_node,
   DCHECK(parent)
       << "A virtual object must have a parent, and cannot exist without one. "
          "The parent is set when the object is constructed.";
+
+  DCHECK(!accessible_node->element())
+      << "The accessible node directly attached to an element should not "
+         "have its own AXObject, since the AXObject will be keyed off of the "
+         "element instead: "
+      << accessible_node->element();
 
   if (!parent->CanHaveChildren())
     return nullptr;
@@ -1502,10 +1554,11 @@ AXObject* AXObjectCacheImpl::GetOrCreate(AbstractInlineTextBox* inline_text_box,
     DCHECK(layout_text_parent->IsText());
     parent = GetOrCreate(layout_text_parent);
     if (!parent) {
-      // Allowed to not have a parent if the text was irrelevant whitespace.
-      DCHECK(inline_text_box->GetText().ContainsOnlyWhitespaceOrEmpty())
+      DCHECK(inline_text_box->GetText().ContainsOnlyWhitespaceOrEmpty() ||
+             !IsRelevantPseudoElementDescendant(*layout_text_parent))
           << "No parent for non-whitespace inline textbox: "
-          << layout_text_parent;
+          << layout_text_parent
+          << "\nParent of parent: " << layout_text_parent->Parent();
       return nullptr;
     }
   }
@@ -2264,7 +2317,8 @@ void AXObjectCacheImpl::SlotAssignmentWillChange(Node* node) {
 }
 
 void AXObjectCacheImpl::ChildrenChanged(Node* node) {
-  ChildrenChanged(Get(node));
+  // Use SafeGet() because there is no guarantee that layout is clean right now.
+  ChildrenChanged(SafeGet(node));
 }
 
 // ChildrenChanged gets called a lot. For the accessibility tests that
@@ -2298,6 +2352,7 @@ void AXObjectCacheImpl::ChildrenChanged(const LayoutObject* layout_object) {
 }
 
 void AXObjectCacheImpl::ChildrenChanged(AccessibleNode* accessible_node) {
+  DCHECK(accessible_node);
   ChildrenChanged(Get(accessible_node));
 }
 

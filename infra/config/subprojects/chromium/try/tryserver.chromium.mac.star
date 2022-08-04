@@ -27,7 +27,7 @@ def ios_builder(*, name, **kwargs):
     kwargs.setdefault("builderless", False)
     kwargs.setdefault("os", os.MAC_DEFAULT)
     kwargs.setdefault("ssd", None)
-    kwargs.setdefault("xcode", xcode.x13main)
+    kwargs.setdefault("xcode", xcode.x14main)
     return try_.builder(name = name, **kwargs)
 
 consoles.list_view(
@@ -102,6 +102,7 @@ try_.orchestrator_builder(
     tryjob = try_.job(),
     experiments = {
         "remove_src_checkout_experiment": 100,
+        "enable_weetbix_queries": 100,
     },
     use_orchestrator_pool = True,
 )
@@ -317,6 +318,9 @@ ios_builder(
     coverage_exclude_sources = "ios_test_files_and_test_utils",
     coverage_test_types = ["overall", "unit"],
     tryjob = try_.job(),
+    experiments = {
+        "enable_weetbix_queries": 100,
+    },
 )
 
 ios_builder(
@@ -371,7 +375,6 @@ ios_builder(
     mirrors = [
         "ci/ios-simulator-noncq",
     ],
-    xcode = xcode.x13main,
     tryjob = try_.job(
         location_regexp = [
             ".+/[+]/third_party/crashpad/crashpad/.+",
@@ -385,7 +388,6 @@ ios_builder(
 
 ios_builder(
     name = "ios15-sdk-simulator",
-    xcode = xcode.x13betabots,
     os = os.MAC_12,
 )
 

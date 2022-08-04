@@ -59,7 +59,6 @@
 #include "third_party/blink/public/mojom/loader/same_document_navigation_type.mojom-shared.h"
 #include "third_party/blink/public/mojom/media/renderer_audio_input_stream_factory.mojom-shared.h"
 #include "third_party/blink/public/mojom/portal/portal.mojom-shared.h"
-#include "third_party/blink/public/platform/blame_context.h"
 #include "third_party/blink/public/platform/cross_variant_mojo_util.h"
 #include "third_party/blink/public/platform/modules/service_worker/web_service_worker_provider.h"
 #include "third_party/blink/public/platform/resource_load_info_notifier_wrapper.h"
@@ -597,9 +596,6 @@ class BLINK_EXPORT WebLocalFrameClient {
     return nullptr;
   }
 
-  // WebRTC
-  virtual bool AllowRTCLegacyTLSProtocols() { return false; }
-
   // Encrypted Media -------------------------------------------------
 
   virtual WebEncryptedMediaClient* EncryptedMediaClient() { return nullptr; }
@@ -617,12 +613,6 @@ class BLINK_EXPORT WebLocalFrameClient {
   virtual absl::optional<UserAgentMetadata> UserAgentMetadataOverride() {
     return absl::nullopt;
   }
-
-  // Do not track ----------------------------------------------------
-
-  // Asks the embedder what value the network stack will send for the DNT
-  // header. An empty string indicates that no DNT header will be send.
-  virtual WebString DoNotTrackValue() { return WebString(); }
 
   //
   // Accessibility -------------------------------------------------------

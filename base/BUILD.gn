@@ -621,6 +621,7 @@ mixed_component("base") {
     "sequence_checker_impl.h",
     "sequence_token.cc",
     "sequence_token.h",
+    "state_transitions.h",
     "stl_util.h",
     "strings/abseil_string_conversions.cc",
     "strings/abseil_string_conversions.h",
@@ -692,6 +693,8 @@ mixed_component("base") {
     "task/common/checked_lock.h",
     "task/common/checked_lock_impl.cc",
     "task/common/checked_lock_impl.h",
+    "task/common/lazy_now.cc",
+    "task/common/lazy_now.h",
     "task/common/operations_controller.cc",
     "task/common/operations_controller.h",
     "task/common/scoped_defer_task_posting.cc",
@@ -726,8 +729,6 @@ mixed_component("base") {
     "task/sequence_manager/fence.cc",
     "task/sequence_manager/fence.h",
     "task/sequence_manager/lazily_deallocated_deque.h",
-    "task/sequence_manager/lazy_now.cc",
-    "task/sequence_manager/lazy_now.h",
     "task/sequence_manager/sequence_manager.cc",
     "task/sequence_manager/sequence_manager.h",
     "task/sequence_manager/sequence_manager_impl.cc",
@@ -2365,8 +2366,6 @@ mixed_component("base") {
   if (enable_base_tracing) {
     sources += [
       "trace_event/auto_open_close_event.h",
-      "trace_event/blame_context.cc",
-      "trace_event/blame_context.h",
       "trace_event/builtin_categories.cc",
       "trace_event/builtin_categories.h",
       "trace_event/category_registry.cc",
@@ -3223,6 +3222,7 @@ test("base_unittests") {
     "security_unittest.cc",
     "sequence_checker_unittest.cc",
     "sequence_token_unittest.cc",
+    "state_transitions_unittest.cc",
     "stl_util_unittest.cc",
     "strings/abseil_string_conversions_unittest.cc",
     "strings/abseil_string_number_conversions_unittest.cc",
@@ -3884,7 +3884,6 @@ test("base_unittests") {
   if (enable_base_tracing) {
     sources += [
       "test/trace_event_analyzer_unittest.cc",
-      "trace_event/blame_context_unittest.cc",
       "trace_event/event_name_filter_unittest.cc",
       "trace_event/heap_profiler_allocation_context_tracker_unittest.cc",
       "trace_event/memory_allocator_dump_unittest.cc",

@@ -110,7 +110,7 @@ std::string FormStructuresToString(
       // integers in |field->section| with consecutive unique integers.
       // The section string is of the form "fieldname_id1_id2-suffix", where
       // id1, id2 are platform-dependent and thus need to be substituted.
-      std::string section = field->section;
+      std::string section = field->section.ToString();
       size_t last_underscore = section.find_last_of('_');
       size_t second_last_underscore =
           section.find_last_of('_', last_underscore - 1);
@@ -198,8 +198,10 @@ FormStructureBrowserTest::FormStructureBrowserTest()
        features::kAutofillEnableSupportForParsingWithSharedLabels,
        // TODO(crbug.com/1277480): Remove once launched.
        features::kAutofillEnableNameSurenameParsing,
-       // TODO(crbug/1190334): Remove once launched.
-       features::kAutofillParseMerchantPromoCodeFields},
+       // TODO(crbug.com/1190334): Remove once launched.
+       features::kAutofillParseMerchantPromoCodeFields,
+       // TODO(crbug.com/1113970): Remove once launched.
+       features::kAutofillSectionUponRedundantNameInfo},
       // Disabled
       {});
 }

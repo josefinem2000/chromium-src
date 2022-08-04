@@ -1656,18 +1656,6 @@ bool DictionaryValue::GetString(StringPiece path,
   return is_string;
 }
 
-bool DictionaryValue::GetString(StringPiece path,
-                                std::u16string* out_value) const {
-  const Value* value;
-  if (!Get(path, &value))
-    return false;
-
-  const bool is_string = value->is_string();
-  if (is_string && out_value)
-    *out_value = UTF8ToUTF16(value->GetString());
-  return is_string;
-}
-
 bool DictionaryValue::GetDictionary(StringPiece path,
                                     const DictionaryValue** out_value) const {
   const Value* value;
@@ -1725,10 +1713,6 @@ DictionaryValue::Iterator::Iterator(const DictionaryValue& target)
 DictionaryValue::Iterator::Iterator(const Iterator& other) = default;
 
 DictionaryValue::Iterator::~Iterator() = default;
-
-DictionaryValue* DictionaryValue::DeepCopy() const {
-  return new DictionaryValue(dict());
-}
 
 std::unique_ptr<DictionaryValue> DictionaryValue::CreateDeepCopy() const {
   return std::make_unique<DictionaryValue>(dict());
