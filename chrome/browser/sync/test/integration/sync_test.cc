@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "base/as_const.h"
 #include "base/bind.h"
 #include "base/callback_helpers.h"
 #include "base/command_line.h"
@@ -22,6 +23,7 @@
 #include "base/strings/string_util.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/test/test_timeouts.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
 #include "chrome/browser/bookmarks/bookmark_model_factory.h"
@@ -248,9 +250,13 @@ class SyncTest::ClosedBrowserObserver : public BrowserListObserver {
 SyncTest::SyncTest(TestType test_type)
     : test_type_(test_type),
       test_construction_time_(base::Time::Now()),
+      sync_run_loop_timeout(FROM_HERE, TestTimeouts::action_max_timeout()),
       server_type_(SERVER_TYPE_UNDECIDED),
       previous_profile_(nullptr),
       num_clients_(-1) {
+  // Any RunLoop timeout will by default result in test failure.
+  sync_run_loop_timeout.SetAddGTestFailureOnTimeout();
+
   sync_datatype_helper::AssociateWithTest(this);
   switch (test_type_) {
     case SINGLE_CLIENT: {
@@ -518,6 +524,7 @@ void SyncTest::OnBrowserRemoved(Browser* browser) {
       // may be destroyed soon. It may not exist for browsers added during
       // tests using AddBrowser().
       if (i < clients_.size()) {
+        CheckForDataTypeFailures(/*client_index=*/i);
         clients_[i].reset();
       }
       break;
@@ -534,6 +541,11 @@ void SyncTest::OnBrowserRemoved(Browser* browser) {
 #endif
 
 SyncServiceImplHarness* SyncTest::GetClient(int index) {
+  return const_cast<SyncServiceImplHarness*>(
+      base::as_const(*this).GetClient(index));
+}
+
+const SyncServiceImplHarness* SyncTest::GetClient(int index) const {
   if (clients_.empty()) {
     LOG(FATAL) << "SetupClients() has not yet been called.";
   }
@@ -954,13 +966,7 @@ void SyncTest::TearDownOnMainThread() {
       // This may happen if the last tab and hence a browser has been closed.
       continue;
     }
-    if (GetClient(client_index)->service()->HasAnyDatatypeErrorForTest()) {
-      ADD_FAILURE() << "Data types failed during tests: "
-                    << GetClient(client_index)
-                           ->service()
-                           ->GetTypeStatusMapForDebugging()
-                           ->DebugString();
-    }
+    CheckForDataTypeFailures(client_index);
   }
 
   // Workaround for https://crbug.com/801569: |prefs::kProfileLastUsed| stores
@@ -1382,4 +1388,15 @@ bool SyncTest::WaitForAsyncChangesToBeCommitted(size_t profile_index) const {
   }
 
   return true;
+}
+
+void SyncTest::CheckForDataTypeFailures(size_t client_index) const {
+  DCHECK(GetClient(client_index));
+  if (GetClient(client_index)->service()->HasAnyDatatypeErrorForTest()) {
+    ADD_FAILURE() << "Data types failed during tests: "
+                  << GetClient(client_index)
+                         ->service()
+                         ->GetTypeStatusMapForDebugging()
+                         ->DebugString();
+  }
 }

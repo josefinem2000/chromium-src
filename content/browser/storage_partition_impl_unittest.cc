@@ -48,13 +48,13 @@
 #include "components/services/storage/shared_storage/shared_storage_manager.h"
 #include "components/services/storage/shared_storage/shared_storage_options.h"
 #include "components/services/storage/storage_service_impl.h"
-#include "content/browser/aggregation_service/aggregation_service_impl.h"
+#include "content/browser/aggregation_service/aggregation_service_test_utils.h"
 #include "content/browser/attribution_reporting/attribution_manager_impl.h"
 #include "content/browser/attribution_reporting/attribution_test_utils.h"
 #include "content/browser/attribution_reporting/attribution_trigger.h"
 #include "content/browser/code_cache/generated_code_cache.h"
 #include "content/browser/code_cache/generated_code_cache_context.h"
-#include "content/browser/gpu/shader_cache_factory.h"
+#include "content/browser/gpu/gpu_disk_cache_factory.h"
 #include "content/browser/interest_group/interest_group_manager_impl.h"
 #include "content/browser/interest_group/interest_group_permissions_cache.h"
 #include "content/browser/interest_group/interest_group_permissions_checker.h"
@@ -539,22 +539,6 @@ class MockDataRemovalObserver : public StoragePartition::DataRemovalObserver {
       observation_{this};
 };
 
-class MockAggregationService : public AggregationServiceImpl {
- public:
-  explicit MockAggregationService(StoragePartitionImpl* partition)
-      : AggregationServiceImpl(/*run_in_memory=*/true,
-                               /*user_data_directory=*/base::FilePath(),
-                               partition) {}
-
-  MOCK_METHOD(void,
-              ClearData,
-              (base::Time delete_begin,
-               base::Time delete_end,
-               StoragePartition::StorageKeyMatcherFunction filter,
-               base::OnceClosure done),
-              (override));
-};
-
 bool IsWebSafeSchemeForTest(const std::string& scheme) {
   return scheme == url::kHttpScheme;
 }
@@ -771,16 +755,16 @@ class StoragePartitionShaderClearTest : public testing::Test {
   StoragePartitionShaderClearTest()
       : task_environment_(content::BrowserTaskEnvironment::IO_MAINLOOP),
         browser_context_(new TestBrowserContext()) {
-    InitShaderCacheFactorySingleton();
-    GetShaderCacheFactorySingleton()->SetCacheInfo(
+    InitGpuDiskCacheFactorySingleton();
+    GetGpuDiskCacheFactorySingleton()->SetCacheInfo(
         kDefaultClientId,
         browser_context()->GetDefaultStoragePartition()->GetPath());
-    cache_ = GetShaderCacheFactorySingleton()->Get(kDefaultClientId);
+    cache_ = GetGpuDiskCacheFactorySingleton()->Get(kDefaultClientId);
   }
 
   ~StoragePartitionShaderClearTest() override {
     cache_ = nullptr;
-    GetShaderCacheFactorySingleton()->RemoveCacheInfo(kDefaultClientId);
+    GetGpuDiskCacheFactorySingleton()->RemoveCacheInfo(kDefaultClientId);
   }
 
   void InitCache() {
@@ -805,7 +789,7 @@ class StoragePartitionShaderClearTest : public testing::Test {
   content::BrowserTaskEnvironment task_environment_;
   std::unique_ptr<TestBrowserContext> browser_context_;
 
-  scoped_refptr<gpu::ShaderDiskCache> cache_;
+  scoped_refptr<gpu::GpuDiskCache> cache_;
 };
 
 // Tests ---------------------------------------------------------------------
@@ -2064,8 +2048,7 @@ TEST_F(StoragePartitionImplTest, RemoveAggregationServiceData) {
   StoragePartitionImpl* partition = static_cast<StoragePartitionImpl*>(
       browser_context()->GetDefaultStoragePartition());
 
-  auto aggregation_service =
-      std::make_unique<MockAggregationService>(partition);
+  auto aggregation_service = std::make_unique<MockAggregationService>();
   auto* aggregation_service_ptr = aggregation_service.get();
   partition->OverrideAggregationServiceForTesting(
       std::move(aggregation_service));

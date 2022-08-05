@@ -16,9 +16,20 @@ void EmitFeedbackAppPostSubmitAction(
   base::UmaHistogramEnumeration(kFeedbackAppPostSubmitAction, action);
 }
 
+void EmitFeedbackAppPreSubmitAction(mojom::FeedbackAppPreSubmitAction action) {
+  // TODO(longbowei) Add preSubmit actions and use switch case statement.
+  base::UmaHistogramBoolean(kFeedbackAppViewedScreenshot, true);
+}
+
 void EmitFeedbackAppIncludedScreenshot(bool included_screenshot) {
   base::UmaHistogramBoolean(kFeedbackAppIncludedScreenshot,
                             included_screenshot);
+}
+
+void EmitFeedbackAppCanContactUser(
+    FeedbackAppContactUserConsentType contact_user_consent) {
+  base::UmaHistogramEnumeration(kFeedbackAppCanContactUser,
+                                contact_user_consent);
 }
 
 }  // namespace ash::os_feedback_ui::metrics

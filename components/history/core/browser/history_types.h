@@ -970,9 +970,13 @@ struct Cluster {
   Cluster(int64_t cluster_id,
           const std::vector<ClusterVisit>& visits,
           const base::flat_map<std::u16string, ClusterKeywordData>&
-              keyword_to_data_map,
+              keyword_to_data_map = {},
           bool should_show_on_prominent_ui_surfaces = true,
-          absl::optional<std::u16string> label = absl::nullopt);
+          absl::optional<std::u16string> label = absl::nullopt,
+          absl::optional<std::u16string> raw_label = absl::nullopt,
+          query_parser::Snippet::MatchPositions label_match_positions = {},
+          std::vector<std::string> related_searches = {},
+          float search_match_score = 0);
   Cluster(const Cluster&);
   Cluster(Cluster&&);
   Cluster& operator=(const Cluster&);
@@ -1014,36 +1018,6 @@ struct Cluster {
   // and should not be persisted. It's a UI-state-specific score that's
   // convenient to buffer here.
   float search_match_score = 0.0;
-};
-
-// A minimal representation of `Cluster` used when retrieving them from
-// `VisitAnnotationsDatabase`.
-// TODO(manukh): Also use this representation when inserting them into the DB,
-//  since the additional information in a `Cluster` isn't necessary.
-struct ClusterRow {
-  ClusterRow();
-  explicit ClusterRow(int64_t cluster_id);
-  ClusterRow(const ClusterRow&);
-  ClusterRow& operator=(const ClusterRow&);
-  ~ClusterRow();
-
-  int64_t cluster_id;
-  std::vector<VisitID> visit_ids;
-};
-
-// Sets of `Cluster` IDs and `AnnotatedVisit`s. This is convenient in that,
-// unlike a vector of `Cluster`s, it contains a flat vector of unique
-// `AnnotatedVisit`s.
-struct ClusterIdsAndAnnotatedVisitsResult {
-  ClusterIdsAndAnnotatedVisitsResult();
-  ClusterIdsAndAnnotatedVisitsResult(
-      std::vector<int64_t> cluster_ids,
-      std::vector<AnnotatedVisit> annotated_visits);
-  ClusterIdsAndAnnotatedVisitsResult(const ClusterIdsAndAnnotatedVisitsResult&);
-  ~ClusterIdsAndAnnotatedVisitsResult();
-
-  std::vector<int64_t> cluster_ids;
-  std::vector<AnnotatedVisit> annotated_visits;
 };
 
 }  // namespace history

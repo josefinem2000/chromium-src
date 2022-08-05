@@ -7,9 +7,7 @@
  */
 
 goog.require('AbstractEarcons');
-goog.require('BrailleKeyCommand');
-goog.require('BrailleKeyEvent');
-goog.require('KeyCode');
 goog.require('TtsInterface');
+goog.require('TtsSpeechProperties');
 
 goog.require('constants');

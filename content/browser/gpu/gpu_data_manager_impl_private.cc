@@ -64,8 +64,8 @@
 #include "gpu/config/gpu_util.h"
 #include "gpu/config/software_rendering_list_autogen.h"
 #include "gpu/ipc/common/memory_stats.h"
+#include "gpu/ipc/host/gpu_disk_cache.h"
 #include "gpu/ipc/host/gpu_memory_buffer_support.h"
-#include "gpu/ipc/host/shader_disk_cache.h"
 #include "gpu/vulkan/buildflags.h"
 #include "media/gpu/gpu_video_accelerator_util.h"
 #include "media/media_buildflags.h"
@@ -1361,8 +1361,7 @@ void GpuDataManagerImplPrivate::UpdateGpuPreferences(
             gfx::BufferUsage::GPU_READ_CPU_READ_WRITE);
   }
 
-  gpu_preferences->gpu_program_cache_size =
-      gpu::ShaderDiskCache::CacheSizeBytes();
+  gpu_preferences->gpu_program_cache_size = gpu::GpuDiskCache::CacheSizeBytes();
 
   gpu_preferences->texture_target_exception_list =
       gpu::CreateBufferUsageAndFormatExceptionList();

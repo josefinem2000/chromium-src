@@ -613,6 +613,16 @@ int32_t ToAXHighlightType(const AtomicString& highlight_type) {
   return static_cast<int32_t>(result);
 }
 
+const AXObject* FindAncestorWithAriaHidden(const AXObject* start) {
+  for (const AXObject* object = start; object;
+       object = object->ParentObject()) {
+    if (object->AOMPropertyOrARIAAttributeIsTrue(AOMBooleanProperty::kHidden))
+      return object;
+  }
+
+  return nullptr;
+}
+
 // static
 unsigned AXObject::number_of_live_ax_objects_ = 0;
 
@@ -649,7 +659,6 @@ void AXObject::Init(AXObject* parent) {
   DCHECK(!is_initializing_);
   base::AutoReset<bool> reentrancy_protector(&is_initializing_, true);
 #endif  // DCHECK_IS_ON()
-
   // The role must be determined immediately.
   // Note: in order to avoid reentrancy, the role computation cannot use the
   // ParentObject(), although it can use the DOM parent.
@@ -691,6 +700,9 @@ void AXObject::Init(AXObject* parent) {
     AXObjectCache().MaybeNewRelationTarget(*GetNode(), this);
 
   UpdateCachedAttributeValuesIfNeeded(false);
+
+  DCHECK(GetDocument()) << "All AXObjects must have a document: "
+                        << ToString(true, true);
 }
 
 void AXObject::Detach() {
@@ -1219,6 +1231,9 @@ void AXObject::Serialize(ui::AXNodeData* node_data,
   bool is_visible = IsVisible();
   if (!is_visible)
     node_data->AddState(ax::mojom::blink::State::kInvisible);
+  SANITIZER_CHECK_EQ(cached_is_aria_hidden_, !!FindAncestorWithAriaHidden(this))
+      << "IsAriaHidden() doesn't match existence of an aria-hidden ancestor: "
+      << ToString(true);
 
   if (is_visible || is_focusable) {
     // If the author applied the ARIA "textbox" role on something that is not
@@ -2927,14 +2942,7 @@ bool AXObject::IsVisible() const {
 }
 
 const AXObject* AXObject::AriaHiddenRoot() const {
-  if (!IsAriaHidden())
-    return nullptr;
-  for (const AXObject* object = this; object; object = object->ParentObject()) {
-    if (object->AOMPropertyOrARIAAttributeIsTrue(AOMBooleanProperty::kHidden))
-      return object;
-  }
-
-  return nullptr;
+  return IsAriaHidden() ? FindAncestorWithAriaHidden(this) : nullptr;
 }
 
 const AXObject* AXObject::InertRoot() const {
@@ -3823,10 +3831,6 @@ bool AXObject::IsHiddenViaStyle() const {
 // https://github.com/w3c/accname/issues/57
 bool AXObject::IsHiddenForTextAlternativeCalculation(
     const AXObject* aria_label_or_description_root) const {
-  // aria-hidden=false allows hidden contents to be used in name from contents.
-  if (AOMPropertyOrARIAAttributeIsFalse(AOMBooleanProperty::kHidden))
-    return false;
-
   auto* node = GetNode();
   if (!node)
     return false;
@@ -3851,6 +3855,12 @@ bool AXObject::IsHiddenForTextAlternativeCalculation(
   if (IsA<SVGDescElement>(node))
     return false;
 
+  // Always contribute text nodes, because they don't have display-related
+  // properties of their own, only their parents do. Parents should have been
+  // checked for their contribution earlier in the process.
+  if (IsA<Text>(node))
+    return false;
+
   // Markers do not contribute to the accessible name.
   // TODO(accessibility): Chrome has never included markers, but that's
   // actually undefined behavior. We will have to revisit after this is
@@ -3864,8 +3874,28 @@ bool AXObject::IsHiddenForTextAlternativeCalculation(
   // are explicitly hidden or they inherited the hidden value, so we resort to
   // contributing them all. See also: https://github.com/w3c/accname/issues/57
   if (aria_label_or_description_root &&
-      aria_label_or_description_root->IsHiddenViaStyle())
+      !aria_label_or_description_root->IsVisible()) {
     return false;
+  }
+
+  // aria-hidden nodes are generally excluded, with the exception:
+  // when computing name/description through an aria-labelledby/describedby
+  // relation, if the target of the relation is hidden it will expose the entire
+  // subtree, including aria-hidden=true nodes. The exception was accounted in
+  // the previous if block, so we are safe to hide any node with
+  // aria-hidden=true at this point.
+  if (AOMPropertyOrARIAAttributeIsTrue(AOMBooleanProperty::kHidden)) {
+    // We only hide aria-hidden text if the node does not support focus as a
+    // bad authoring correction.
+    if (!CanSetFocusAttribute())
+      return true;
+  } else {
+    // When IsAriaHidden() returns false, we only know the node is not in an
+    // aria-hidden="true" subtree. We need to check for the case where
+    // aria-hidden="false" specifically.
+    if (AOMPropertyOrARIAAttributeIsFalse(AOMBooleanProperty::kHidden))
+      return false;
+  }
 
   return IsHiddenViaStyle();
 }
@@ -6647,6 +6677,9 @@ String AXObject::ToString(bool verbose, bool cached_values_only) const {
         }
       }
     }
+
+    if (!GetDocument())
+      string_builder = string_builder + " missingDocument";
 
     // Add properties of interest that often contribute to errors:
     if (HasARIAOwns(GetElement())) {

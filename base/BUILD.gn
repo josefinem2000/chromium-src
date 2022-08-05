@@ -190,10 +190,17 @@ mixed_component("base") {
     "allocator/allocator_check.h",
     "allocator/allocator_extension.cc",
     "allocator/allocator_extension.h",
+    "allocator/dispatcher/configuration.h",
     "allocator/dispatcher/dispatcher.cc",
     "allocator/dispatcher/dispatcher.h",
+    "allocator/dispatcher/initializer.h",
+    "allocator/dispatcher/internal/dispatch_data.cc",
+    "allocator/dispatcher/internal/dispatch_data.h",
+    "allocator/dispatcher/internal/dispatcher_internal.h",
+    "allocator/dispatcher/internal/tools.h",
     "allocator/dispatcher/reentry_guard.cc",
     "allocator/dispatcher/reentry_guard.h",
+    "allocator/dispatcher/subsystem.h",
     "as_const.h",
     "at_exit.cc",
     "at_exit.h",
@@ -535,6 +542,8 @@ mixed_component("base") {
     "pending_task.h",
     "pickle.cc",
     "pickle.h",
+    "power_monitor/battery_level_provider.cc",
+    "power_monitor/battery_level_provider.h",
     "power_monitor/moving_average.cc",
     "power_monitor/moving_average.h",
     "power_monitor/power_monitor.cc",
@@ -1499,6 +1508,7 @@ mixed_component("base") {
     ":logging_buildflags",
     ":orderfile_buildflags",
     ":parsing_buildflags",
+    ":power_monitor_buildflags",
     ":profiler_buildflags",
     ":sanitizer_buildflags",
     ":synchronization_buildflags",
@@ -2059,6 +2069,7 @@ mixed_component("base") {
       "files/file_enumerator_win.cc",
       "memory/platform_shared_memory_mapper_win.cc",
       "memory/platform_shared_memory_region_win.cc",
+      "power_monitor/battery_level_provider_win.cc",
       "power_monitor/power_monitor_device_source_win.cc",
       "power_monitor/speed_limit_observer_win.cc",
       "power_monitor/speed_limit_observer_win.h",
@@ -2116,6 +2127,7 @@ mixed_component("base") {
       "memory/platform_shared_memory_region_mac.cc",
       "message_loop/message_pump_kqueue.cc",
       "message_loop/message_pump_kqueue.h",
+      "power_monitor/battery_level_provider_mac.mm",
       "power_monitor/power_monitor_device_source_mac.mm",
       "power_monitor/thermal_state_observer_mac.h",
       "power_monitor/thermal_state_observer_mac.mm",
@@ -2634,6 +2646,14 @@ buildflag_header("profiler_buildflags") {
   ]
 }
 
+buildflag_header("power_monitor_buildflags") {
+  header = "power_monitor_buildflags.h"
+  header_dir = "base/power_monitor"
+  _has_battery_provider_impl = is_win || is_mac
+
+  flags = [ "HAS_BATTERY_LEVEL_PROVIDER_IMPL=$_has_battery_provider_impl" ]
+}
+
 # This is the subset of files from base that should not be used with a dynamic
 # library. Note that this library cannot depend on base because base depends on
 # base_static.
@@ -3030,6 +3050,13 @@ source_set("arm_bti_testfunctions") {
 
 test("base_unittests") {
   sources = [
+    "allocator/dispatcher/dispatcher_unittest.cc",
+    "allocator/dispatcher/initializer_unittest.cc",
+    "allocator/dispatcher/internal/dispatcher_internal_unittest.cc",
+    "allocator/dispatcher/testing/dispatcher_test.cc",
+    "allocator/dispatcher/testing/dispatcher_test.h",
+    "allocator/dispatcher/testing/observer_mock.h",
+    "allocator/dispatcher/testing/tools.h",
     "as_const_unittest.cc",
     "at_exit_unittest.cc",
     "atomicops_unittest.cc",
@@ -3189,6 +3216,7 @@ test("base_unittests") {
     "parameter_pack_unittest.cc",
     "path_service_unittest.cc",
     "pickle_unittest.cc",
+    "power_monitor/battery_level_provider_unittest.cc",
     "power_monitor/moving_average_unittest.cc",
     "power_monitor/power_monitor_device_source_unittest.cc",
     "power_monitor/power_monitor_unittest.cc",

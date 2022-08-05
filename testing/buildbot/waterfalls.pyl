@@ -2120,7 +2120,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -2154,7 +2154,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_beta_bots',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -2237,7 +2237,7 @@
           'mac_retina_amd_gpu_stable',
         ],
         'test_suites': {
-          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular_and_ci_only_validation',
+          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular',
           'gtest_tests': 'gpu_dawn_integration_gtests_passthrough',
           'isolated_scripts': 'gpu_dawn_isolated_scripts',
         },
@@ -2290,7 +2290,7 @@
           'mac_retina_amd_gpu_stable',
         ],
         'test_suites': {
-          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular_and_ci_only_validation',
+          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular',
           'gtest_tests': 'gpu_dawn_integration_gtests_passthrough',
           'isolated_scripts': 'gpu_dawn_isolated_scripts',
         },
@@ -2329,7 +2329,7 @@
           'win10_intel_hd_630_stable',
         ],
         'test_suites': {
-          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular_and_ci_only_validation',
+          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular',
           'gtest_tests': 'gpu_dawn_integration_gtests_passthrough_win_intel',
           'isolated_scripts': 'gpu_dawn_isolated_scripts_win',
         },
@@ -2353,7 +2353,7 @@
           'win10_intel_hd_630_stable',
         ],
         'test_suites': {
-          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular_and_ci_only_validation',
+          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular',
           'gtest_tests': 'gpu_dawn_integration_gtests_passthrough_win_intel',
           'isolated_scripts': 'gpu_dawn_isolated_scripts_win',
         },
@@ -2379,7 +2379,7 @@
           'win10_intel_hd_630_stable',
         ],
         'test_suites': {
-          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular_and_ci_only_validation',
+          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular',
           'gtest_tests': 'gpu_dawn_integration_gtests_passthrough_win_intel',
           'isolated_scripts': 'gpu_dawn_isolated_scripts_win',
         },
@@ -2403,7 +2403,7 @@
           'win10_intel_hd_630_stable',
         ],
         'test_suites': {
-          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular_and_ci_only_validation',
+          'gpu_telemetry_tests': 'gpu_dawn_telemetry_cts_regular',
           'gtest_tests': 'gpu_dawn_integration_gtests_passthrough_win_intel',
           'isolated_scripts': 'gpu_dawn_isolated_scripts_win',
         },
@@ -2771,7 +2771,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
       },
@@ -3262,7 +3262,7 @@
           'mac_12_arm64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3280,7 +3280,7 @@
           'mac_12_arm64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3293,7 +3293,7 @@
           'mac_12_arm64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3310,7 +3310,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3325,7 +3325,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3338,7 +3338,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3354,7 +3354,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ]
       },
@@ -3364,7 +3364,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3378,7 +3378,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3394,7 +3394,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_beta_bots',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -3415,7 +3415,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_beta_bots',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -5138,7 +5138,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -5155,7 +5155,7 @@
           'mac_12_arm64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -5171,7 +5171,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -5363,7 +5363,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {
@@ -5519,7 +5519,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
       },
@@ -5533,7 +5533,7 @@
           'mac_11_or_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
       },
@@ -5547,7 +5547,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
       },
@@ -5561,7 +5561,7 @@
           'mac_11_or_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
       },
@@ -6167,7 +6167,7 @@
           'mac_12_x64',
           'mac_toolchain',
           'out_dir_arg',
-          'xcode_13_main',
+          'xcode_14_main',
           'xctest',
         ],
         'test_suites': {

@@ -1543,7 +1543,12 @@ void WizardController::OnEnrollmentScreenExit(EnrollmentScreen::Result result) {
     case EnrollmentScreen::Result::BACK:
     case EnrollmentScreen::Result::SKIPPED_FOR_TESTS:
       PerformOOBECompletedActions();
-      ShowPackagedLicenseScreen();
+      if (prescribed_enrollment_config_.is_forced()) {
+        LOG(WARNING) << "User trying to skip enrollment screen";
+        ShowPackagedLicenseScreen();
+      } else {
+        ShowLoginScreen();
+      }
       break;
     case EnrollmentScreen::Result::TPM_ERROR:
       DCHECK(switches::IsTpmDynamic());
@@ -1761,7 +1766,7 @@ void WizardController::OnArcTermsOfServiceScreenExit(
     case ArcTermsOfServiceScreen::Result::BACK:
       DCHECK(demo_setup_controller_);
       DCHECK(StartupUtils::IsEulaAccepted());
-      ShowNetworkScreen();
+      ShowDemoModePreferencesScreen();
       break;
   }
 }
@@ -2009,7 +2014,7 @@ void WizardController::SetCurrentScreen(BaseScreen* new_current) {
   VLOG(1) << "SetCurrentScreen: "
           << (new_current ? new_current->screen_id().name : "null");
 
-  if (new_current && new_current->MaybeSkip(wizard_context_)) {
+  if (new_current && new_current->MaybeSkip(*wizard_context_)) {
     RecordUMAHistogramForOOBEStepShownStatus(new_current->screen_id(),
                                              ScreenShownStatus::kSkipped);
     return;
@@ -2344,7 +2349,7 @@ bool WizardController::IsZeroDelayEnabled() {
 void WizardController::SkipPostLoginScreensForTesting() {
   wizard_context_->skip_post_login_screens_for_tests = true;
   auto* current_screen = default_controller()->current_screen();
-  if (current_screen && !current_screen->MaybeSkip(wizard_context_)) {
+  if (current_screen && !current_screen->MaybeSkip(*wizard_context_)) {
     LOG(WARNING) << __func__ << ": Ignore screen "
                  << current_screen->screen_id().name;
   }

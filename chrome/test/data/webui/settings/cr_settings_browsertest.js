@@ -171,6 +171,28 @@ TEST_F(
     function() {
       runMochaSuite('TranslatePageMetricsBrowser');
     });
+var CrSettingsSpellCheckPageMetricsTest = class extends CrSettingsBrowserTest {
+  /** @override */
+  get browsePreload() {
+    return 'chrome://settings/test_loader.html?module=settings/spell_check_page_metrics_test_browser.js';
+  }
+};
+
+TEST_F('CrSettingsSpellCheckPageMetricsTest', 'SpellCheckMetrics', function() {
+  mocha.grep(spell_check_page_metrics_test_browser.TestNames.SpellCheckMetrics).run();
+});
+
+GEN('#if BUILDFLAG(GOOGLE_CHROME_BRANDING)');
+TEST_F('CrSettingsSpellCheckPageMetricsTest', 'SpellCheckMetricsOfficialBuild', function() {
+  mocha.grep(spell_check_page_metrics_test_browser.TestNames.SpellCheckMetricsOfficialBuild).run();
+});
+GEN('#endif');
+
+GEN('#if !BUILDFLAG(IS_MAC)');
+TEST_F('CrSettingsSpellCheckPageMetricsTest', 'SpellCheckMetricsNotMacOSx', function() {
+  mocha.grep(spell_check_page_metrics_test_browser.TestNames.SpellCheckMetricsNotMacOSx).run();
+});
+GEN('#endif');
 
 GEN('#endif  // !BUILDFLAG(IS_CHROMEOS_ASH)');
 
@@ -736,7 +758,6 @@ TEST_F('CrSettingsSiteDataDetailsSubpageTest', 'All', function() {
 });
 
 [['AppearanceFontsPage', 'appearance_fonts_page_test.js'],
- ['AppearancePage', 'appearance_page_test.js'],
  [
    'SettingsCategoryDefaultRadioGroup',
    'settings_category_default_radio_group_tests.js',
@@ -822,6 +843,8 @@ GEN('#if !BUILDFLAG(IS_CHROMEOS)');
 [['DefaultBrowser', 'default_browser_test.js'],
  ['ImportDataDialog', 'import_data_dialog_test.js'],
  ['SystemPage', 'system_page_tests.js'],
+ // TODO(crbug.com/1350019) Test is flaky on ChromeOS
+ ['AppearancePage', 'appearance_page_test.js'],
 ].forEach(test => registerTest(...test));
 GEN('#endif');
 

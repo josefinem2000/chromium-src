@@ -5837,6 +5837,13 @@
       'gpu_webgpu_integration_partial_backend_validation_isolated_scripts',
     ],
 
+    'gpu_dawn_telemetry_cts_regular': [
+      'gpu_dawn_telemetry_cts_tests',
+    ],
+
+    # TODO(crbug.com/1321877): Instead of having CI-only test suites, we should
+    # split CI and CQ configurations so we can make manual trybots that mirror the
+    # CI bots as well.
     'gpu_dawn_telemetry_cts_regular_and_ci_only_validation': [
       'gpu_dawn_telemetry_cts_tests',
       'gpu_dawn_telemetry_cts_tests_with_ci_only_validation',
@@ -6598,6 +6605,7 @@
       'ios_common_tests': {
         'variants': [
           'SIM_IPHONE_6S_15_2',
+          'SIM_IPHONE_8_16_0',
         ],
       },
       'ios_eg2_cq_tests': {
@@ -6606,6 +6614,9 @@
           'SIM_IPHONE_6S_15_2',
           'SIM_IPHONE_7_15_2',
           'SIM_IPAD_AIR_2_15_2',
+          'SIM_IPHONE_8_16_0',
+          'SIM_IPHONE_X_16_0',
+          'SIM_IPAD_AIR_3RD_GEN_16_0',
         ],
       },
       'ios_eg2_tests': {
@@ -6614,6 +6625,9 @@
           'SIM_IPHONE_7_15_2',
           'SIM_IPAD_AIR_2_15_2',
           'SIM_IPHONE_X_15_2',
+          'SIM_IPHONE_8_16_0',
+          'SIM_IPAD_AIR_3RD_GEN_16_0',
+          'SIM_IPHONE_X_16_0',
         ],
       },
       'ios_screen_size_dependent_tests': {
@@ -6622,6 +6636,10 @@
           'SIM_IPHONE_6S_15_2',
           'SIM_IPHONE_SE_1ST_GEN_15_2',
           'SIM_IPAD_AIR_2_15_2',
+          'SIM_IPHONE_8_PLUS_16_0',
+          'SIM_IPHONE_8_16_0',
+          'SIM_IPHONE_SE_3RD_GEN_16_0',
+          'SIM_IPAD_AIR_3RD_GEN_16_0',
         ],
       },
     },
@@ -6678,6 +6696,9 @@
           'SIM_IPHONE_7_15_2',
           'SIM_IPAD_AIR_2_15_2',
           'SIM_IPHONE_X_15_2',
+          'SIM_IPHONE_8_16_0',
+          'SIM_IPHONE_X_16_0',
+          'SIM_IPAD_AIR_3RD_GEN_16_0',
         ]
       },
       'ios_eg2_cq_tests': {
@@ -6685,6 +6706,8 @@
         'variants': [
           'SIM_IPHONE_7_15_2',
           'SIM_IPAD_AIR_2_15_2',
+          'SIM_IPHONE_8_16_0',
+          'SIM_IPAD_AIR_3RD_GEN_16_0',
         ]
       }
     },
@@ -6899,8 +6922,7 @@
     'lacros_skylab_arm64': {
       'lacros_skylab_arm64_tests': {
         'variants': [
-          'CROS_CHERRY64_RELEASE_LKGM',
-          'CROS_JACUZZI64_RELEASE_LKGM',
+          'CROS_HEROBRINE_RELEASE_LKGM',
         ]
       },
     },

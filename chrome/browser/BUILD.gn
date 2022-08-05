@@ -105,7 +105,7 @@ buildflag_header("buildflags") {
 
   # Android and ChromeOS don't support multiple browser processes, so they don't
   # employ ProcessSingleton.
-  if (is_android || is_chromeos_ash || is_chromeos_lacros) {
+  if (is_android || is_chromeos) {
     flags += [ "ENABLE_PROCESS_SINGLETON=0" ]
   } else {
     flags += [ "ENABLE_PROCESS_SINGLETON=1" ]
@@ -3932,8 +3932,6 @@ static_library("browser") {
       "metrics/first_web_contents_profiler_base.cc",
       "metrics/first_web_contents_profiler_base.h",
       "metrics/incognito_observer_desktop.cc",
-      "metrics/power/battery_level_provider.cc",
-      "metrics/power/battery_level_provider.h",
       "metrics/power/power_metrics.cc",
       "metrics/power/power_metrics.h",
       "metrics/power/power_metrics_constants.cc",
@@ -5172,6 +5170,7 @@ static_library("browser") {
       "//chrome/browser/ui/quick_answers",
       "//chrome/browser/ui/webui/chromeos/add_supervision:mojo_bindings",
       "//chrome/browser/ui/webui/chromeos/audio:mojo_bindings",
+      "//chrome/browser/ui/webui/chromeos/cloud_upload:mojo_bindings",
       "//chrome/browser/ui/webui/chromeos/crostini_installer:mojo_bindings",
       "//chrome/browser/ui/webui/chromeos/crostini_upgrader:mojo_bindings",
       "//chrome/browser/ui/webui/chromeos/emoji:mojo_bindings",
@@ -5289,6 +5288,7 @@ static_library("browser") {
       deps += [
         "//ash/webui/demo_mode_app_ui",
         "//ash/webui/demo_mode_app_ui/mojom",
+        "//ash/webui/facial_ml_app_ui",
         "//ash/webui/sample_system_web_app_ui",
         "//ash/webui/sample_system_web_app_ui/mojom:shared",
         "//ash/webui/sample_system_web_app_ui/mojom:trusted",
@@ -5834,7 +5834,6 @@ static_library("browser") {
       "metrics/google_update_metrics_provider_win.h",
       "metrics/jumplist_metrics_win.cc",
       "metrics/jumplist_metrics_win.h",
-      "metrics/power/battery_level_provider_win.cc",
       "metrics/tab_stats/tab_stats_tracker_delegate_win.cc",
       "metrics/tab_stats/tab_stats_tracker_win.cc",
       "net/chrome_mojo_proxy_resolver_win.cc",
@@ -6120,7 +6119,6 @@ static_library("browser") {
       "media_galleries/mac/mtp_device_delegate_impl_mac.mm",
       "memory_details_mac.cc",
       "metrics/chrome_browser_main_extra_parts_metrics_mac.mm",
-      "metrics/power/battery_level_provider_mac.mm",
       "metrics/power/coalition_resource_usage_provider_mac.h",
       "metrics/power/coalition_resource_usage_provider_mac.mm",
       "metrics/power/power_metrics_provider_mac.h",

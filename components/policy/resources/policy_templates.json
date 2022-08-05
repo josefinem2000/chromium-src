@@ -10377,7 +10377,7 @@
 
       From <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph> version 92, this policy is also supported in the headless mode.
 
-      Note: Blocking internal chrome://* URLs can lead to unexpected errors.''',
+      Note: Blocking internal chrome://* and chrome-untrusted://* URLs can lead to unexpected errors or may be circumvented in special cases. Instead of blocking certain internal URLs, see if there are more specific policies available. Common cases: Instead of blocking chrome://settings/certificates, use <ph name="CA_CERTIFICATE_MANAGEMENT_ALLOWED_POLICY_NAME">CACertificateManagementAllowed</ph>. Instead of blocking chrome-untrusted://crosh, use <ph name="SYSTEM_FEATURES_DISABLE_LIST_POLICY_NAME">SystemFeaturesDisableList</ph>.''',
       'arc_support': 'Android apps may voluntarily choose to honor this list. You cannot force them to honor it.',
     },
     {
@@ -11206,6 +11206,16 @@
         'dynamic_refresh': True,
         'per_profile': False,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable trust in certificates issued by Symantec Corporation Legacy PKI',
+        },
+        {
+          'value': False,
+          'caption': 'Disable trust in certificates issued by Symantec Corporation Legacy PKI',
+        },
+      ],
       'deprecated': True,
       'example_value': False,
       'id': 413,
@@ -11229,6 +11239,21 @@
         'dynamic_refresh': False,
         'per_profile': False,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Use the built-in certificate verifier',
+        },
+        {
+          'value': False,
+          'caption': 'Use the legacy platform certificate verifier',
+        },
+        {
+          'value': None,
+          'caption': 'Use any certificate verifier',
+        },
+      ],
+      'default': None,
       'example_value': False,
       'id': 575,
       'caption': '''Determines whether the built-in certificate verifier will be used to verify server certificates''',
@@ -11287,6 +11312,16 @@
         'dynamic_refresh': False,
         'per_profile': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Clear profile data on disk when user session ends',
+        },
+        {
+          'value': False,
+          'caption': 'Persist profile data on disk when user session ends',
+        },
+      ],
       'example_value': True,
       'id': 245,
       'caption': '''Ephemeral profile''',
@@ -11495,6 +11530,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device version info reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device version info reporting',
+        },
+      ],
       'example_value': False,
       'id': 119,
       'caption': '''Report OS and firmware version''',
@@ -11515,6 +11560,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device activity time reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device activity time reporting',
+        },
+      ],
       'example_value': False,
       'id': 120,
       'caption': '''Report device activity times''',
@@ -11590,6 +11645,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device boot mode reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device boot mode reporting',
+        },
+      ],
       'example_value': False,
       'id': 121,
       'caption': '''Report device boot mode''',
@@ -11610,13 +11675,25 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device location reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device location reporting',
+        },
+      ],
       'example_value': False,
       'id': 143,
       'caption': '''Report device location''',
       'tags': ['admin-sharing'],
       'desc': '''Report the geographic location of the device.
 
-      If the policy is not set, or set to false, the location will not be reported.''',
+      Setting the policy to Enabled has enrolled devices periodically report their location.
+
+      Setting the policy to Disabled or leaving it unset means enrolled devices don't report their location.''',
       'arc_support': 'This policy has no effect on the logging done by Android.',
     },
     {
@@ -11663,13 +11740,25 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device network interface reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device network interface reporting',
+        },
+      ],
       'example_value': False,
       'id': 224,
       'caption': '''Report device network interfaces''',
       'tags': ['admin-sharing'],
       'desc': '''This policy is deprecated in M96. Please use <ph name="REPORT_DEVICE_NETWORK_CONFIGURATION">ReportDeviceNetworkConfiguration</ph> and <ph name="REPORT_DEVICE_NETWORK_STATUS">ReportDeviceNetworkStatus</ph> instead.
 
-      Setting the policy to Enabled or leaving it unset has enrolled devices report the list of network interfaces with their types and hardware addresses. Setting the policy to Disabled means enrolled devices don't report the network interface.''',
+      Setting the policy to Enabled or leaving it unset has enrolled devices report the list of network interfaces with their types and hardware addresses.
+
+      Setting the policy to Disabled means enrolled devices don't report the network interface.''',
       'arc_support': 'This policy has no effect on the logging done by Android.',
     },
     {
@@ -11761,6 +11850,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device users reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device users reporting',
+        },
+      ],
       'example_value': False,
       'id': 248,
       'caption': '''Report device users''',
@@ -11782,13 +11881,25 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device hardware status reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device hardware status reporting',
+        },
+      ],
       'example_value': False,
       'id': 290,
       'caption': '''Report hardware status''',
       'tags': ['admin-sharing'],
       'desc': '''This policy is deprecated as of M96. Please use <ph name="REPORT_DEVICE_CPU_INFO">ReportDeviceCpuInfo</ph>, <ph name="REPORT_DEVICE_MEMORY_INFO">ReportDeviceMemoryInfo</ph>, <ph name="REPORT_DEVICE_STORAGE_STATUS">ReportDeviceStorageStatus</ph>, <ph name="REPORT_DEVICE_SECURITY_STATUS">ReportDeviceSecurityStatus</ph>, and <ph name="REPORT_DEVICE_AUDIO_STATUS">ReportDeviceAudioStatus</ph> instead.
 
-      Setting the policy to Enabled or leaving it unset has enrolled devices report hardware statistics such as CPU/RAM usage. Setting the policy to Disabled means enrolled devices don't report the hardware statistics.''',
+      Setting the policy to Enabled or leaving it unset has enrolled devices report hardware statistics such as CPU/RAM usage.
+
+      Setting the policy to Disabled means enrolled devices don't report the hardware statistics.''',
       'arc_support': 'This policy has no effect on the logging done by Android.',
     },
     {
@@ -11802,6 +11913,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device kiosk session reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device kiosk session reporting',
+        },
+      ],
       'example_value': False,
       'id': 291,
       'caption': '''Report information about active kiosk sessions''',
@@ -11854,6 +11975,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device graphics status reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device graphics status reporting',
+        },
+      ],
       'example_value': False,
       'id': 660,
       'caption': '''Report display and graphics statuses''',
@@ -11877,6 +12008,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device crash report information reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device crash report information reporting',
+        },
+      ],
       'example_value': False,
       'id': 665,
       'caption': '''Report information about crash reports.''',
@@ -11900,6 +12041,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device OS update status reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device OS update status reporting',
+        },
+      ],
       'example_value': False,
       'id': 602,
       'caption': '''Report OS update status''',
@@ -14060,7 +14211,7 @@
       'id': 807,
       'caption': '''Set the user experience of disabled features''',
       'tags': [],
-      'desc': '''Controls the user experience of disabled features listed in <ph name="SYSTEM_FEATURES_DISABLE_LIST">SystemFeaturesDisableList</ph>.
+      'desc': '''Controls the user experience of disabled features listed in <ph name="SYSTEM_FEATURES_DISABLE_LIST_POLICY_NAME">SystemFeaturesDisableList</ph>.
 
       If this policy is set to "blocked", the disabled features will become unusable but still visible to users.
 
@@ -22294,7 +22445,7 @@
       'owners': ['swapnilgupta@google.com', 'file://components/policy/resources/OWNERS'],
       'type': 'main',
       'schema': { 'type': 'boolean' },
-      'supported_on': ['chrome_os:85-'],
+      'supported_on': ['chrome_os:85-106'],
       'supported_chrome_os_management': ['google_cloud'],
       'features': {
         'dynamic_refresh': True,
@@ -25330,7 +25481,7 @@
 
           If this policy is set, the "Kerberos username" field shows the prefilled domain on the right. If the user enters their username it is going to be concatenated with the prefilled domain. If the user's input contains "@", the prefilled domain is not shown and does not affect the input.
 
-          If this policy is unset, no adittional information is shown and creating the ticket works as usual.''',
+          If this policy is unset, no additional information is shown and creating the ticket works as usual.''',
     },
     {
       'name': 'CommandLineFlagSecurityWarningsEnabled',

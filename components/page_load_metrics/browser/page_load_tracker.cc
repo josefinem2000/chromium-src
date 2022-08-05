@@ -806,14 +806,12 @@ void PageLoadTracker::OnTimingChanged() {
 
   const mojom::PaintTimingPtr& paint_timing =
       metrics_update_dispatcher_.timing().paint_timing;
-  largest_contentful_paint_handler_.RecordTiming(
+  largest_contentful_paint_handler_.RecordMainFrameTiming(
       *paint_timing->largest_contentful_paint,
-      paint_timing->first_input_or_scroll_notified_timestamp,
-      nullptr /* subframe_rfh */);
-  experimental_largest_contentful_paint_handler_.RecordTiming(
+      paint_timing->first_input_or_scroll_notified_timestamp);
+  experimental_largest_contentful_paint_handler_.RecordMainFrameTiming(
       *paint_timing->experimental_largest_contentful_paint,
-      paint_timing->first_input_or_scroll_notified_timestamp,
-      nullptr /* subframe_rfh */);
+      paint_timing->first_input_or_scroll_notified_timestamp);
 
   for (const auto& observer : observers_) {
     DispatchObserverTimingCallbacks(
@@ -834,12 +832,12 @@ void PageLoadTracker::OnSubFrameTimingChanged(
     const mojom::PageLoadTiming& timing) {
   DCHECK(rfh->GetParentOrOuterDocument());
   const mojom::PaintTimingPtr& paint_timing = timing.paint_timing;
-  largest_contentful_paint_handler_.RecordTiming(
+  largest_contentful_paint_handler_.RecordSubFrameTiming(
       *paint_timing->largest_contentful_paint,
-      paint_timing->first_input_or_scroll_notified_timestamp, rfh);
-  experimental_largest_contentful_paint_handler_.RecordTiming(
+      paint_timing->first_input_or_scroll_notified_timestamp, rfh, url_);
+  experimental_largest_contentful_paint_handler_.RecordSubFrameTiming(
       *paint_timing->experimental_largest_contentful_paint,
-      paint_timing->first_input_or_scroll_notified_timestamp, rfh);
+      paint_timing->first_input_or_scroll_notified_timestamp, rfh, url_);
   for (const auto& observer : observers_) {
     observer->OnTimingUpdate(rfh, timing);
   }

@@ -477,13 +477,21 @@ Cluster::Cluster(int64_t cluster_id,
                  const base::flat_map<std::u16string, ClusterKeywordData>&
                      keyword_to_data_map,
                  bool should_show_on_prominent_ui_surfaces,
-                 absl::optional<std::u16string> label)
+                 absl::optional<std::u16string> label,
+                 absl::optional<std::u16string> raw_label,
+                 query_parser::Snippet::MatchPositions label_match_positions,
+                 std::vector<std::string> related_searches,
+                 float search_match_score)
     : cluster_id(cluster_id),
       visits(visits),
       keyword_to_data_map(keyword_to_data_map),
       should_show_on_prominent_ui_surfaces(
           should_show_on_prominent_ui_surfaces),
-      label(label) {}
+      label(label),
+      raw_label(raw_label),
+      label_match_positions(label_match_positions),
+      related_searches(related_searches),
+      search_match_score(search_match_score) {}
 Cluster::Cluster(const Cluster&) = default;
 Cluster::Cluster(Cluster&&) = default;
 Cluster& Cluster::operator=(const Cluster&) = default;
@@ -497,22 +505,5 @@ std::vector<std::u16string> Cluster::GetKeywords() const {
   }
   return keywords;
 }
-
-ClusterRow::ClusterRow() = default;
-ClusterRow::ClusterRow(int64_t cluster_id) : cluster_id(cluster_id) {}
-ClusterRow::ClusterRow(const ClusterRow&) = default;
-ClusterRow& ClusterRow::operator=(const ClusterRow&) = default;
-ClusterRow::~ClusterRow() = default;
-
-ClusterIdsAndAnnotatedVisitsResult::ClusterIdsAndAnnotatedVisitsResult() =
-    default;
-ClusterIdsAndAnnotatedVisitsResult::ClusterIdsAndAnnotatedVisitsResult(
-    std::vector<int64_t> cluster_ids,
-    std::vector<AnnotatedVisit> annotated_visits)
-    : cluster_ids(cluster_ids), annotated_visits(annotated_visits) {}
-ClusterIdsAndAnnotatedVisitsResult::ClusterIdsAndAnnotatedVisitsResult(
-    const ClusterIdsAndAnnotatedVisitsResult&) = default;
-ClusterIdsAndAnnotatedVisitsResult::~ClusterIdsAndAnnotatedVisitsResult() =
-    default;
 
 }  // namespace history

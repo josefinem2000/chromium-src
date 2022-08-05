@@ -7,6 +7,7 @@ import("//third_party/closure_compiler/compile_js.gni")
 import("//tools/grit/grit_rule.gni")
 import("//tools/grit/preprocess_if_expr.gni")
 import("//tools/polymer/html_to_js.gni")
+import("//tools/polymer/html_to_wrapper.gni")
 import("//tools/typescript/ts_library.gni")
 import("//ui/webui/resources/tools/generate_grd.gni")
 import("//ui/webui/webui_features.gni")
@@ -23,7 +24,6 @@ preprocessed_ts_folder = "preprocessed_ts"
 web_components_manifest = "web_components_manifest.json"
 non_web_component_files_manifest = "non_web_component_files_manifest.json"
 browser_settings_tsc_manifest = "browser_settings_tsc_manifest.json"
-mojo_webui_manifest = "mojo_webui_manifest.json"
 external_mojo_manifest = "external_mojo_manifest.json"
 
 if (optimize_webui) {
@@ -47,7 +47,6 @@ if (optimize_webui) {
       ":build_ts",
       ":preprocess_browser_settings_tsc",
       ":preprocess_gen_js_files",
-      ":preprocess_mojo_webui",
       ":preprocess_src_js_files",
       "//chrome/browser/resources/nearby_share/shared:preprocess_v3",
       "//ui/webui/resources:preprocess",
@@ -107,8 +106,10 @@ ts_library("build_ts") {
   deps = [
     "//third_party/polymer/v3_0:library",
     "//ui/webui/resources:library",
+    "//ui/webui/resources/mojo:library",
   ]
   extra_deps = [
+    ":generate_mojom_webui",
     ":preprocess_gen_ts_files",
     ":preprocess_src_ts_files",
     "//ash/webui/common/resources:generate_definitions",
@@ -119,7 +120,7 @@ ts_library("build_ts") {
     "//tools/typescript/definitions/bluetooth_private.d.ts",
   ]
   root_dir = "$target_gen_dir/$preprocessed_ts_folder"
-  in_files = src_ts_files + gen_ts_files
+  in_files = src_ts_files + gen_ts_files + mojom_webui_files
   out_dir = "$target_gen_dir/$preprocessed_folder"
 }
 
@@ -132,10 +133,19 @@ preprocess_if_expr("preprocess_src_ts_files") {
 
 preprocess_if_expr("preprocess_gen_ts_files") {
   defines = chrome_grit_defines
-  deps = [ ":generate_web_components" ]
+  deps = [
+    ":generate_web_component_html_wrapper_files",
+    ":generate_web_components",
+  ]
   in_folder = get_path_info("../", "gen_dir")
   in_files = gen_ts_files
   out_folder = "$target_gen_dir/$preprocessed_ts_folder"
+}
+
+html_to_wrapper("generate_web_component_html_wrapper_files") {
+  in_folder = "../"
+  in_files = web_component_html_files
+  out_folder = get_path_info("../", "gen_dir")
 }
 
 # TODO(crbug/1315757) Transfer these JS files into ts_library() when
@@ -157,32 +167,21 @@ preprocess_if_expr("preprocess_gen_js_files") {
   in_files = pending_gen_js_files
 }
 
-# Preprocess all WebUI mojom files, which are bundled in optimized builds.
-preprocess_if_expr("preprocess_mojo_webui") {
-  deps = [
+# Generate all WebUI mojom files and copy them to preprocessed_ts_folder to be
+# input to ts_library(). These files are bundled in optimized builds.
+group("generate_mojom_webui") {
+  public_deps = [
     ":generate_ash_search_mojo_webui",
     ":generate_cros_audio_config_mojo_webui",
     ":generate_personalization_search_mojo_webui",
     ":generate_settings_mojo_webui",
-  ]
-  in_folder = "$target_gen_dir"
-  out_folder = "$target_gen_dir/$preprocessed_folder"
-  out_manifest = "$target_gen_dir/$mojo_webui_manifest"
-  in_files = [
-    "mojom-webui/routes.mojom-webui.js",
-    "mojom-webui/setting.mojom-webui.js",
-    "mojom-webui/search/search.mojom-webui.js",
-    "mojom-webui/search/search_result_icon.mojom-webui.js",
-    "mojom-webui/search/user_action_recorder.mojom-webui.js",
-    "mojom-webui/personalization/search.mojom-webui.js",
-    "mojom-webui/audio/cros_audio_config.mojom-webui.js",
   ]
 }
 
 copy("generate_cros_audio_config_mojo_webui") {
   deps = [ "//ash/components/audio/public/mojom:mojom_webui_js" ]
   sources = [ "$root_gen_dir/mojom-webui/ash/components/audio/public/mojom/cros_audio_config.mojom-webui.js" ]
-  outputs = [ "$target_gen_dir/mojom-webui/audio/{{source_file_part}}" ]
+  outputs = [ "$target_gen_dir/$preprocessed_ts_folder/mojom-webui/audio/{{source_file_part}}" ]
 }
 
 copy("generate_settings_mojo_webui") {
@@ -192,14 +191,15 @@ copy("generate_settings_mojo_webui") {
     "$root_gen_dir/mojom-webui/chrome/browser/ui/webui/settings/chromeos/constants/routes.mojom-webui.js",
     "$root_gen_dir/mojom-webui/chrome/browser/ui/webui/settings/chromeos/constants/setting.mojom-webui.js",
   ]
-  outputs = [ "$target_gen_dir/mojom-webui/{{source_file_part}}" ]
+  outputs = [
+    "$target_gen_dir/$preprocessed_ts_folder/mojom-webui/{{source_file_part}}",
+  ]
 }
 
 copy("generate_personalization_search_mojo_webui") {
   deps = [ "//ash/webui/personalization_app/search:mojo_bindings_webui_js" ]
   sources = [ "$root_gen_dir/mojom-webui/ash/webui/personalization_app/search/search.mojom-webui.js" ]
-  outputs =
-      [ "$target_gen_dir/mojom-webui/personalization/{{source_file_part}}" ]
+  outputs = [ "$target_gen_dir/$preprocessed_ts_folder/mojom-webui/personalization/{{source_file_part}}" ]
 }
 
 copy("generate_ash_search_mojo_webui") {
@@ -210,7 +210,7 @@ copy("generate_ash_search_mojo_webui") {
     "$root_gen_dir/mojom-webui/chrome/browser/ui/webui/settings/ash/search/search_result_icon.mojom-webui.js",
     "$root_gen_dir/mojom-webui/chrome/browser/ui/webui/settings/ash/search/user_action_recorder.mojom-webui.js",
   ]
-  outputs = [ "$target_gen_dir/mojom-webui/search/{{source_file_part}}" ]
+  outputs = [ "$target_gen_dir/$preprocessed_ts_folder/mojom-webui/search/{{source_file_part}}" ]
 }
 
 # Mojo files generated by non-OS-settings targets, not bundled.
@@ -341,7 +341,6 @@ generate_grd("build_grd") {
       ":build_ts",
       ":preprocess_browser_settings_tsc",
       ":preprocess_gen_js_files",
-      ":preprocess_mojo_webui",
       ":preprocess_src_js_files",
       "//chrome/browser/resources/nearby_share/shared:build_v3_grdp",
       "//ui/webui/resources/cr_components/app_management:build_ts",
@@ -351,7 +350,6 @@ generate_grd("build_grd") {
       "$target_gen_dir/$web_components_manifest",
       "$target_gen_dir/$non_web_component_files_manifest",
       "$target_gen_dir/$browser_settings_tsc_manifest",
-      "$target_gen_dir/$mojo_webui_manifest",
       "$target_gen_dir/build_ts.manifest",
     ]
     resource_path_rewrites += [ "chromeos/os_settings.html|os_settings.html" ]
@@ -412,6 +410,7 @@ preprocess_if_expr("preprocess_browser_settings_tsc") {
     "prefs/prefs_mixin.js",
     "prefs/prefs_types.js",
     "prefs/pref_util.js",
+    "privacy_page/autofill_assistant_browser_proxy.js",
     "privacy_page/privacy_page_browser_proxy.js",
     "relaunch_mixin.js",
     "setting_id_param_util.js",
@@ -453,7 +452,6 @@ group("generate_web_components") {
     "multidevice_page:web_components",
     "nearby_share_page:web_components",
     "os_a11y_page:web_components",
-    "os_about_page:web_components",
     "os_apps_page:web_components",
     "os_apps_page/app_management_page:web_components",
     "os_apps_page/app_management_page/borealis_page:web_components",

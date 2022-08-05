@@ -196,37 +196,8 @@ SkColor AshColorProvider::GetControlsLayerColor(ControlsLayerType type) const {
 }
 
 SkColor AshColorProvider::GetContentLayerColor(ContentLayerType type) const {
-  return GetContentLayerColorImpl(type, IsDarkModeEnabled());
-}
-
-SkColor AshColorProvider::GetActiveDialogTitleBarColor() const {
-  return cros_styles::ResolveColor(cros_styles::ColorName::kDialogTitleBarColor,
-                                   IsDarkModeEnabled());
-}
-
-SkColor AshColorProvider::GetInactiveDialogTitleBarColor() const {
-  // TODO(wenbojie): Use a different inactive color in future.
-  return GetActiveDialogTitleBarColor();
-}
-
-std::pair<SkColor, float> AshColorProvider::GetInkDropBaseColorAndOpacity(
-    SkColor background_color) const {
-  if (background_color == gfx::kPlaceholderColor)
-    background_color = GetBackgroundColor();
-
-  const bool is_dark = color_utils::IsDark(background_color);
-  const SkColor base_color = is_dark ? SK_ColorWHITE : SK_ColorBLACK;
-  const float opacity = is_dark ? kLightInkDropOpacity : kDarkInkDropOpacity;
-  return std::make_pair(base_color, opacity);
-}
-
-SkColor AshColorProvider::GetBackgroundColor() const {
-  return GetBackgroundThemedColorImpl(GetBackgroundDefaultColor(),
-                                      IsDarkModeEnabled());
-}
-
-SkColor AshColorProvider::GetContentLayerColorImpl(ContentLayerType type,
-                                                   bool use_dark_color) const {
+  bool use_dark_color = IsDarkModeEnabled();
+  auto* color_provider = GetColorProvider();
   switch (type) {
     case ContentLayerType::kSeparatorColor:
     case ContentLayerType::kShelfHandleColor:
@@ -257,15 +228,13 @@ SkColor AshColorProvider::GetContentLayerColorImpl(ContentLayerType type,
       return SkColorSetA(
           use_dark_color ? gfx::kGoogleBlue300 : gfx::kGoogleBlue600, 0x4C);
     case ContentLayerType::kSwitchTrackColorActive:
-      return GetSecondToneColor(GetContentLayerColorImpl(
-          ContentLayerType::kSwitchKnobColorActive, use_dark_color));
+      return color_provider->GetColor(kColorAshSwitchTrackColorActive);
     case ContentLayerType::kButtonLabelColorPrimary:
     case ContentLayerType::kButtonIconColorPrimary:
     case ContentLayerType::kBatteryBadgeColor:
       return use_dark_color ? gfx::kGoogleGrey900 : gfx::kGoogleGrey200;
     case ContentLayerType::kAppStateIndicatorColorInactive:
-      return GetDisabledColor(GetContentLayerColorImpl(
-          ContentLayerType::kAppStateIndicatorColor, use_dark_color));
+      return color_provider->GetColor(kColorAshAppStateIndicatorColorInactive);
     case ContentLayerType::kCurrentDeskColor:
       return use_dark_color ? SK_ColorWHITE : SK_ColorBLACK;
     case ContentLayerType::kSwitchAccessInnerStrokeColor:
@@ -276,6 +245,7 @@ SkColor AshColorProvider::GetContentLayerColorImpl(ContentLayerType type,
       return use_dark_color ? SkColorSetA(SK_ColorWHITE, 0x0D)
                             : SkColorSetA(SK_ColorBLACK, 0x14);
     case ContentLayerType::kAppStateIndicatorColor:
+      return color_provider->GetColor(kColorAshAppStateIndicatorColor);
     case ContentLayerType::kButtonIconColor:
     case ContentLayerType::kButtonLabelColor:
       return use_dark_color ? gfx::kGoogleGrey200 : gfx::kGoogleGrey900;
@@ -290,6 +260,32 @@ SkColor AshColorProvider::GetContentLayerColorImpl(ContentLayerType type,
     default:
       return ResolveColor(type, use_dark_color);
   }
+}
+
+SkColor AshColorProvider::GetActiveDialogTitleBarColor() const {
+  return cros_styles::ResolveColor(cros_styles::ColorName::kDialogTitleBarColor,
+                                   IsDarkModeEnabled());
+}
+
+SkColor AshColorProvider::GetInactiveDialogTitleBarColor() const {
+  // TODO(wenbojie): Use a different inactive color in future.
+  return GetActiveDialogTitleBarColor();
+}
+
+std::pair<SkColor, float> AshColorProvider::GetInkDropBaseColorAndOpacity(
+    SkColor background_color) const {
+  if (background_color == gfx::kPlaceholderColor)
+    background_color = GetBackgroundColor();
+
+  const bool is_dark = color_utils::IsDark(background_color);
+  const SkColor base_color = is_dark ? SK_ColorWHITE : SK_ColorBLACK;
+  const float opacity = is_dark ? kLightInkDropOpacity : kDarkInkDropOpacity;
+  return std::make_pair(base_color, opacity);
+}
+
+SkColor AshColorProvider::GetBackgroundColor() const {
+  return GetBackgroundThemedColorImpl(GetBackgroundDefaultColor(),
+                                      IsDarkModeEnabled());
 }
 
 SkColor AshColorProvider::GetBackgroundDefaultColor() const {

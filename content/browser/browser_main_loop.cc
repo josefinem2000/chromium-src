@@ -72,8 +72,8 @@
 #include "content/browser/gpu/browser_gpu_client_delegate.h"
 #include "content/browser/gpu/compositor_util.h"
 #include "content/browser/gpu/gpu_data_manager_impl.h"
+#include "content/browser/gpu/gpu_disk_cache_factory.h"
 #include "content/browser/gpu/gpu_process_host.h"
-#include "content/browser/gpu/shader_cache_factory.h"
 #include "content/browser/media/media_internals.h"
 #include "content/browser/media/media_keys_listener_manager_impl.h"
 #include "content/browser/metrics/histogram_synchronizer.h"
@@ -1237,10 +1237,10 @@ void BrowserMainLoop::PostCreateThreadsImpl() {
     cc::SetClientNameForMetrics("Browser");
   }
 
-  // Initialize the GPU shader cache. This needs to be initialized before
+  // Initialize the GPU cache. This needs to be initialized before
   // BrowserGpuChannelHostFactory below, since that depends on an initialized
-  // ShaderCacheFactory.
-  InitShaderCacheFactorySingleton();
+  // GpuDiskCacheFactory.
+  InitGpuDiskCacheFactorySingleton();
 
   // Initialize the FontRenderParams. This needs to be initialized before gpu
   // process initialization below.
