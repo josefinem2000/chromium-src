@@ -144,7 +144,6 @@ class PageHandler : public DevToolsDomainHandler,
       Maybe<bool> from_surface,
       Maybe<bool> capture_beyond_viewport,
       std::unique_ptr<CaptureScreenshotCallback> callback) override;
-
   void CaptureSnapshot(
       Maybe<std::string> format,
       std::unique_ptr<CaptureSnapshotCallback> callback) override;
@@ -209,8 +208,6 @@ class PageHandler : public DevToolsDomainHandler,
   void ScreencastFrameEncoded(
       std::unique_ptr<Page::ScreencastFrameMetadata> metadata,
       const protocol::Binary& data);
-
-
 
   void ScreenshotCaptured(
       std::unique_ptr<CaptureScreenshotCallback> callback,

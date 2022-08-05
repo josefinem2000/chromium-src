@@ -807,7 +807,6 @@ void PageHandler::CaptureScreenshot(
   }
 }
 
-
 void PageHandler::CaptureScreenshotBeyondViewport(
     RenderWidgetHostImpl* widget_host,
     std::string screenshot_format,
