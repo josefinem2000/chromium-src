@@ -144,20 +144,7 @@ class PageHandler : public DevToolsDomainHandler,
       Maybe<bool> from_surface,
       Maybe<bool> capture_beyond_viewport,
       std::unique_ptr<CaptureScreenshotCallback> callback) override;
-  // clip & widget_host should live for the entirety of this method
-  void CaptureScreenshotBeyondViewport(
-      RenderWidgetHostImpl* widget_host,
-      std::string screenshot_format,
-      int screenshot_quality,
-      Maybe<Page::Viewport> clip,
-      std::unique_ptr<CaptureScreenshotCallback> callback);
-  // clip & widget_host should live for the entirety of this method
-  void CaptureScreenshotWithinViewport(
-      RenderWidgetHostImpl* widget_host,
-      std::string screenshot_format,
-      int screenshot_quality,
-      Maybe<Page::Viewport> clip,
-      std::unique_ptr<CaptureScreenshotCallback> callback);
+
   void CaptureSnapshot(
       Maybe<std::string> format,
       std::unique_ptr<CaptureSnapshotCallback> callback) override;
@@ -198,6 +185,21 @@ class PageHandler : public DevToolsDomainHandler,
  private:
   enum EncodingFormat { PNG, JPEG };
 
+  // clip & widget_host should live for the entirety of this method
+  void CaptureScreenshotBeyondViewport(
+      RenderWidgetHostImpl* widget_host,
+      std::string screenshot_format,
+      int screenshot_quality,
+      Maybe<Page::Viewport> clip,
+      std::unique_ptr<CaptureScreenshotCallback> callback);
+  // clip & widget_host should live for the entirety of this method
+  void CaptureScreenshotWithinViewport(
+      RenderWidgetHostImpl* widget_host,
+      std::string screenshot_format,
+      int screenshot_quality,
+      Maybe<Page::Viewport> clip,
+      std::unique_ptr<CaptureScreenshotCallback> callback);
+
   bool ShouldCaptureNextScreencastFrame();
   void NotifyScreencastVisibility(bool visible);
   void OnFrameFromVideoConsumer(scoped_refptr<media::VideoFrame> frame);
@@ -207,6 +209,8 @@ class PageHandler : public DevToolsDomainHandler,
   void ScreencastFrameEncoded(
       std::unique_ptr<Page::ScreencastFrameMetadata> metadata,
       const protocol::Binary& data);
+
+
 
   void ScreenshotCaptured(
       std::unique_ptr<CaptureScreenshotCallback> callback,
