@@ -878,17 +878,17 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   host_->render_view_host()->GetDelegate()->SetWebPreferences(
       modified_web_prefs);
 
-  {
-    // TODO(crbug.com/1141835): Remove the bug is fixed.
-    // Walkaround for the bug. Emulated `view_size` has to be set twice,
-    // otherwise the scrollbar will be on the screenshot present.
-    blink::DeviceEmulationParams tmp_params = modified_params;
-    tmp_params.view_size = gfx::Size(1, 1);
-    emulation_handler_->SetDeviceEmulationParams(tmp_params);
-  }
+  // {
+  //   // TODO(crbug.com/1141835): Remove the bug is fixed.
+  //   // Walkaround for the bug. Emulated `view_size` has to be set twice,
+  //   // otherwise the scrollbar will be on the screenshot present.
+  //   blink::DeviceEmulationParams tmp_params = modified_params;
+  //   tmp_params.view_size = gfx::Size(1, 1);
+  //   emulation_handler_->SetDeviceEmulationParams(tmp_params);
+  // }
 
-  // We use DeviceEmulationParams to either emulate, set viewport or both.
-  emulation_handler_->SetDeviceEmulationParams(modified_params);
+  // // We use DeviceEmulationParams to either emulate, set viewport or both.
+  // emulation_handler_->SetDeviceEmulationParams(modified_params);
 
   // Set view size for the screenshot right after emulating.
   if (clip.isJust()) {
