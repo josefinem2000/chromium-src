@@ -918,8 +918,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
       base::BindOnce(&PageHandler::ScreenshotCaptured,
                      weak_factory_.GetWeakPtr(), std::move(callback),
                      screenshot_format, screenshot_quality, original_view_size,
-                     requested_image_size, original_params,
-                     original_web_prefs),
+                     requested_image_size, original_params, original_web_prefs),
       true);
 }
 
