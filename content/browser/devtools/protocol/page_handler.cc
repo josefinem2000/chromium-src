@@ -822,10 +822,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
 
   // Capture original view size if we know we are going to destroy it. We use
   // it in ScreenshotCaptured to restore.
-  gfx::Size original_view_size =
-      emulation_enabled || clip.isJust()
-          ? widget_host->GetView()->GetViewBounds().size()
-          : gfx::Size();
+  gfx::Size original_view_size = widget_host->GetView()->GetViewBounds().size();
   gfx::Size emulated_view_size = modified_params.view_size;
 
   double dpfactor = 1;
@@ -870,10 +867,8 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   }
 
   // set web preferences for beyond viewport
-  absl::optional<blink::web_pref::WebPreferences> maybe_original_web_prefs;
-  blink::web_pref::WebPreferences original_web_prefs  // should we delete this
+  blink::web_pref::WebPreferences original_web_prefs
       = host_->render_view_host()->GetDelegate()->GetOrCreateWebPreferences();
-  maybe_original_web_prefs = original_web_prefs;  // should we delete this?
 
   blink::web_pref::WebPreferences modified_web_prefs = original_web_prefs;
   // Hiding scrollbar is needed to avoid scrollbar artefacts on the
@@ -924,7 +919,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
                      weak_factory_.GetWeakPtr(), std::move(callback),
                      screenshot_format, screenshot_quality, original_view_size,
                      requested_image_size, original_params,
-                     maybe_original_web_prefs),
+                     original_web_prefs),
       true);
 }
 
