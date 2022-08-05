@@ -867,8 +867,8 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   }
 
   // set web preferences for beyond viewport
-  blink::web_pref::WebPreferences original_web_prefs
-      = host_->render_view_host()->GetDelegate()->GetOrCreateWebPreferences();
+  blink::web_pref::WebPreferences original_web_prefs =
+      host_->render_view_host()->GetDelegate()->GetOrCreateWebPreferences();
 
   blink::web_pref::WebPreferences modified_web_prefs = original_web_prefs;
   // Hiding scrollbar is needed to avoid scrollbar artefacts on the
