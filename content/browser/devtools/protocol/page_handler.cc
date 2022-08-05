@@ -822,10 +822,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
 
   // Capture original view size if we know we are going to destroy it. We use
   // it in ScreenshotCaptured to restore.
-  gfx::Size original_view_size =
-      emulation_enabled || clip.isJust()
-          ? widget_host->GetView()->GetViewBounds().size()
-          : gfx::Size();
+  gfx::Size original_view_size = widget_host->GetView()->GetViewBounds().size();
   gfx::Size emulated_view_size = modified_params.view_size;
 
   double dpfactor = 1;
