@@ -831,16 +831,16 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     // When emulating, emulate again and scale to make resulting image match
     // physical DP resolution. If view_size is not overriden, use actual view
     // size.
-    float original_scale =
-        original_params.scale > 0 ? original_params.scale : 1;
-    if (!modified_params.view_size.width()) {
-      emulated_view_size.set_width(
-          ceil(original_view_size.width() / original_scale));
-    }
-    if (!modified_params.view_size.height()) {
-      emulated_view_size.set_height(
-          ceil(original_view_size.height() / original_scale));
-    }
+    // float original_scale =
+    //     original_params.scale > 0 ? original_params.scale : 1;
+    // if (!modified_params.view_size.width()) {
+    //   emulated_view_size.set_width(
+    //       ceil(original_view_size.width() / original_scale));
+    // }
+    // if (!modified_params.view_size.height()) {
+    //   emulated_view_size.set_height(
+    //       ceil(original_view_size.height() / original_scale));
+    // }
 
     dpfactor = modified_params.device_scale_factor
                    ? modified_params.device_scale_factor /
@@ -852,7 +852,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     modified_params.view_size = emulated_view_size;
   } else if (clip.isJust()) {
     // When not emulating, still need to emulate the page size.
-    modified_params.view_size = original_view_size;
+    // modified_params.view_size = original_view_size;
     modified_params.screen_size = gfx::Size();
     modified_params.device_scale_factor = 0;
     modified_params.scale = 1;
@@ -901,13 +901,13 @@ void PageHandler::CaptureScreenshotBeyondViewport(
         gfx::ScaleToFlooredSize(emulated_view_size, dpfactor));
   }
   gfx::Size requested_image_size = gfx::Size();
+  if (clip.isJust()) {
+    requested_image_size =
+        gfx::Size(clip.fromJust()->GetWidth(), clip.fromJust()->GetHeight());
+  } else if (emulation_enabled) {
+    requested_image_size = emulated_view_size;
+  }
   if (emulation_enabled || clip.isJust()) {
-    if (clip.isJust()) {
-      requested_image_size =
-          gfx::Size(clip.fromJust()->GetWidth(), clip.fromJust()->GetHeight());
-    } else {
-      requested_image_size = emulated_view_size;
-    }
     double scale = widget_host_device_scale_factor * dpfactor;
     if (clip.isJust())
       scale *= clip.fromJust()->GetScale();
