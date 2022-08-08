@@ -100,6 +100,7 @@
 <translation id="1455242230282523554">แสดงการตั้งค่าภาษา</translation>
 <translation id="1460620680449458626">ระดับเสียงปิดเสียงอยู่</translation>
 <translation id="1467432559032391204">ซ้าย</translation>
+<translation id="146902737843070955">ผู้ดูแลระบบขอให้ทำการเปลี่ยนแปลงนี้</translation>
 <translation id="147310119694673958">แบตเตอรี่โทรศัพท์ <ph name="BATTERY_PERCENTAGE" />%</translation>
 <translation id="1479909375538722835">เมนูการช่วยเหลือพิเศษแบบลอย</translation>
 <translation id="1480845547124508962"><ph name="CURRENT_TIME" /> กดปุ่ม Enter เพื่อเปิดมุมมองปฏิทิน</translation>
@@ -470,10 +471,10 @@
 <translation id="3708186454126126312">อุปกรณ์ที่เคยเชื่อมต่อ</translation>
 <translation id="371370241367527062">ไมโครโฟนด้านหน้า</translation>
 <translation id="3713734891607377840">เปิดเมื่อดาวน์โหลดเสร็จ</translation>
+<translation id="3724279623330129812">ซูมอัตโนมัติให้อยู่ตรงกลางกล้อง</translation>
 <translation id="3726171378575546917"><ph name="UNAVAILABLE_APPS_ONE" />, <ph name="UNAVAILABLE_APPS_TWO" /> และอีก<ph name="UNAVAILABLE_APPS_COUNT" /> แอปไม่ได้อยู่ในอุปกรณ์</translation>
 <translation id="3735740477244556633">จัดเรียงตาม</translation>
 <translation id="3742055079367172538">ภาพหน้าจอที่บันทึก</translation>
-<translation id="3761848338953536304">ผู้ดูแลระบบขอให้คุณปิดการตั้งค่าการล็อกซิม</translation>
 <translation id="3765841986579723851">แก้ไขวันนี้</translation>
 <translation id="3771549900096082774">โหมดคอนทราสต์สูง</translation>
 <translation id="3773700760453577392">ผู้ดูแลระบบไม่อนุญาตให้ <ph name="USER_EMAIL" /> ลงชื่อเข้าสู่ระบบพร้อมกันหลายบัญชี ผู้ใช้ทุกคนต้องออกจากระบบเพื่อดำเนินการต่อ</translation>
@@ -761,6 +762,16 @@
 <translation id="5393156353051693207">แตะที่ใดก็ได้ค้างไว้เพื่อเรียงลำดับแอปใหม่</translation>
 <translation id="5395308026110844773"><ph name="DRAGGED_APP_NAME" /> อยู่เหนือ <ph name="IN_PLACE_APP" /> ปล่อยเพื่อสร้างโฟลเดอร์</translation>
 <translation id="5397578532367286026">การใช้งานและประวัติของผู้ใช้รายนี้อาจถูกตรวจสอบโดยผู้จัดการ (<ph name="MANAGER_EMAIL" />) บน chrome.com</translation>
+<translation id="5399673806694250334">ถาดสถานะ เวลา <ph name="TIME" />,
+        <ph name="BATTERY" />
+        <ph name="CHANNEL" />
+        <ph name="NETWORK" />,
+        <ph name="MIC" />,
+        <ph name="CAMERA" />,
+        <ph name="MANAGED" />
+        <ph name="NOTIFICATION" />,
+        <ph name="IME" />
+        <ph name="LOCALE" /></translation>
 <translation id="5400461572260843123">การตั้งค่าด่วน กด "ค้นหา" + ลูกศรซ้าย เพื่อเข้าถึงศูนย์การแจ้งเตือน</translation>
 <translation id="5426063383988017631">เมนูการตั้งค่าปิดแล้ว</translation>
 <translation id="5428899915242071344">เริ่มเลือก</translation>
@@ -827,6 +838,7 @@
 <translation id="5779721926447984944">ไฟล์ที่ปักหมุดไว้</translation>
 <translation id="5788127256798019331">ไฟล์ Play</translation>
 <translation id="5790085346892983794">สำเร็จ</translation>
+<translation id="5804651031882187592">ปิดการตั้งค่า "ล็อกซิม"</translation>
 <translation id="5805809050170488595">คลิกเพื่อเปิดใช้ <ph name="NETWORK_NAME" /></translation>
 <translation id="5825969630400862129">การตั้งค่าอุปกรณ์ที่เชื่อมต่อ</translation>
 <translation id="5837036133683224804">หยุด <ph name="ROUTE_TITLE" /> ใน<ph name="RECEIVER_NAME" /></translation>
@@ -859,7 +871,6 @@
 <translation id="598407983968395253">ใช้เทมเพลต</translation>
 <translation id="598882571027504733">หากต้องการรับอัปเดต ให้รีสตาร์ท Chromebook ในขณะที่ยังเชื่อมต่อกับแป้นพิมพ์</translation>
 <translation id="5992218262414051481">เปิดใช้โหมดคอนทราสต์สูงอยู่ กด Ctrl+Search+H อีกครั้งเพื่อสลับเป็นปิด</translation>
-<translation id="6009656393242168182">ปิดใช้การตั้งค่าการล็อกซิม</translation>
 <translation id="6012623610530968780">หน้า <ph name="SELECTED_PAGE" /> จาก <ph name="TOTAL_PAGE_NUM" /></translation>
 <translation id="6018164090099858612">กำลังออกจากโหมดมิเรอร์</translation>
 <translation id="602001110135236999">เลื่อนไปทางซ้าย</translation>
@@ -899,6 +910,7 @@
 <translation id="619279033188484792">ดูรูปภาพ สื่อ และการแจ้งเตือนล่าสุดของโทรศัพท์ใน <ph name="DEVICE_TYPE" /></translation>
 <translation id="619335566042889110">ชาร์จจนเต็มเลย</translation>
 <translation id="6193431488227440296">กำลังพัฒนา</translation>
+<translation id="6210042900243040400">เชื่อมต่อ <ph name="NAME" /> ที่บันทึกไว้ก่อนหน้านี้ใน <ph name="EMAIL" /></translation>
 <translation id="6220928844947387476">ตอนนี้สามารถบันทึกตัวคุณเองไปพร้อมกับหน้าจอได้แล้ว</translation>
 <translation id="622484624075952240">ลง</translation>
 <translation id="6231419273573514727">อุปกรณ์ต่อพ่วงอาจมีประสิทธิภาพจำกัด</translation>

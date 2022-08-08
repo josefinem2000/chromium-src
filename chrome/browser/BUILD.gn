@@ -1665,8 +1665,6 @@ static_library("browser") {
     "signin/header_modification_delegate_impl.h",
     "signin/identity_manager_factory.cc",
     "signin/identity_manager_factory.h",
-    "signin/investigator_dependency_provider.cc",
-    "signin/investigator_dependency_provider.h",
     "signin/primary_account_policy_manager.cc",
     "signin/primary_account_policy_manager.h",
     "signin/primary_account_policy_manager_factory.cc",
@@ -2226,7 +2224,6 @@ static_library("browser") {
     "//components/reporting/storage:storage_uploader_interface",
     "//components/reporting/storage_selector",
     "//components/reporting/util:backoff_settings",
-    "//components/reporting/util:shared_queue",
     "//components/reporting/util:status",
     "//components/reporting/util:status_macros",
     "//components/reporting/util:status_proto",
@@ -5149,7 +5146,6 @@ static_library("browser") {
       "//chrome/browser/ash/system_extensions/api/window_management",
       "//chrome/browser/ash/system_web_apps",
       "//chrome/browser/chromeos",
-      "//chrome/browser/chromeos/extensions/telemetry",
       "//chrome/browser/enterprise/connectors/device_trust/attestation/ash",
       "//chrome/browser/nearby_sharing:share_target",
       "//chrome/browser/nearby_sharing/certificates",
@@ -5182,7 +5178,6 @@ static_library("browser") {
       "//chrome/browser/ui/webui/nearby_share/public/mojom",
       "//chrome/browser/ui/webui/settings/ash/os_apps_page/mojom",
       "//chrome/browser/ui/webui/settings/ash/search:mojo_bindings",
-      "//chrome/common/chromeos/extensions",
       "//chrome/services/sharing/public/cpp",
       "//chrome/services/sharing/public/proto",
       "//chrome/services/speech:lib",
@@ -5191,12 +5186,14 @@ static_library("browser") {
       "//chromeos/ash/components/dbus/attestation:attestation_proto",
       "//chromeos/ash/components/dbus/concierge",
       "//chromeos/ash/components/dbus/cros_disks",
+      "//chromeos/ash/components/dbus/cryptohome",
       "//chromeos/ash/components/dbus/image_loader",
       "//chromeos/ash/components/dbus/session_manager",
       "//chromeos/ash/components/dbus/update_engine",
       "//chromeos/ash/components/dbus/userdataauth:userdataauth",
       "//chromeos/ash/components/dbus/userdataauth:userdataauth_proto",
       "//chromeos/ash/components/feature_usage",
+      "//chromeos/ash/components/install_attributes",
       "//chromeos/ash/components/local_search_service",
       "//chromeos/ash/components/local_search_service/public/cpp",
       "//chromeos/ash/components/local_search_service/public/mojom",
@@ -5213,7 +5210,6 @@ static_library("browser") {
       "//chromeos/crosapi/cpp:crosapi_constants",
       "//chromeos/crosapi/mojom",
       "//chromeos/dbus",
-      "//chromeos/dbus/cryptohome",
       "//chromeos/dbus/tpm_manager",
       "//chromeos/dbus/tpm_manager:tpm_manager_proto",
       "//chromeos/login/login_state",
@@ -5523,6 +5519,8 @@ static_library("browser") {
       "lacros/snap_controller_lacros.h",
       "lacros/standalone_browser_test_controller.cc",
       "lacros/standalone_browser_test_controller.h",
+      "lacros/sync/sync_crosapi_manager_lacros.cc",
+      "lacros/sync/sync_crosapi_manager_lacros.h",
       "lacros/sync/sync_explicit_passphrase_client_lacros.cc",
       "lacros/sync/sync_explicit_passphrase_client_lacros.h",
       "lacros/sync/sync_user_settings_client_lacros.cc",
@@ -5732,11 +5730,13 @@ static_library("browser") {
     ]
     deps += [
       "//ash/webui/projector_app/public/cpp",
+      "//chrome/browser/chromeos/extensions/telemetry",
       "//chrome/browser/metrics/structured",
       "//chrome/browser/policy:onc",
       "//chrome/browser/ui/quick_answers",
       "//chrome/browser/ui/webui/settings/chromeos/constants:mojom",
       "//chrome/browser/webshare:storage",
+      "//chrome/common/chromeos/extensions",
       "//chromeos/components/cdm_factory_daemon:cdm_factory_daemon_browser",
       "//chromeos/components/disks:prefs",
       "//chromeos/components/onc:onc",
@@ -6087,8 +6087,6 @@ static_library("browser") {
       "mac/auth_session_request.mm",
       "mac/bluetooth_utility.h",
       "mac/bluetooth_utility.mm",
-      "mac/chrome_browser_main_extra_parts_mac.h",
-      "mac/chrome_browser_main_extra_parts_mac.mm",
       "mac/dock.h",
       "mac/dock.mm",
       "mac/exception_processor.h",
@@ -7325,8 +7323,7 @@ static_library("browser") {
     ]
   }
 
-  # TODO(crbug.com/1306610): Split out files that only need `enable_plugins`.
-  if (enable_ppapi) {
+  if (enable_plugins) {
     sources += [
       "plugins/chrome_content_browser_client_plugins_part.cc",
       "plugins/chrome_content_browser_client_plugins_part.h",
@@ -7358,16 +7355,23 @@ static_library("browser") {
       "plugins/plugin_utils.h",
       "plugins/reload_plugin_infobar_delegate.cc",
       "plugins/reload_plugin_infobar_delegate.h",
+    ]
+    deps += [
+      "//media:media_buildflags",
+      "//services/network/public/mojom",
+    ]
+  }
+
+  if (enable_ppapi) {
+    sources += [
       "renderer_host/pepper/chrome_browser_pepper_host_factory.cc",
       "renderer_host/pepper/chrome_browser_pepper_host_factory.h",
       "renderer_host/pepper/pepper_isolated_file_system_message_filter.cc",
       "renderer_host/pepper/pepper_isolated_file_system_message_filter.h",
     ]
     deps += [
-      "//media:media_buildflags",
       "//ppapi/host",
       "//ppapi/proxy:ipc",
-      "//services/network/public/mojom",
     ]
     if (is_chromeos_ash) {
       deps += [ "//ash/components/cryptohome" ]

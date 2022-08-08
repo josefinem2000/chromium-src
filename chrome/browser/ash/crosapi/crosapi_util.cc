@@ -8,7 +8,6 @@
 
 #include "ash/components/arc/arc_util.h"
 #include "ash/components/settings/cros_settings_provider.h"
-#include "ash/components/tpm/install_attributes.h"
 #include "ash/constants/ash_features.h"
 #include "ash/constants/ash_pref_names.h"
 #include "ash/constants/ash_switches.h"
@@ -33,9 +32,11 @@
 #include "chrome/browser/speech/tts_crosapi_util.h"
 #include "chrome/browser/ui/webui/chrome_web_ui_controller_factory.h"
 #include "chrome/browser/web_applications/web_app_utils.h"
+#include "chromeos/ash/components/install_attributes/install_attributes.h"
 #include "chromeos/components/cdm_factory_daemon/mojom/browser_cdm_factory.mojom.h"
 #include "chromeos/components/remote_apps/mojom/remote_apps.mojom.h"
 #include "chromeos/components/sensors/mojom/cros_sensor_service.mojom.h"
+#include "chromeos/constants/chromeos_features.h"
 #include "chromeos/constants/devicetype.h"
 #include "chromeos/crosapi/cpp/crosapi_constants.h"
 #include "chromeos/crosapi/mojom/app_service.mojom.h"
@@ -91,6 +92,7 @@
 #include "chromeos/crosapi/mojom/power.mojom.h"
 #include "chromeos/crosapi/mojom/prefs.mojom.h"
 #include "chromeos/crosapi/mojom/printing_metrics.mojom.h"
+#include "chromeos/crosapi/mojom/probe_service.mojom.h"
 #include "chromeos/crosapi/mojom/remoting.mojom.h"
 #include "chromeos/crosapi/mojom/screen_manager.mojom.h"
 #include "chromeos/crosapi/mojom/sharesheet.mojom.h"
@@ -238,7 +240,7 @@ constexpr InterfaceVersionEntry MakeInterfaceVersionEntry() {
   return {T::Uuid_, T::Version_};
 }
 
-static_assert(crosapi::mojom::Crosapi::Version_ == 92,
+static_assert(crosapi::mojom::Crosapi::Version_ == 93,
               "If you add a new crosapi, please add it to "
               "kInterfaceVersionEntries below.");
 
@@ -309,6 +311,7 @@ constexpr InterfaceVersionEntry kInterfaceVersionEntries[] = {
     MakeInterfaceVersionEntry<crosapi::mojom::Power>(),
     MakeInterfaceVersionEntry<crosapi::mojom::Prefs>(),
     MakeInterfaceVersionEntry<crosapi::mojom::PrintingMetrics>(),
+    MakeInterfaceVersionEntry<crosapi::mojom::TelemetryProbeService>(),
     MakeInterfaceVersionEntry<crosapi::mojom::Remoting>(),
     MakeInterfaceVersionEntry<crosapi::mojom::ResourceManager>(),
     MakeInterfaceVersionEntry<crosapi::mojom::ScreenManager>(),
@@ -572,6 +575,8 @@ mojom::BrowserInitParamsPtr GetBrowserInitParams(
       tts_crosapi_util::ShouldEnableLacrosTtsSupport();
   params->enable_float_window =
       base::FeatureList::IsEnabled(chromeos::wm::features::kFloatWindow);
+  params->is_cloud_gaming_device =
+      chromeos::features::IsCloudGamingDeviceEnabled();
 
   return params;
 }

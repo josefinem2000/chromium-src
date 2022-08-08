@@ -417,6 +417,12 @@ const FeatureEntry::FeatureParam kTrendingQueriesEnableSignedOut[] = {
     {kTrendingQueriesHideShortcutsParam, "true"},
     {kTrendingQueriesDisabledFeedParam, "false"},
     {kTrendingQueriesSignedOutParam, "true"}};
+const FeatureEntry::FeatureParam
+    kTrendingQueriesEnableNeverShowHideShortcuts[] = {
+        {kTrendingQueriesHideShortcutsParam, "true"},
+        {kTrendingQueriesDisabledFeedParam, "false"},
+        {kTrendingQueriesSignedOutParam, "false"},
+        {kTrendingQueriesNeverShowModuleParam, "true"}};
 
 const FeatureEntry::FeatureVariation kTrendingQueriesModuleVariations[] = {
     {"Enabled All Users", kTrendingQueriesEnableAllUsers,
@@ -428,6 +434,10 @@ const FeatureEntry::FeatureVariation kTrendingQueriesModuleVariations[] = {
      std::size(kTrendingQueriesEnableFeedDisabled), nullptr},
     {"Enabled Signed Out", kTrendingQueriesEnableSignedOut,
      std::size(kTrendingQueriesEnableSignedOut), nullptr},
+    {"Enabled Never Show and Hide Shortcuts",
+     kTrendingQueriesEnableNeverShowHideShortcuts,
+     std::size(kTrendingQueriesEnableNeverShowHideShortcuts), nullptr},
+
 };
 
 const FeatureEntry::FeatureParam kNewMICEFREWithUMADialog[] = {
@@ -595,6 +605,11 @@ const flags_ui::FeatureEntry kFeatureEntries[] = {
          omnibox::kUIExperimentMaxAutocompleteMatches,
          kOmniboxUIMaxAutocompleteMatchesVariations,
          "OmniboxUIMaxAutocompleteVariations")},
+    {"omnibox-local-history-zero-suggest-beyond-ntp",
+     flag_descriptions::kOmniboxLocalHistoryZeroSuggestBeyondNTPName,
+     flag_descriptions::kOmniboxLocalHistoryZeroSuggestBeyondNTPDescription,
+     flags_ui::kOsIos,
+     FEATURE_VALUE_TYPE(omnibox::kLocalHistoryZeroSuggestBeyondNTP)},
     {"omnibox-max-zps-matches", flag_descriptions::kOmniboxMaxZPSMatchesName,
      flag_descriptions::kOmniboxMaxZPSMatchesDescription, flags_ui::kOsIos,
      FEATURE_WITH_PARAMS_VALUE_TYPE(omnibox::kMaxZeroSuggestMatches,
@@ -891,6 +906,10 @@ const flags_ui::FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kEnableUnicornAccountSupportDescription,
      flags_ui::kOsIos,
      FEATURE_VALUE_TYPE(signin::kEnableUnicornAccountSupport)},
+    {"ios-webpage-intent-annotations",
+     flag_descriptions::kEnableWebPageAnnotationsName,
+     flag_descriptions::kEnableWebPageAnnotationsDescription, flags_ui::kOsIos,
+     FEATURE_VALUE_TYPE(web::features::kEnableWebPageAnnotations)},
     {"leak-detection-unauthenticated",
      flag_descriptions::kLeakDetectionUnauthenticatedName,
      flag_descriptions::kLeakDetectionUnauthenticatedDescription,
@@ -996,6 +1015,9 @@ const flags_ui::FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kEnableExpKitCalendarTextClassifierName,
      flag_descriptions::kEnableExpKitCalendarTextClassifierDescription,
      flags_ui::kOsIos, FEATURE_VALUE_TYPE(kEnableExpKitCalendarTextClassifier)},
+    {"experience-kit-maps", flag_descriptions::kMapsExperienceKitName,
+     flag_descriptions::kMapsExperienceKitDescription, flags_ui::kOsIos,
+     FEATURE_VALUE_TYPE(kMapsExperienceKit)},
     {"https-only-mode", flag_descriptions::kHttpsOnlyModeName,
      flag_descriptions::kHttpsOnlyModeDescription, flags_ui::kOsIos,
      FEATURE_VALUE_TYPE(security_interstitials::features::kHttpsOnlyMode)},

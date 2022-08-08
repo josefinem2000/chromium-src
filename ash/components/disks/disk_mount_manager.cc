@@ -16,7 +16,6 @@
 
 #include "ash/components/disks/disk.h"
 #include "ash/components/disks/suspend_unmount_manager.h"
-#include "ash/constants/ash_features.h"
 #include "base/barrier_closure.h"
 #include "base/bind.h"
 #include "base/callback_helpers.h"
@@ -68,12 +67,7 @@ std::string FormatFileSystemTypeToString(FormatFileSystemType filesystem) {
 class DiskMountManagerImpl : public DiskMountManager,
                              public CrosDisksClient::Observer {
  public:
-  DiskMountManagerImpl() {
-    cros_disks_client_ = chromeos::CrosDisksClient::Get();
-    suspend_unmount_manager_ = std::make_unique<SuspendUnmountManager>(this);
-
-    cros_disks_client_->AddObserver(this);
-  }
+  DiskMountManagerImpl() { cros_disks_client_->AddObserver(this); }
 
   DiskMountManagerImpl(const DiskMountManagerImpl&) = delete;
   DiskMountManagerImpl& operator=(const DiskMountManagerImpl&) = delete;
@@ -162,7 +156,7 @@ class DiskMountManagerImpl : public DiskMountManager,
       LOG(ERROR) << "Cannot find mount point '" << mount_path << "'";
       // We can't call OnFormatCompleted until |pending_format_changes_| has
       // been populated.
-      NotifyFormatStatusUpdate(FORMAT_COMPLETED, FORMAT_ERROR_UNKNOWN,
+      NotifyFormatStatusUpdate(FORMAT_COMPLETED, FormatError::kUnknown,
                                mount_path, label);
       return;
     }
@@ -174,18 +168,18 @@ class DiskMountManagerImpl : public DiskMountManager,
     DiskMap::const_iterator disk = disks_.find(device_path);
     if (disk == disks_.end()) {
       LOG(ERROR) << "Cannot find device '" << device_path << "'";
-      OnFormatCompleted(FORMAT_ERROR_UNKNOWN, device_path);
+      OnFormatCompleted(FormatError::kUnknown, device_path);
       return;
     }
     if (disk->second->is_read_only()) {
       LOG(ERROR) << "Device '" << device_path << "' is read-only";
-      OnFormatCompleted(FORMAT_ERROR_DEVICE_NOT_ALLOWED, device_path);
+      OnFormatCompleted(FormatError::kDeviceNotAllowed, device_path);
       return;
     }
 
     if (filesystem == FormatFileSystemType::kUnknown) {
       LOG(ERROR) << "Unknown filesystem passed to FormatMountedDevice";
-      OnFormatCompleted(FORMAT_ERROR_UNSUPPORTED_FILESYSTEM, device_path);
+      OnFormatCompleted(FormatError::kUnsupportedFilesystem, device_path);
       return;
     }
 
@@ -203,7 +197,7 @@ class DiskMountManagerImpl : public DiskMountManager,
     if (disk_iter == disks_.end()) {
       LOG(ERROR) << "Cannot find device '" << device_path << "'";
       OnPartitionCompleted(device_path, filesystem, label,
-                           PARTITION_ERROR_INVALID_DEVICE_PATH);
+                           PartitionError::kInvalidDevicePath);
       return;
     }
 
@@ -221,7 +215,7 @@ class DiskMountManagerImpl : public DiskMountManager,
       LOG(ERROR) << "Cannot find mount point '" << mount_path << "'";
       // We can't call OnRenameCompleted until |pending_rename_changes_| has
       // been populated.
-      NotifyRenameStatusUpdate(RENAME_COMPLETED, RENAME_ERROR_UNKNOWN,
+      NotifyRenameStatusUpdate(RENAME_COMPLETED, RenameError::kUnknown,
                                mount_path, volume_name);
       return;
     }
@@ -232,13 +226,13 @@ class DiskMountManagerImpl : public DiskMountManager,
     DiskMap::const_iterator iter = disks_.find(device_path);
     if (iter == disks_.end()) {
       LOG(ERROR) << "Cannot find device '" << device_path << "'";
-      OnRenameCompleted(RENAME_ERROR_UNKNOWN, device_path);
+      OnRenameCompleted(RenameError::kUnknown, device_path);
       return;
     }
 
     if (iter->second->is_read_only()) {
       LOG(ERROR) << "Device '" << device_path << "' is read-only";
-      OnRenameCompleted(RENAME_ERROR_DEVICE_NOT_ALLOWED, device_path);
+      OnRenameCompleted(RenameError::kDeviceNotAllowed, device_path);
       return;
     }
 
@@ -571,7 +565,7 @@ class DiskMountManagerImpl : public DiskMountManager,
         disks_.find(device_path) != disks_.end()) {
       FormatUnmountedDevice(device_path, filesystem, label);
     } else {
-      OnFormatCompleted(FORMAT_ERROR_UNKNOWN, device_path);
+      OnFormatCompleted(FormatError::kUnknown, device_path);
     }
   }
 
@@ -582,7 +576,7 @@ class DiskMountManagerImpl : public DiskMountManager,
     if (error_code != MountError::kNone ||
         disks_.find(device_path) == disks_.end()) {
       OnPartitionCompleted(device_path, filesystem, label,
-                           PARTITION_ERROR_UNKNOWN);
+                           PartitionError::kUnknown);
       return;
     }
 
@@ -610,11 +604,11 @@ class DiskMountManagerImpl : public DiskMountManager,
                        const std::string& device_label,
                        bool success) {
     if (!success) {
-      OnFormatCompleted(FORMAT_ERROR_UNKNOWN, device_path);
+      OnFormatCompleted(FormatError::kUnknown, device_path);
       return;
     }
 
-    NotifyFormatStatusUpdate(FORMAT_STARTED, FORMAT_ERROR_NONE, device_path,
+    NotifyFormatStatusUpdate(FORMAT_STARTED, FormatError::kNone, device_path,
                              device_label);
   }
 
@@ -635,7 +629,7 @@ class DiskMountManagerImpl : public DiskMountManager,
       DCHECK(disk);
 
       if (pending_change != pending_format_changes_.end() &&
-          error_code == FORMAT_ERROR_NONE) {
+          error_code == FormatError::kNone) {
         disk->set_device_label(pending_change->second.volume_name);
         disk->set_file_system_type(pending_change->second.file_system_type);
       }
@@ -657,7 +651,7 @@ class DiskMountManagerImpl : public DiskMountManager,
 
     pending_partitioning_disks_.insert(disk->second->device_path());
 
-    NotifyPartitionStatusUpdate(PARTITION_STARTED, PARTITION_ERROR_NONE,
+    NotifyPartitionStatusUpdate(PARTITION_STARTED, PartitionError::kNone,
                                 device_path, label);
 
     cros_disks_client_->SinglePartitionFormat(
@@ -678,7 +672,7 @@ class DiskMountManagerImpl : public DiskMountManager,
       Disk* disk = iter->second.get();
       DCHECK(disk);
 
-      if (error_code == PARTITION_ERROR_NONE) {
+      if (error_code == PartitionError::kNone) {
         EnsureMountInfoRefreshed(
             BindOnce(&DiskMountManagerImpl::OnRefreshAfterPartition,
                      weak_ptr_factory_.GetWeakPtr(), device_path, filesystem,
@@ -704,7 +698,7 @@ class DiskMountManagerImpl : public DiskMountManager,
       LOG(ERROR) << "Device not found, maybe ejected";
       pending_partitioning_disks_.erase(device_path);
       NotifyPartitionStatusUpdate(PARTITION_COMPLETED,
-                                  PARTITION_ERROR_INVALID_DEVICE_PATH,
+                                  PartitionError::kInvalidDevicePath,
                                   device_path, label);
       return;
     }
@@ -725,7 +719,7 @@ class DiskMountManagerImpl : public DiskMountManager,
       LOG(ERROR) << "New partition couldn't be found";
       pending_partitioning_disks_.erase(device_path);
       NotifyPartitionStatusUpdate(PARTITION_COMPLETED,
-                                  PARTITION_ERROR_INVALID_DEVICE_PATH,
+                                  PartitionError::kInvalidDevicePath,
                                   device_path, label);
       return;
     }
@@ -751,7 +745,7 @@ class DiskMountManagerImpl : public DiskMountManager,
                               MountError error_code) {
     if (error_code != MountError::kNone ||
         disks_.find(device_path) == disks_.end()) {
-      OnRenameCompleted(RENAME_ERROR_UNKNOWN, device_path);
+      OnRenameCompleted(RenameError::kUnknown, device_path);
       return;
     }
 
@@ -775,11 +769,11 @@ class DiskMountManagerImpl : public DiskMountManager,
                        const std::string& volume_name,
                        bool success) {
     if (!success) {
-      OnRenameCompleted(RENAME_ERROR_UNKNOWN, device_path);
+      OnRenameCompleted(RenameError::kUnknown, device_path);
       return;
     }
 
-    NotifyRenameStatusUpdate(RENAME_STARTED, RENAME_ERROR_NONE, device_path,
+    NotifyRenameStatusUpdate(RENAME_STARTED, RenameError::kNone, device_path,
                              volume_name);
   }
 
@@ -800,7 +794,7 @@ class DiskMountManagerImpl : public DiskMountManager,
       DCHECK(disk);
 
       if (pending_change != pending_rename_changes_.end() &&
-          error_code == RENAME_ERROR_NONE)
+          error_code == RenameError::kNone)
         disk->set_device_label(pending_change->second);
     }
 
@@ -1032,7 +1026,7 @@ class DiskMountManagerImpl : public DiskMountManager,
   // Mount event change observers.
   base::ObserverList<DiskMountManager::Observer> observers_;
 
-  CrosDisksClient* cros_disks_client_;
+  CrosDisksClient* const cros_disks_client_ = chromeos::CrosDisksClient::Get();
 
   // The list of disks found.
   DiskMountManager::DiskMap disks_;
@@ -1049,7 +1043,7 @@ class DiskMountManagerImpl : public DiskMountManager,
   bool already_refreshed_ = false;
   std::vector<EnsureMountInfoRefreshedCallback> refresh_callbacks_;
 
-  std::unique_ptr<SuspendUnmountManager> suspend_unmount_manager_;
+  SuspendUnmountManager suspend_unmount_manager_{this};
 
   // Whether the instance attempted to mount a device in read-only mode for
   // each source path.

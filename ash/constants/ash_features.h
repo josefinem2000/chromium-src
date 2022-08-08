@@ -291,7 +291,6 @@ COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kExoHapticFeedbackSupport;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kExoLockNotification;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kExoOrdinalMotion;
-COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kExoPointerLock;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kExperimentalRgbKeyboardPatterns;
 COMPONENT_EXPORT(ASH_CONSTANTS)
@@ -624,6 +623,8 @@ COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kUploadOfficeToCloud;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kUseAuthsessionAuthentication;
 COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kUseAuthFactors;
+COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kUseBluetoothSystemInAsh;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kUseLoginShelfWidget;
@@ -867,6 +868,7 @@ COMPONENT_EXPORT(ASH_CONSTANTS) bool IsTouchscreenInDiagnosticsAppEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsTrafficCountersEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsTrilinearFilteringEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsUploadOfficeToCloudEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsUseAuthFactorsEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsUseLoginShelfWidgetEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsUseStorkSmdsServerAddressEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsWallpaperFastRefreshEnabled();

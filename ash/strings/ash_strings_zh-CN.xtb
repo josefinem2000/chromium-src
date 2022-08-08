@@ -327,6 +327,7 @@
 <translation id="2894949423239620203">数据线可能会影响性能</translation>
 <translation id="2903844815300039659">已连接到网络“<ph name="NAME" />”，<ph name="STRENGTH" /></translation>
 <translation id="2914580577416829331">屏幕截图</translation>
+<translation id="2925246975070834767">欢迎试用“自动缩放”功能，使自己位于屏幕中央。您可在“快捷设置”中开启此功能。</translation>
 <translation id="2941112035454246133">低</translation>
 <translation id="2942350706960889382">停靠的放大镜</translation>
 <translation id="2942516765047364088">任务栏位置</translation>
@@ -472,7 +473,6 @@
 <translation id="3726171378575546917">无法在此设备上使用<ph name="UNAVAILABLE_APPS_ONE" />、<ph name="UNAVAILABLE_APPS_TWO" />以及另外 <ph name="UNAVAILABLE_APPS_COUNT" /> 个应用。</translation>
 <translation id="3735740477244556633">排序依据</translation>
 <translation id="3742055079367172538">已完成屏幕截图</translation>
-<translation id="3761848338953536304">您的管理员正在要求您关闭 SIM 卡锁定设置</translation>
 <translation id="3765841986579723851">今天修改过</translation>
 <translation id="3771549900096082774">高反差模式</translation>
 <translation id="3773700760453577392">管理员已禁止 <ph name="USER_EMAIL" /> 使用多帐号登录功能。所有用户都必须先退出帐号才能继续。</translation>
@@ -634,6 +634,7 @@
 <translation id="4628757576491864469">设备</translation>
 <translation id="4631891353005174729"><ph name="APP_NAME_TYPE" />，星级评分为 <ph name="RATING_SCORE" /></translation>
 <translation id="4633185660152240791">{0,plural, =1{请在 1 天内将设备回滚到上一个版本}other{请在 # 天内将设备回滚到上一个版本}}</translation>
+<translation id="4633636853437260449">按 Ctrl+W 即可删除</translation>
 <translation id="4642092649622328492">截取局部屏幕截图</translation>
 <translation id="4644727592819780893">区域太小，无法显示相机预览画面</translation>
 <translation id="4648249871170053485"><ph name="APP_NAME" />，推荐的应用</translation>
@@ -867,7 +868,6 @@
 <translation id="598407983968395253">使用模板</translation>
 <translation id="598882571027504733">要想获取此项更新，请在已连接该键盘的情况下重新启动您的 Chromebook。</translation>
 <translation id="5992218262414051481">已启用高反差模式。再按一次 Ctrl+搜索键+H 组合键即可关闭此模式。</translation>
-<translation id="6009656393242168182">停用您的 SIM 卡锁定设置</translation>
 <translation id="6012623610530968780">第 <ph name="SELECTED_PAGE" /> 页（共 <ph name="TOTAL_PAGE_NUM" /> 页）</translation>
 <translation id="6018164090099858612">正在退出镜像模式</translation>
 <translation id="602001110135236999">向左滚动</translation>

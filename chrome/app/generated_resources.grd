@@ -295,7 +295,7 @@ are declared in tools/grit/grit_rule.gni.
       <part file="profiles_strings.grdp" />
 
       <!-- Chrome-OS-specific strings -->
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <part file="chromeos_shared_strings.grdp" />
       </if>
       <if expr="chromeos_ash">
@@ -379,7 +379,7 @@ are declared in tools/grit/grit_rule.gni.
         </message>
       </if>
 
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_PERMISSIONS_REQUESTED_SCREENREADER_ANNOUNCEMENT" desc="Announcement to screen readers on ChromeOS when permission is requested to inform users of how to focus the permission UI.">
           Permission requested, press Ctrl + Forward to respond
         </message>
@@ -389,7 +389,7 @@ are declared in tools/grit/grit_rule.gni.
           Permission requested, press ⌘ + Option + Down arrow to respond
         </message>
       </if>
-      <if expr="not chromeos_ash and not chromeos_lacros and not is_macosx and toolkit_views">
+      <if expr="not is_chromeos and not is_macosx and toolkit_views">
         <message name="IDS_PERMISSIONS_REQUESTED_SCREENREADER_ANNOUNCEMENT" desc="Announcement to screen readers on Windows, Linux or Fuchsia when permission is requested to inform users of how to focus the permission UI.">
           Permission requested, press F6 to respond
         </message>
@@ -1409,7 +1409,7 @@ are declared in tools/grit/grit_rule.gni.
       </if>
 
       <!-- App menu -->
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_TOGGLE_REQUEST_TABLET_SITE" desc="The toggle to request mobile version site on a touch dev.">
           Request mobile site
         </message>
@@ -1800,7 +1800,7 @@ are declared in tools/grit/grit_rule.gni.
                desc="When starting a download, let the user know we're starting the download.">
         Starting...
       </message>
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_DOWNLOAD_STATUS_IN_PROGRESS_TITLE"
                  desc="The title of a download notification: the current download status is in progress.">
                  Downloading <ph name="FILE_NAME">$1<ex>somedocument.pdf</ex></ph>
@@ -2012,21 +2012,21 @@ are declared in tools/grit/grit_rule.gni.
         This file is encrypted. Ask its owner to decrypt.
       </message>
 
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_PROMPT_BLOCKED_MIXED_DOWNLOAD_TITLE"
                  desc="In the download notification, a title of the message shown on a download blocked for being insecure.">
           Insecure download blocked
         </message>
       </if>
 
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_PROMPT_BLOCKED_MALICIOUS_DOWNLOAD_TITLE"
                  desc="In the download notification, a title of message shown for blocked download">
           Dangerous download blocked
         </message>
       </if>
 
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_PROMPT_SEND_TO_SAFEBROWSING_DOWNLOAD_TITLE"
                  desc="In the download notification, a title of message shown indicating that the file may be malicious and Safe Browsing recommends sending the file to Google">
           Scan file before opening?
@@ -4897,7 +4897,7 @@ are declared in tools/grit/grit_rule.gni.
         Could not load '<ph name="IMAGE_PATH">$1<ex>/path/to/file</ex></ph>' for theme.
       </message>
 
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_EXTENSION_NOTIFICATION_INSTALLED" desc="Toast message shown when an application is successfully installed.">
           <ph name="APP">$1<ex>Google Keep</ex></ph> installed
         </message>
@@ -5025,6 +5025,18 @@ are declared in tools/grit/grit_rule.gni.
           <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_ALL_EXTENSIONS_BLOCKED" desc="The label in an extension's page access submenu when the user blocked any extensions on the current page (sentence case).">
             You previously chose to not allow any extensions on <ph name="ORIGIN">$1<ex>google.com</ex></ph>
           </message>
+          <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_CLICK_V2" desc="The label in an extension's context menu to allow the extension access to the page only when the user clicks on the extension action (sentence case).">
+            When I click the extension
+          </message>
+          <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_SITE_V2" desc="The label in an extension's context menu to always allow the extension access to the current origin (sentence case).">
+            Always on <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+          </message>
+          <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_ALL_SITES_V2" desc="The label in an extension's context menu to always allow the extension access on all sites (sentence case).">
+            Always on all sites
+          </message>
+           <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_PERMISSIONS_PAGE" desc="The label in an extension's context menu that the user can click to open site permissions page in chrome://extensions (sentence case).">
+            Manage site permissions
+          </message>
           <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_CLICK" desc="The label in an extension's context menu to allow the extension access to the page only when the user clicks on the extension action (sentence case).">
             When you click the extension
           </message>
@@ -5086,6 +5098,18 @@ are declared in tools/grit/grit_rule.gni.
           </message>
           <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_ALL_EXTENSIONS_BLOCKED" desc="The label in an extension's page access submenu when the user blocked any extensions on the current page (title case).">
             You Previously Chose To Not Allow Any Extensions On <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+          </message>
+          <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_CLICK_V2" desc="The label in an extension's context menu to allow the extension access to the page only when the user clicks on the extension action (title case).">
+            When I Click the Extension
+          </message>
+          <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_SITE_V2" desc="The label in an extension's context menu to always allow the extension access to the current origin (title case).">
+            Always on <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+          </message>
+          <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_ALL_SITES_V2" desc="The label in an extension's context menu to always allow the extension access on all sites (title case).">
+            Always on All Sites
+          </message>
+          <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_PERMISSIONS_PAGE" desc="The label in an extension's context menu that the user can click to open site permissions page in chrome://extensions (title case).">
+            Manage Site Permissions
           </message>
           <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_CLICK" desc="The label in an extension's context menu to allow the extension access to the page only when the user clicks on the extension action (title case).">
             When You Click the Extension
@@ -5627,7 +5651,7 @@ Keep your key file in a safe place. You will need it to create new versions of y
         App Settings
       </message>
 
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <then>
           <message name="IDS_WEB_APP_SETTINGS_LINK" desc="Text of the link pointing to the app settings page. This appears at the bottom of the Permissions pane of the Page Information Window for app windows (in place of 'Site settings').">
             App settings
@@ -5780,7 +5804,7 @@ Keep your key file in a safe place. You will need it to create new versions of y
        <message name="IDS_PASSWORD_GENERATION_EDITING_SUGGESTION" desc="Notification text next to the generated password assuring the user that the password has been saved.">
         Saved password
       </message>
-      <message name="IDS_SAVE_PASSWORD" desc="The title of the save password bubble when a password can be saved.">
+      <message name="IDS_SAVE_PASSWORD" desc="The title of the save password bubble when a password can be saved." formatter_data="android_java">
         Save password?
       </message>
       <message name="IDS_SAVE_ACCOUNT" desc="The title of the save password bubble when a federated credential can be saved.">
@@ -7198,7 +7222,7 @@ Keep your key file in a safe place. You will need it to create new versions of y
           Open in app
         </message>
 
-        <if expr="chromeos_ash or chromeos_lacros">
+        <if expr="is_chromeos">
           <then>
             <message name="IDR_INTENT_PICKER_SUPPORTED_LINKS_INFOBAR_MESSAGE" desc="The text of an infobar asking if the user wants to open web links supported by a particular app (e.g. https://www.youtube.com) in that app.">
               Always use the <ph name="APP">$1<ex>YouTube</ex></ph> app to open supported web links?
@@ -7751,7 +7775,7 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Google 
         </if>
       </if>
       <if expr="is_android">
-        <message name="IDS_PASSWORD_MANAGER_SAVE_BUTTON" desc="Mobile: Button text for the 'Save Password' infobar's 'Remember password' option">
+        <message name="IDS_PASSWORD_MANAGER_SAVE_BUTTON" desc="Mobile: Button text for the 'Save Password' infobar's 'Remember password' option"  formatter_data="android_java">
           Save
         </message>
         <message name="IDS_PASSWORD_MANAGER_BLOCKLIST_BUTTON" desc="Mobile: Button text for the 'Save Password' infobar's 'Never remember for this site' option">
@@ -8304,7 +8328,7 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Google 
  for unfollowing a site.">
           Unfollow site
         </message>
-        <if expr="chromeos_ash or chromeos_lacros">
+        <if expr="is_chromeos">
           <message name="IDS_TAB_CXMENU_GROUPED_BY_DESK_MENU_ITEM_A11Y" desc="The a11y message for menu items in 'Move tabs to another window' when grouped by desk.">
             <ph name="TAB_TITLE">$1<ex>Google News</ex></ph> belongs to desk <ph name="DESK_TITLE">$2<ex>School</ex></ph>
           </message>
@@ -8699,7 +8723,7 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Google 
         Send feedback
       </message>
       <!-- Killed Tab Strings -->
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_KILLED_TAB_BY_OOM_MESSAGE" desc="The message displayed on the killed tab page when the page was killed by an out of memory error.">
           Either Chrome ran out of memory or the process for the webpage was terminated for some other reason.  To continue, reload or go to another page.
         </message>
@@ -11648,7 +11672,7 @@ Please help our engineers fix this problem. Tell us what happened right before y
       <message name="IDS_TAB_AX_LABEL_PINNED_FORMAT" is_accessibility_with_no_ui="true" desc="Accessibility label text, when a tab is pinned. Example: 'Google Search - Pinned'">
         <ph name="WINDOW_TITLE">$1<ex>Google Search</ex></ph> - Pinned
       </message>
-      <if expr="chromeos_ash or chromeos_lacros">
+      <if expr="is_chromeos">
         <message name="IDS_TAB_AX_LABEL_PERMISSION_REQUESTED_FORMAT" desc="Accessibility label text for ChromeOS, when a tab has a pending request. Example: 'Google Search - Permission requested, press F6 to respond'.">
           <ph name="WINDOW_TITLE">$1<ex>Google Search</ex></ph> - Permission requested, press Ctrl + Forward to respond
         </message>
@@ -11658,7 +11682,7 @@ Please help our engineers fix this problem. Tell us what happened right before y
           <ph name="WINDOW_TITLE">$1<ex>Google Search</ex></ph> - Permission requested, press ⌘ + Option + Up arrow to respond
         </message>
       </if>
-      <if expr="not chromeos_ash and not chromeos_lacros and not is_macosx and toolkit_views">
+      <if expr="not is_chromeos and not is_macosx and toolkit_views">
         <message name="IDS_TAB_AX_LABEL_PERMISSION_REQUESTED_FORMAT" desc="Accessibility label text for Windows, Linux or Fuchsia, when a tab has a pending request. Example: 'Google Search - Permission requested, press F6 to respond'.">
           <ph name="WINDOW_TITLE">$1<ex>Google Search</ex></ph> - Permission requested, press F6 to respond
         </message>
@@ -13390,8 +13414,8 @@ Please help our engineers fix this problem. Tell us what happened right before y
     <message name="IDS_PRIVACY_SANDBOX_BUBBLE_NOTICE_DESCRIPTION_ESTIMATES_INTERESTS_LINK_A11Y_NAME" desc="The accessible text read for IDS_PRIVACY_SANDBOX_BUBBLE_NOTICE_DESCRIPTION_ESTIMATES_INTERESTS_LINK. * “estimate your interests”: Topics of interest include things like “Live comedy” and “Rock music”. Chrome estimates these interests based on the sites users visit. It’s an “estimation”, and we don’t want to suggest that we know with certainty the user’s interests. Avoid words like “guess”, “establish”, “define”, etc. (in place of “estimate”). ">
       estimates your interests - Chrome can estimate your interests
     </message>
-    <message name="IDS_PRIVACY_SANDBOX_DIALOG_CONSENT_BODY_DESCRIPTION_1" desc="* “restrict” means to lessen. We don’t want to suggest that we’re “eliminating” cross-site tracking. * “cross-site tracking”: An example: a user visits site A and then site B. Based on how third-party cookies work today, when that user later visits site C, site C can be aware that the user visited sites A and B, and can even have some sense for what they did on those sites. * “stop ad spam and fraud”:  This feature isn’t really related to restricting cross-site tracking but we combined these features in the same sentence / section for structural reasons.">
-      We’re exploring ways to restrict cross-site tracking while enabling sites to stop ad spam and fraud.
+    <message name="IDS_PRIVACY_SANDBOX_DIALOG_CONSENT_BODY_DESCRIPTION_1" desc="The description beneath the “Limited sharing between sites” subtitle. * “exploring” conveys that this is a work in progress. * “restrict” means to lessen. We don’t want to suggest that we’re “eliminating” cross-site tracking. * “tracking”: An example: a user visits site A and then site B. Based on how third-party cookies work today, when that user later visits site C, site C can be aware that the user visited sites A and B, and can even have some sense for what they did on those sites. * “stop ad spam and fraud”:  This feature isn’t really related to restricting cross-site tracking but we combined these features in the same sentence / section for structural reasons.">
+      We’re exploring ways to restrict tracking while enabling sites to stop ad spam and fraud.
     </message>
     <message name="IDS_PRIVACY_SANDBOX_DIALOG_CONSENT_BODY_HEADER_2" desc="2 of 2 subtitles on the page.That means that the page title, the sub titles, and the button label all work well together as a mini story: 1) Help us build a more private web How? 2) Limit sharing between sites 3) More control over the ads you see 4) Yes, I’ll try it">
       More control over the ads you see
@@ -13455,6 +13479,12 @@ Please help our engineers fix this problem. Tell us what happened right before y
       </message>
       <message name="IDS_AUTOFILL_ASSISTANT_PASSWORD_CHANGE_SUCCESSFULLY_CHANGED_PASSWORD_CLOSE_SIDE_PANEL" desc="The label of the button shown in the side panel after a sucessfull run. Once a user clicks on it, the side panel will close." translateable="false">
         Done
+      </message>
+      <message name="IDS_AUTOFILL_ASSISTANT_PASSWORD_CHANGE_ERROR_SCREEN_TITLE" desc="The title shown in the side panel when an error with the script execution occurred." translateable="false">
+        Something went wrong.
+      </message>
+      <message name="IDS_AUTOFILL_ASSISTANT_PASSWORD_CHANGE_ERROR_SCREEN_DESCRIPTION" desc="The description shown in the side panel when an error with the script execution occurred." translateable="false">
+        Check the site and try changing your password.
       </message>
     </if>
   </messages>

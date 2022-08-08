@@ -4673,6 +4673,7 @@ Bu işleme birden fazla anahtar atayabilirsiniz.</translation>
 <translation id="5470735824776589490">Cihazınızın Powerwash ile sıfırlanabilmesi için yeniden başlatılması gerekir. <ph name="LINK_BEGIN" />Daha fazla bilgi<ph name="LINK_END" /></translation>
 <translation id="5471768120198416576">Merhaba! Ben sizin metin okuma sesinizim.</translation>
 <translation id="5472627187093107397">Bu site için şifreleri kaydet</translation>
+<translation id="5473062644742711742">Chrome Web Mağazası'nda daha fazla erişilebilirlik aracı bulun</translation>
 <translation id="5473075389972733037">IBM</translation>
 <translation id="5473099001878321374">Devam ederek bu cihazın Google'dan, çocuğunuzun operatöründen ve bu cihazın üreticisinden güncellemeleri ve uygulamaları, muhtemelen hücresel veri üzerinden otomatik olarak indirip yükleyebileceğini kabul etmiş olursunuz. Bu uygulamalardan bazıları uygulama içi satın alma seçenekleri sunabilir.</translation>
 <translation id="5473156705047072749">{NUM_CHARACTERS,plural, =1{PIN en az bir karakter olmalıdır}other{PIN en az # karakter olmalıdır}}</translation>
@@ -5311,7 +5312,6 @@ Hassas bilgileri vermediğinizden emin olun.</translation>
 <translation id="6086846494333236931">Yöneticiniz tarafından yüklendi</translation>
 <translation id="6087746524533454243">Tarayıcı bilgisi sayfasını mı arıyorsunuz? Şu adresi ziyaret edin:</translation>
 <translation id="6087960857463881712">Çok beğenen</translation>
-<translation id="6088535503330933227">Chrome; reklam spam'i, sahtekarlık ve siteler arası paylaşımı kısıtlamanın yollarını arar. Chrome ayrıca sitelerin size reklam göstermek için kullanabileceği <ph name="ESTIMATE_INTERESTS_LINK" />. İlgi alanlarınızı ayarlardan yönetebilirsiniz.</translation>
 <translation id="608912389580139775">Bu sayfayı okuma listenize eklemek için Yer İşareti simgesini tıklayın</translation>
 <translation id="6091761513005122595">Paylaşım başarıyla eklendi.</translation>
 <translation id="6093888419484831006">Güncelleme iptal ediliyor...</translation>
@@ -7959,6 +7959,7 @@ Anahtar dosyanızı güvenli bir yerde saklayın. Uzantınızın yeni sürümler
 <translation id="8666759526542103597">Tarayıcıya dayalı reklam kişiselleştirme hakkında</translation>
 <translation id="8667328578593601900"><ph name="FULLSCREEN_ORIGIN" /> artık tam ekran görüntüleniyor ve fare imlecinizi devre dışı bıraktı.</translation>
 <translation id="8667760277771450375">Sitelerin, reklam spam'ini ve sahtekarlığı durdurmasını sağlarken siteler arası izlemeyi kısıtlamanın yollarını da araştırıyoruz.</translation>
+<translation id="8668378421690365723">Cihazınız artık düzgün çalışmayabilir, ayrıca güvenlik ve performans sorunları yaşayabilir.</translation>
 <translation id="8669284339312441707">Daha Sıcak</translation>
 <translation id="8670537393737592796">Buraya hızlı bir şekilde geri dönmek için yükle düğmesini tıklayarak <ph name="APP_NAME" /> uygulamasını yükleyin</translation>
 <translation id="867085395664725367">Geçici sunucu hatası oluştu.</translation>
@@ -8442,6 +8443,7 @@ Anahtar dosyanızı güvenli bir yerde saklayın. Uzantınızın yeni sürümler
 <translation id="9120693811286642342"><ph name="BEGIN_PARAGRAPH1" />En iyi deneyim için <ph name="DEVICE_OS" /> yüklemesini dahili diskinizde gerçekleştirin. Daha sonra giriş ekranından da yükleyebilirsiniz.<ph name="END_PARAGRAPH1" />
     <ph name="BEGIN_PARAGRAPH2" />Yüklemeye hazır değilseniz önce denemek için USB'den çalıştırabilirsiniz. Bu şekilde mevcut işletim sisteminiz ve verileriniz kaldırılmaz ancak depolama alanı ve performansla ilgili bazı sınırlar görebilirsiniz.<ph name="END_PARAGRAPH2" /></translation>
 <translation id="9121814364785106365">İğnelenmiş sekme olarak aç</translation>
+<translation id="9123287046453017203">Cihazınız güncel değil</translation>
 <translation id="9124003689441359348">Kayıtlı şifreleriniz burada görünür</translation>
 <translation id="9126149354162942022">İmleç rengi</translation>
 <translation id="9128317794749765148">Kurulum tamamlanamadı</translation>

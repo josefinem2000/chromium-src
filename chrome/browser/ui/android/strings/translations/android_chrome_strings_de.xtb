@@ -271,7 +271,6 @@ Wenn du deinen Browserverlauf löschst – entweder komplett oder für eine bes
 <translation id="2496180316473517155">Browserverlauf</translation>
 <translation id="2497852260688568942">Die Synchronisierung wurde von deinem Administrator deaktiviert</translation>
 <translation id="250020030759455918">Du kannst deinen Anmeldestatus für <ph name="SITE_NAME" />, Browserdaten und Websitedaten in Chrome einsehen</translation>
-<translation id="2507178219579379057">Chrome sucht nach Möglichkeiten, Anzeigenspam, Betrug und die Datenweitergabe zwischen Websites einzuschränken. Chrome <ph name="BEGIN_LINK" />schätzt außerdem deine Interessen ein<ph name="END_LINK" />, die von anderen Websites dazu verwendet werden können, dir Werbung zu zeigen. Du kannst deine Interessen in den Einstellungen verwalten.</translation>
 <translation id="2513403576141822879">Weitere Einstellungen in Verbindung mit Datenschutz, Sicherheit und der Erhebung von Daten findest du unter <ph name="BEGIN_LINK" />Synchronisierung und Google-Dienste<ph name="END_LINK" /></translation>
 <translation id="2517472476991765520">Scannen</translation>
 <translation id="2523184218357549926">URLs der von dir besuchten Seiten werden an Google gesendet</translation>
@@ -1049,6 +1048,7 @@ Trust Tokens verbessern den Datenschutz im Web und können nicht dazu verwendet 
 <translation id="6671495933530132209">Bild kopieren</translation>
 <translation id="6674571176963658787">Gib deine Passphrase ein, um die Synchronisierung zu starten</translation>
 <translation id="6676840375528380067">Deine Chrome-Daten vom Gerät löschen?</translation>
+<translation id="6676927815633975364">Auf dieser Website und in Chrome anmelden</translation>
 <translation id="6684809838922667136">Chrome verbessern</translation>
 <translation id="670498945988402717">Gestern geprüft</translation>
 <translation id="6710213216561001401">Zurück</translation>

@@ -26,7 +26,6 @@
 #include "ash/components/peripheral_notification/peripheral_notification_manager.h"
 #include "ash/components/power/dark_resume_controller.h"
 #include "ash/components/settings/cros_settings_names.h"
-#include "ash/components/tpm/install_attributes.h"
 #include "ash/components/tpm/tpm_token_loader.h"
 #include "ash/constants/ash_features.h"
 #include "ash/constants/ash_switches.h"
@@ -113,7 +112,6 @@
 #include "chrome/browser/ash/login/demo_mode/demo_session.h"
 #include "chrome/browser/ash/login/helper.h"
 #include "chrome/browser/ash/login/lock/screen_locker.h"
-#include "chrome/browser/ash/login/login_screen_extensions_lifetime_manager.h"
 #include "chrome/browser/ash/login/login_screen_extensions_storage_cleaner.h"
 #include "chrome/browser/ash/login/login_wizard.h"
 #include "chrome/browser/ash/login/session/chrome_session_manager.h"
@@ -204,6 +202,7 @@
 #include "chromeos/ash/components/dbus/session_manager/fake_session_manager_client.h"
 #include "chromeos/ash/components/dbus/session_manager/session_manager_client.h"
 #include "chromeos/ash/components/dbus/userdataauth/fake_userdataauth_client.h"
+#include "chromeos/ash/components/install_attributes/install_attributes.h"
 #include "chromeos/ash/components/local_search_service/public/cpp/local_search_service_proxy_factory.h"
 #include "chromeos/ash/components/network/fast_transition_observer.h"
 #include "chromeos/ash/components/network/network_cert_loader.h"
@@ -1236,8 +1235,6 @@ void ChromeBrowserMainPartsAsh::PostProfileInit(Profile* profile,
     demo_mode_resources_remover_ = DemoModeResourcesRemover::CreateIfNeeded(
         g_browser_process->local_state());
 
-    login_screen_extensions_lifetime_manager_ =
-        std::make_unique<LoginScreenExtensionsLifetimeManager>();
     login_screen_extensions_storage_cleaner_ =
         std::make_unique<LoginScreenExtensionsStorageCleaner>();
   }
@@ -1478,7 +1475,6 @@ void ChromeBrowserMainPartsAsh::PostMainMessageLoopRun() {
   lock_to_single_user_manager_.reset();
   wilco_dtc_supportd_manager_.reset();
   gnubby_notification_.reset();
-  login_screen_extensions_lifetime_manager_.reset();
   login_screen_extensions_storage_cleaner_.reset();
   debugd_notification_handler_.reset();
   shortcut_mapping_pref_service_.reset();

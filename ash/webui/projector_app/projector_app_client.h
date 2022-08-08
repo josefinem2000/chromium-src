@@ -29,10 +29,8 @@ class Value;
 namespace ash {
 
 class AnnotatorMessageHandler;
-
 struct AnnotatorTool;
-struct ProjectorScreencast;
-
+struct ProjectorScreencastVideo;
 struct NewScreencastPrecondition;
 
 struct PendingScreencast {
@@ -83,9 +81,9 @@ using PendingScreencastSet =
 // ProjectorApp.
 class ProjectorAppClient {
  public:
-  // The callback used by the GetScreencast() API.
-  using OnGetScreencastCallback =
-      base::OnceCallback<void(std::unique_ptr<ProjectorScreencast> screencast,
+  // The callback used by the GetVideo() API.
+  using OnGetVideoCallback =
+      base::OnceCallback<void(std::unique_ptr<ProjectorScreencastVideo> video,
                               const std::string& error_message)>;
 
   // Interface for observing events on the ProjectorAppClient.
@@ -155,10 +153,13 @@ class ProjectorAppClient {
   // Triggers the opening of the Chrome feedback dialog.
   virtual void OpenFeedbackDialog() const = 0;
 
-  // TODO(b/236857019): Wire up ProjectorMessageHandler.
-  // Populates a screencast object in |callback| for given |screencast_id|.
-  virtual void GetScreencast(const std::string& screencast_id,
-                             OnGetScreencastCallback callback) = 0;
+  // Launches the given DriveFS video file with `video_file_id` into the
+  // Projector app. The `resource_key` is an additional security token needed to
+  // gain access to link-shared files. Since the `resource_key` is currently
+  // only used by Googlers, the `resource_key` might be empty.
+  virtual void GetVideo(const std::string& video_file_id,
+                        const std::string& resource_key,
+                        OnGetVideoCallback callback) const = 0;
 
   // Registers the AnnotatorMessageHandler that is owned by the WebUI that
   // contains the Projector annotator.

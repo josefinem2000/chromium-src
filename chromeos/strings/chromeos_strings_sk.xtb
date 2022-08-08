@@ -27,6 +27,7 @@
 <translation id="1199355487114804640">Prehratie alebo pozastavenie</translation>
 <translation id="1201402288615127009">Ďalej</translation>
 <translation id="1204296502688602597">Latencia DNS</translation>
+<translation id="1207734034680156868">Návrhy vychádzajú z vášho opisu</translation>
 <translation id="123124571410524056">Podozrenie na portál</translation>
 <translation id="1236400083787698183">Pred reštartom vykonajte obnovu zariadenia prostredníctvom funkcie Powerwash. Ak má zariadenie kryt, zatvorte ho až po dokončení obnovy prostredníctvom funkcie Powerwash. Jej dokončenie môže trvať až minútu.</translation>
 <translation id="1238612778414822719">Latencia protokolu HTTPS</translation>
@@ -86,7 +87,7 @@
 <translation id="1620510694547887537">Kamera</translation>
 <translation id="1621067168122174824">Spustiť test nabitia</translation>
 <translation id="1631385268983122904">Zariadenie zatiaľ znova neskladajte</translation>
-<translation id="1639239467298939599">Prebieha načítavanie</translation>
+<translation id="1639239467298939599">Načítava sa</translation>
 <translation id="1641857168437328880">Podávač dokumentov (jednostranný)</translation>
 <translation id="1643449475550628585">Denne meniť obrázok tapety</translation>
 <translation id="1644574205037202324">História</translation>

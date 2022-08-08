@@ -45,6 +45,7 @@
 #include "third_party/blink/public/common/renderer_preferences/renderer_preferences.h"
 #include "third_party/blink/public/common/tokens/tokens.h"
 #include "third_party/blink/public/mojom/frame/frame.mojom-blink.h"
+#include "third_party/blink/public/mojom/frame/remote_frame.mojom-blink.h"
 #include "third_party/blink/public/mojom/input/focus_type.mojom-blink-forward.h"
 #include "third_party/blink/public/mojom/page/page.mojom-blink.h"
 #include "third_party/blink/public/mojom/page/page_visibility_state.mojom-blink.h"
@@ -219,7 +220,6 @@ class CORE_EXPORT WebViewImpl final : public WebView,
   int32_t HistoryListLength() const { return history_list_length_; }
   const SessionStorageNamespaceId& GetSessionStorageNamespaceId() override;
   bool IsFencedFrameRoot() const override;
-  WebViewClient* Client() override { return web_view_client_; }
 
   // Functions to add and remove observers for this object.
   void AddObserver(WebViewObserver* observer);
@@ -335,6 +335,8 @@ class CORE_EXPORT WebViewImpl final : public WebView,
   // Returns the page object associated with this view. This may be null when
   // the page is shutting down, but will be valid at all other times.
   Page* GetPage() const { return page_.Get(); }
+
+  WebViewClient* Client() { return web_view_client_; }
 
   WebDevToolsAgentImpl* MainFrameDevToolsAgentImpl();
 

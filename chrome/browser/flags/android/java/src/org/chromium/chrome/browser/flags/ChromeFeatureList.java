@@ -276,6 +276,8 @@ public abstract class ChromeFeatureList {
             "ChromeSharingHubLaunchAdjacent";
     public static final String CHROME_SURVEY_NEXT_ANDROID = "ChromeSurveyNextAndroid";
     public static final String ENABLE_CBD_SIGN_OUT = "EnableCbdSignOut";
+    public static final String CLEAR_OMNIBOX_FOCUS_AFTER_NAVIGATION =
+            "ClearOmniboxFocusAfterNavigation";
     public static final String COMMAND_LINE_ON_NON_ROOTED = "CommandLineOnNonRooted";
     public static final String COMMERCE_COUPONS = "CommerceCoupons";
     public static final String COMMERCE_MERCHANT_VIEWER = "CommerceMerchantViewer";
@@ -430,6 +432,8 @@ public abstract class ChromeFeatureList {
             "AndroidAuxiliarySearch";
     public static final String OMNIBOX_ASSISTANT_VOICE_SEARCH = "OmniboxAssistantVoiceSearch";
     public static final String OMNIBOX_MODERNIZE_VISUAL_UPDATE = "OmniboxModernizeVisualUpdate";
+    public static final String OMNIBOX_MOST_VISITED_TILES_DYNAMIC_SPACING =
+            "OmniboxMostVisitedTilesDynamicSpacing";
     public static final String OMNIBOX_MOST_VISITED_TILES_TITLE_WRAP_AROUND =
             "OmniboxMostVisitedTilesTitleWrapAround";
     public static final String OMNIBOX_REMOVE_SUGGESTION_HEADER_CHEVRON =

@@ -100,6 +100,7 @@
 <translation id="1455242230282523554">ভাষার সেটিংস দেখুন</translation>
 <translation id="1460620680449458626">ভলিউম মিউট করা আছে।</translation>
 <translation id="1467432559032391204">বামে</translation>
+<translation id="146902737843070955">আপনার অ্যাডমিনিস্ট্রেটর এই পরিবর্তন করার জন্য অনুরোধ করেছেন</translation>
 <translation id="147310119694673958">ফোনে <ph name="BATTERY_PERCENTAGE" />% চার্জ আছে</translation>
 <translation id="1479909375538722835">ভাসমান অ্যাক্সেসিবিলিটি মেনু</translation>
 <translation id="1480845547124508962"><ph name="CURRENT_TIME" />, Calendar ভিউ খোলার জন্য এন্টার প্রেস করুন</translation>
@@ -470,10 +471,10 @@
 <translation id="3708186454126126312">আগে কানেক্ট করা ছিল</translation>
 <translation id="371370241367527062">সামনের মাইক্রোফোন</translation>
 <translation id="3713734891607377840">সম্পূর্ণ হলে খুলুন</translation>
+<translation id="3724279623330129812">ক্যামেরাকে কেন্দ্র করে অটোজুম</translation>
 <translation id="3726171378575546917"><ph name="UNAVAILABLE_APPS_ONE" />, <ph name="UNAVAILABLE_APPS_TWO" /> এবং আরও <ph name="UNAVAILABLE_APPS_COUNT" />টি অ্যাপ এই ডিভাইসে উপলভ্য নেই।</translation>
 <translation id="3735740477244556633">এই অনুসারে সাজান</translation>
 <translation id="3742055079367172538">স্ক্রিনশট নেওয়া হয়েছে</translation>
-<translation id="3761848338953536304">'লক সিম' সেটিং বন্ধ করার জন্য আপনাকে অ্যাডমিনিস্ট্রেটর অনুরোধ করেছেন</translation>
 <translation id="3765841986579723851">আজ এডিট করা হয়েছে</translation>
 <translation id="3771549900096082774">উচ্চ কনট্রাস্ট মোড</translation>
 <translation id="3773700760453577392">একজন অ্যাডমিনিস্ট্রেটর <ph name="USER_EMAIL" />-র জন্য একাধিক সাইন-ইন বাতিল করেছেন। চালিয়ে যাওয়ার জন্য, সব ব্যবহারকারীকে অবশ্যই সাইন-আউট করতে হবে।</translation>
@@ -761,6 +762,16 @@
 <translation id="5393156353051693207">অ্যাপ নতুন করে সাজাতে যেকোনও জায়গায় টাচ করে ধরে থাকুন</translation>
 <translation id="5395308026110844773">ফোল্ডার তৈরি করতে <ph name="IN_PLACE_APP" />-এর উপরে <ph name="DRAGGED_APP_NAME" /> টেনে এনে ছেড়ে দিন।</translation>
 <translation id="5397578532367286026">chrome.com-এ পরিচালক (<ph name="MANAGER_EMAIL" />) এই ব্যবহারকারীর ব্যবহার এবং ইতিহাস পর্যালোচনা করতে পারেন৷</translation>
+<translation id="5399673806694250334">স্ট্যাটাস ট্রে, সময় <ph name="TIME" />,
+        <ph name="BATTERY" />
+        <ph name="CHANNEL" />
+        <ph name="NETWORK" />,
+        <ph name="MIC" />,
+        <ph name="CAMERA" />,
+        <ph name="MANAGED" />
+        <ph name="NOTIFICATION" />,
+        <ph name="IME" />
+        <ph name="LOCALE" /></translation>
 <translation id="5400461572260843123">দ্রুত সেটিংস, বিজ্ঞপ্তি কেন্দ্র অ্যাক্সেস করতে, 'সার্চ করুন' ও 'বাঁদিকে যান' বোতামে একসাথে প্রেস করুন।</translation>
 <translation id="5426063383988017631">'সেটিংস' মেনু বন্ধ করা হয়েছে</translation>
 <translation id="5428899915242071344">বেছে নেওয়া শুরু করুন</translation>
@@ -827,6 +838,7 @@
 <translation id="5779721926447984944">পিন করা ফাইল</translation>
 <translation id="5788127256798019331">Play ফাইল</translation>
 <translation id="5790085346892983794">সফল</translation>
+<translation id="5804651031882187592">"সিম কার্ড লক করা" সেটিং বন্ধ করা</translation>
 <translation id="5805809050170488595"><ph name="NETWORK_NAME" /> চালু করতে ক্লিক করুন</translation>
 <translation id="5825969630400862129">কানেক্ট করা ডিভাইসের সেটিংস</translation>
 <translation id="5837036133683224804"><ph name="RECEIVER_NAME" />-এ <ph name="ROUTE_TITLE" /> বন্ধ করুন</translation>
@@ -859,7 +871,6 @@
 <translation id="598407983968395253">টেমপ্লেট ব্যবহার করুন</translation>
 <translation id="598882571027504733">আপডেট পেতে, অ্যাটাচ করা কীবোর্ডের মাধ্যমে আপনার Chromebook রিস্টার্ট করুন।</translation>
 <translation id="5992218262414051481">উচ্চ কনট্রাস্ট মোড চালু করা হয়েছে। টগল করে বন্ধ করার জন্য Ctrl+Search+H টিপুন।</translation>
-<translation id="6009656393242168182">আপনার 'সিম লক' সেটিং বন্ধ করুন</translation>
 <translation id="6012623610530968780"><ph name="TOTAL_PAGE_NUM" />টি পৃষ্ঠার মধ্যে <ph name="SELECTED_PAGE" />টি পৃষ্ঠা</translation>
 <translation id="6018164090099858612">মিরর মোড থেকে প্রস্থান করছে</translation>
 <translation id="602001110135236999">বাঁ দিকে স্ক্রল করুন</translation>

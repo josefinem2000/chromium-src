@@ -554,13 +554,13 @@ static_library("test_support") {
       "//ash/components/account_manager",
       "//ash/components/settings",
       "//ash/components/tpm",
-      "//ash/components/tpm:test_support",
       "//ash/constants",
       "//ash/public/cpp:test_support",
       "//chrome/browser/ash",
       "//chrome/browser/ash/system_web_apps",
       "//chromeos/ash/components/dbus/session_manager",
       "//chromeos/ash/components/dbus/userdataauth",
+      "//chromeos/ash/components/install_attributes:test_support",
       "//chromeos/dbus/tpm_manager",
       "//chromeos/login/login_state",
       "//components/exo",
@@ -3114,6 +3114,7 @@ if (!is_android) {
           "//chrome/browser/enterprise/connectors/device_trust/common",
           "//chrome/browser/enterprise/connectors/device_trust/key_management/browser/commands:test_support",
           "//chrome/browser/enterprise/connectors/device_trust/key_management/core/persistence:test_support",
+          "//components/device_signals/core/common",
           "//components/device_signals/core/common:features",
         ]
       }
@@ -3599,6 +3600,7 @@ if (!is_android) {
         "../browser/ash/file_manager/file_tasks_browsertest.cc",
         "../browser/ash/file_manager/image_loader_jstest.cc",
         "../browser/ash/file_manager/open_with_browser_browsertest.cc",
+        "../browser/ash/first_party_sets/first_party_sets_policy_initialization_browsertest.cc",
         "../browser/ash/guest_os/guest_os_registry_service_icon_browsertest.cc",
         "../browser/ash/input_method/input_method_engine_browsertests.cc",
         "../browser/ash/input_method/native_input_method_engine_with_ime_service_browsertest.cc",
@@ -3646,6 +3648,7 @@ if (!is_android) {
         "../browser/ash/login/error_screen_browsertest.cc",
         "../browser/ash/login/eula_browsertest.cc",
         "../browser/ash/login/existing_user_controller_browsertest.cc",
+        "../browser/ash/login/extensions/login_screen_extensions_lifetime_manager_browsertest.cc",
         "../browser/ash/login/guest_login_browsertest.cc",
         "../browser/ash/login/lock/fingerprint_unlock_browsertest.cc",
         "../browser/ash/login/lock/lock_screen_browsertest.cc",
@@ -3657,7 +3660,6 @@ if (!is_android) {
         "../browser/ash/login/login_browsertest.cc",
         "../browser/ash/login/login_manager_test.cc",
         "../browser/ash/login/login_manager_test.h",
-        "../browser/ash/login/login_screen_extensions_lifetime_manager_browsertest.cc",
         "../browser/ash/login/login_screen_policy_browsertest.cc",
         "../browser/ash/login/login_ui_browsertest.cc",
         "../browser/ash/login/login_ui_keyboard_browsertest.cc",
@@ -4186,6 +4188,8 @@ if (!is_android) {
         "//chromeos/ash/components/dbus/cicerone",
         "//chromeos/ash/components/dbus/concierge",
         "//chromeos/ash/components/dbus/cros_disks",
+        "//chromeos/ash/components/dbus/cryptohome",
+        "//chromeos/ash/components/dbus/cryptohome:cryptohome_proto",
         "//chromeos/ash/components/dbus/image_burner",
         "//chromeos/ash/components/dbus/rmad:rmad",
         "//chromeos/ash/components/dbus/seneschal",
@@ -4206,8 +4210,6 @@ if (!is_android) {
         "//chromeos/components/quick_answers/public/cpp:cpp",
         "//chromeos/components/remote_apps/mojom:mojom",
         "//chromeos/dbus:test_support",
-        "//chromeos/dbus/cryptohome",
-        "//chromeos/dbus/cryptohome:cryptohome_proto",
         "//chromeos/dbus/dlp",
         "//chromeos/dbus/missive:test_support",
         "//chromeos/login/login_state:test_support",
@@ -4650,6 +4652,7 @@ if (is_chromeos_lacros) {
       ":sync_integration_test_support",
       ":test_support",
       "//chrome/app:command_ids",
+      "//chrome/browser/chromeos/extensions/telemetry/api:browser_tests",
       "//chromeos/crosapi/mojom",
       "//chromeos/lacros",
       "//chromeos/lacros:test_support",
@@ -7583,6 +7586,10 @@ test("unit_tests") {
       sources +=
           [ "../browser/spellchecker/spelling_service_client_unittest.cc" ]
     }
+
+    if (use_browser_spellchecker && enable_spelling_service) {
+      sources += [ "../browser/spellchecker/spelling_request_unittest.cc" ]
+    }
   }
 
   # TODO(crbug.com/1229899): Clean up and move this to a separate target.
@@ -7975,10 +7982,17 @@ test("unit_tests") {
         "../browser/chromeos/extensions/login_screen/login/external_logout_request/external_logout_request_event_handler_unittest.cc",
         "../browser/chromeos/extensions/login_screen/login_state/login_state_api_unittest.cc",
         "//chrome/browser/chromeos/extensions/contact_center_insights/contact_center_insights_extension_manager_unittest.cc",
+
+        # TODO(b/207754758): Move the following file into the appropriate target
+        "//chrome/browser/chromeos/extensions/telemetry/api/api_guard_delegate_unittest.cc",
       ]
-      deps += [ "//chromeos/dbus/missive:missive" ]
-    } else {
-      sources += [ "../browser/extensions/api/messaging/native_messaging_policy_handler_unittest.cc" ]
+      deps += [
+        "//chrome/browser/chromeos/extensions/telemetry/api",
+        "//chrome/browser/chromeos/extensions/telemetry/api:fake_hardware_info_delegate",
+        "//chrome/browser/chromeos/extensions/telemetry/api:unit_tests",
+        "//chrome/common/chromeos/extensions",
+        "//chromeos/dbus/missive:missive",
+      ]
     }
 
     if (is_chromeos_ash) {
@@ -7993,8 +8007,7 @@ test("unit_tests") {
         "../browser/chromeos/extensions/login_screen/login_screen_storage/login_screen_storage_api_ash_unittest.cc",
         "../browser/chromeos/extensions/login_screen/login_state/session_state_changed_event_dispatcher_ash_unittest.cc",
 
-        # TODO(b/207754758): Move the following two files into the appropriate target
-        "../browser/chromeos/extensions/telemetry/api/api_guard_delegate_unittest.cc",
+        # TODO(b/207754758): Move the following file into the appropriate target
         "../browser/chromeos/extensions/telemetry/chromeos_permission_messages_unittest.cc",
         "../browser/extensions/api/enterprise_device_attributes/enterprise_device_attributes_api_ash_unittest.cc",
         "../browser/extensions/api/file_system/consent_provider_unittest.cc",
@@ -8353,8 +8366,11 @@ test("unit_tests") {
       "../browser/plugins/plugin_installer_unittest.cc",
       "../browser/plugins/plugin_metadata_unittest.cc",
       "../browser/plugins/plugin_prefs_unittest.cc",
-      "../common/pepper_permission_util_unittest.cc",
     ]
+  }
+
+  if (enable_ppapi) {
+    sources += [ "../common/pepper_permission_util_unittest.cc" ]
   }
 
   if (enable_basic_printing) {

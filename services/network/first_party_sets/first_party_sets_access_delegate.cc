@@ -6,7 +6,9 @@
 
 #include <utility>
 
+#include "base/metrics/histogram_functions.h"
 #include "base/stl_util.h"
+#include "base/time/time.h"
 #include "net/base/schemeful_site.h"
 #include "net/cookies/first_party_set_metadata.h"
 
@@ -50,6 +52,10 @@ FirstPartySetsAccessDelegate::ComputeMetadata(
     const std::set<net::SchemefulSite>& party_context,
     base::OnceCallback<void(net::FirstPartySetMetadata)> callback) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+
+  if (!context_config_.is_enabled()) {
+    return {net::FirstPartySetMetadata()};
+  }
   if (pending_queries_) {
     // base::Unretained() is safe because `this` owns `pending_queries_` and
     // `pending_queries_` will not run the enqueued callbacks after `this` is
@@ -71,6 +77,11 @@ FirstPartySetsAccessDelegate::FindOwner(
     base::OnceCallback<void(FirstPartySetsAccessDelegate::OwnerResult)>
         callback) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+
+  if (!context_config_.is_enabled()) {
+    return absl::make_optional<FirstPartySetsManager::OwnerResult>(
+        absl::nullopt);
+  }
   if (pending_queries_) {
     // base::Unretained() is safe because `this` owns `pending_queries_` and
     // `pending_queries_` will not run the enqueued callbacks after `this` is
@@ -90,6 +101,10 @@ FirstPartySetsAccessDelegate::FindOwners(
     base::OnceCallback<void(FirstPartySetsAccessDelegate::OwnersResult)>
         callback) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+
+  if (!context_config_.is_enabled())
+    return {{}};
+
   if (pending_queries_) {
     // base::Unretained() is safe because `this` owns `pending_queries_` and
     // `pending_queries_` will not run the enqueued callbacks after `this` is
@@ -109,6 +124,8 @@ void FirstPartySetsAccessDelegate::ComputeMetadataAndInvoke(
     const std::set<net::SchemefulSite>& party_context,
     base::OnceCallback<void(net::FirstPartySetMetadata)> callback) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+  DCHECK(context_config_.is_enabled());
+
   std::pair<base::OnceCallback<void(net::FirstPartySetMetadata)>,
             base::OnceCallback<void(net::FirstPartySetMetadata)>>
       callbacks = base::SplitOnceCallback(std::move(callback));
@@ -127,6 +144,8 @@ void FirstPartySetsAccessDelegate::FindOwnerAndInvoke(
     base::OnceCallback<void(FirstPartySetsAccessDelegate::OwnerResult)>
         callback) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+  DCHECK(context_config_.is_enabled());
+
   std::pair<base::OnceCallback<void(FirstPartySetsAccessDelegate::OwnerResult)>,
             base::OnceCallback<void(FirstPartySetsAccessDelegate::OwnerResult)>>
       callbacks = base::SplitOnceCallback(std::move(callback));
@@ -143,6 +162,8 @@ void FirstPartySetsAccessDelegate::FindOwnersAndInvoke(
     base::OnceCallback<void(FirstPartySetsAccessDelegate::OwnersResult)>
         callback) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+  DCHECK(context_config_.is_enabled());
+
   std::pair<
       base::OnceCallback<void(FirstPartySetsAccessDelegate::OwnersResult)>,
       base::OnceCallback<void(FirstPartySetsAccessDelegate::OwnersResult)>>
@@ -157,6 +178,20 @@ void FirstPartySetsAccessDelegate::FindOwnersAndInvoke(
 
 void FirstPartySetsAccessDelegate::InvokePendingQueries() {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+
+  UmaHistogramTimes(
+      "Cookie.FirstPartySets.InitializationDuration."
+      "ContextReadyToServeQueries2",
+      construction_timer_.Elapsed());
+
+  base::UmaHistogramCounts10000(
+      "Cookie.FirstPartySets.ContextDelayedQueriesCount",
+      pending_queries_ ? pending_queries_->size() : 0);
+
+  base::UmaHistogramTimes("Cookie.FirstPartySets.ContextMostDelayedQueryDelta",
+                          first_async_query_timer_.has_value()
+                              ? first_async_query_timer_->Elapsed()
+                              : base::TimeDelta());
   if (!pending_queries_)
     return;
 
@@ -173,6 +208,9 @@ void FirstPartySetsAccessDelegate::EnqueuePendingQuery(
     base::OnceClosure run_query) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   DCHECK(pending_queries_);
+
+  if (!first_async_query_timer_.has_value())
+    first_async_query_timer_ = {base::ElapsedTimer()};
 
   pending_queries_->push_back(std::move(run_query));
 }

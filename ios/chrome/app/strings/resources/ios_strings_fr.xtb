@@ -311,6 +311,7 @@ Lisez les instructions du moteur de recherche pour supprimer l'historique de vos
 <translation id="3529024052484145543">Non sécurisé</translation>
 <translation id="3533202363250687977">Fermer tous les onglets de navigation privée</translation>
 <translation id="3533436815740441613">Nouvel onglet</translation>
+<translation id="3547799431091898961">Pour vous déconnecter de votre compte Google sur tous les sites Web, <ph name="BEGIN_LINK" />déconnectez-vous de Chrome<ph name="END_LINK" />.</translation>
 <translation id="3551320343578183772">Fermer l'onglet</translation>
 <translation id="3581564640715911333">Proposer de traduire les pages dans d'autres langues</translation>
 <translation id="3588820906588687999">Ouvrir l'image dans un nouvel onglet</translation>
@@ -681,6 +682,7 @@ Toutefois, évitez d'utiliser un même mot de passe pour plusieurs sites.</trans
 <translation id="6561262006871132942">Zoom avant</translation>
 <translation id="6583087784430677195">Pour désactiver cela, ouvrez les <ph name="BEGIN_LINK" />Réglages<ph name="END_LINK" />, puis accédez à "Saisir automatiquement les mots de passe".</translation>
 <translation id="6585618849026997638">Ajoutez les pages qui vous intéressent à vos favoris pour pouvoir y revenir facilement</translation>
+<translation id="6596481460663245319">Rechercher dans l'image avec Google</translation>
 <translation id="6598875554591387303">Trier par éditeur</translation>
 <translation id="6603393121510733479">Votre organisation a désactivé la navigation privée.
 <ph name="BEGIN_LINK" />En savoir plus<ph name="END_LINK" /></translation>
@@ -850,6 +852,7 @@ Ils peuvent également s'en servir pour voir votre activité de navigation sur l
 <translation id="7987685713885608670">Pour renforcer la sécurité, chiffrez les mots de passe sur votre appareil avant qu'ils soient enregistrés dans le Gestionnaire de mots de passe Google.</translation>
 <translation id="7993619969781047893">Des fonctionnalités sur certains sites risquent de ne pas fonctionner</translation>
 <translation id="800361585186029508">Ouvre les URL saisies dans Google Chrome.</translation>
+<translation id="8016714545083187120">Toujours utiliser une connexion sécurisée</translation>
 <translation id="802154636333426148">Échec du téléchargement</translation>
 <translation id="8023878949384262191">Développe la section.</translation>
 <translation id="8027581147000338959">Ouvrir dans une nouvelle fenêtre</translation>

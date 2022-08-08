@@ -164,6 +164,11 @@ extern const char kEnableExpKitCalendarTextClassifierDescription[] =
     "When enabled, Experience Kit Calendar will use Text Classifier library in "
     "entity detection where possible.";
 
+extern const char kMapsExperienceKitName[] = "Experience Kit Maps";
+extern const char kMapsExperienceKitDescription[] =
+    "When enabled, long pressing on an address will trigger Experience Kit Maps"
+    "location and directions handling";
+
 const char kContentSuggestionsUIModuleRefreshName[] =
     "Content Suggestions UI Module Refresh";
 const char kContentSuggestionsUIModuleRefreshDescription[] =
@@ -309,6 +314,11 @@ const char kEnableUnicornAccountSupportName[] =
     "Enable Unicorn account support";
 const char kEnableUnicornAccountSupportDescription[] =
     "Allows users to sign-in with their Unicorn account.";
+
+const char kEnableWebPageAnnotationsName[] = "Enable Web Page Intent Detection";
+const char kEnableWebPageAnnotationsDescription[] =
+    "Prototype to detect and highlight data with possible intent in a web "
+    "page.";
 
 const char kEnableShortenedPasswordAutoFillInstructionName[] =
     "Enable shortened instructions to turn on Password AutoFill for Chrome";
@@ -539,6 +549,12 @@ const char kOmniboxPasteButtonName[] = "Omnibox paste to search button";
 const char kOmniboxPasteButtonDescription[] =
     "Add a paste button when showing clipboard suggestions in the omnibox. iOS "
     "16 and above.";
+
+const char kOmniboxLocalHistoryZeroSuggestBeyondNTPName[] =
+    "Allow local history zero-prefix suggestions beyond NTP";
+const char kOmniboxLocalHistoryZeroSuggestBeyondNTPDescription[] =
+    "Enables local history zero-prefix suggestions in every context in which "
+    "the remote zero-prefix suggestions are enabled.";
 
 const char kOmniboxZeroSuggestPrefetchingName[] =
     "Omnibox Zero Prefix Suggestion Prefetching on NTP";

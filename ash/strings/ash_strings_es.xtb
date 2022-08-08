@@ -327,6 +327,7 @@ Aquí tienes algunas cosas que puedes probar para empezar.</translation>
 <translation id="2894949423239620203">El cable podría afectar al rendimiento</translation>
 <translation id="2903844815300039659">Conectado a <ph name="NAME" />, <ph name="STRENGTH" /></translation>
 <translation id="2914580577416829331">Capturas de pantalla</translation>
+<translation id="2925246975070834767">Prueba el zoom automático para estar en el centro de la pantalla. Actívalo en los ajustes rápidos.</translation>
 <translation id="2941112035454246133">Baja</translation>
 <translation id="2942350706960889382">Lupa fijada</translation>
 <translation id="2942516765047364088">Posición de la estantería</translation>
@@ -472,7 +473,6 @@ Conecta tu dispositivo a la corriente.</translation>
 <translation id="3726171378575546917"><ph name="UNAVAILABLE_APPS_ONE" />, <ph name="UNAVAILABLE_APPS_TWO" /> y <ph name="UNAVAILABLE_APPS_COUNT" /> más no están en este dispositivo.</translation>
 <translation id="3735740477244556633">Ordenar por</translation>
 <translation id="3742055079367172538">Captura de pantalla hecha</translation>
-<translation id="3761848338953536304">Tu administrador solicita que desactives el ajuste de bloqueo de la SIM</translation>
 <translation id="3765841986579723851">Editado hoy</translation>
 <translation id="3771549900096082774">Modo de contraste alto</translation>
 <translation id="3773700760453577392">Un administrador ha inhabilitado el inicio de sesión múltiple para <ph name="USER_EMAIL" />.
@@ -635,6 +635,7 @@ Todos los usuarios deben cerrar sesión para continuar.</translation>
 <translation id="4628757576491864469">Dispositivos</translation>
 <translation id="4631891353005174729"><ph name="APP_NAME_TYPE" />, valoración por estrellas de <ph name="RATING_SCORE" /></translation>
 <translation id="4633185660152240791">{0,plural, =1{Cambia el dispositivo a la versión anterior en un plazo de 1 día}other{Cambia el dispositivo a la versión anterior en un plazo de # días}}</translation>
+<translation id="4633636853437260449">Pulsa Ctrl + W para eliminar</translation>
 <translation id="4642092649622328492">Hacer una captura de pantalla parcial</translation>
 <translation id="4644727592819780893">El área es demasiado pequeña para que la cámara la capte</translation>
 <translation id="4648249871170053485"><ph name="APP_NAME" />, aplicación recomendada</translation>
@@ -760,6 +761,16 @@ Todos los usuarios deben cerrar sesión para continuar.</translation>
 <translation id="5393156353051693207">Toca y mantén pulsado en cualquier lugar de la pantalla para reorganizar tus aplicaciones</translation>
 <translation id="5395308026110844773"><ph name="DRAGGED_APP_NAME" /> está encima de <ph name="IN_PLACE_APP" />. Suelta para crear una carpeta.</translation>
 <translation id="5397578532367286026">El administrador puede consultar el uso y el historial de este usuario (<ph name="MANAGER_EMAIL" />) en la página chrome.com.</translation>
+<translation id="5399673806694250334">Bandeja de estado: hora <ph name="TIME" />,
+        <ph name="BATTERY" />
+        <ph name="CHANNEL" />
+        <ph name="NETWORK" />,
+        <ph name="MIC" />,
+        <ph name="CAMERA" />,
+        <ph name="MANAGED" />
+        <ph name="NOTIFICATION" />,
+        <ph name="IME" />
+        <ph name="LOCALE" /></translation>
 <translation id="5400461572260843123">Ajustes rápidos. Pulsa la tecla de búsqueda y la flecha izquierda para acceder al centro de notificaciones.</translation>
 <translation id="5426063383988017631">Menú Ajustes cerrado</translation>
 <translation id="5428899915242071344">Empezar a seleccionar</translation>
@@ -858,7 +869,6 @@ Todos los usuarios deben cerrar sesión para continuar.</translation>
 <translation id="598407983968395253">Utilizar plantilla</translation>
 <translation id="598882571027504733">Para recibir la actualización, reinicia tu Chromebook con el teclado conectado.</translation>
 <translation id="5992218262414051481">Se ha habilitado el modo de contraste alto. Pulsa Ctrl + Tecla de búsqueda + H de nuevo para desactivarlo.</translation>
-<translation id="6009656393242168182">Inhabilita el ajuste de bloqueo de tu SIM</translation>
 <translation id="6012623610530968780">Página <ph name="SELECTED_PAGE" /> de <ph name="TOTAL_PAGE_NUM" /></translation>
 <translation id="6018164090099858612">Saliendo del modo Espejo</translation>
 <translation id="602001110135236999">Desplazar a la izquierda</translation>
@@ -898,6 +908,7 @@ Todos los usuarios deben cerrar sesión para continuar.</translation>
 <translation id="619279033188484792">Consulta fotos, contenido multimedia y notificaciones recientes de tu teléfono en tu <ph name="DEVICE_TYPE" /></translation>
 <translation id="619335566042889110">Cargar al 100 % ahora</translation>
 <translation id="6193431488227440296">Desarrollo</translation>
+<translation id="6210042900243040400">Conectar dispositivo <ph name="NAME" /> guardado anteriormente en <ph name="EMAIL" /></translation>
 <translation id="6220928844947387476">Ahora puedes grabarte a ti mismo y tu pantalla al mismo tiempo</translation>
 <translation id="622484624075952240">Flecha hacia abajo</translation>
 <translation id="6231419273573514727">Es posible que el rendimiento de los periféricos esté limitado</translation>

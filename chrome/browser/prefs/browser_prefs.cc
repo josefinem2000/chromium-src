@@ -331,7 +331,6 @@
 #include "chrome/browser/ash/first_run/first_run.h"
 #include "chrome/browser/ash/floating_workspace/floating_workspace_util.h"
 #include "chrome/browser/ash/guest_os/guest_id.h"
-#include "chrome/browser/ash/guest_os/guest_os_mime_types_service.h"
 #include "chrome/browser/ash/guest_os/guest_os_pref_names.h"
 #include "chrome/browser/ash/guest_os/guest_os_terminal.h"
 #include "chrome/browser/ash/lock_screen_apps/state_controller.h"
@@ -1157,8 +1156,8 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
   chromeos::ArcKioskAppManager::RegisterPrefs(registry);
   ash::AudioDevicesPrefHandlerImpl::RegisterPrefs(registry);
   ash::cert_provisioning::RegisterLocalStatePrefs(registry);
-  chromeos::CellularESimProfileHandlerImpl::RegisterLocalStatePrefs(registry);
-  chromeos::ManagedCellularPrefHandler::RegisterLocalStatePrefs(registry);
+  ash::CellularESimProfileHandlerImpl::RegisterLocalStatePrefs(registry);
+  ash::ManagedCellularPrefHandler::RegisterLocalStatePrefs(registry);
   ash::ChromeUserManagerImpl::RegisterPrefs(registry);
   crosapi::browser_util::RegisterLocalStatePrefs(registry);
   ash::CupsPrintersManager::RegisterLocalStatePrefs(registry);
@@ -1188,7 +1187,7 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
   ash::login::SecurityTokenSessionController::RegisterLocalStatePrefs(registry);
   ash::reporting::LoginLogoutReporter::RegisterPrefs(registry);
   ash::MultiProfileUserController::RegisterPrefs(registry);
-  chromeos::NetworkMetadataStore::RegisterPrefs(registry);
+  ash::NetworkMetadataStore::RegisterPrefs(registry);
   ash::NetworkThrottlingObserver::RegisterPrefs(registry);
   ash::PowerMetricsReporter::RegisterLocalStatePrefs(registry);
   ash::platform_keys::KeyPermissionsManagerImpl::RegisterLocalStatePrefs(
@@ -1530,7 +1529,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
   ash::multidevice_setup::MultiDeviceSetupService::RegisterProfilePrefs(
       registry);
   ash::MultiProfileUserController::RegisterProfilePrefs(registry);
-  chromeos::NetworkMetadataStore::RegisterPrefs(registry);
+  ash::NetworkMetadataStore::RegisterPrefs(registry);
   ash::ReleaseNotesStorage::RegisterProfilePrefs(registry);
   ash::HelpAppNotificationController::RegisterProfilePrefs(registry);
   ash::quick_unlock::FingerprintStorage::RegisterProfilePrefs(registry);
@@ -1823,11 +1822,6 @@ void MigrateObsoleteProfilePrefs(Profile* profile) {
   // Added 2021/07.
   profile_prefs->ClearPref(kExtensionCheckupOnStartup);
 #endif
-
-#if BUILDFLAG(IS_CHROMEOS_ASH)
-  // Added 2021/07.
-  guest_os::GuestOsMimeTypesService::MigrateVerboseMimeTypePrefs(profile_prefs);
-#endif  // BUILDFLAG(IS_CHROMEOS_ASH)
 
 #if !BUILDFLAG(IS_ANDROID)
   // Added 2021/07

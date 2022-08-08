@@ -2815,17 +2815,17 @@ void Element::SetPopupFocusOnShow() {
   GetDocument().UpdateStyleAndLayoutTreeForNode(this);
 
   Element* control = nullptr;
-  if (IsAutofocusable() || hasAttribute(html_names::kDelegatesfocusAttr)) {
-    // If the popup has autofocus or delegatesfocus, focus it.
+  if (IsAutofocusable()) {
+    // If the popup has autofocus, focus it.
     control = this;
   } else {
     // Otherwise, look for a child control that has the autofocus attribute.
     control = GetPopupFocusableArea(/*autofocus_only=*/true);
   }
 
-  // If the popup does not use autofocus or delegatesfocus, then the focus
-  // should remain on the currently active element.
-  // https://open-ui.org/components/popup.research.explainer#autofocus-logic
+  // If the popup does not use autofocus, then the focus should remain on the
+  // currently active element.
+  // https://open-ui.org/components/popup.research.explainer#focus-management
   if (!control)
     return;
 
@@ -3100,7 +3100,7 @@ Element* Element::PopupHoverTargetElement() const {
 // within another pop-up, and the container pop-up is a descendant of this
 // pop_up. For the special case of popup=manual pop-ups, which do not have
 // ancestral relationships, this function checks pure DOM tree descendants of
-// popup=manual pop-ups. This is important for the `hover-pop-up-hide-delay` CSS
+// popup=manual pop-ups. This is important for the `pop-up-hide-delay` CSS
 // property, which works for all pop-up types, and needs to keep pop-ups open
 // when a descendant is hovered.
 bool Element::IsNodePopUpDescendant(const Node& node) const {
@@ -3125,11 +3125,11 @@ bool Element::IsNodePopUpDescendant(const Node& node) const {
 void Element::MaybeQueuePopupHideEvent() {
   DCHECK(RuntimeEnabledFeatures::HTMLPopupAttributeEnabled());
   DCHECK(HasValidPopupAttribute());
-  // If the pop-up isn't showing, or it has an infinite HoverPopUpHideDelay, do
+  // If the pop-up isn't showing, or it has an infinite PopUpHideDelay, do
   // nothing.
   if (GetPopupData()->visibilityState() == PopupVisibilityState::kHidden)
     return;
-  float hide_delay_seconds = GetComputedStyle()->HoverPopUpHideDelay();
+  float hide_delay_seconds = GetComputedStyle()->PopUpHideDelay();
   // If the value is infinite or NaN, don't hide the pop-up.
   if (!std::isfinite(hide_delay_seconds))
     return;
@@ -3194,7 +3194,7 @@ void Element::HandlePopupHovered(bool hovered) {
       auto& hover_tasks = popup_element->GetPopupData()->hoverShowTasks();
       DCHECK(!hover_tasks.Contains(this));
 
-      float hover_delay_seconds = GetComputedStyle()->HoverPopUpDelay();
+      float hover_delay_seconds = GetComputedStyle()->PopUpShowDelay();
       // If the value is infinite or NaN, don't queue a task at all.
       DCHECK_GE(hover_delay_seconds, 0);
       if (std::isfinite(hover_delay_seconds)) {
@@ -5694,15 +5694,6 @@ void Element::Focus(const FocusParams& params) {
       frame_owner_element->contentDocument()->UnloadStarted())
     return;
 
-  if (HasValidPopupAttribute() &&
-      hasAttribute(html_names::kDelegatesfocusAttr)) {
-    DCHECK(RuntimeEnabledFeatures::HTMLPopupAttributeEnabled());
-    if (auto* node_to_focus = GetPopupFocusableArea(/*autofocus_only=*/false)) {
-      node_to_focus->Focus(params);
-    }
-    return;
-  }
-
   // Ensure we have clean style (including forced display locks).
   GetDocument().UpdateStyleAndLayoutTreeForNode(this);
 
@@ -6568,10 +6559,6 @@ ContainerQueryEvaluator* Element::GetContainerQueryEvaluator() const {
   if (const auto* cq_data = GetContainerQueryData())
     return cq_data->GetContainerQueryEvaluator();
   return nullptr;
-}
-
-void Element::SetContainerQueryEvaluator(ContainerQueryEvaluator* evaluator) {
-  EnsureElementRareData().SetContainerQueryEvaluator(evaluator);
 }
 
 bool Element::SkippedContainerStyleRecalc() const {

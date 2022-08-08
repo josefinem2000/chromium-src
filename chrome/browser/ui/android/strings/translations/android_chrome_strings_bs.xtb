@@ -271,7 +271,6 @@ Kada izbrišete historiju pregledanja, cijelu ili samo za određene web lokacije
 <translation id="2496180316473517155">Historija pregledanja</translation>
 <translation id="2497852260688568942">Sinhronizaciju je onemogućio vaš administrator</translation>
 <translation id="250020030759455918">Vidjet ćete svoj status prijave na web lokaciji <ph name="SITE_NAME" />, podatke pregledanja i podatke web lokacije na Chromeu</translation>
-<translation id="2507178219579379057">Chrome istražuje načine da ograniči neželjene oglase, prevare i dijeljenje između web lokacija. Chrome također <ph name="BEGIN_LINK" />procjenjuje vaša interesovanja<ph name="END_LINK" />, na temelju kojih vam web lokacije mogu prikazivati oglase. Interesovanjima možete upravljati u postavkama.</translation>
 <translation id="2513403576141822879">Više postavki koje se odnose na privatnost, sigurnost i prikupljanje podataka dostupno je u odjeljku <ph name="BEGIN_LINK" />Sinkronizacija i prilagodba<ph name="END_LINK" /></translation>
 <translation id="2517472476991765520">Skeniraj</translation>
 <translation id="2523184218357549926">URL-ove stranica koje posjećujete šalje Googleu</translation>
@@ -1049,7 +1048,7 @@ Tokeni povjerenja poboljšavaju privatnosti na webu i ne mogu se koristi za utvr
 <translation id="6671495933530132209">Kopiraj sliku</translation>
 <translation id="6674571176963658787">Da pokrenete sinhronizaciju, unesite pristupni izraz</translation>
 <translation id="6676840375528380067">Obrisati Chrome podatke s ovog uređaja?</translation>
-<translation id="6676927815633975364">Prijavite se na ovu web-lokaciju i Chrome</translation>
+<translation id="6676927815633975364">Prijavite se na ovu web lokaciju i u Chrome</translation>
 <translation id="6684809838922667136">Poboljšajte Chrome</translation>
 <translation id="670498945988402717">Provjereno jučer</translation>
 <translation id="6710213216561001401">Nazad</translation>

@@ -184,6 +184,17 @@ id<GREYMatcher> OmniboxWidthBetween(CGFloat width, CGFloat margin) {
 #define MAYBE_testCollectionShortcuts testCollectionShortcuts
 #endif
 - (void)MAYBE_testCollectionShortcuts {
+  // Relaunch the app with trending queries disabled, to ensure that the
+  // shortcuts module is always present.
+  // TODO(crbug.com/1350826): Trending queries is configured as a
+  // first-run trial, and one of the arms removes the Shortcuts
+  // module. Fix these tests to force an appropriate configuration or
+  // otherwise support the various possible experiment arms.
+  AppLaunchConfiguration config = [self appConfigurationForTestCase];
+  config.relaunch_policy = ForceRelaunchByCleanShutdown;
+  config.features_disabled.push_back(kTrendingQueriesModule);
+  [[AppLaunchManager sharedManager] ensureAppLaunchedWithConfiguration:config];
+
   // Check the Bookmarks.
   [[EarlGrey
       selectElementWithMatcher:chrome_test_util::ButtonWithAccessibilityLabelId(
@@ -726,6 +737,17 @@ id<GREYMatcher> OmniboxWidthBetween(CGFloat width, CGFloat margin) {
 #define MAYBE_testFavicons testFavicons
 #endif
 - (void)MAYBE_testFavicons {
+  // Relaunch the app with trending queries disabled, to ensure that the
+  // shortcuts module is always present.
+  // TODO(crbug.com/1350826): Trending queries is configured as a
+  // first-run trial, and one of the arms removes the Shortcuts
+  // module. Fix these tests to force an appropriate configuration or
+  // otherwise support the various possible experiment arms.
+  AppLaunchConfiguration config = [self appConfigurationForTestCase];
+  config.relaunch_policy = ForceRelaunchByCleanShutdown;
+  config.features_disabled.push_back(kTrendingQueriesModule);
+  [[AppLaunchManager sharedManager] ensureAppLaunchedWithConfiguration:config];
+
   for (NSInteger index = 0; index < 4; index++) {
     [[EarlGrey
         selectElementWithMatcher:
@@ -1103,12 +1125,19 @@ id<GREYMatcher> OmniboxWidthBetween(CGFloat width, CGFloat margin) {
 // Tests that feed ablation successfully hides the feed from the NTP and the
 // toggle from the Chrome settings.
 // TODO(crbug.com/1339419): Test fails on device.
-#if !TARGET_IPHONE_SIMULATOR
-#define MAYBE_testFeedAblationHidesFeed DISABLED_testFeedAblationHidesFeed
-#else
-#define MAYBE_testFeedAblationHidesFeed testFeedAblationHidesFeed
-#endif
-- (void)MAYBE_testFeedAblationHidesFeed {
+// TODO(crbug.com/1350826): Test fails on small form factors.
+- (void)DISABLED_testFeedAblationHidesFeed {
+  // Relaunch the app with trending queries disabled, to ensure that the
+  // discover feed is always present.
+  // TODO(crbug.com/1350826): Trending queries is configured as a
+  // first-run trial, and one of the arms removes the discover
+  // feed. Fix these tests to force an appropriate configuration or
+  // otherwise support the various possible experiment arms.
+  AppLaunchConfiguration config = [self appConfigurationForTestCase];
+  config.relaunch_policy = ForceRelaunchByCleanShutdown;
+  config.features_disabled.push_back(kTrendingQueriesModule);
+  [[AppLaunchManager sharedManager] ensureAppLaunchedWithConfiguration:config];
+
   // Ensures that feed header is visible before enabling ablation.
   [[EarlGrey selectElementWithMatcher:chrome_test_util::DiscoverHeaderLabel()]
       assertWithMatcher:grey_sufficientlyVisible()];
@@ -1124,8 +1153,6 @@ id<GREYMatcher> OmniboxWidthBetween(CGFloat width, CGFloat margin) {
       assertWithMatcher:grey_notNil()];
 
   // Relaunch the app with ablation enabled.
-  AppLaunchConfiguration config = [self appConfigurationForTestCase];
-  config.relaunch_policy = ForceRelaunchByCleanShutdown;
   config.features_enabled.push_back(kEnableFeedAblation);
   [[AppLaunchManager sharedManager] ensureAppLaunchedWithConfiguration:config];
 

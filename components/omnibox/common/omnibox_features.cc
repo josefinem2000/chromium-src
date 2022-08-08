@@ -132,6 +132,11 @@ const base::Feature kFocusTriggersSRPZeroSuggest{
 extern const base::Feature kLocalHistorySuggestRevamp{
     "LocalHistorySuggestRevamp", base::FEATURE_DISABLED_BY_DEFAULT};
 
+// Enables local history zero-prefix suggestions in every context in which the
+// remote zero-prefix suggestions are enabled.
+const base::Feature kLocalHistoryZeroSuggestBeyondNTP{
+    "LocalHistoryZeroSuggestBeyondNTP", base::FEATURE_DISABLED_BY_DEFAULT};
+
 // Used to adjust the age threshold since the last visit in order to consider a
 // normalized keyword search term as a zero-prefix suggestion. If disabled, the
 // default value of 60 days for Desktop and 7 days for Android and iOS is used.
@@ -260,6 +265,11 @@ const base::Feature kSuggestionAnswersColorReverse = {
 // with a carousel of tiles, instead of one URL per row.
 extern const base::Feature kMostVisitedTiles{"OmniboxMostVisitedTiles",
                                              enabled_by_default_android_only};
+
+// If enabled, computes spacing between MV tiles so that about 4.5 tiles are
+// shown on screen on narrow devices.
+extern const base::Feature kMostVisitedTilesDynamicSpacing{
+    "OmniboxMostVisitedTilesDynamicSpacing", base::FEATURE_DISABLED_BY_DEFAULT};
 
 // If enabled, permits the title on the MostVisitedTiles to wrap around to
 // second line.

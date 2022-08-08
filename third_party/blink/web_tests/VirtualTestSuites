@@ -14,12 +14,6 @@
     "args": ["--enable-features=PrivateNetworkAccessPermissionPrompt"]
   },
   {
-    "prefix": "disable-accept-language-header",
-    "platforms": ["Linux", "Mac", "Win"],
-    "bases": ["http/tests/navigation/language"],
-    "args": ["--disable-features=AcceptLanguageHeader"]
-  },
-  {
     "prefix": "gpu",
     "platforms": ["Linux", "Mac", "Win", "Fuchsia"],
     "bases": ["fast/canvas"],
@@ -1309,6 +1303,12 @@
       "fast/preloader"
     ],
     "args": ["--enable-features=ThreadedPreloadScanner,PrecompileInlineScripts"]
+  },
+  {
+    "prefix": "isolate-sandboxed-iframes",
+    "platforms": ["Linux", "Mac", "Win"],
+    "bases": [ "external/wpt/html/infrastructure/urls/terminology-0/" ],
+    "args": [ "--enable-features=IsolateSandboxedIframes" ]
   },
   {
     "prefix": "coop-restrict-properties",

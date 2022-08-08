@@ -100,6 +100,7 @@
 <translation id="1455242230282523554">Хэлний тохиргоог харуулах</translation>
 <translation id="1460620680449458626">Дууг хаасан.</translation>
 <translation id="1467432559032391204">Зүүн</translation>
+<translation id="146902737843070955">Таны администратор энэ өөрчлөлтийг хүссэн</translation>
 <translation id="147310119694673958">Утасны батарей <ph name="BATTERY_PERCENTAGE" />%</translation>
 <translation id="1479909375538722835">Хөвж буй хандалтын цэс</translation>
 <translation id="1480845547124508962"><ph name="CURRENT_TIME" />, Календарийн харагдах байдлыг нээхийн тулд enter товчийг дарна уу</translation>
@@ -470,10 +471,10 @@
 <translation id="3708186454126126312">Өмнө нь холбогдсон</translation>
 <translation id="371370241367527062">Урд талын микрофон</translation>
 <translation id="3713734891607377840">Дуусах үед нээх</translation>
+<translation id="3724279623330129812">Автомат томруулалтыг камерын төвд байрлуулсан</translation>
 <translation id="3726171378575546917">Энэ төхөөрөмж дээр <ph name="UNAVAILABLE_APPS_ONE" />, <ph name="UNAVAILABLE_APPS_TWO" /> болон өөр <ph name="UNAVAILABLE_APPS_COUNT" /> апп байхгүй байна.</translation>
 <translation id="3735740477244556633">Дараахаар эрэмбэлэх</translation>
 <translation id="3742055079367172538">Дэлгэцний зургийг авсан болно (Screenshot)</translation>
-<translation id="3761848338953536304">Танай администратор таныг SIM түгжих тохиргоог унтраахыг хүсэж байна</translation>
 <translation id="3765841986579723851">Өнөөдөр зассан</translation>
 <translation id="3771549900096082774">Өндөр ялгаралтай горим</translation>
 <translation id="3773700760453577392">Админ <ph name="USER_EMAIL" />-д олон зэрэг нэвтрэхийг зөвшөөрөөгүй байна. 
@@ -838,6 +839,7 @@
 <translation id="5779721926447984944">Бэхэлсэн файлууд</translation>
 <translation id="5788127256798019331">Файлуудыг тоглуулах</translation>
 <translation id="5790085346892983794">Амжилттай гүйцэтгэлээ</translation>
+<translation id="5804651031882187592">"SIM-г түгжих" тохиргоог унтраах</translation>
 <translation id="5805809050170488595"><ph name="NETWORK_NAME" />-г идэвхжүүлэхийн тулд товших</translation>
 <translation id="5825969630400862129">Холбогдсон төхөөрөмжүүдийн тохиргоо</translation>
 <translation id="5837036133683224804"><ph name="RECEIVER_NAME" />-г <ph name="ROUTE_TITLE" />-д дамжуулахаа зогсоох</translation>
@@ -870,7 +872,6 @@
 <translation id="598407983968395253">Загварыг ашиглах</translation>
 <translation id="598882571027504733">Шинэчлэлт авахын тулд Chromebook-ээ хавсаргасан гараар шинэчилнэ үү.</translation>
 <translation id="5992218262414051481">Өндөр ялгаралтай горимыг идэвхжүүлсэн. Үүнийг унтраахын тулд Ctrl+Search+H-г дахин дарна уу.</translation>
-<translation id="6009656393242168182">SIM-н түгжээний тохиргоогоо идэвхгүй болгох</translation>
 <translation id="6012623610530968780">Хуудас <ph name="TOTAL_PAGE_NUM" />-н <ph name="SELECTED_PAGE" /></translation>
 <translation id="6018164090099858612">Толь горимоос гарч байна</translation>
 <translation id="602001110135236999">Зүүн тийш гүйлгэх</translation>

@@ -1930,6 +1930,42 @@
                     "enable_features": [
                         "BackForwardCacheMemoryControls"
                     ]
+                },
+                {
+                    "name": "Enabled_1000",
+                    "params": {
+                        "memory_threshold_for_back_forward_cache_in_mb": "1000"
+                    },
+                    "enable_features": [
+                        "BackForwardCacheMemoryControls"
+                    ]
+                },
+                {
+                    "name": "Enabled_1300",
+                    "params": {
+                        "memory_threshold_for_back_forward_cache_in_mb": "1300"
+                    },
+                    "enable_features": [
+                        "BackForwardCacheMemoryControls"
+                    ]
+                },
+                {
+                    "name": "Enabled_1500",
+                    "params": {
+                        "memory_threshold_for_back_forward_cache_in_mb": "1500"
+                    },
+                    "enable_features": [
+                        "BackForwardCacheMemoryControls"
+                    ]
+                },
+                {
+                    "name": "Enabled_1700",
+                    "params": {
+                        "memory_threshold_for_back_forward_cache_in_mb": "1700"
+                    },
+                    "enable_features": [
+                        "BackForwardCacheMemoryControls"
+                    ]
                 }
             ]
         }
@@ -2047,6 +2083,25 @@
             ]
         }
     ],
+    "BreakupLongOmniboxTasks": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "params": {
+                        "clear_focus_asynchronously": "true"
+                    },
+                    "enable_features": [
+                        "ClearOmniboxFocusAfterNavigation",
+                        "PostTaskFocusTab"
+                    ]
+                }
+            ]
+        }
+    ],
     "BrowserSwitcherNoneIsGreylist": [
         {
             "platforms": [
@@ -2112,29 +2167,6 @@
                     },
                     "enable_features": [
                         "PermissionPredictions"
-                    ]
-                }
-            ]
-        }
-    ],
-    "CPSS-OnDeviceNotificationPredictions": [
-        {
-            "platforms": [
-                "android",
-                "chromeos",
-                "chromeos_lacros",
-                "linux",
-                "mac",
-                "windows"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled_20220221",
-                    "params": {
-                        "holdback_chance": "0.3"
-                    },
-                    "enable_features": [
-                        "PermissionOnDeviceNotificationPredictions"
                     ]
                 }
             ]
@@ -3272,26 +3304,6 @@
                     "name": "Enabled_20220601",
                     "enable_features": [
                         "DefaultPassthroughCommandDecoder"
-                    ]
-                }
-            ]
-        }
-    ],
-    "DeferredShaping": [
-        {
-            "platforms": [
-                "android",
-                "chromeos",
-                "chromeos_lacros",
-                "linux",
-                "mac",
-                "windows"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled",
-                    "enable_features": [
-                        "DeferredShaping"
                     ]
                 }
             ]
@@ -6388,21 +6400,6 @@
             ]
         }
     ],
-    "OmniboxPostTaskFocusTabAndroid": [
-        {
-            "platforms": [
-                "android"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled",
-                    "enable_features": [
-                        "PostTaskFocusTab"
-                    ]
-                }
-            ]
-        }
-    ],
     "OmniboxPrerender": [
         {
             "platforms": [
@@ -6563,6 +6560,21 @@
                     "enable_features": [
                         "CacheDeprecatedSystemLocationSetting",
                         "OptimizeGeolocationHeaderGeneration"
+                    ]
+                }
+            ]
+        }
+    ],
+    "OptimizeLayoutsForPullRefresh": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "OptimizeLayoutsForPullRefresh"
                     ]
                 }
             ]
@@ -6792,6 +6804,8 @@
                 "android",
                 "android_weblayer",
                 "android_webview",
+                "chromeos",
+                "chromeos_lacros",
                 "linux",
                 "windows"
             ],
@@ -7651,6 +7665,28 @@
                     "name": "Enabled_20220208",
                     "enable_features": [
                         "ReadLaterReminderNotification"
+                    ]
+                }
+            ]
+        }
+    ],
+    "ReadWritePasswordNotesBackupField": [
+        {
+            "platforms": [
+                "android",
+                "android_weblayer",
+                "chromeos",
+                "chromeos_lacros",
+                "ios",
+                "linux",
+                "mac",
+                "windows"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "ReadWritePasswordNotesBackupField"
                     ]
                 }
             ]
@@ -9986,27 +10022,6 @@
                     },
                     "enable_features": [
                         "VideoTutorials"
-                    ]
-                }
-            ]
-        }
-    ],
-    "ViewportHeightClientHintHeader": [
-        {
-            "platforms": [
-                "windows",
-                "mac",
-                "chromeos",
-                "chromeos_lacros",
-                "linux",
-                "android",
-                "android_webview"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled",
-                    "enable_features": [
-                        "ViewportHeightClientHintHeader"
                     ]
                 }
             ]

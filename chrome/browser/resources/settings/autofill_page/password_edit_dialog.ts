@@ -9,7 +9,7 @@
 
 import 'chrome://resources/cr_elements/cr_button/cr_button.m.js';
 import 'chrome://resources/cr_elements/cr_dialog/cr_dialog.m.js';
-import 'chrome://resources/cr_elements/cr_icon_button/cr_icon_button.m.js';
+import 'chrome://resources/cr_elements/cr_icon_button/cr_icon_button.js';
 import 'chrome://resources/cr_elements/cr_input/cr_input.m.js';
 import 'chrome://resources/cr_elements/cr_icons_css.m.js';
 import 'chrome://resources/cr_elements/shared_vars_css.m.js';
@@ -299,7 +299,7 @@ export class PasswordEditDialogElement extends PasswordEditDialogElementBase {
     if (this.existingEntry) {
       this.websiteUrls_ = this.existingEntry.urls;
       this.username_ = this.existingEntry.username;
-      this.note_ = this.existingEntry.note;
+      this.note_ = this.existingEntry.note || '';
     }
     this.password_ = this.getPassword_();
     if (!this.isInFederatedViewMode_) {

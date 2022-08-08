@@ -4694,6 +4694,7 @@ Gallwch aseinio sawl switsh i'r weithred hon.</translation>
 <translation id="5470735824776589490">Rhaid ailgychwyn cyn y gellir ailosod eich dyfais gyda Powerwash. <ph name="LINK_BEGIN" />Dysgu rhagor<ph name="LINK_END" /></translation>
 <translation id="5471768120198416576">Shw'mae! Fi yw eich llais testun i leferydd.</translation>
 <translation id="5472627187093107397">Cadw cyfrineiriau ar gyfer y wefan hon</translation>
+<translation id="5473062644742711742">Gallwch ddod o hyd i ragor o offer hygyrchedd yn Chrome Web Store</translation>
 <translation id="5473075389972733037">IBM</translation>
 <translation id="5473099001878321374">Drwy barhau, rydych yn cytuno y gall y ddyfais hon hefyd lawrlwytho a gosod diweddariadau ac apiau yn awtomatig gan Google, cludydd eich plentyn a gwneuthurwr y ddyfais hon, gan ddefnyddio data symudol o bosib. Mae'n bosib y bydd rhai o'r apiau hyn yn cynnig pryniannau o fewn yr ap.</translation>
 <translation id="5473156705047072749">{NUM_CHARACTERS,plural, =1{Rhaid i'r PIN fod o leiaf un nod}zero{Rhaid i'r PIN fod o leiaf # nod}two{Rhaid i'r PIN fod o leiaf # nod}few{Rhaid i'r PIN fod o leiaf # nod}many{Rhaid i'r PIN fod o leiaf # nod}other{Rhaid i'r PIN fod o leiaf # nod}}</translation>
@@ -5331,7 +5332,6 @@ Gallwch aseinio sawl switsh i'r weithred hon.</translation>
 <translation id="6086846494333236931">Wedi'i osod gan eich gweinyddwr</translation>
 <translation id="6087746524533454243">Chwilio am dudalen ynghylch y porwr? Ewch i</translation>
 <translation id="6087960857463881712">Wyneb anhygoel</translation>
-<translation id="6088535503330933227">Mae Chrome yn archwilio ffyrdd o gyfyngu ar sothach hysbysebion, twyll a rhannu rhwng gwefannau. Mae Chrome hefyd <ph name="ESTIMATE_INTERESTS_LINK" /> y gall gwefannau defnyddio i ddangos hysbysebion i chi. Gallwch reoli'ch diddordebau yn y gosodiadau.</translation>
 <translation id="608912389580139775">I ychwanegu'r dudalen hon at eich rhestr ddarllen, cliciwch yr eicon Nod Tudalen</translation>
 <translation id="6091761513005122595">Mae'r gyfran wedi'i gosod yn llwyddiannus.</translation>
 <translation id="6093888419484831006">Wrthi'n canslo'r diweddariad...</translation>
@@ -7987,6 +7987,7 @@ Cadwch eich ffeil allwedd mewn man diogel. Bydd ei hangen arnoch i greu fersiyna
 <translation id="8666759526542103597">Ynglŷn â phersonoleiddio hysbysebion ar sail Porwr</translation>
 <translation id="8667328578593601900">Mae <ph name="FULLSCREEN_ORIGIN" /> bellach yn sgrîn lawn ac wedi analluogi cyrchwr eich llygoden.</translation>
 <translation id="8667760277771450375">Rydym yn archwilio ffyrdd i gyfyngu ar olrhain traws-wefan tra'n galluogi gwefannau i stopio sothach hysbysebion a thwyll.</translation>
+<translation id="8668378421690365723">Mae'n bosib na fydd eich dyfais yn gweithio'n iawn mwyach, ac mae'n bosib y bydd yn profi problemau diogelwch a pherfformiad.</translation>
 <translation id="8669284339312441707">Cynhesach</translation>
 <translation id="8670537393737592796">I ddychwelyd yma'n gyflym, gosodwch <ph name="APP_NAME" /> drwy glicio'r botwm gosod</translation>
 <translation id="867085395664725367">Bu gwall gweinydd dros dro.</translation>
@@ -8474,6 +8475,7 @@ Mae <ph name="DOMAIN" /> yn gofyn i chi gadw'ch cerdyn smart wedi'i fewnosod.}}<
 <translation id="9120693811286642342"><ph name="BEGIN_PARAGRAPH1" />Am y profiad gorau, gosodwch <ph name="DEVICE_OS" /> i'ch disg mewnol. Gallwch hefyd ei osod yn nes ymlaen o'r sgrîn mewngofnodi.<ph name="END_PARAGRAPH1" />
     <ph name="BEGIN_PARAGRAPH2" />Os nad ydych yn barod i'w osod, gallwch ei redeg o USB i roi cynnig arni. Bydd hyn yn cadw eich data ac OS presennol, ond mae'n bosib y byddwch yn gweld cyfyngiadau o ran storfa a pherfformiad.<ph name="END_PARAGRAPH2" /></translation>
 <translation id="9121814364785106365">Ar agor fel tab a biniwyd</translation>
+<translation id="9123287046453017203">Nid yw'ch dyfais yn gyfredol</translation>
 <translation id="9124003689441359348">Bydd cyfrineiriau sydd wedi'u cadw yn ymddangos yma</translation>
 <translation id="9126149354162942022">Lliw'r cyrchwr</translation>
 <translation id="9128317794749765148">Methu â chwblhau gosod</translation>

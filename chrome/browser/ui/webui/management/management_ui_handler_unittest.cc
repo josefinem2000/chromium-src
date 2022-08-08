@@ -42,7 +42,6 @@
 #include "ui/base/l10n/l10n_util.h"
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
-#include "ash/components/tpm/stub_install_attributes.h"
 #include "base/test/test_simple_task_runner.h"
 #include "base/time/time.h"
 #include "chrome/browser/ash/crostini/crostini_features.h"
@@ -63,12 +62,12 @@
 #include "chrome/browser/prefs/browser_prefs.h"
 #include "chrome/test/base/testing_browser_process.h"
 #include "chrome/test/base/testing_profile_manager.h"
+#include "chromeos/ash/components/install_attributes/stub_install_attributes.h"
 #include "chromeos/ash/components/network/network_handler_test_helper.h"
 #include "chromeos/ash/components/network/network_metadata_store.h"
 #include "chromeos/ash/components/network/network_state_handler.h"
 #include "chromeos/ash/components/network/proxy/proxy_config_handler.h"
 #include "chromeos/ash/components/network/proxy/ui_proxy_config_service.h"
-#include "chromeos/dbus/dbus_thread_manager.h"  // nogncheck
 #include "chromeos/dbus/power/power_manager_client.h"
 #include "chromeos/dbus/shill/shill_service_client.h"
 #include "chromeos/system/fake_statistics_provider.h"
@@ -386,12 +385,9 @@ class ManagementUIHandlerTests : public TestingBaseClass {
 
     crostini_features_ = std::make_unique<crostini::FakeCrostiniFeatures>();
     SetUpConnectManager();
-    // DBusThreadManager::Initialize() has to be called before creating
-    // NetworkHandlerTestHelper.
-    chromeos::DBusThreadManager::Initialize();
     network_handler_test_helper_ =
         std::make_unique<ash::NetworkHandlerTestHelper>();
-    chromeos::NetworkMetadataStore::RegisterPrefs(user_prefs_.registry());
+    ash::NetworkMetadataStore::RegisterPrefs(user_prefs_.registry());
     // The |DeviceSettingsTestBase| setup above instantiates
     // |FakeShillManagerClient| with a default environment which will post
     // tasks on the current thread to setup a initial network configuration with
@@ -401,7 +397,6 @@ class ManagementUIHandlerTests : public TestingBaseClass {
   void TearDown() override {
     network_handler_test_helper_.reset();
     profile_.reset();
-    chromeos::DBusThreadManager::Shutdown();
     TestingBrowserProcess::GetGlobal()->SetLocalState(nullptr);
     DeviceSettingsTestBase::TearDown();
   }

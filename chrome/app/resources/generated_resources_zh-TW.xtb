@@ -1869,6 +1869,7 @@
 <translation id="2727633948226935816">不要再提醒我</translation>
 <translation id="2727712005121231835">實際大小</translation>
 <translation id="2729314457178420145">一併清除瀏覽資料 (<ph name="URL" />)。這項操作可能會將你登出 Google.com。<ph name="LEARN_MORE" /></translation>
+<translation id="2729327310379176711">Chrome 正在尋找減少追蹤使用者活動的新方式，讓你上網時更安全。此外，Chrome 也會<ph name="ESTIMATE_INTERESTS_LINK" />，同時讓你自行管理這些資訊。你造訪的網站可在之後要求 Chrome 提供這類資訊，以便向你顯示廣告。</translation>
 <translation id="2730029791981212295">正在備份 Linux 應用程式和檔案</translation>
 <translation id="2730901670247399077">表情符號建議</translation>
 <translation id="273093730430620027">這個網頁正在存取你的攝影機。</translation>
@@ -5309,7 +5310,6 @@
 <translation id="6086846494333236931">由您的管理員安裝</translation>
 <translation id="6087746524533454243">要查看瀏覽器的「關於」頁面嗎？請前往</translation>
 <translation id="6087960857463881712">好看的臉蛋</translation>
-<translation id="6088535503330933227">Chrome 會探索如何防範垃圾內容和詐欺行為，以及限制網站之間分享資訊的方法。Chrome 還會<ph name="ESTIMATE_INTERESTS_LINK" />，讓網站可以使用這項資訊向你顯示廣告。你可以前往設定管理自己的興趣喜好。</translation>
 <translation id="608912389580139775">如要將這個網頁加入閱讀清單，請按一下「書籤」圖示</translation>
 <translation id="6091761513005122595">已成功共用掛接的裝置。</translation>
 <translation id="6093888419484831006">正在取消更新...</translation>
@@ -7958,6 +7958,7 @@
 <translation id="8666759526542103597">關於以瀏覽器為主的廣告個人化</translation>
 <translation id="8667328578593601900"><ph name="FULLSCREEN_ORIGIN" /> 已顯示為全螢幕，並且停用了滑鼠游標。</translation>
 <translation id="8667760277771450375">我們正在開發限制跨網站追蹤的方法，同時讓網站能夠防範廣告垃圾內容和欺詐行為。</translation>
+<translation id="8668378421690365723">裝置可能無法再正常運作，而且可能會有安全性和效能問題。</translation>
 <translation id="8669284339312441707">暖色調</translation>
 <translation id="8670537393737592796">如要快速返回此處，請點選安裝按鈕來安裝「<ph name="APP_NAME" />」</translation>
 <translation id="867085395664725367">伺服器發生暫時性錯誤。</translation>
@@ -8441,6 +8442,7 @@
 <translation id="9120693811286642342"><ph name="BEGIN_PARAGRAPH1" />為獲得最佳體驗，請將 <ph name="DEVICE_OS" /> 安裝至內部磁碟。你也可以之後再透過登入畫面安裝。<ph name="END_PARAGRAPH1" />
     <ph name="BEGIN_PARAGRAPH2" />如果現在還不想安裝，可透過 USB 執行並試用此作業系統。這種做法可保留現有作業系統和資料，但儲存空間及效能可能會有所限制。<ph name="END_PARAGRAPH2" /></translation>
 <translation id="9121814364785106365">在固定分頁中開啟</translation>
+<translation id="9123287046453017203">這部裝置不是最新版本</translation>
 <translation id="9124003689441359348">你所儲存的密碼會顯示在這裡</translation>
 <translation id="9126149354162942022">游標顏色</translation>
 <translation id="9128317794749765148">無法完成設定</translation>

@@ -12,7 +12,6 @@ source_set("unit_tests") {
   configs += [ "//build/config/linux/dbus" ]
   testonly = true
   deps = [
-    "//ash/components/tpm:test_support",
     "//base",
     "//base/test:test_support",
     "//chromeos/ash/components/dbus/audio",
@@ -21,6 +20,8 @@ source_set("unit_tests") {
     "//chromeos/ash/components/dbus/biod:test_support",
     "//chromeos/ash/components/dbus/cec_service:unit_tests",
     "//chromeos/ash/components/dbus/cros_disks:unit_tests",
+    "//chromeos/ash/components/dbus/cryptohome",
+    "//chromeos/ash/components/dbus/cryptohome:attestation_proto",
     "//chromeos/ash/components/dbus/easy_unlock:unit_tests",
     "//chromeos/ash/components/dbus/fwupd:test_support",
     "//chromeos/ash/components/dbus/gnubby:unit_tests",
@@ -37,6 +38,7 @@ source_set("unit_tests") {
     "//chromeos/ash/components/dbus/update_engine:unit_tests",
     "//chromeos/ash/components/dbus/userdataauth",
     "//chromeos/ash/components/dbus/userdataauth:userdataauth_proto",
+    "//chromeos/ash/components/install_attributes:test_support",
     "//chromeos/dbus:test_support",
     "//components/account_id",
     "//dbus",

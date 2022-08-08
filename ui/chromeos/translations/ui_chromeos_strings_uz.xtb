@@ -148,7 +148,6 @@
 <translation id="2282155092769082568">Avtomatik sozlash uchun URL manzil:</translation>
 <translation id="2288278176040912387">Patefon</translation>
 <translation id="2291538123825441971"><ph name="NUMBER_OF_FILES" /> ta fayl ochilmoqda.</translation>
-<translation id="2303282178633578561">SIM kartani qulflash</translation>
 <translation id="2303301624314357662"><ph name="FILE_NAME" /> fayli ochilmoqda.</translation>
 <translation id="2304820083631266885">Sayyora</translation>
 <translation id="2305020378527873881"><ph name="VOLUME_NAME" /> tizimdan uzildi.</translation>
@@ -187,10 +186,8 @@
 <translation id="2570012981255377263">Oxirgi fayllar shu yerda chiqadi</translation>
 <translation id="2578394532502990878">Tamil (fonetik)</translation>
 <translation id="2579959351793446050">Oriya</translation>
-<translation id="2593644851255584939">Administrator SIM qulfini faolsizlantirishni talab qiladi.</translation>
 <translation id="2602810353103180630">Tarmoq: <ph name="NETWORK_INDEX" />/<ph name="NETWORK_COUNT" />, <ph name="NETWORK_NAME" />, <ph name="CONNECTION_STATUS" />, Signal darajasi: <ph name="SIGNAL_STRENGTH" />%, Administrator tomonidan bloklangan, Batafsil</translation>
 <translation id="2614589611416690597"><ph name="VIDEO_TYPE" /> video</translation>
-<translation id="2617342710774726426">SIM karta qulflangan</translation>
 <translation id="2620090360073999360">Ayni paytda Google Disk ish faoliyatida emas.</translation>
 <translation id="2621713457727696555">Himoyalangan</translation>
 <translation id="2638942478653899953">Google Drive‘ga ulanib bo‘lmadi. Iltimos, <ph name="BEGIN_LINK" />tizimdan chiqing<ph name="END_LINK" /> va qaytadan kiring.</translation>
@@ -288,10 +285,12 @@
 <translation id="3479552764303398839">Hozir emas</translation>
 <translation id="3486821258960016770">Mongol</translation>
 <translation id="3495304270784461826"><ph name="COUNT" /> ta xatolik.</translation>
+<translation id="3495810061346586977">Bu maxfiy fayl va administrator siyosati tomonidan taqiqlanishi mumkin. <ph name="BEGIN_LINK_HELP" />Batafsil<ph name="END_LINK_HELP" /></translation>
 <translation id="3509680540198371098">Tarmoq: <ph name="NETWORK_INDEX" />/<ph name="NETWORK_COUNT" />, Nomi: <ph name="NETWORK_NAME" />, Himoya: <ph name="SECURITY_STATUS" />, Ulanish: <ph name="CONNECTION_STATUS" />, Signal darajasi: <ph name="SIGNAL_STRENGTH" />%, Batafsil</translation>
 <translation id="3522708245912499433">Portugal tili</translation>
 <translation id="3524311639100184459">Diqqat! Bu vaqtinchalik fayllar diskda joy boʻshatish uchun avtomatik oʻchirib yuborilishi mumkin.  <ph name="BEGIN_LINK" />Batafsil<ph name="END_LINK" /></translation>
 <translation id="3527085408025491307">Jild</translation>
+<translation id="3548125359243647069">PIN kod juda koʻp marta xato kiritildi.</translation>
 <translation id="3549797760399244642">drive.google.com manziliga o‘tish...</translation>
 <translation id="3553048479571901246">Fayllarni <ph name="APP_NAME" /> ilovasidan ochishdan avval ularni Windows fayllari jildiga nusxalang.</translation>
 <translation id="3556731189587832921">Ingliz (AQSH) va kompyuter uchun xalqaro klaviatura</translation>
@@ -488,6 +487,7 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="5159560892333415631">Chiqitdonni boʻshatish</translation>
 <translation id="5163869187418756376">Ulashish amalga oshmadi. Ulanishni tekshirib ko‘rib, qayta urining.</translation>
 <translation id="516592729076796170">Dasturchilar uchun Dvorak klaviaturasi</translation>
+<translation id="5172749059808361023">Cheklov tafsilotlari</translation>
 <translation id="5177526793333269655">Kichiklashtirilgan rasmlar</translation>
 <translation id="5194713942430106590">Ustundagi fayllar roʻyxatini oʻsish boʻyicha tartiblash.</translation>
 <translation id="5211614973734216083">Farer</translation>
@@ -528,7 +528,6 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="5489067830765222292">Latish</translation>
 <translation id="5489965683297092283"><ph name="FILTER_NAME" /> filtri oʻchiq.</translation>
 <translation id="5494920125229734069">Hammasini tanlash</translation>
-<translation id="5500104704744051184">PUK kaliti kiritilmaguncha bu tarmoqdan foydalana olmaysiz</translation>
 <translation id="5500122897333236901">Island tili</translation>
 <translation id="5508696409934741614">Nuqtalar</translation>
 <translation id="5522908512596376669">Fayllar roʻyxati uchun saralash shakli almashdi.</translation>
@@ -617,6 +616,7 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="6267547857941397424">Tarmoq: <ph name="NETWORK_INDEX" />/<ph name="NETWORK_COUNT" />, Telefon nomi: <ph name="PHONE_NAME" />, Signal darajasi: <ph name="SIGNAL_STRENGTH" />%, Telefon quvvati: <ph name="BATTERY_STATUS" />%, Ulanish</translation>
 <translation id="6269630227984243955">Malay</translation>
 <translation id="6287852322318138013">Ushbu faylni ochish uchun kerakli dasturni tanlang</translation>
+<translation id="6295542640242147836">SIM kartani qulflash</translation>
 <translation id="6296410173147755564">PUK kod xato</translation>
 <translation id="6312403991423642364">Noma’lum tarmoq xatoligi</translation>
 <translation id="6317608858038767920">Foydalanuvchi DNS serveri: <ph name="INPUT_INDEX" /></translation>
@@ -726,6 +726,7 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="7189874332498648577"><ph name="NUMBER_OF_GB" /> GB</translation>
 <translation id="7191454237977785534">Faylni saqlab olish</translation>
 <translation id="7229570126336867161">EVDO bo‘lishi lozim</translation>
+<translation id="7230898482850090046">Administrator SIM kartani qulflash sozlamasini faolsizlantirishni talab qilmoqda</translation>
 <translation id="7238097264433196391">Xotira ombori nomi</translation>
 <translation id="7238643356913091553"><ph name="NETWORK_NAME" />, Batafsil</translation>
 <translation id="7246947237293279874">FTP proksi-server</translation>
@@ -758,6 +759,7 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="7505167922889582512">Yashirin fayllarni ko‘rsatish</translation>
 <translation id="7514365320538308">Yuklab olish</translation>
 <translation id="751507702149411736">Belarus tilida</translation>
+<translation id="7521790570754130607">Mobil internetdan foydalanish uchun PIN kod talab etiladi</translation>
 <translation id="7532029025027028521">Fors tili transliteratsiyasi</translation>
 <translation id="7544830582642184299">Parallels Desktopga Google Drive omboringizdagi fayllarni ochishga ruxsat bering. Oʻzgarishlar boshqa qurilmalaringizga sinxronlanadi.</translation>
 <translation id="7547009467130558110">Sport oyoq kiyimi</translation>
@@ -782,6 +784,7 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="76959938259365003">Chiqitdon boʻshatilmadi.</translation>
 <translation id="770015031906360009">Yunon tili</translation>
 <translation id="7705251383879779343">Nusxa olindi: <ph name="FILE_NAME" />.</translation>
+<translation id="7708271999969613024">Bu tarmoqdan foydalanish uchun operator bergan 8 xonali Shaxsiy qulfdan yechish kalitini (PUK) kiriting.</translation>
 <translation id="7711920809702896782">Rasm haqida</translation>
 <translation id="7724603315864178912">Qirqish</translation>
 <translation id="7730494089396812859">Bulutdagi zahiralangan nuxsalar haqidagi ma’lumotlarni ko‘rsatish</translation>
@@ -809,7 +812,6 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="7831491651892296503">Tarmoqni sozlashda xatolik yuz berdi</translation>
 <translation id="7839804798877833423">Bu fayllarni yuklashga taxminan <ph name="FILE_SIZE" /> mobil trafik sarf bo‘ladi.</translation>
 <translation id="7846076177841592234">Belgilashni bekor qilish</translation>
-<translation id="7847617962681804761">Mobil internetdan foydalanish uchun PIN kod talab etiladi</translation>
 <translation id="7853966320808728790">Fransuz BEPO</translation>
 <translation id="7857117644404132472">Istisno qo‘shish</translation>
 <translation id="7868774406711971383">Polyak</translation>
@@ -878,6 +880,7 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="8437209419043462667">Ingliz (AQSH)</translation>
 <translation id="8452135315243592079">Yo‘qolgan SIM karta</translation>
 <translation id="8456681095658380701">Yaroqsiz nom</translation>
+<translation id="8457767749626250697">SIM karta qulflangan</translation>
 <translation id="8459404855768962328">Bu fayl nusxalansa, u <ph name="DESTINATION_NAME" /> jildiga ruxsati bor barcha foydalanuvchilarga ulashiladi.</translation>
 <translation id="8461467696380332069">Fayl ustida oʻng tugmani bosing va javon ichidagi fayllarga tezkor kirish uchun “Javonga mahkamlash” bandini tanlang.</translation>
 <translation id="8461914792118322307">Proksi-server sozlamalari</translation>
@@ -904,7 +907,6 @@ Amal bajarilishini kuting va qurilmani “Fayllar” ilovasida chiqarib oling. A
 <translation id="8579285237314169903"><ph name="NUMBER_OF_FILES" /> ta element sinxronlanmoqda...</translation>
 <translation id="8600173386174225982">Fayllar roʻyxati uchun saralash shakli eskizlarga almashdi.</translation>
 <translation id="8601932370724196034">Crostini tasvir fayli</translation>
-<translation id="8608515571837163082">PIN kod juda koʻp marta xato kiritildi. Aloqa operatori taqdim qilgan 8-raqamli shaxsiy qulfdan chiqarish kalitini (PUK) kiriting.</translation>
 <translation id="8609695766746872526">Island</translation>
 <translation id="863903787380594467">PIN kod xato. Sizda <ph name="RETRIES" /> ta urinish qoldi.</translation>
 <translation id="8639391553632924850"><ph name="INPUT_LABEL" /> – port</translation>

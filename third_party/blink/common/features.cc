@@ -210,7 +210,7 @@ const base::Feature kVariableCOLRV1{"VariableCOLRV1",
 // Controls whether the Viewport Height client hint can be added to request
 // headers.
 const base::Feature kViewportHeightClientHintHeader{
-    "ViewportHeightClientHintHeader", base::FEATURE_DISABLED_BY_DEFAULT};
+    "ViewportHeightClientHintHeader", base::FEATURE_ENABLED_BY_DEFAULT};
 
 // Used to control the collection of anchor element metrics (crbug.com/856683).
 // If kNavigationPredictor is enabled, then metrics of anchor elements
@@ -1598,6 +1598,9 @@ const base::Feature kScrollUpdateOptimizations{
 
 const base::Feature kClipboardUnsanitizedContent{
     "ClipboardUnsanitizedContent", base::FEATURE_DISABLED_BY_DEFAULT};
+
+const base::Feature kWebRtcThreadsUseResourceEfficientType{
+    "WebRtcThreadsUseResourceEfficientType", base::FEATURE_DISABLED_BY_DEFAULT};
 
 }  // namespace features
 }  // namespace blink

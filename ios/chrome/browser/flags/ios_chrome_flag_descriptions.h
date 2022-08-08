@@ -139,6 +139,11 @@ extern const char kCalendarExperienceKitDescription[];
 extern const char kEnableExpKitCalendarTextClassifierName[];
 extern const char kEnableExpKitCalendarTextClassifierDescription[];
 
+// Title and description for the flag to enable experience kit maps location and
+// directions.
+extern const char kMapsExperienceKitName[];
+extern const char kMapsExperienceKitDescription[];
+
 // Title and description for the flag that updates the Content Suggestions to a
 // new module design.
 extern const char kContentSuggestionsUIModuleRefreshName[];
@@ -325,6 +330,11 @@ extern const char kEnableUnicornAccountSupportDescription[];
 extern const char kFullscreenPromosManagerName[];
 extern const char kFullscreenPromosManagerDescription[];
 
+// Title and description for the flag to enable web page detected intents
+// annotations.
+extern const char kEnableWebPageAnnotationsName[];
+extern const char kEnableWebPageAnnotationsDescription[];
+
 // Title and description for the command line switch used to determine the
 // active fullscreen viewport adjustment mode.
 extern const char kFullscreenSmoothScrollingName[];
@@ -495,6 +505,10 @@ extern const char kOmniboxNewImplementationDescription[];
 // suggestion.
 extern const char kOmniboxPasteButtonName[];
 extern const char kOmniboxPasteButtonDescription[];
+
+// Title and description for local history zero-prefix suggestions beyond NTP.
+extern const char kOmniboxLocalHistoryZeroSuggestBeyondNTPName[];
+extern const char kOmniboxLocalHistoryZeroSuggestBeyondNTPDescription[];
 
 // Title and description for the zero-suggest prefetching on the New Tab Page.
 extern const char kOmniboxZeroSuggestPrefetchingName[];

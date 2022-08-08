@@ -2330,6 +2330,8 @@ static_library("ui") {
       "ash/projector/projector_app_client_impl.h",
       "ash/projector/projector_client_impl.cc",
       "ash/projector/projector_client_impl.h",
+      "ash/projector/projector_drivefs_provider.cc",
+      "ash/projector/projector_drivefs_provider.h",
       "ash/projector/projector_soda_installation_controller.cc",
       "ash/projector/projector_soda_installation_controller.h",
       "ash/projector/projector_utils.cc",
@@ -3050,7 +3052,6 @@ static_library("ui") {
       "//ash/components/proximity_auth",
       "//ash/components/settings",
       "//ash/components/tether",
-      "//ash/components/tpm",
       "//ash/constants",
       "//ash/keyboard/ui",
       "//ash/public/cpp",
@@ -3150,6 +3151,8 @@ static_library("ui") {
       "//chrome/services/file_util/public/cpp",
       "//chromeos/ash/components/assistant:buildflags",
       "//chromeos/ash/components/dbus/audio",
+      "//chromeos/ash/components/dbus/cryptohome",
+      "//chromeos/ash/components/dbus/cryptohome:cryptohome_proto",
       "//chromeos/ash/components/dbus/hermes",
       "//chromeos/ash/components/dbus/human_presence",
       "//chromeos/ash/components/dbus/kerberos:kerberos_proto",
@@ -3163,6 +3166,7 @@ static_library("ui") {
       "//chromeos/ash/components/dbus/userdataauth",
       "//chromeos/ash/components/dbus/userdataauth:userdataauth_proto",
       "//chromeos/ash/components/human_presence",
+      "//chromeos/ash/components/install_attributes",
       "//chromeos/ash/components/local_search_service/public/cpp",
       "//chromeos/ash/components/local_search_service/public/mojom",
       "//chromeos/ash/components/network",
@@ -3184,8 +3188,6 @@ static_library("ui") {
       "//chromeos/crosapi/cpp",
       "//chromeos/crosapi/cpp:crosapi_constants",
       "//chromeos/dbus",
-      "//chromeos/dbus/cryptohome",
-      "//chromeos/dbus/cryptohome:cryptohome_proto",
       "//chromeos/dbus/tpm_manager",
       "//chromeos/dbus/tpm_manager:tpm_manager_proto",
       "//chromeos/login/login_state",
@@ -4706,8 +4708,6 @@ static_library("ui") {
       "views/passwords/views_utils.h",
       "views/payments/contact_info_editor_view_controller.cc",
       "views/payments/contact_info_editor_view_controller.h",
-      "views/payments/credit_card_editor_view_controller.cc",
-      "views/payments/credit_card_editor_view_controller.h",
       "views/payments/editor_view_controller.cc",
       "views/payments/editor_view_controller.h",
       "views/payments/error_message_view_controller.cc",
@@ -4896,6 +4896,8 @@ static_library("ui") {
       "views/side_search/unified_side_search_helper.cc",
       "views/site_data/page_specific_site_data_dialog.cc",
       "views/site_data/page_specific_site_data_dialog.h",
+      "views/site_data/page_specific_site_data_dialog_controller.cc",
+      "views/site_data/page_specific_site_data_dialog_controller.h",
       "views/ssl_client_certificate_selector.cc",
       "views/ssl_client_certificate_selector.h",
       "views/status_bubble_views.cc",
@@ -5544,15 +5546,10 @@ static_library("ui") {
     deps += [ "//components/pdf/browser" ]
   }
 
-  # TODO(crbug.com/1306610): Make `HungPluginTabHelper` usage conditional.
-  if (enable_ppapi) {
+  if (enable_plugins) {
     sources += [
       "hung_plugin_tab_helper.cc",
       "hung_plugin_tab_helper.h",
-    ]
-    deps += [
-      "//ppapi/c",
-      "//ppapi/proxy:ipc",
     ]
   }
 

@@ -3791,6 +3791,7 @@ Mesaj de la server: <ph name="SERVER_MSG" /></translation>
 <translation id="4579581181964204535">Nu se poate proiecta <ph name="HOST_NAME" />.</translation>
 <translation id="4579876313423027742">Pentru notificările din browser, accesează <ph name="LINK_BEGIN" />Setările browserului Chrome<ph name="LINK_END" /></translation>
 <translation id="4580596421317071374">Parolele se salvează în <ph name="GOOGLE_PASSWORD_MANAGER" /> pe acest dispozitiv.</translation>
+<translation id="4580626299762849806">Nu se pot importa parolele. Verifică <ph name="FILENAME" /> și asigură-te că este formatat corect.</translation>
 <translation id="4581774856936278355">Eroare la restabilirea Linux</translation>
 <translation id="4582297591746054421">Site-urile citesc de obicei clipboardul pentru a face acțiuni precum păstrarea formatării textului pe care l-ai copiat</translation>
 <translation id="4582563038311694664">Restabilește toate setările</translation>
@@ -5096,6 +5097,7 @@ Poți atribui mai multe comutatoare acestei acțiuni.</translation>
 <translation id="5877064549588274448">Canalul a fost schimbat. Reporniți dispozitivul pentru a aplica modificările.</translation>
 <translation id="5877584842898320529">Imprimanta selectată nu este disponibilă sau nu este instalată corect. <ph name="BR" /> Verifică imprimanta sau încearcă să selectezi altă imprimantă.</translation>
 <translation id="5878945009165002849">Blochează solicitările de conectare de la serviciile de identitate</translation>
+<translation id="5882449899683447569">A apărut o eroare și parolele nu s-au importat</translation>
 <translation id="5882919346125742463">Rețele cunoscute</translation>
 <translation id="5883356647197510494">Permisiuni blocate automat: <ph name="PERMISSION_1" />, <ph name="PERMISSION_2" /></translation>
 <translation id="5884474295213649357">Această filă este conectată la un dispozitiv USB.</translation>
@@ -5314,7 +5316,6 @@ Poți atribui mai multe comutatoare acestei acțiuni.</translation>
 <translation id="6086846494333236931">Instalată de administrator</translation>
 <translation id="6087746524533454243">Cauți pagina despre browser? Accesează</translation>
 <translation id="6087960857463881712">Față extraordinară</translation>
-<translation id="6088535503330933227">Chrome explorează modalități de a limita spamul publicitar, fraudele și permiterea accesului între site-uri. În plus, Chrome <ph name="ESTIMATE_INTERESTS_LINK" />, pe care site-urile le pot folosi pentru a-ți afișa anunțuri. Îți poți gestiona interesele din setări.</translation>
 <translation id="608912389580139775">Pentru a adăuga pagina în lista de lecturi, dă clic pe pictograma Marcaj</translation>
 <translation id="6091761513005122595">Dispozitivul de stocare în rețea a fost montat.</translation>
 <translation id="6093888419484831006">Se anulează actualizarea...</translation>
@@ -7964,6 +7965,7 @@ Păstrează fișierul cu cheia într-un loc sigur. Acesta va fi necesar la crear
 <translation id="8666759526542103597">Despre Personalizarea anunțurilor bazată pe browser</translation>
 <translation id="8667328578593601900"><ph name="FULLSCREEN_ORIGIN" /> este acum în modul ecran complet și a dezactivat cursorul mouse-ului dvs.</translation>
 <translation id="8667760277771450375">Explorăm noi moduri de a restricționa urmărirea pe mai multe site-uri, permițând site-urilor să prevină spamul cu anunțuri și frauda.</translation>
+<translation id="8668378421690365723">Este posibil ca dispozitivul să nu mai funcționeze corespunzător și să întâmpini probleme de securitate și de performanță.</translation>
 <translation id="8669284339312441707">Mai caldă</translation>
 <translation id="8670537393737592796">Ca să revii rapid aici, instalează <ph name="APP_NAME" /> dând clic pe butonul de instalare</translation>
 <translation id="867085395664725367">A apărut o eroare temporară de server.</translation>
@@ -8448,6 +8450,7 @@ Păstrează fișierul cu cheia într-un loc sigur. Acesta va fi necesar la crear
 <translation id="9120693811286642342"><ph name="BEGIN_PARAGRAPH1" />Pentru o experiență optimă, instalează <ph name="DEVICE_OS" /> pe discul intern. Poți să instalezi și mai târziu din ecranul de conectare.<ph name="END_PARAGRAPH1" />
     <ph name="BEGIN_PARAGRAPH2" />Dacă nu ești gata de instalare, poți să rulezi serviciul de pe USB pentru a-l încerca. Astfel, vei păstra sistemul de operare și datele existente, dar pot să existe limitări ale spațiului de stocare și ale performanței.<ph name="END_PARAGRAPH2" /></translation>
 <translation id="9121814364785106365">Deschide ca filă fixată</translation>
+<translation id="9123287046453017203">Dispozitivul tău nu este actualizat</translation>
 <translation id="9124003689441359348">Parolele salvate vor fi afișate aici</translation>
 <translation id="9126149354162942022">Culoarea cursorului</translation>
 <translation id="9128317794749765148">Nu s-a putut finaliza configurarea</translation>

@@ -271,7 +271,6 @@ Lorsque vous supprimez votre historique de navigation (entièrement ou pour un s
 <translation id="2496180316473517155">Historique de navigation</translation>
 <translation id="2497852260688568942">Votre administrateur a désactivé la synchronisation</translation>
 <translation id="250020030759455918">Vous verrez votre état de connexion à <ph name="SITE_NAME" />, ainsi que vos données de navigation et les données du site dans Chrome</translation>
-<translation id="2507178219579379057">Chrome étudie différents moyens de limiter le spam publicitaire, la fraude et le partage entre les sites. Chrome <ph name="BEGIN_LINK" />prédit aussi vos centres d'intérêt<ph name="END_LINK" /> que les sites peuvent utiliser pour vous proposer des annonces. Vous pouvez gérer vos centres d'intérêt dans les paramètres.</translation>
 <translation id="2513403576141822879">Pour accéder à d'autres paramètres liés à la confidentialité, à la sécurité et à la collecte de données, consultez la section <ph name="BEGIN_LINK" />Services Google/Synchronisation<ph name="END_LINK" />.</translation>
 <translation id="2517472476991765520">Scanner</translation>
 <translation id="2523184218357549926">Envoie les URL des pages que vous consultez à Google</translation>
@@ -1049,6 +1048,7 @@ Les jetons de confiance améliorent la confidentialité sur le Web et ne peuvent
 <translation id="6671495933530132209">Copier l'image</translation>
 <translation id="6674571176963658787">Pour lancer la synchronisation, saisissez votre phrase secrète</translation>
 <translation id="6676840375528380067">Supprimer vos données Chrome sur cet appareil ?</translation>
+<translation id="6676927815633975364">Connectez-vous à ce site et à Chrome</translation>
 <translation id="6684809838922667136">Améliorer Chrome</translation>
 <translation id="670498945988402717">Vérification effectuée hier</translation>
 <translation id="6710213216561001401">Précédent</translation>

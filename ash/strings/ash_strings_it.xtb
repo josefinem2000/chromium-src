@@ -327,6 +327,7 @@ Ecco alcune cose che puoi provare per iniziare.</translation>
 <translation id="2894949423239620203">Il cavo può influire sulle prestazioni</translation>
 <translation id="2903844815300039659">Connesso a <ph name="NAME" />, <ph name="STRENGTH" />.</translation>
 <translation id="2914580577416829331">Schermate acquisite</translation>
+<translation id="2925246975070834767">Prova lo zoom automatico in modo da essere al centro dello schermo. Attivalo nelle Impostazioni rapide.</translation>
 <translation id="2941112035454246133">Bassa</translation>
 <translation id="2942350706960889382">Lente d'ingrandimento ancorata</translation>
 <translation id="2942516765047364088">Posizione barra delle app</translation>
@@ -469,10 +470,10 @@ Collega il dispositivo all'alimentazione.</translation>
 <translation id="3708186454126126312">Connessi in precedenza</translation>
 <translation id="371370241367527062">Microfono anteriore</translation>
 <translation id="3713734891607377840">Apri dopo il completamento</translation>
+<translation id="3724279623330129812">Lo zoom automatico ha centrato la fotocamera</translation>
 <translation id="3726171378575546917"><ph name="UNAVAILABLE_APPS_ONE" />, <ph name="UNAVAILABLE_APPS_TWO" /> e altre <ph name="UNAVAILABLE_APPS_COUNT" /> app non sono disponibili su questo dispositivo.</translation>
 <translation id="3735740477244556633">Ordina per</translation>
 <translation id="3742055079367172538">Screenshot acquisito</translation>
-<translation id="3761848338953536304">L'amministratore richiede la disattivazione dell'impostazione di blocco della SIM</translation>
 <translation id="3765841986579723851">Modificato oggi</translation>
 <translation id="3771549900096082774">Modalità ad alto contrasto</translation>
 <translation id="3773700760453577392">Un amministratore ha vietato l'accesso simultaneo per <ph name="USER_EMAIL" />.
@@ -635,6 +636,7 @@ Collega il dispositivo all'alimentazione.</translation>
 <translation id="4628757576491864469">Dispositivi</translation>
 <translation id="4631891353005174729"><ph name="APP_NAME_TYPE" />, valutazione a stelle <ph name="RATING_SCORE" /></translation>
 <translation id="4633185660152240791">{0,plural, =1{Ripristina la versione precedente del dispositivo entro un giorno}other{Ripristina la versione precedente del dispositivo entro # giorni}}</translation>
+<translation id="4633636853437260449">Premi Ctrl + W per eliminare</translation>
 <translation id="4642092649622328492">Acquisisce lo screenshot parziale</translation>
 <translation id="4644727592819780893">Area troppo piccola per mostrare l'anteprima della fotocamera</translation>
 <translation id="4648249871170053485"><ph name="APP_NAME" />, consiglio applicazione</translation>
@@ -760,6 +762,16 @@ Collega il dispositivo all'alimentazione.</translation>
 <translation id="5393156353051693207">Tocca e tieni premuto un punto qualsiasi per riordinare le app</translation>
 <translation id="5395308026110844773"><ph name="DRAGGED_APP_NAME" /> sopra <ph name="IN_PLACE_APP" />, rilascia per creare una cartella.</translation>
 <translation id="5397578532367286026">L'utilizzo e la cronologia di questo utente possono essere esaminati dal gestore (<ph name="MANAGER_EMAIL" />) su chrome.com.</translation>
+<translation id="5399673806694250334">Barra di stato, ora <ph name="TIME" />,
+        <ph name="BATTERY" />
+        <ph name="CHANNEL" />
+        <ph name="NETWORK" />,
+        <ph name="MIC" />,
+        <ph name="CAMERA" />,
+        <ph name="MANAGED" />
+        <ph name="NOTIFICATION" />,
+        <ph name="IME" />
+        <ph name="LOCALE" /></translation>
 <translation id="5400461572260843123">Impostazioni rapide; premi il tasto per la ricerca + freccia sinistra per accedere al centro notifiche.</translation>
 <translation id="5426063383988017631">Menu Impostazioni chiuso</translation>
 <translation id="5428899915242071344">Inizia la selezione</translation>
@@ -858,7 +870,6 @@ Collega il dispositivo all'alimentazione.</translation>
 <translation id="598407983968395253">Utilizza modello</translation>
 <translation id="598882571027504733">Per scaricare l'aggiornamento, riavvia il Chromebook con la tastiera collegata.</translation>
 <translation id="5992218262414051481">Modalità ad alto contrasto attivata. Premi di nuovo CTRL + tasto per la ricerca + H per disattivarla.</translation>
-<translation id="6009656393242168182">Disattiva l'impostazione di blocco della SIM</translation>
 <translation id="6012623610530968780">Pagina <ph name="SELECTED_PAGE" /> di <ph name="TOTAL_PAGE_NUM" /></translation>
 <translation id="6018164090099858612">Uscita dalla modalità di mirroring</translation>
 <translation id="602001110135236999">Scorri a sinistra</translation>

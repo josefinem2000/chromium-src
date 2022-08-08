@@ -7,7 +7,7 @@
   <h2 class="flex">$i18n{automaticallyTranslateLanguages}</h2>
   <cr-button id="addAlwaysTranslate" class="header-aligned-button"
       on-click="onAddAlwaysTranslateLanguagesClick_">
-    $i18n{add}
+    $i18n{addLanguages}
   </cr-button>
 </div>
 <div class="list-frame">
@@ -15,7 +15,7 @@
     <template is="dom-repeat" items="[[languages.alwaysTranslate]]">
       <div class="list-item">
         <div class="start cr-padded-text">[[item.displayName]]</div>
-        <cr-icon-button class="icon-clear"
+        <cr-icon-button class="icon-delete-gray"
             on-click="onRemoveAlwaysTranslateLanguageClick_">
         </cr-icon-button>
       </div>
@@ -30,7 +30,7 @@
   <h2 class="flex">$i18n{neverTranslateLanguages}</h2>
   <cr-button id="addNeverTranslate" class="header-aligned-button"
       on-click="onAddNeverTranslateLanguagesClick_">
-    $i18n{add}
+    $i18n{addLanguages}
   </cr-button>
 </div>
 <div class="list-frame">
@@ -38,7 +38,7 @@
     <template is="dom-repeat" items="[[languages.neverTranslate]]">
       <div class="list-item">
         <div class="start cr-padded-text">[[item.displayName]]</div>
-        <cr-icon-button class="icon-clear" value="[[item.code]]"
+        <cr-icon-button class="icon-delete-gray" value="[[item.code]]"
             on-click="onRemoveNeverTranslateLanguageClick_">
         </cr-icon-button>
       </div>

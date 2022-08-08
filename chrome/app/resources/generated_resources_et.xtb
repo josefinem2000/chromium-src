@@ -4681,6 +4681,7 @@ Saate sellele toimingule määrata mitu lülitit.</translation>
 <translation id="5470735824776589490">Seade tuleb taaskäivitada, enne kui saate selle Powerwashiga lähtestada. <ph name="LINK_BEGIN" />Lisateave<ph name="LINK_END" /></translation>
 <translation id="5471768120198416576">Tere! Mina olen teie kõnesünteesi hääl.</translation>
 <translation id="5472627187093107397">Salvesta selle saidi paroolid</translation>
+<translation id="5473062644742711742">Leidke Chrome'i veebipoest rohkem juurdepääsetavuse tööriistu</translation>
 <translation id="5473075389972733037">IBM</translation>
 <translation id="5473099001878321374">Jätkamisel nõustute, et see seade võib Google'i, teie lapse operaatori ja seadme tootja värskendusi ning rakendusi automaatselt alla laadida ja installida, kasutades selleks võib-olla teie mobiilset andmesidet. Mõned rakendused võivad pakkuda rakendusesiseseid oste.</translation>
 <translation id="5473156705047072749">{NUM_CHARACTERS,plural, =1{PIN-kood peab koosnema vähemalt ühest tähemärgist}other{PIN-kood peab koosnema vähemalt # tähemärgist}}</translation>
@@ -5318,7 +5319,6 @@ Saate sellele toimingule määrata mitu lülitit.</translation>
 <translation id="6086846494333236931">Selle installis administraator</translation>
 <translation id="6087746524533454243">Kas otsite brauseri teabe lehte? Külastage saiti</translation>
 <translation id="6087960857463881712">Lahe nägu</translation>
-<translation id="6088535503330933227">Chrome otsib võimalusi, kuidas rämpsreklaame, pettusi ja saitide vahelist jagamist piirata. Samuti prognoosib Chrome <ph name="ESTIMATE_INTERESTS_LINK" />, mida saidid saavad kasutada teile reklaamide kuvamiseks. Saate oma huvisid seadetes hallata.</translation>
 <translation id="608912389580139775">Selle lehe lisamiseks lugemisloendisse klõpsake järjehoidjaikoonil</translation>
 <translation id="6091761513005122595">Jagatava üksuse ühendamine õnnestus.</translation>
 <translation id="6093888419484831006">Värskenduse tühistamine ...</translation>
@@ -7967,6 +7967,7 @@ Hoidke oma võtmefail kindlas kohas. Teil läheb seda oma laiendi uute versiooni
 <translation id="8666759526542103597">Teave brauseripõhise reklaamide isikupärastamise kohta</translation>
 <translation id="8667328578593601900"><ph name="FULLSCREEN_ORIGIN" /> on nüüd täisekraanil ja teie hiirekursor on keelatud.</translation>
 <translation id="8667760277771450375">Katsetame uusi viise, kuidas piirata saitidevahelist jälgimist, võimaldades saitidel samas blokeerida rämpsreklaamid ja pettused.</translation>
+<translation id="8668378421690365723">Teie seade ei pruugi enam korralikult töötada ning võib esineda turva- ja toimivusprobleeme.</translation>
 <translation id="8669284339312441707">Soojem</translation>
 <translation id="8670537393737592796">Kiirelt siia naasmiseks installige rakendus <ph name="APP_NAME" />, klõpsates installimisnupul</translation>
 <translation id="867085395664725367">Ilmnes serveri ajutine viga.</translation>
@@ -8450,6 +8451,7 @@ Hoidke oma võtmefail kindlas kohas. Teil läheb seda oma laiendi uute versiooni
 <translation id="9120693811286642342"><ph name="BEGIN_PARAGRAPH1" />Parima kasutuskogemuse saamiseks installige <ph name="DEVICE_OS" /> oma sisemisele kettale. Saate selle hiljem installida ka sisselogimiskuval.<ph name="END_PARAGRAPH1" />
     <ph name="BEGIN_PARAGRAPH2" />Kui te pole installimiseks valmis, saate rakendust proovida, käitades selle USB-seadmelt. See säilitab teie olemasoleva operatsioonisüsteemi ja andmed, kuid kehtida võivad salvestusruumi- ja jõudluspiirangud.<ph name="END_PARAGRAPH2" /></translation>
 <translation id="9121814364785106365">Ava kinnitatud vahelehel</translation>
+<translation id="9123287046453017203">Teie seade pole ajakohane</translation>
 <translation id="9124003689441359348">Salvestatud paroolid kuvatakse siin</translation>
 <translation id="9126149354162942022">Kursori värv</translation>
 <translation id="9128317794749765148">Seadistust ei õnnestunud lõpule viia</translation>

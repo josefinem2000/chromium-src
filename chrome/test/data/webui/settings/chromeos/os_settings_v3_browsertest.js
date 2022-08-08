@@ -14,6 +14,7 @@ GEN('#include "chrome/common/buildflags.h"');
 GEN('#include "chrome/common/chrome_features.h"');
 GEN('#include "components/app_restore/features.h"');
 GEN('#include "content/public/test/browser_test.h"');
+GEN('#include "ui/accessibility/accessibility_features.h"');
 
 /* eslint-disable no-var */
 
@@ -207,11 +208,9 @@ var OSSettingsOsBluetoothSavedDevicesListV3Test =
   }
 };
 
-TEST_F(
-    'OSSettingsOsBluetoothSavedDevicesListV3Test', 'DISABLED_AllJsTests',
-    () => {
-      mocha.run();
-    });
+TEST_F('OSSettingsOsBluetoothSavedDevicesListV3Test', 'AllJsTests', () => {
+  mocha.run();
+});
 
 var OSSettingsSearchEngineV3Test = class extends OSSettingsV3BrowserTest {
   /** @override */
@@ -464,7 +463,9 @@ TEST_F('OSSettingsCrostiniExtraContainerPageV3Test', 'AllJsTests', () => {
  ['SwitchAccessSetupGuideDialog', 'switch_access_setup_guide_dialog_test.js'],
  ['SwitchAccessSubpage', 'switch_access_subpage_tests.js'],
  ['TetherConnectionDialog', 'tether_connection_dialog_test.js'],
- ['TextToSpeechPage', 'text_to_speech_page_tests.js'],
+ ['TextToSpeechPage', 'text_to_speech_page_tests.js',
+   {enabled: ['features::kAccessibilityOSSettingsVisibility']},
+ ],
  ['TextToSpeechSubpage', 'text_to_speech_subpage_tests.js'],
  ['TimezoneSelector', 'timezone_selector_test.js'],
  ['TimezoneSubpage', 'timezone_subpage_test.js'],

@@ -1973,6 +1973,13 @@ const char kOmniboxSiteSearchStarterPackName[] =
 const char kOmniboxSiteSearchStarterPackDescription[] =
     "Enables @history, @bookmarks, and @tabs scopes in Omnibox Site "
     "Search/Keyword Mode";
+
+const char kOmniboxLocalHistoryZeroSuggestBeyondNTPName[] =
+    "Allow local history zero-prefix suggestions beyond NTP";
+const char kOmniboxLocalHistoryZeroSuggestBeyondNTPDescription[] =
+    "Enables local history zero-prefix suggestions in every context in which "
+    "the remote zero-prefix suggestions are enabled.";
+
 const char kOmniboxFocusTriggersSRPZeroSuggestName[] =
     "Allow Omnibox contextual web on-focus suggestions on the SRP";
 const char kOmniboxFocusTriggersSRPZeroSuggestDescription[] =
@@ -5150,11 +5157,6 @@ const char kExoOrdinalMotionName[] =
     "Raw (unaccelerated) motion for Linux applications";
 const char kExoOrdinalMotionDescription[] =
     "Send unaccelerated values as raw motion events to linux applications.";
-
-const char kExoPointerLockName[] = "Pointer lock for Linux applications";
-const char kExoPointerLockDescription[] =
-    "Allow Linux applications to request a pointer lock, i.e. exclusive use of "
-    "the mouse pointer.";
 
 const char kExoLockNotificationName[] = "Notification bubble for UI lock";
 const char kExoLockNotificationDescription[] =

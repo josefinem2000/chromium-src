@@ -1168,7 +1168,10 @@ bool AXObjectCacheImpl::IsRelevantSlotElement(const HTMLSlotElement& slot) {
   // content-visibility:auto may be removed from the AX tree depending on
   // whether it was recently rendered.
   //
-  // TODO(accessibility): There should be a better way to accomplish this.
+  // TODO(accessibility) This fails for the web test
+  // detach-locked-slot-children-crash.html with --force-renderer-accessibility.
+  // See web_tests/FlagExpectations/force-renderer-accessibility.
+  // There should be a better way to accomplish this.
   // Could a new function be added to the slot element?
   const Node* parent = LayoutTreeBuilderTraversal::Parent(slot);
   if (const HTMLSlotElement* parent_slot =
@@ -3468,10 +3471,14 @@ void AXObjectCacheImpl::HandleEventSubscriptionChanged(
   if (!DoesEventListenerImpactIgnoredState(event_type))
     return;
 
-  // If the |event_type| may affect the ignored state of |node|, which means
-  // that the parent's children may have changed.
+  // Adding/removing a listener may affect the ignored state of node's AXObject.
   modification_count_++;
   MarkElementDirty(&node);
+  // If the ignored state changes, the parent's children may have changed.
+  if (AXObject* obj = SafeGet(&node)) {
+    if (obj->CachedParentObject())
+      ChildrenChanged(obj->CachedParentObject());
+  }
 }
 
 void AXObjectCacheImpl::LabelChangedWithCleanLayout(Element* element) {

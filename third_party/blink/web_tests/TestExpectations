@@ -318,6 +318,8 @@ crbug.com/1311705 virtual/document-transition-wide-gamut/wpt_internal/document-t
 crbug.com/1311705 virtual/document-transition-wide-gamut/wpt_internal/document-transition/old-content-captures-different-size.html [ Failure ]
 crbug.com/1311705 virtual/document-transition-wide-gamut/wpt_internal/document-transition/old-content-captures-opacity.html [ Failure ]
 
+crbug.com/1350640 [ Mac11 ] virtual/document-transition-wide-gamut/wpt_internal/document-transition/commit-timeout-crash.html [ Timeout ]
+
 ########## Ref tests can't be rebaselined ##########
 crbug.com/619103 paint/invalidation/background/background-resize-width.html [ Failure Pass ]
 
@@ -1473,6 +1475,7 @@ crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-003.html [ Fail
 crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-004.html [ Failure ]
 crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-005.html [ Failure ]
 crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-007.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-008.html [ Failure ]
 
 # These require css-align-3 positional keywords that Blink doesn't yet support for flexbox.
 crbug.com/1011718 external/wpt/css/css-flexbox/flexbox-safe-overflow-position-001.html [ Failure ]
@@ -1502,10 +1505,6 @@ crbug.com/886585 external/wpt/css/css-flexbox/flexbox-align-self-baseline-horiz-
 crbug.com/886585 external/wpt/css/css-flexbox/flexbox-align-self-baseline-horiz-006.xhtml [ Failure ]
 crbug.com/886585 external/wpt/css/css-flexbox/flexbox-align-self-baseline-horiz-007.xhtml [ Failure ]
 crbug.com/886585 external/wpt/css/css-flexbox/flexbox-align-self-baseline-horiz-008.xhtml [ Failure ]
-
-# Bad test expectations, but we aren't sure if web compatible yet.
-crbug.com/1114280 external/wpt/css/css-flexbox/flexbox-min-width-auto-005.html [ Failure ]
-crbug.com/1114280 external/wpt/css/css-flexbox/flexbox-min-width-auto-006.html [ Failure ]
 
 # [css-lists]
 crbug.com/1123457 external/wpt/css/css-lists/counter-list-item.html [ Failure ]
@@ -3367,6 +3366,25 @@ crbug.com/626703 [ Win ] virtual/prerender/external/wpt/speculation-rules/preren
 crbug.com/626703 [ Win ] virtual/partitioned-cookies/http/tests/inspector-protocol/network/disabled-cache-navigation.js [ Failure ]
 
 # ====== New tests from wpt-importer added here ======
+crbug.com/626703 external/wpt/css/css-ruby/rbc-rtc-basic-001.html [ Failure ]
+crbug.com/626703 [ Mac11-arm64 ] external/wpt/css/css-shapes/shape-outside/shape-image/shape-image-022.html [ Failure ]
+crbug.com/626703 [ Mac12 ] virtual/off-main-thread-css-paint/external/wpt/css/css-paint-api/registered-property-value-018.https.html [ Failure ]
+crbug.com/626703 external/wpt/css/css-pseudo/lang-pseudo-class-across-shadow-boundaries.html [ Failure ]
+crbug.com/626703 external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-construct-xml-parser.xhtml [ Crash ]
+crbug.com/626703 [ Linux ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
+crbug.com/626703 [ Mac10.15 ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
+crbug.com/626703 [ Mac11 ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
+crbug.com/626703 [ Mac11-arm64 ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
+crbug.com/626703 [ Mac12 ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
+crbug.com/626703 [ Mac12-arm64 ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
+crbug.com/626703 [ Win11 ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
+crbug.com/626703 [ Win10.20h2 ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash Timeout ]
+crbug.com/626703 external/wpt/html/dom/directionality/bdi-element-invalid-dir.html [ Failure ]
+crbug.com/626703 virtual/css-highlight-inheritance/external/wpt/css/css-pseudo/lang-pseudo-class-across-shadow-boundaries.html [ Failure ]
+crbug.com/626703 virtual/css-highlight-overlay-painting/external/wpt/css/css-pseudo/lang-pseudo-class-across-shadow-boundaries.html [ Failure ]
+crbug.com/626703 [ Linux ] virtual/fenced-frame-mparch/wpt_internal/fenced_frame/background-sync.https.html [ Timeout ]
+crbug.com/626703 [ Mac12 ] virtual/off-main-thread-css-paint/external/wpt/css/css-paint-api/paint2d-roundRect.https.html [ Failure ]
+crbug.com/626703 [ Mac10.15 ] virtual/off-main-thread-css-paint/external/wpt/css/css-paint-api/registered-property-value-010.https.html [ Failure ]
 crbug.com/626703 external/wpt/css/css-pseudo/highlight-currentcolor-painting-properties-001.html [ Failure ]
 crbug.com/626703 external/wpt/css/css-pseudo/highlight-currentcolor-painting-properties-002.html [ Failure ]
 crbug.com/626703 external/wpt/css/css-pseudo/highlight-currentcolor-root-implicit-default-001.html [ Failure ]

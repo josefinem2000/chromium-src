@@ -680,10 +680,6 @@ const base::Feature kExoLockNotification{"ExoLockNotification",
 const base::Feature kExoOrdinalMotion{"ExoOrdinalMotion",
                                       base::FEATURE_DISABLED_BY_DEFAULT};
 
-// Enable or disable pointer lock for Crostini and Borealis windows.
-const base::Feature kExoPointerLock{"ExoPointerLock",
-                                    base::FEATURE_ENABLED_BY_DEFAULT};
-
 // Allows RGB Keyboard to test new animations/patterns.
 const base::Feature kExperimentalRgbKeyboardPatterns{
     "ExperimentalRgbKeyboardPatterns", base::FEATURE_DISABLED_BY_DEFAULT};
@@ -1549,6 +1545,10 @@ const base::Feature kUploadOfficeToCloud("UploadOfficeToCloud",
 // sign-in.
 const base::Feature kUseAuthsessionAuthentication{
     "UseAuthsessionAuthentication", base::FEATURE_ENABLED_BY_DEFAULT};
+
+// Uses new AuthFactor-based API when communicating with cryptohome.
+const base::Feature kUseAuthFactors{"UseAuthFactors",
+                                    base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Enables using the BluetoothSystem Mojo interface for Bluetooth operations.
 const base::Feature kUseBluetoothSystemInAsh{"UseBluetoothSystemInAsh",
@@ -2421,6 +2421,10 @@ bool IsTrilinearFilteringEnabled() {
 
 bool IsUploadOfficeToCloudEnabled() {
   return base::FeatureList::IsEnabled(kUploadOfficeToCloud);
+}
+
+bool IsUseAuthFactorsEnabled() {
+  return base::FeatureList::IsEnabled(kUseAuthFactors);
 }
 
 bool IsUseLoginShelfWidgetEnabled() {

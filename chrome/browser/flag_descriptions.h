@@ -1103,6 +1103,9 @@ extern const char kOmniboxRemoveSuggestionHeaderCapitalizationDescription[];
 extern const char kOmniboxRichAutocompletionPromisingName[];
 extern const char kOmniboxRichAutocompletionPromisingDescription[];
 
+extern const char kOmniboxLocalHistoryZeroSuggestBeyondNTPName[];
+extern const char kOmniboxLocalHistoryZeroSuggestBeyondNTPDescription[];
+
 extern const char kOmniboxFocusTriggersSRPZeroSuggestName[];
 extern const char kOmniboxFocusTriggersSRPZeroSuggestDescription[];
 
@@ -2943,9 +2946,6 @@ extern const char kExoGamepadVibrationDescription[];
 
 extern const char kExoOrdinalMotionName[];
 extern const char kExoOrdinalMotionDescription[];
-
-extern const char kExoPointerLockName[];
-extern const char kExoPointerLockDescription[];
 
 extern const char kExoLockNotificationName[];
 extern const char kExoLockNotificationDescription[];

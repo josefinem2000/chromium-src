@@ -1132,6 +1132,11 @@ WRAPPED_INSTANTIATE_TEST_SUITE_P(
         TestCase("driveClickFirstSearchResult").FilesSwa(),
         TestCase("drivePressEnterToSearch"),
         TestCase("drivePressEnterToSearch").FilesSwa(),
+        TestCase("driveSearchAlwaysDisplaysMyDrive"),
+        TestCase("driveSearchAlwaysDisplaysMyDrive").FilesSwa(),
+        TestCase("driveSearchAlwaysDisplaysMyDrive")
+            .FilesSwa()
+            .FilesExperimental(),
         TestCase("drivePressClearSearch"),
         TestCase("drivePressClearSearch").FilesSwa(),
         TestCase("drivePressCtrlAFromSearch"),
@@ -1740,6 +1745,9 @@ WRAPPED_INSTANTIATE_TEST_SUITE_P(
         TestCase("showMyFiles").EnableTrash().FilesSwa(),
         TestCase("myFilesDisplaysAndOpensEntries"),
         TestCase("myFilesDisplaysAndOpensEntries").FilesSwa(),
+        TestCase("myFilesDisplaysAndOpensEntries")
+            .FilesSwa()
+            .FilesExperimental(),
         TestCase("myFilesFolderRename"),
         TestCase("myFilesFolderRename").FilesSwa(),
         TestCase("myFilesUpdatesWhenAndroidVolumeMounts").DontMountVolumes(),
@@ -1752,6 +1760,11 @@ WRAPPED_INSTANTIATE_TEST_SUITE_P(
         TestCase("myFilesAutoExpandOnce").FilesSwa(),
         TestCase("myFilesToolbarDelete"),
         TestCase("myFilesToolbarDelete").FilesSwa()));
+
+WRAPPED_INSTANTIATE_TEST_SUITE_P(
+    Navigation, /* navigation.js */
+    FilesAppBrowserTest,
+    ::testing::Values(TestCase("navigateToParent")));
 
 WRAPPED_INSTANTIATE_TEST_SUITE_P(
     InstallLinuxPackageDialog, /* install_linux_package_dialog.js */

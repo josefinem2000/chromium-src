@@ -148,7 +148,6 @@
 <translation id="2282155092769082568">স্বতঃকনফিগারেশান URL:</translation>
 <translation id="2288278176040912387">রেকর্ড প্লেয়ার</translation>
 <translation id="2291538123825441971"><ph name="NUMBER_OF_FILES" />টি ফাইল খোলা হচ্ছে।</translation>
-<translation id="2303282178633578561">সিম কার্ড লক করুন</translation>
 <translation id="2303301624314357662"><ph name="FILE_NAME" /> খোলা হচ্ছে।</translation>
 <translation id="2304820083631266885">গ্রহ</translation>
 <translation id="2305020378527873881"><ph name="VOLUME_NAME" /> সরিয়ে দেওয়া হয়েছে।</translation>
@@ -187,10 +186,8 @@
 <translation id="2570012981255377263">আপনার সাম্প্রতিক ফাইল এখানে দেখা যাবে</translation>
 <translation id="2578394532502990878">তামিল ফোনেটিক</translation>
 <translation id="2579959351793446050">ওড়িয়া</translation>
-<translation id="2593644851255584939">আপনার অ্যাডমিনিস্ট্রেটর চান যে আপনি সিম কার্ড লক বন্ধ করুন।</translation>
 <translation id="2602810353103180630"><ph name="NETWORK_COUNT" />টি নেটওয়ার্কের মধ্যে <ph name="NETWORK_INDEX" /> নম্বর নেটওয়ার্ক, <ph name="NETWORK_NAME" />, <ph name="CONNECTION_STATUS" />, সিগন্যাল ক্ষমতা <ph name="SIGNAL_STRENGTH" />%, আপনার অ্যাডমিনিস্ট্রেটর ব্লক করেছেন, বিবরণ</translation>
 <translation id="2614589611416690597"><ph name="VIDEO_TYPE" /> ভিডিও</translation>
-<translation id="2617342710774726426">সিম কার্ড লক করা আছে</translation>
 <translation id="2620090360073999360">এই সময়ে Google ড্রাইভে পৌঁছানো যাবে না৷</translation>
 <translation id="2621713457727696555">সুরক্ষিত</translation>
 <translation id="2638942478653899953">Google ড্রাইভে পৌঁছানো যাবে না৷ অনুগ্রহ করে <ph name="BEGIN_LINK" />লগ-আউট<ph name="END_LINK" /> করুন এবং আবার লগ-ইন করুন৷</translation>
@@ -288,10 +285,12 @@
 <translation id="3479552764303398839">এখনই নয়</translation>
 <translation id="3486821258960016770">মঙ্গোলিয়ান</translation>
 <translation id="3495304270784461826"><ph name="COUNT" />টি ত্রুটি৷</translation>
+<translation id="3495810061346586977">এই ফাইলটি গোপনীয় এবং অ্যাডমিনিস্ট্রেটর নীতির মাধ্যমে প্রযোজ্য বিধিনিষেধ পালন করেই এটি শেয়ার করা হয়। <ph name="BEGIN_LINK_HELP" />আরও জানুন<ph name="END_LINK_HELP" /></translation>
 <translation id="3509680540198371098"><ph name="NETWORK_COUNT" />টির মধ্যে <ph name="NETWORK_INDEX" /> নম্বর নেটওয়ার্ক, <ph name="NETWORK_NAME" />, <ph name="SECURITY_STATUS" />, <ph name="CONNECTION_STATUS" />, সিগন্যাল: <ph name="SIGNAL_STRENGTH" />%, বিবরণ</translation>
 <translation id="3522708245912499433">পর্তুগিজ</translation>
 <translation id="3524311639100184459">সতর্কতা: এই ফাইলগুলি অস্থায়ী এবং ডিস্কের জায়গা খালি করতে হয়ত অটোমেটিক মুছে ফেলা হবে।  <ph name="BEGIN_LINK" />আরও জানুন<ph name="END_LINK" /></translation>
 <translation id="3527085408025491307">ফোল্ডার</translation>
+<translation id="3548125359243647069">একটি ভুল পিন অনেকবার লেখা হয়েছে।</translation>
 <translation id="3549797760399244642">drive.google.com এ যান...</translation>
 <translation id="3553048479571901246"><ph name="APP_NAME" /> ব্যবহার করে ফাইল খুলতে, সেগুলি প্রথমে Windows ফাইল ফোল্ডারে কপি করে রাখুন।</translation>
 <translation id="3556731189587832921">ইংরেজি (মার্কিন যুক্তরাষ্ট্র) ভাষায় ইন্টারন্যাশনাল পিসি কীবোর্ড</translation>
@@ -488,6 +487,7 @@
 <translation id="5159560892333415631">ট্র্যাশ খালি করুন</translation>
 <translation id="5163869187418756376">শেয়ার করে ব্যর্থ হয়েছে৷ আপনার সংযোগটি পরীক্ষা করে পরে আবার চেষ্টা করুন৷</translation>
 <translation id="516592729076796170">মার্কিন যুক্তরাষ্ট্র প্রোগ্রামার ডিভোরাক</translation>
+<translation id="5172749059808361023">সীমাবদ্ধতার বিবরণ</translation>
 <translation id="5177526793333269655">থাম্বনেল ভিউ</translation>
 <translation id="5194713942430106590">কলামের মানগুলি ছোট থেকে বড় ক্রমানুযায়ী সাজাতে ক্লিক করুন।</translation>
 <translation id="5211614973734216083">ফ্যারোইজ</translation>
@@ -528,7 +528,6 @@
 <translation id="5489067830765222292">লাতভিয়ান</translation>
 <translation id="5489965683297092283"><ph name="FILTER_NAME" /> ফিল্টার বন্ধ আছে।</translation>
 <translation id="5494920125229734069">সকল বেছে নিন</translation>
-<translation id="5500104704744051184">আপনি PUK না লেখা পর্যন্ত এই নেটওয়ার্ক ব্যবহার করতে পারবেন না</translation>
 <translation id="5500122897333236901">আইসল্যান্ডিক</translation>
 <translation id="5508696409934741614">বিন্দু</translation>
 <translation id="5522908512596376669">লিস্ট ভিউতে ফাইলের তালিকা পরিবর্তিত হয়েছে।</translation>
@@ -617,6 +616,7 @@
 <translation id="6267547857941397424"><ph name="NETWORK_COUNT" />টির মধ্যে <ph name="NETWORK_INDEX" /> নম্বর নেটওয়ার্ক, <ph name="PHONE_NAME" /> সিগন্যাল: <ph name="SIGNAL_STRENGTH" />, ফোনের ব্যাটারি <ph name="BATTERY_STATUS" />%, কানেক্ট করুন</translation>
 <translation id="6269630227984243955">মালয়</translation>
 <translation id="6287852322318138013">এই ফাইলটি খোলার জন্য একটি অ্যাপ্লিকেশান বেছে নিন</translation>
+<translation id="6295542640242147836">সিম কার্ড লক করা</translation>
 <translation id="6296410173147755564">ভুল PUK দিয়েছেন</translation>
 <translation id="6312403991423642364">অজানা নেটওয়ার্ক ত্রুটি</translation>
 <translation id="6317608858038767920">কাস্টম নেমসার্ভার <ph name="INPUT_INDEX" /></translation>
@@ -726,6 +726,7 @@
 <translation id="7189874332498648577"><ph name="NUMBER_OF_GB" /> জিবি</translation>
 <translation id="7191454237977785534">ফাইল এই রূপে সেভ করুন</translation>
 <translation id="7229570126336867161">EVDO এর প্রয়োজন</translation>
+<translation id="7230898482850090046">আপনার অ্যাডমিনিস্ট্রেটর "সিম কার্ড লক করা" সেটিং বন্ধ করার অনুরোধ জানিয়েছেন</translation>
 <translation id="7238097264433196391">ড্রাইভের নাম</translation>
 <translation id="7238643356913091553"><ph name="NETWORK_NAME" />, বিবরণ</translation>
 <translation id="7246947237293279874">এফটিপি প্রক্সি</translation>
@@ -758,6 +759,7 @@
 <translation id="7505167922889582512">লুকানো ফাইল দেখুন</translation>
 <translation id="7514365320538308">ডাউনলোড করুন</translation>
 <translation id="751507702149411736">বেলারুশীয়</translation>
+<translation id="7521790570754130607">মোবাইল ডেটা ব্যবহার করতে পিন লাগবে</translation>
 <translation id="7532029025027028521">ফার্সি লিপ্যন্তর</translation>
 <translation id="7544830582642184299">Linux অ্যাপকে আপনার Google Drive-এ ফাইল অ্যাক্সেস করার অনুমতি দিন। পরিবর্তনগুলি আপনার অন্যান্য ডিভাইসের সাথে সিঙ্ক হয়ে যাবে।</translation>
 <translation id="7547009467130558110">স্নিকার</translation>
@@ -782,6 +784,7 @@
 <translation id="76959938259365003">ট্র্যাশ খালি করা যায়নি।</translation>
 <translation id="770015031906360009">গ্রীক</translation>
 <translation id="7705251383879779343"><ph name="FILE_NAME" /> কপি করা হয়েছে।</translation>
+<translation id="7708271999969613024">এই নেটওয়ার্ক ব্যবহার করতে, আপনার পরিষেবা প্রদানকারীর থেকে পাওয়া ৮-সংখ্যার 'পার্সোনাল আনব্লকিং কী' (PUK) লিখতে হবে।</translation>
 <translation id="7711920809702896782">ইমেজর তথ্য</translation>
 <translation id="7724603315864178912">কাটুন</translation>
 <translation id="7730494089396812859">ক্লাউড ব্যাক-আপের বিশদ বিবরণ দেখায়</translation>
@@ -809,7 +812,6 @@
 <translation id="7831491651892296503">নেটওয়ার্ক কনফিগার করার সময় ত্রুটি</translation>
 <translation id="7839804798877833423">এই ফাইলগুলি আনতে আনুমানিক মোবাইল ডেটা <ph name="FILE_SIZE" /> ব্যবহার হবে</translation>
 <translation id="7846076177841592234">নির্বাচন বাতিল করুন</translation>
-<translation id="7847617962681804761">মোবাইল ডেটা ব্যবহার করতে পিন লাগবে</translation>
 <translation id="7853966320808728790">ফরাসি BÉPO</translation>
 <translation id="7857117644404132472">ব্যতিক্রম যোগ করুন</translation>
 <translation id="7868774406711971383">পোলিশ</translation>
@@ -878,6 +880,7 @@
 <translation id="8437209419043462667">মার্কিন যুক্তরাষ্ট্রীয়</translation>
 <translation id="8452135315243592079">সিম কার্ড পাওয়া যাচ্ছে না</translation>
 <translation id="8456681095658380701">ভুল নাম</translation>
+<translation id="8457767749626250697">আপনার সিম কার্ড লক করা আছে</translation>
 <translation id="8459404855768962328">এই আইটেম কপি করলে, এটি শেয়ার করা ফোল্ডার '<ph name="DESTINATION_NAME" />' দেখতে পাওয়া প্রতিটি ব্যক্তির সাথে শেয়ার হয়ে যাবে।</translation>
 <translation id="8461467696380332069">কোনও ফাইলে রাইট-ক্লিক করুন এবং শেল্ফে আপনার ফাইল দ্রুত অ্যাক্সেস করার জন্য "শেল্ফে পিন করুন" বিকল্পটি বেছে নিন।</translation>
 <translation id="8461914792118322307">প্রক্সি</translation>
@@ -904,7 +907,6 @@
 <translation id="8579285237314169903"><ph name="NUMBER_OF_FILES" />টি আইটেম সিঙ্ক করা হচ্ছে...</translation>
 <translation id="8600173386174225982">থাম্বনেল ভিউতে ফাইলের তালিকা পরিবর্তিত হয়েছে।</translation>
 <translation id="8601932370724196034">Crostini ছবির ফাইল</translation>
-<translation id="8608515571837163082">একটি ভুল পিন অনেকবার লেখা হয়েছে। আপনার পরিষেবা প্রদানকারীর থেকে পাওয়া ৮-সংখ্যার 'পার্সোনাল আনব্লকিং কী' (PUK) লিখুন।</translation>
 <translation id="8609695766746872526">আইসল্যান্ডিক</translation>
 <translation id="863903787380594467">ভুল পিন দিয়েছেন। আপনি আর <ph name="RETRIES" /> বার চেষ্টা করতে পারবেন।</translation>
 <translation id="8639391553632924850"><ph name="INPUT_LABEL" /> - পোর্ট</translation>

@@ -51,7 +51,6 @@
 #include "content/renderer/document_state.h"
 #include "content/renderer/navigation_state.h"
 #include "content/renderer/render_process.h"
-#include "content/renderer/render_view_impl.h"
 #include "content/renderer/service_worker/service_worker_network_provider_for_frame.h"
 #include "content/shell/browser/shell.h"
 #include "content/shell/browser/shell_browser_context.h"
@@ -78,6 +77,7 @@
 #include "third_party/blink/public/common/widget/device_emulation_params.h"
 #include "third_party/blink/public/mojom/frame/frame_owner_properties.mojom.h"
 #include "third_party/blink/public/mojom/frame/frame_replication_state.mojom.h"
+#include "third_party/blink/public/mojom/frame/remote_frame.mojom.h"
 #include "third_party/blink/public/mojom/frame/tree_scope_type.mojom.h"
 #include "third_party/blink/public/mojom/loader/request_context_frame_type.mojom.h"
 #include "third_party/blink/public/platform/modules/service_worker/web_service_worker_network_provider.h"
@@ -99,6 +99,7 @@
 #include "third_party/blink/public/web/web_origin_trials.h"
 #include "third_party/blink/public/web/web_page_popup.h"
 #include "third_party/blink/public/web/web_performance.h"
+#include "third_party/blink/public/web/web_picture_in_picture_window_options.h"
 #include "third_party/blink/public/web/web_remote_frame.h"
 #include "third_party/blink/public/web/web_script_source.h"
 #include "third_party/blink/public/web/web_settings.h"
@@ -976,8 +977,8 @@ TEST_F(RenderViewImplTest, BeginNavigationForWebUI) {
   popup_request.SetMode(network::mojom::RequestMode::kNavigate);
   popup_request.SetRedirectMode(network::mojom::RedirectMode::kManual);
   popup_request.SetRequestContext(blink::mojom::RequestContextType::INTERNAL);
-  blink::WebView* new_web_view = web_view_->Client()->CreateView(
-      GetMainFrame(), popup_request, blink::WebWindowFeatures(), "foo",
+  blink::WebView* new_web_view = frame()->CreateNewWindow(
+      popup_request, blink::WebWindowFeatures(), "foo",
       blink::kWebNavigationPolicyNewForegroundTab,
       network::mojom::WebSandboxFlags::kNone,
       blink::AllocateSessionStorageNamespaceId(), consumed_user_gesture,

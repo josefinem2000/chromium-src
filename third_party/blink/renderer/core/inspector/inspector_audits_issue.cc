@@ -160,6 +160,14 @@ BuildAttributionReportingIssueType(AttributionReportingIssueType type) {
     case AttributionReportingIssueType::kTooManyConcurrentRequests:
       return protocol::Audits::AttributionReportingIssueTypeEnum::
           TooManyConcurrentRequests;
+    case AttributionReportingIssueType::kSourceAndTriggerHeaders:
+      return protocol::Audits::AttributionReportingIssueTypeEnum::
+          SourceAndTriggerHeaders;
+    case AttributionReportingIssueType::kSourceIgnored:
+      return protocol::Audits::AttributionReportingIssueTypeEnum::SourceIgnored;
+    case AttributionReportingIssueType::kTriggerIgnored:
+      return protocol::Audits::AttributionReportingIssueTypeEnum::
+          TriggerIgnored;
   }
 }
 

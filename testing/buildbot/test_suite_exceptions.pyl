@@ -487,6 +487,12 @@
           'hard_timeout': 1800,
         },
       },
+      'win10.20h2-blink-rel': {
+        'swarming': {
+          'shards': 6,
+          'hard_timeout': 1200,
+        },
+      },
       'win10.20h2-blink-rel-dummy': {
         'swarming': {
           'shards': 6,
@@ -761,6 +767,12 @@
         'swarming': {
           'shards': 7,
           'hard_timeout': 1800,
+        },
+      },
+      'win10.20h2-blink-rel': {
+        'swarming': {
+          'shards': 9,
+          'hard_timeout': 1200,
         },
       },
       'win10.20h2-blink-rel-dummy': {
@@ -2472,6 +2484,11 @@
         },
       },
     },
+  },
+  'lacros_all_tast_tests eve': {
+    'remove_from': [
+      'lacros-amd64-generic-rel',
+    ]
   },
   'maps_pixel_passthrough_test': {
     'modifications': {
