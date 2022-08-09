@@ -867,6 +867,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   }
 
   // set web preferences for beyond viewport
+  // save the original web preferences
   blink::web_pref::WebPreferences original_web_prefs =
       host_->render_view_host()->GetDelegate()->GetOrCreateWebPreferences();
 
@@ -895,10 +896,10 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   gfx::Size requested_image_size = gfx::Size();
 
   if (clip.isJust()) {
-    double scale = dpfactor * clip.fromJust()->GetScale();
-    widget_host->GetView()->SetSize(
-        gfx::Size(base::ClampRound(clip.fromJust()->GetWidth() * scale),
-                  base::ClampRound(clip.fromJust()->GetHeight() * scale)));
+    double view_size_scale = dpfactor * clip.fromJust()->GetScale();
+    widget_host->GetView()->SetSize(gfx::Size(
+        base::ClampRound(clip.fromJust()->GetWidth() * view_size_scale),
+        base::ClampRound(clip.fromJust()->GetHeight() * view_size_scale)));
 
     requested_image_size =
         gfx::Size(clip.fromJust()->GetWidth(), clip.fromJust()->GetHeight());
@@ -911,10 +912,11 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   }
 
   if (emulation_enabled || clip.isJust()) {
-    double scale = widget_host_device_scale_factor * dpfactor;
+    double image_scale = widget_host_device_scale_factor * dpfactor;
     if (clip.isJust())
-      scale *= clip.fromJust()->GetScale();
-    requested_image_size = gfx::ScaleToRoundedSize(requested_image_size, scale);
+      image_scale *= clip.fromJust()->GetScale();
+    requested_image_size =
+        gfx::ScaleToRoundedSize(requested_image_size, image_scale);
   }
 
   widget_host->GetSnapshotFromBrowser(
