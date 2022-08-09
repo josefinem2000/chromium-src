@@ -2344,6 +2344,11 @@ bool BrowserView::IsBookmarkBarAnimating() const {
 }
 
 bool BrowserView::IsTabStripEditable() const {
+#if BUILDFLAG(ENABLE_WEBUI_TAB_STRIP)
+  if (webui_tab_strip_)
+    return webui_tab_strip_->IsTabStripEditable();
+#endif  // BUILDFLAG(ENABLE_WEBUI_TAB_STRIP)
+
   return tabstrip_->IsTabStripEditable();
 }
 
@@ -4320,8 +4325,7 @@ void BrowserView::UpdateAcceleratorMetrics(const ui::Accelerator& accelerator,
 
   if (command_id == IDC_BOOKMARK_THIS_TAB) {
     UMA_HISTOGRAM_ENUMERATION("Bookmarks.EntryPoint",
-                              BOOKMARK_ENTRY_POINT_ACCELERATOR,
-                              BOOKMARK_ENTRY_POINT_LIMIT);
+                              BookmarkEntryPoint::kAccelerator);
   }
   if (command_id == IDC_NEW_TAB &&
       browser_->SupportsWindowFeature(Browser::FEATURE_TABSTRIP)) {

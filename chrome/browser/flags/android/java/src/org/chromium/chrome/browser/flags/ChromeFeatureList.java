@@ -484,6 +484,7 @@ public abstract class ChromeFeatureList {
     public static final String PWA_UPDATE_DIALOG_FOR_NAME = "PwaUpdateDialogForName";
     public static final String QUERY_TILES = "QueryTiles";
     public static final String QUERY_TILES_IN_NTP = "QueryTilesInNTP";
+    public static final String QUERY_TILES_ON_START = "QueryTilesOnStart";
     public static final String QUERY_TILES_SEGMENTATION = "QueryTilesSegmentation";
     public static final String QUICK_ACTION_SEARCH_WIDGET = "QuickActionSearchWidgetAndroid";
     public static final String QUIET_NOTIFICATION_PROMPTS = "QuietNotificationPrompts";
@@ -653,6 +654,8 @@ public abstract class ChromeFeatureList {
     public static final CachedFlag sLensCameraAssistedSearch =
             new CachedFlag(LENS_CAMERA_ASSISTED_SEARCH, false);
     public static final CachedFlag sNewWindowAppMenu = new CachedFlag(NEW_WINDOW_APP_MENU, true);
+    public static final CachedFlag sOmniboxModernizeVisualUpdate =
+            new CachedFlag(OMNIBOX_MODERNIZE_VISUAL_UPDATE, false);
     public static final CachedFlag sOptimizationGuidePushNotifications =
             new CachedFlag(OPTIMIZATION_GUIDE_PUSH_NOTIFICATIONS, false);
     public static final CachedFlag sPaintPreviewDemo = new CachedFlag(PAINT_PREVIEW_DEMO, false);
@@ -661,6 +664,7 @@ public abstract class ChromeFeatureList {
     public static final CachedFlag sPrefetchNotificationSchedulingIntegration =
             new CachedFlag(PREFETCH_NOTIFICATION_SCHEDULING_INTEGRATION, false);
     public static final CachedFlag sQueryTiles = new CachedFlag(QUERY_TILES, false);
+    public static final CachedFlag sQueryTilesOnStart = new CachedFlag(QUERY_TILES_ON_START, false);
     public static final CachedFlag sReadLater = new CachedFlag(READ_LATER, false);
     public static final CachedFlag sStartSurfaceAndroid =
             new CachedFlag(START_SURFACE_ANDROID, false);

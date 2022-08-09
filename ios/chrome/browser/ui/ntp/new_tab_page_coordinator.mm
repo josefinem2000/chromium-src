@@ -352,6 +352,12 @@ namespace {
 - (void)stop {
   if (!self.started)
     return;
+
+  if (self.browser->GetBrowserState()->IsOffTheRecord()) {
+    self.incognitoViewController = nil;
+    self.started = NO;
+    return;
+  }
   self.viewPresented = NO;
   [self updateVisible];
 
@@ -365,7 +371,6 @@ namespace {
   self.contentSuggestionsCoordinator = nil;
   self.headerSynchronizer = nil;
   self.headerController = nil;
-  self.incognitoViewController = nil;
   // Remove before nil to ensure View Hierarchy doesn't hold last strong
   // reference.
   [self.containedViewController willMoveToParentViewController:nil];
@@ -374,6 +379,7 @@ namespace {
   self.containedViewController = nil;
   self.ntpViewController.feedHeaderViewController = nil;
   self.ntpViewController = nil;
+  self.feedHeaderViewController.ntpDelegate = nil;
   self.feedHeaderViewController = nil;
   self.alertCoordinator = nil;
   self.authService = nil;
@@ -1177,6 +1183,7 @@ namespace {
       [[FeedTopSectionCoordinator alloc]
           initWithBaseViewController:self.ntpViewController
                              browser:self.browser];
+  feedTopSectionCoordinator.ntpDelegate = self;
   [feedTopSectionCoordinator start];
   return feedTopSectionCoordinator;
 }

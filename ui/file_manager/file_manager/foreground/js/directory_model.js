@@ -67,8 +67,6 @@ export class DirectoryModel extends EventTarget {
 
     /** @private {?function(Event): void} */
     this.onSearchCompleted_ = null;
-    /** @private {?Function} */
-    this.onClearSearch_ = null;
 
     /**
      * @private {boolean}
@@ -1238,11 +1236,9 @@ export class DirectoryModel extends EventTarget {
       event.newDirEntry = dirEntry;
       event.volumeChanged = previousVolumeInfo !== currentVolumeInfo;
       this.dispatchEvent(event);
-      if (util.isFilesAppExperimental()) {
-        // Notify the Store that the new directory has successfully changed.
-        this.store_.dispatch(
-            changeDirectory({to: dirEntry, status: PropStatus.SUCCESS}));
-      }
+      // Notify the Store that the new directory has successfully changed.
+      this.store_.dispatch(
+          changeDirectory({to: dirEntry, status: PropStatus.SUCCESS}));
     });
   }
 
@@ -1641,11 +1637,8 @@ export class DirectoryModel extends EventTarget {
    * @param {string} query Query that will be searched for.
    * @param {function(Event)} onSearchRescan Function that will be called when
    *     the search directory is rescanned (i.e. search results are displayed).
-   * @param {function()} onClearSearch Function to be called when search state
-   *     gets cleared.
-   * TODO(olege): Change callbacks to events.
    */
-  search(query, onSearchRescan, onClearSearch) {
+  search(query, onSearchRescan) {
     this.lastSearchQuery_ = query;
     this.clearSearch_();
     const currentDirEntry = this.getCurrentDirEntry();
@@ -1685,9 +1678,8 @@ export class DirectoryModel extends EventTarget {
 
         // Notify the store-aware parts.
         this.store_.dispatch(
-            searchAction({term: query, status: PropStatus.SUCCESS}));
+            searchAction({query: query, status: PropStatus.SUCCESS}));
       };
-      this.onClearSearch_ = onClearSearch;
       this.addEventListener('scan-completed', this.onSearchCompleted_);
       this.clearAndScan_(newDirContents, callback);
     });
@@ -1708,11 +1700,6 @@ export class DirectoryModel extends EventTarget {
       this.onSearchCompleted_ = null;
     }
 
-    if (this.onClearSearch_) {
-      this.onClearSearch_();
-      this.onClearSearch_ = null;
-    }
-
     this.store_.dispatch(searchAction({}));
   }
 
@@ -1731,6 +1718,7 @@ export class DirectoryModel extends EventTarget {
       chrome.fileManagerPrivate.IOTaskType.EMPTY_TRASH,
       chrome.fileManagerPrivate.IOTaskType.MOVE,
       chrome.fileManagerPrivate.IOTaskType.RESTORE,
+      chrome.fileManagerPrivate.IOTaskType.TRASH,
     ]);
     /** @type {!Set<?VolumeManagerCommon.RootType>} */
     const rootTypesRequireRefresh = new Set([

@@ -504,8 +504,8 @@ const char kAutofillHighlightOnlyChangedValuesInPreviewModeDescription[] =
     "and other values that are not changed by accepting the preview should "
     "not be highlighted.";
 
-const char kAutofillParseIbanFieldsName[] = "Parse IBAN fields in forms";
-const char kAutofillParseIbanFieldsDescription[] =
+const char kAutofillParseIBANFieldsName[] = "Parse IBAN fields in forms";
+const char kAutofillParseIBANFieldsDescription[] =
     "When enabled, Autofill will attempt to find International Bank Account "
     "Number (IBAN) fields when parsing forms.";
 
@@ -4304,6 +4304,11 @@ const char kWin10TabSearchCaptionButtonDescription[] =
 
 #if BUILDFLAG(IS_MAC)
 
+const char kBiometricAuthenticationInSettingsName[] =
+    "Biometric authentication in settings";
+const char kBiometricAuthenticationInSettingsDescription[] =
+    "Enables biometric authentication in settings to view/edit/copy a password";
+
 #if BUILDFLAG(ENABLE_PRINTING)
 const char kCupsIppPrintingBackendName[] = "CUPS IPP Printing Backend";
 const char kCupsIppPrintingBackendDescription[] =
@@ -4355,10 +4360,7 @@ const char kSystemColorChooserDescription[] =
 const char kUseAngleName[] = "Choose ANGLE graphics backend";
 const char kUseAngleDefault[] = "Default";
 const char kUseAngleGL[] = "OpenGL";
-const char kEnableBiometricAuthenticationInSettingsName[] =
-    "Biometric authentication in settings";
-const char kEnableBiometricAuthenticationInSettingsDescription[] =
-    "Enables biometric authentication in settings to view/edit/copy a password";
+
 const char kBiometricAuthenticationForFillingName[] =
     "Biometric authentication reauth before filling";
 const char kBiometricAuthenticationForFillingDescription[] =
@@ -5586,6 +5588,10 @@ const char kProjectorExcludeTranscriptName[] =
 const char kProjectorExcludeTranscriptDescription[] =
     "Support excluding segment of Projector recording by excluding transcript";
 
+const char kQsRevampName[] = "Quick Settings Revamp";
+const char kQsRevampDescription[] =
+    "Enable QS UI revamp with separated message center.";
+
 const char kReleaseNotesNotificationAllChannelsName[] =
     "Release Notes Notification All Channels";
 const char kReleaseNotesNotificationAllChannelsDescription[] =
@@ -5937,6 +5943,11 @@ const char kCrOSEnforceSystemAecNsAgcDescription[] =
 
 const char kCrosPrivacyHubName[] = "Enable ChromeOS Privacy Hub";
 const char kCrosPrivacyHubDescription[] = "Enables ChromeOS Privacy Hub.";
+
+const char kCrosPrivacyHubFutureName[] =
+    "Enable ChromeOS Privacy Hub future features";
+const char kCrosPrivacyHubFutureDescription[] =
+    "Enables ChromeOS Privacy Hub future features.";
 
 const char kDeprecateLowUsageCodecsName[] = "Deprecates low usage media codecs";
 const char kDeprecateLowUsageCodecsDescription[] =

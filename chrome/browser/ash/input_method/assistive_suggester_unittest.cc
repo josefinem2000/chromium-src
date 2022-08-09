@@ -321,6 +321,34 @@ TEST_F(AssistiveSuggesterTest,
   EXPECT_FALSE(assistive_suggester_->IsAssistiveFeatureEnabled());
 }
 
+TEST_F(AssistiveSuggesterTest, RecordPKDiacriticsPrefEnabledOnActivate) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(
+      features::kDiacriticsOnPhysicalKeyboardLongpress);
+
+  SetInputMethodOptions(*profile_, /*predictive_writing_enabled=*/false,
+                        /*diacritics_on_longpress_enabled=*/true);
+  assistive_suggester_->OnActivate(kUsEnglishEngineId);
+
+  histogram_tester_.ExpectUniqueSample(
+      "InputMethod.Assistive.UserPref.PhysicalKeyboardDiacriticsOnLongpress",
+      true, 1);
+}
+
+TEST_F(AssistiveSuggesterTest, RecordPKDiacriticsPrefDisabledOnActivate) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(
+      features::kDiacriticsOnPhysicalKeyboardLongpress);
+
+  SetInputMethodOptions(*profile_, /*predictive_writing_enabled=*/false,
+                        /*diacritics_on_longpress_enabled=*/false);
+  assistive_suggester_->OnActivate(kUsEnglishEngineId);
+
+  histogram_tester_.ExpectUniqueSample(
+      "InputMethod.Assistive.UserPref.PhysicalKeyboardDiacriticsOnLongpress",
+      false, 1);
+}
+
 TEST_F(AssistiveSuggesterTest, RecordPredictiveWritingPrefOnActivate) {
   base::test::ScopedFeatureList feature_list;
   feature_list.InitWithFeatures(
@@ -469,7 +497,7 @@ TEST_F(AssistiveSuggesterTest,
   task_environment_.FastForwardBy(base::Seconds(1));
 
   EXPECT_TRUE(suggestion_handler_->GetShowingSuggestion());
-  EXPECT_EQ(suggestion_handler_->GetSuggestionText(), u"à;á;â;ã;ã;ä;å;ā");
+  EXPECT_EQ(suggestion_handler_->GetSuggestionText(), u"à;á;â;ä;æ;ã;å;ā");
 }
 
 TEST_F(AssistiveSuggesterTest, DiacriticsSuggestionOnKeyDownRecordsSuccess) {
@@ -541,7 +569,7 @@ TEST_F(AssistiveSuggesterTest,
   EXPECT_FALSE(assistive_suggester_->OnKeyEvent(ReleaseKey(ui::DomCode::US_O)));
   task_environment_.FastForwardBy(base::Seconds(1));
   EXPECT_TRUE(suggestion_handler_->GetShowingSuggestion());
-  EXPECT_EQ(suggestion_handler_->GetSuggestionText(), u"à;á;â;ã;ã;ä;å;ā");
+  EXPECT_EQ(suggestion_handler_->GetSuggestionText(), u"à;á;â;ä;æ;ã;å;ā");
 }
 
 TEST_F(AssistiveSuggesterTest,

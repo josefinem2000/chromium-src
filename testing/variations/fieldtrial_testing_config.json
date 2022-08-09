@@ -117,6 +117,33 @@
             ]
         }
     ],
+    "AndroidBackPressRefactor": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "EnabledWithSystemBack_2022_07_20",
+                    "params": {
+                        "system_back": "true"
+                    },
+                    "enable_features": [
+                        "BackGestureRefactorAndroid"
+                    ]
+                },
+                {
+                    "name": "EnabledWithoutSystemBack_2022_07_20",
+                    "params": {
+                        "system_back": "false"
+                    },
+                    "enable_features": [
+                        "BackGestureRefactorAndroid"
+                    ]
+                }
+            ]
+        }
+    ],
     "AndroidBulkTabRestore": [
         {
             "platforms": [
@@ -6651,6 +6678,21 @@
             ]
         }
     ],
+    "PageInfoAboutThisSiteMoreInfo": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "PageInfoAboutThisSiteMoreInfo"
+                    ]
+                }
+            ]
+        }
+    ],
     "PageInfoDiscoverabilityTimeout": [
         {
             "platforms": [
@@ -7300,6 +7342,28 @@
                     "enable_features": [
                         "PrewarmDefaultFontFamilies"
                     ]
+                }
+            ]
+        }
+    ],
+    "PriceDropNtpIPH": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "params": {
+                        "availability": ">=0",
+                        "event_trigger": "name:price_drop_ntp_iph_triggered;comparator:==0;window:365;storage:365",
+                        "event_used": "name:tab_switcher_button_clicked;comparator:any;window:365;storage:365",
+                        "session_rate": "<1"
+                    },
+                    "enable_features": [
+                        "IPH_PriceDropNTP"
+                    ],
+                    "disable_features": []
                 }
             ]
         }
@@ -9405,6 +9469,21 @@
                     "name": "Enabled",
                     "enable_features": [
                         "UnifiedSidePanel"
+                    ]
+                }
+            ]
+        }
+    ],
+    "UseGetrandomForRandBytes": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "UseGetrandomForRandBytes"
                     ]
                 }
             ]

@@ -942,16 +942,9 @@ class DemoSetupVariantCountryCodeRegionTest : public DemoSetupArcSupportedTest {
   }
 };
 
-// Flake on ASAN: crbug.com/1340982
-#if defined(ADDRESS_SANITIZER) || !defined(NDEBUG)
-#define MAYBE_VariantCountryCodeRegionDefaultCountryIsSet \
-  DISABLED_VariantCountryCodeRegionDefaultCountryIsSet
-#else
-#define MAYBE_VariantCountryCodeRegionDefaultCountryIsSet \
-  VariantCountryCodeRegionDefaultCountryIsSet
-#endif
+// Flaky test: crbug.com/1340982, crbug.com/1147265
 IN_PROC_BROWSER_TEST_F(DemoSetupVariantCountryCodeRegionTest,
-                       MAYBE_VariantCountryCodeRegionDefaultCountryIsSet) {
+                       DISABLED_VariantCountryCodeRegionDefaultCountryIsSet) {
   // Simulate successful online setup.
   enrollment_helper_.ExpectEnrollmentMode(
       policy::EnrollmentConfig::MODE_ATTESTATION);
@@ -992,7 +985,8 @@ class DemoSetupVirtualSetRegionCodeTest : public DemoSetupArcSupportedTest {
 };
 
 // Flake on ASAN: crbug.com/1340618
-#if defined(ADDRESS_SANITIZER) || !defined(NDEBUG)
+// Flake on Linux Chrome OS: crbug.com/1351186
+#if defined(ADDRESS_SANITIZER) || !defined(NDEBUG) || BUILDFLAG(IS_CHROMEOS)
 #define MAYBE_VirtualSetCountryCodeRegionPlaceholderIsSet \
   DISABLED_VirtualSetCountryCodeRegionPlaceholderIsSet
 #else
@@ -1029,16 +1023,9 @@ class DemoSetupRegionCodeNotExistTest : public DemoSetupArcSupportedTest {
   }
 };
 
-// TODO(crbug.com/1320444): Re-enable the test in debug.
-#if defined(ADDRESS_SANITIZER) || !defined(NDEBUG)
-#define MAYBE_RegionCodeNotExistPlaceholderIsSet \
-  DISABLED_RegionCodeNotExistPlaceholderIsSet
-#else
-#define MAYBE_RegionCodeNotExistPlaceholderIsSet \
-  RegionCodeNotExistPlaceholderIsSet
-#endif
+// TODO(crbug.com/1320444): Flaky test.
 IN_PROC_BROWSER_TEST_F(DemoSetupRegionCodeNotExistTest,
-                       MAYBE_RegionCodeNotExistPlaceholderIsSet) {
+                       DISABLED_RegionCodeNotExistPlaceholderIsSet) {
   // Simulate successful online setup.
   enrollment_helper_.ExpectEnrollmentMode(
       policy::EnrollmentConfig::MODE_ATTESTATION);

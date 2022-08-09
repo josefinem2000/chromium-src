@@ -2927,21 +2927,6 @@ Try tapping the mic to ask me anything.
       <message name="IDS_SHIMLESS_RMA_FINALIZE_COMPLETE" translateable="false" desc="Message to display when finalization is complete.">
         Complete.
       </message>
-      <message name="IDS_SHIMLESS_RMA_FINALIZE_FAILED_BLOCKING" translateable="false" desc="Message to display when finalization failed and RMA cannot complete.">
-        Failed, blocking.
-      </message>
-      <message name="IDS_SHIMLESS_RMA_FINALIZE_FAILED_NON_BLOCKING" translateable="false" desc="Message to display when finalization failed, but RMA can continue.">
-        Failed, non blocking.
-      </message>
-      <message name="IDS_SHIMLESS_RMA_FINALIZE_FAILED_RETRY_BUTTON_LABEL" translateable="false" desc="The label for the button to retry finalization.">
-        Retry finalization
-      </message>
-      <message name="IDS_SHIMLESS_RMA_FINALIZE_WP_DISABLED_DIALOG_TITLE" desc="The title of the dialog that shows up when finalization failed because Write Protect is off.">
-        Make sure Write Protect is on
-      </message>
-      <message name="IDS_SHIMLESS_RMA_FINALIZE_WP_DISABLED_DIALOG_BODY" desc="The body of the dialog that shows up when finalization failed because Write Protect is off.">
-        Write Protect is still turned off. To proceed, turn on Write Protect.
-      </message>
       <!-- Device provisioning page -->
       <message name="IDS_SHIMLESS_RMA_PROVISIONING_TITLE" desc="Title for the device provisioning page. Provisioning is when component specific data is set e.g. erasing fingerprint data from the thumb reader or regenerating the device stable secret before returning the device to a new owner.">
         Provisioning the device...
@@ -3200,6 +3185,23 @@ Try tapping the mic to ask me anything.
       <message name="IDS_SHIMLESS_RMA_CRITICAL_REBOOT_BUTTON" desc="Label for the button that attempts to cancel RMA and reboot the device.">
         Restart
       </message>
+      <!-- Hardware error page -->
+      <message name="IDS_SHIMLESS_RMA_HARDWARE_ERROR_TITLE" desc="The title for the hardware error page. Hardware errors occur on the finalization and the provisioning step and can only be resolved by replacing the main board.">
+        Can't complete repair
+      </message>
+      <message name="IDS_SHIMLESS_RMA_HARDWARE_ERROR_MESSAGE" desc="The message for the hardware error explaining how to fix it.">
+        Something went wrong. This is most likely due to a hardware issue. Replace the main board and try the repair process again.
+      </message>
+      <message name="IDS_SHIMLESS_RMA_HARDWARE_SHUTDOWN_BUTTON" desc="Label for the shut down button on the hardware error page.">
+        Shut down
+      </message>
+      <!-- Reboot page -->
+      <message name="IDS_SHIMLESS_RMA_REBOOT_PAGE_TITLE" desc="The title for the reboot page. The reboot page is shown when the device is preparing to reboot.">
+        Preparing to restart...
+      </message>
+      <message name="IDS_SHIMLESS_RMA_REBOOT_PAGE_MESSAGE" desc="The message for the reboot page explaining how soon the device will reboot.">
+        System will restart in 5 seconds.
+      </message>
       <!-- Wipe device page -->
       <message name="IDS_SHIMLESS_RMA_WIPE_DEVICE_TITLE" desc="Title for the page where the user chooses whether to erase the data or keep/preserve the data on the device.">
         Device is going to the same user. Erase user data?
@@ -3442,6 +3444,9 @@ Try tapping the mic to ask me anything.
       </message>
       <message name="IDS_FEEDBACK_TOOL_ADD_FILE_LABEL" desc="Label for the field of adding a file">
         Add file
+      </message>
+      <message name="IDS_FEEDBACK_TOOL_ATTACH_FILE_LABEL_TOOLTIP" desc="Label for the tooltip content on attach files icon.">
+        Files will be sent to Google for debugging
       </message>
       <message name="IDS_FEEDBACK_TOOL_ATTACH_FILE_CHECKBOX_ARIA_LABEL" desc="Aria Label of the checkbox to select the picked file">
         Attach file

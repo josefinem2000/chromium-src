@@ -9,13 +9,11 @@
 goog.require('AncestryRecoveryStrategy');
 goog.require('AutomationPredicate');
 goog.require('AutomationTreeWalker');
-goog.require('AutomationUtil');
 goog.require('EarconDescription');
 goog.require('PanelNodeMenuData');
 goog.require('PanelNodeMenuItemData');
 goog.require('QueueMode');
 goog.require('RecoveryStrategy');
-goog.require('TreeDumper');
 goog.require('TtsCategory');
 
 goog.require('constants');

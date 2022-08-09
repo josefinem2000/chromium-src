@@ -271,8 +271,8 @@ extern const char kAutofillFillMerchantPromoCodeFieldsDescription[];
 extern const char kAutofillHighlightOnlyChangedValuesInPreviewModeName[];
 extern const char kAutofillHighlightOnlyChangedValuesInPreviewModeDescription[];
 
-extern const char kAutofillParseIbanFieldsName[];
-extern const char kAutofillParseIbanFieldsDescription[];
+extern const char kAutofillParseIBANFieldsName[];
+extern const char kAutofillParseIBANFieldsDescription[];
 
 extern const char kAutofillParseMerchantPromoCodeFieldsName[];
 extern const char kAutofillParseMerchantPromoCodeFieldsDescription[];
@@ -2458,6 +2458,9 @@ extern const char kWin10TabSearchCaptionButtonDescription[];
 
 #if BUILDFLAG(IS_MAC)
 
+extern const char kBiometricAuthenticationInSettingsName[];
+extern const char kBiometricAuthenticationInSettingsDescription[];
+
 #if BUILDFLAG(ENABLE_PRINTING)
 extern const char kCupsIppPrintingBackendName[];
 extern const char kCupsIppPrintingBackendDescription[];
@@ -2494,9 +2497,6 @@ extern const char kUseAngleName[];
 
 extern const char kUseAngleDefault[];
 extern const char kUseAngleGL[];
-
-extern const char kEnableBiometricAuthenticationInSettingsName[];
-extern const char kEnableBiometricAuthenticationInSettingsDescription[];
 
 extern const char kBiometricAuthenticationForFillingName[];
 extern const char kBiometricAuthenticationForFillingDescription[];
@@ -3199,6 +3199,9 @@ extern const char kProjectorAnnotatorDescription[];
 extern const char kProjectorExcludeTranscriptName[];
 extern const char kProjectorExcludeTranscriptDescription[];
 
+extern const char kQsRevampName[];
+extern const char kQsRevampDescription[];
+
 extern const char kReleaseNotesNotificationAllChannelsName[];
 extern const char kReleaseNotesNotificationAllChannelsDescription[];
 
@@ -3397,6 +3400,9 @@ extern const char kCrOSDspBasedAgcAllowedDescription[];
 
 extern const char kCrosPrivacyHubName[];
 extern const char kCrosPrivacyHubDescription[];
+
+extern const char kCrosPrivacyHubFutureName[];
+extern const char kCrosPrivacyHubFutureDescription[];
 
 extern const char kCrOSEnforceSystemAecName[];
 extern const char kCrOSEnforceSystemAecDescription[];

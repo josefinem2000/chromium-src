@@ -2058,9 +2058,7 @@ WRAPPED_INSTANTIATE_TEST_SUITE_P(
     FilesAppBrowserTest,
     ::testing::Values(
         TestCase("breadcrumbsNavigate"),
-        TestCase("breadcrumbsNavigate").FilesExperimental(),
         TestCase("breadcrumbsNavigate").FilesSwa(),
-        TestCase("breadcrumbsNavigate").FilesSwa().FilesExperimental(),
         TestCase("breadcrumbsDownloadsTranslation"),
         TestCase("breadcrumbsDownloadsTranslation").FilesSwa(),
         TestCase("breadcrumbsRenderShortPath"),
@@ -2069,7 +2067,6 @@ WRAPPED_INSTANTIATE_TEST_SUITE_P(
         TestCase("breadcrumbsEliderButtonHidden").FilesSwa(),
         TestCase("breadcrumbsRenderLongPath"),
         TestCase("breadcrumbsRenderLongPath").FilesSwa(),
-        TestCase("breadcrumbsRenderLongPath").FilesSwa().FilesExperimental(),
         TestCase("breadcrumbsMainButtonClick"),
         TestCase("breadcrumbsMainButtonClick").FilesSwa(),
         TestCase("breadcrumbsMainButtonEnterKey"),
@@ -2152,6 +2149,16 @@ WRAPPED_INSTANTIATE_TEST_SUITE_P(
         TestCase("trashNoTasksInTrashRoot").EnableTrash().FilesSwa(),
         TestCase("trashDoubleClickOnFileInTrashRootShowsDialog").EnableTrash(),
         TestCase("trashDoubleClickOnFileInTrashRootShowsDialog")
+            .EnableTrash()
+            .FilesSwa(),
+        TestCase("trashDragDropRootAcceptsEntries").EnableTrash().FilesSwa(),
+        TestCase("trashDragDropFromDisallowedRootsFails")
+            .EnableTrash()
+            .FilesSwa(),
+        TestCase("trashDragDropNonModifiableEntriesCantBeTrashed")
+            .EnableTrash()
+            .FilesSwa(),
+        TestCase("trashDragDropRootPerformsTrashAction")
             .EnableTrash()
             .FilesSwa()));
 

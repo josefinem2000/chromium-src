@@ -3643,6 +3643,9 @@ const FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kCellularUseSecondEuiccName,
      flag_descriptions::kCellularUseSecondEuiccDescription, kOsCrOS,
      FEATURE_VALUE_TYPE(chromeos::features::kCellularUseSecondEuicc)},
+    {"cros-privacy-hub-future", flag_descriptions::kCrosPrivacyHubFutureName,
+     flag_descriptions::kCrosPrivacyHubFutureDescription, kOsCrOS,
+     FEATURE_VALUE_TYPE(ash::features::kCrosPrivacyHubFuture)},
     {"enable-cros-privacy-hub", flag_descriptions::kCrosPrivacyHubName,
      flag_descriptions::kCrosPrivacyHubDescription, kOsCrOS,
      FEATURE_VALUE_TYPE(ash::features::kCrosPrivacyHub)},
@@ -3656,6 +3659,9 @@ const FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kOobeHidDetectionRevampName,
      flag_descriptions::kOobeHidDetectionRevampDescription, kOsCrOS,
      FEATURE_VALUE_TYPE(chromeos::features::kOobeHidDetectionRevamp)},
+    {"qs-revamp", flag_descriptions::kQsRevampName,
+     flag_descriptions::kQsRevampDescription, kOsCrOS,
+     FEATURE_VALUE_TYPE(chromeos::features::kQsRevamp)},
     {"quick-settings-network-revamp",
      flag_descriptions::kQuickSettingsNetworkRevampName,
      flag_descriptions::kQuickSettingsNetworkRevampDescription, kOsCrOS,
@@ -8898,9 +8904,9 @@ const FeatureEntry kFeatureEntries[] = {
      FEATURE_VALUE_TYPE(syncer::kIgnoreSyncEncryptionKeysLongMissing)},
 
     {"autofill-parse-iban-fields",
-     flag_descriptions::kAutofillParseIbanFieldsName,
-     flag_descriptions::kAutofillParseIbanFieldsDescription, kOsAll,
-     FEATURE_VALUE_TYPE(autofill::features::kAutofillParseIbanFields)},
+     flag_descriptions::kAutofillParseIBANFieldsName,
+     flag_descriptions::kAutofillParseIBANFieldsDescription, kOsAll,
+     FEATURE_VALUE_TYPE(autofill::features::kAutofillParseIBANFields)},
 
 #if BUILDFLAG(IS_ANDROID)
     {"autofill-enable-fido-progress-dialog",
@@ -8956,14 +8962,14 @@ const FeatureEntry kFeatureEntries[] = {
      kOsCrOS | kOsLacros,
      FEATURE_VALUE_TYPE(apps::features::kLinkCapturingAutoDisplayIntentPicker)},
 #endif  // BUILDFLAG(IS_CHROMEOS)
-#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
-    {"enable-biometric-authentication-in-settings",
-     flag_descriptions::kEnableBiometricAuthenticationInSettingsName,
-     flag_descriptions::kEnableBiometricAuthenticationInSettingsDescription,
-     kOsMac | kOsWin,
+
+#if BUILDFLAG(IS_MAC)
+    {"biometric-authentication-in-settings",
+     flag_descriptions::kBiometricAuthenticationInSettingsName,
+     flag_descriptions::kBiometricAuthenticationInSettingsDescription, kOsMac,
      FEATURE_VALUE_TYPE(
-         password_manager::features::kEnableBiometricAuthenticationInSettings)},
-#endif
+         password_manager::features::kBiometricAuthenticationInSettings)},
+#endif  // BUILDFLAG(IS_MAC)
 
     {"autofill-enable-remade-downstream-metrics",
      flag_descriptions::kAutofillEnableRemadeDownstreamMetricsName,

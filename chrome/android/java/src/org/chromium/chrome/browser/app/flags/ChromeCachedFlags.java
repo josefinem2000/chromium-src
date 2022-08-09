@@ -100,10 +100,12 @@ public class ChromeCachedFlags {
                 add(ChromeFeatureList.sInstantStart);
                 add(ChromeFeatureList.sInterestFeedV2);
                 add(ChromeFeatureList.sNewWindowAppMenu);
+                add(ChromeFeatureList.sOmniboxModernizeVisualUpdate);
                 add(ChromeFeatureList.sOptimizationGuidePushNotifications);
                 add(ChromeFeatureList.sPaintPreviewDemo);
                 add(ChromeFeatureList.sPaintPreviewShowOnStartup);
                 add(ChromeFeatureList.sQueryTiles);
+                add(ChromeFeatureList.sQueryTilesOnStart);
                 add(ChromeFeatureList.sReadLater);
                 add(ChromeFeatureList.sStartSurfaceAndroid);
                 add(ChromeFeatureList.sStartSurfaceRefactor);
@@ -150,7 +152,6 @@ public class ChromeCachedFlags {
                         add(StartSurfaceConfiguration.SIGNIN_PROMO_NTP_RESET_AFTER_HOURS);
                         add(StartSurfaceConfiguration.SPARE_RENDERER_DELAY_MS);
                         add(StartSurfaceConfiguration.START_SURFACE_EXCLUDE_MV_TILES);
-                        add(StartSurfaceConfiguration.START_SURFACE_EXCLUDE_QUERY_TILES);
                         add(StartSurfaceConfiguration.START_SURFACE_HIDE_INCOGNITO_SWITCH_NO_TAB);
                         add(StartSurfaceConfiguration.START_SURFACE_LAST_ACTIVE_TAB_ONLY);
                         add(StartSurfaceConfiguration.START_SURFACE_OPEN_NTP_INSTEAD_OF_START);
