@@ -891,22 +891,25 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   emulation_handler_->SetDeviceEmulationParams(modified_params);
 
   // Set view size for the screenshot right after emulating.
+  // Set requested image size
+  gfx::Size requested_image_size = gfx::Size();
+
   if (clip.isJust()) {
     double scale = dpfactor * clip.fromJust()->GetScale();
     widget_host->GetView()->SetSize(
         gfx::Size(base::ClampRound(clip.fromJust()->GetWidth() * scale),
                   base::ClampRound(clip.fromJust()->GetHeight() * scale)));
+
+    requested_image_size =
+        gfx::Size(clip.fromJust()->GetWidth(), clip.fromJust()->GetHeight());
+
   } else if (emulation_enabled) {
     widget_host->GetView()->SetSize(
         gfx::ScaleToFlooredSize(emulated_view_size, dpfactor));
-  }
-  gfx::Size requested_image_size = gfx::Size();
-  if (clip.isJust()) {
-    requested_image_size =
-        gfx::Size(clip.fromJust()->GetWidth(), clip.fromJust()->GetHeight());
-  } else if (emulation_enabled) {
+
     requested_image_size = emulated_view_size;
   }
+
   if (emulation_enabled || clip.isJust()) {
     double scale = widget_host_device_scale_factor * dpfactor;
     if (clip.isJust())
