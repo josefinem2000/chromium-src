@@ -833,11 +833,11 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     // size.
     float original_scale =
         original_params.scale > 0 ? original_params.scale : 1;
-    if (!modified_params.view_size.width()) {
+    if (!emulated_view_size.width()) {
       emulated_view_size.set_width(
           ceil(original_view_size.width() / original_scale));
     }
-    if (!modified_params.view_size.height()) {
+    if (!emulated_view_size.height()) {
       emulated_view_size.set_height(
           ceil(original_view_size.height() / original_scale));
     }
