@@ -809,7 +809,7 @@ void PageHandler::CaptureScreenshot(
 
 void PageHandler::CaptureScreenshotBeyondViewport(
     RenderWidgetHostImpl* widget_host,
-    std::string screenshot_format,
+    const std::string& screenshot_format,
     int screenshot_quality,
     Maybe<Page::Viewport> maybe_clip,
     std::unique_ptr<CaptureScreenshotCallback> callback) {
@@ -937,7 +937,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
 
 void PageHandler::CaptureScreenshotWithinViewport(
     RenderWidgetHostImpl* widget_host,
-    std::string screenshot_format,
+    const std::string& screenshot_format,
     int screenshot_quality,
     Maybe<Page::Viewport> clip,
     std::unique_ptr<CaptureScreenshotCallback> callback) {
