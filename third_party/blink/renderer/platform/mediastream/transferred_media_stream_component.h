@@ -18,14 +18,19 @@
 namespace blink {
 
 class MediaStreamSource;
-class WebAudioSourceProvider;
 class WebLocalFrame;
 
 class PLATFORM_EXPORT TransferredMediaStreamComponent final
     : public GarbageCollected<TransferredMediaStreamComponent>,
       public MediaStreamComponent {
  public:
-  TransferredMediaStreamComponent() = default;
+  // For carrying deserialized data to the TransferredMediaStreamComponent
+  // constructor.
+  struct TransferredValues {
+    String id;
+  };
+
+  explicit TransferredMediaStreamComponent(const TransferredValues& data);
 
   TransferredMediaStreamComponent(const TransferredMediaStreamComponent&) =
       delete;
@@ -40,16 +45,13 @@ class PLATFORM_EXPORT TransferredMediaStreamComponent final
 
   String Id() const override;
   int UniqueId() const override;
+  bool Remote() const override;
   bool Enabled() const override;
   void SetEnabled(bool enabled) override;
-  bool Muted() const override;
-  void SetMuted(bool muted) override;
   WebMediaStreamTrack::ContentHintType ContentHint() override;
   void SetContentHint(WebMediaStreamTrack::ContentHintType) override;
   const MediaConstraints& Constraints() const override;
   void SetConstraints(const MediaConstraints& constraints) override;
-  AudioSourceProvider* GetAudioSourceProvider() override;
-  void SetSourceProvider(WebAudioSourceProvider* provider) override;
 
   MediaStreamTrackPlatform* GetPlatformTrack() const override;
 
@@ -67,6 +69,7 @@ class PLATFORM_EXPORT TransferredMediaStreamComponent final
 
  private:
   Member<MediaStreamComponent> component_;
+  TransferredValues data_;
 };
 
 }  // namespace blink

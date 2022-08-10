@@ -1255,13 +1255,13 @@
   },
   {
     "name": "destroy-profile-on-browser-close",
-    "owners": [ "nicolaso" ],
-    "expiry_milestone": 100
+    "owners": [ "nicolaso", "droger" ],
+    "expiry_milestone": 112
   },
   {
     "name": "destroy-system-profiles",
     "owners": [ "nicolaso" ],
-    "expiry_milestone": 104
+    "expiry_milestone": 112
   },
   {
     "name": "device-force-scheduled-reboot",
@@ -4138,11 +4138,6 @@
     "expiry_milestone": 108
   },
   {
-    "name": "lazily-create-web-state-on-restoration",
-    "owners": ["olivierrobin", "sdefresne"],
-    "expiry_milestone": 105
-  },
-  {
     "name": "leak-detection-unauthenticated",
     "owners": ["rgod@google.com", "vasilii"],
     "expiry_milestone": 102
@@ -4791,7 +4786,7 @@
   {
       "name": "omnibox-new-textfield-implementation",
       "owners": ["stkhapugin", "rkgibson@google.com", "chrome-omnibox-team@google.com"],
-      "expiry_milestone": 105
+      "expiry_milestone": 107
   },
   {
     "name": "omnibox-on-device-head-suggestions",
@@ -6558,6 +6553,11 @@
   {
     "name": "web-otp-backend",
     "owners": [ "yigu" ],
+    "expiry_milestone": 110
+  },
+  {
+    "name": "web-payment-api-csp",
+    "owners": [ "rouslan", "web-payments-team@google.com" ],
     "expiry_milestone": 110
   },
   {

@@ -4,7 +4,6 @@
 
 import("//build/config/buildflags_paint_preview.gni")
 import("//build/config/chromebox_for_meetings/buildflags.gni")
-import("//build/config/chromecast_build.gni")
 import("//build/config/chromeos/ui_mode.gni")
 import("//build/config/compiler/compiler.gni")
 import("//build/config/features.gni")
@@ -1845,6 +1844,7 @@ static_library("ui") {
       "//ui/base/dragdrop/mojom:mojom_headers",
     ]
 
+    # TODO(crbug.com/1030821): Resolve circular dependencies.
     allow_circular_includes_from += [ "//chrome/browser/media/router" ]
 
     if (use_ozone && !is_chromeos_ash) {
@@ -3493,6 +3493,10 @@ static_library("ui") {
       "views/profiles/profile_picker_view.cc",
       "views/profiles/profile_picker_view.h",
       "views/profiles/profile_picker_web_contents_host.h",
+      "webui/intro/intro_handler.cc",
+      "webui/intro/intro_handler.h",
+      "webui/intro/intro_ui.cc",
+      "webui/intro/intro_ui.h",
       "webui/profile_helper.cc",
       "webui/profile_helper.h",
       "webui/settings/settings_default_browser_handler.cc",
@@ -3912,12 +3916,7 @@ static_library("ui") {
       ]
     }
   } else {  # 'OS!="win"
-    # The Cast Linux build sets toolkit_views to false, but many files in this
-    # target include views-related files unconditionally, causing `gn check`
-    # to fail on this variant. Since this target is only referenced (but not
-    # compiled) on this variant, it's okay to add this "incorrect" dependency
-    # to Cast Linux builds so that `gn check` passes.
-    if (toolkit_views || is_castos) {
+    if (toolkit_views) {
       public_deps += [
         "//ui/views",
         "//ui/views/controls/webview",
@@ -4900,6 +4899,8 @@ static_library("ui") {
       "views/site_data/page_specific_site_data_dialog.h",
       "views/site_data/page_specific_site_data_dialog_controller.cc",
       "views/site_data/page_specific_site_data_dialog_controller.h",
+      "views/site_data/site_data_row_view.cc",
+      "views/site_data/site_data_row_view.h",
       "views/ssl_client_certificate_selector.cc",
       "views/ssl_client_certificate_selector.h",
       "views/status_bubble_views.cc",
@@ -5472,8 +5473,8 @@ static_library("ui") {
       "views/extensions/media_galleries_dialog_views.h",
       "views/extensions/media_gallery_checkbox_view.cc",
       "views/extensions/media_gallery_checkbox_view.h",
-      "views/extensions/settings_overridden_dialog_view.cc",
-      "views/extensions/settings_overridden_dialog_view.h",
+      "views/extensions/settings_overridden_dialog.cc",
+      "views/extensions/settings_overridden_dialog.h",
       "views/javascript_app_modal_event_blocker.h",
       "web_applications/app_browser_controller.cc",
       "web_applications/app_browser_controller.h",

@@ -141,6 +141,7 @@ CONTENT_EXPORT extern const base::Feature kLazyImageVisibleLoadTimeMetrics;
 CONTENT_EXPORT extern const base::Feature kLazyInitializeMediaControls;
 CONTENT_EXPORT extern const base::Feature kLegacyWindowsDWriteFontFallback;
 CONTENT_EXPORT extern const base::Feature kLogJsConsoleMessages;
+CONTENT_EXPORT extern const base::Feature kLowerMemoryLimitForNonMainRenderers;
 CONTENT_EXPORT extern const base::Feature kMBIMode;
 enum class MBIMode {
   // In this mode, the AgentSchedulingGroup will use the process-wide legacy IPC
@@ -179,6 +180,7 @@ CONTENT_EXPORT extern const base::Feature kNotificationContentImage;
 CONTENT_EXPORT extern const base::Feature kNotificationTriggers;
 CONTENT_EXPORT extern const base::Feature kOriginIsolationHeader;
 CONTENT_EXPORT extern const base::Feature kOverscrollHistoryNavigation;
+CONTENT_EXPORT extern const base::Feature kWebPaymentAPICSP;
 CONTENT_EXPORT extern const base::Feature kPaymentRequestBasicCard;
 CONTENT_EXPORT extern const base::Feature kPeriodicBackgroundSync;
 CONTENT_EXPORT extern const base::Feature kFeaturePolicyHeader;

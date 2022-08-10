@@ -509,7 +509,7 @@ void TruncateAndAddStringAttribute(
     uint32_t max_len = kMaxStringAttributeLength) {
   if (value.IsEmpty())
     return;
-  std::string value_utf8 = value.Utf8();
+  std::string value_utf8 = value.Utf8(kStrictUTF8Conversion);
   if (value_utf8.size() > max_len) {
     std::string truncated;
     base::TruncateUTF8ToByteSize(value_utf8, max_len, &truncated);
@@ -2634,6 +2634,14 @@ bool AXObject::IsVisited() const {
 
 bool AXObject::AccessibilityIsIgnored() const {
   UpdateCachedAttributeValuesIfNeeded();
+#if defined(AX_FAIL_FAST_BUILD)
+  if (!cached_is_ignored_ && IsDetached()) {
+    NOTREACHED()
+        << "A detached node cannot be ignored: " << ToString(true)
+        << "\nThe Detach() method sets cached_is_ignored_ to true, but "
+           "something has recomputed it.";
+  }
+#endif
   return cached_is_ignored_;
 }
 
@@ -2952,6 +2960,9 @@ const AXObject* AXObject::InertRoot() const {
 
   while (object && !object->IsAXNodeObject())
     object = object->ParentObject();
+
+  DCHECK(object);
+
   Node* node = object->GetNode();
   auto* element = DynamicTo<Element>(node);
   if (!element)
@@ -6697,8 +6708,8 @@ String AXObject::ToString(bool verbose, bool cached_values_only) const {
       string_builder = string_builder + " focused";
     if (!IsDetached() && AXObjectCache().IsAriaOwned(this))
       string_builder = string_builder + " isAriaOwned";
-    if (!IsDetached() && (cached_values_only ? LastKnownIsIgnoredValue()
-                                             : AccessibilityIsIgnored())) {
+    if (cached_values_only ? LastKnownIsIgnoredValue()
+                           : AccessibilityIsIgnored()) {
       string_builder = string_builder + " isIgnored";
 #if defined(AX_FAIL_FAST_BUILD)
       // TODO(accessibility) Move this out of AX_FAIL_FAST_BUILD by having a new

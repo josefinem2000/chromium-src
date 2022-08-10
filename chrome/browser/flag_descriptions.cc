@@ -1744,11 +1744,6 @@ const char kLensCameraAssistedSearchDescription[] =
     "Enable an entry point to Google Lens to allow users to search what they "
     "see using their mobile camera.";
 
-const char kLocationBarModelOptimizationsName[] =
-    "LocationBarModel optimizations";
-const char kLocationBarModelOptimizationsDescription[] =
-    "Cache commonly used data in LocationBarModel to improve performance";
-
 const char kLogJsConsoleMessagesName[] =
     "Log JS console messages in system logs";
 const char kLogJsConsoleMessagesDescription[] =
@@ -2999,6 +2994,12 @@ const char kWebPaymentsExperimentalFeaturesName[] =
     "Experimental Web Payments API features";
 const char kWebPaymentsExperimentalFeaturesDescription[] =
     "Enable experimental Web Payments API features";
+
+const char kWebPaymentAPICSPName[] = "CSP policy for Web Payment API";
+const char kWebPaymentAPICSPDescription[] =
+    "Enforce Content Security Policy connect-src directive for Web Payment API "
+    "when fetching manifest files, app icons, and service worker JavaScript "
+    "files.";
 
 const char kPaymentRequestBasicCardName[] =
     "PaymentRequest API 'basic-card' method";

@@ -3308,7 +3308,7 @@ if (!is_android) {
         "../browser/ui/views/extensions/extensions_request_access_dialog_view_browsertest.cc",
         "../browser/ui/views/extensions/media_galleries_dialog_views_browsertest.cc",
         "../browser/ui/views/extensions/reload_page_dialog_view_browsertest.cc",
-        "../browser/ui/views/extensions/settings_overridden_dialog_view_browsertest.cc",
+        "../browser/ui/views/extensions/settings_overridden_dialog_browsertest.cc",
         "../browser/ui/views/external_protocol_dialog_browsertest.cc",
         "../browser/ui/views/file_system_access/file_system_access_browsertest.cc",
         "../browser/ui/views/file_system_access/file_system_access_permission_view_browsertest.cc",
@@ -6873,6 +6873,7 @@ test("unit_tests") {
       "../browser/performance_manager/policies/high_efficiency_mode_policy_unittest.cc",
       "../browser/performance_manager/policies/page_discarding_helper_unittest.cc",
       "../browser/performance_manager/policies/urgent_page_discarding_policy_unittest.cc",
+      "../browser/performance_manager/user_tuning/user_performance_tuning_manager_unittest.cc",
     ]
 
     sources += [
@@ -7461,6 +7462,7 @@ test("unit_tests") {
       "../browser/lacros/account_manager/signin_helper_lacros_unittest.cc",
       "../browser/lacros/cert/client_cert_store_lacros_unittest.cc",
       "../browser/lacros/force_installed_tracker_lacros_unittest.cc",
+      "../browser/lacros/fullscreen_controller_client_lacros_unittest.cc",
       "../browser/lacros/lacros_memory_pressure_evaluator_unittest.cc",
       "../browser/lacros/lacros_url_handling_unittest.cc",
       "../browser/lacros/metrics_reporting_observer_unittest.cc",
@@ -7489,6 +7491,7 @@ test("unit_tests") {
       "//chromeos/lacros:test_support",
       "//chromeos/startup",
       "//chromeos/ui/base",
+      "//chromeos/ui/wm",
       "//components/account_manager_core",
       "//components/account_manager_core:test_support",
     ]
@@ -8576,7 +8579,7 @@ test("unit_tests") {
       "../browser/ui/views/extensions/extensions_toolbar_unittest.cc",
       "../browser/ui/views/extensions/extensions_toolbar_unittest.h",
       "../browser/ui/views/extensions/media_galleries_dialog_views_unittest.cc",
-      "../browser/ui/views/extensions/settings_overridden_dialog_view_unittest.cc",
+      "../browser/ui/views/extensions/settings_overridden_dialog_unittest.cc",
       "../browser/ui/views/frame/browser_non_client_frame_view_unittest.cc",
       "../browser/ui/views/frame/browser_view_layout_unittest.cc",
       "../browser/ui/views/frame/browser_view_unittest.cc",
@@ -8755,27 +8758,6 @@ test("unit_tests") {
   if (enable_widevine_cdm_component && (is_linux || is_chromeos_lacros)) {
     sources +=
         [ "../common/media/component_widevine_cdm_hint_file_linux_unittest.cc" ]
-  }
-
-  # This target gets pulled in in Chromecast builds, even though it doesn't get
-  # built or used there. The below files cause "gn check" failures in ways that
-  # would be resolvable only by adding "nogncheck" on the includes in question.
-  # Rather than doing that, simply eliminate the files from being visible to
-  # GN.
-  # NOTE: A natural idea would be to set sources to the empty set here, but
-  # that surprisingly turns out to cause its own "gn check" problems as various
-  # utility headers are contained in those sources that other test targets in
-  # //chrome include.
-  # TODO(crbug.com/1215474): Eliminate //chrome being visible in the GN structure
-  # on Chromecast and remove this section entirely.
-  if (is_castos) {
-    sources -= [
-      "../browser/enterprise/connectors/connectors_service_unittest.cc",
-      "../browser/enterprise/connectors/reporting/extension_install_event_router_unittest.cc",
-      "../browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router_unittest.cc",
-      "../browser/ui/tab_contents/chrome_web_contents_view_handle_drop_unittest.cc",
-      "../browser/ui/webui/management/management_ui_handler_unittest.cc",
-    ]
   }
 
   if (is_chrome_branded && !is_android) {

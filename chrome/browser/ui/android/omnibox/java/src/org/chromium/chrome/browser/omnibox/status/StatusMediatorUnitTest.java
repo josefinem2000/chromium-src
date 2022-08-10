@@ -52,9 +52,9 @@ import org.chromium.chrome.browser.profiles.Profile;
 import org.chromium.chrome.browser.ui.theme.BrandedColorScheme;
 import org.chromium.chrome.test.util.browser.Features;
 import org.chromium.chrome.test.util.browser.Features.EnableFeatures;
-import org.chromium.components.embedder_support.util.UrlConstants;
 import org.chromium.components.permissions.PermissionDialogController;
 import org.chromium.components.search_engines.TemplateUrlService;
+import org.chromium.components.security_state.ConnectionSecurityLevel;
 import org.chromium.ui.base.WindowAndroid;
 import org.chromium.ui.modelutil.PropertyModel;
 
@@ -107,6 +107,7 @@ public final class StatusMediatorUnitTest {
         };
         doReturn(false).when(mLocationBarDataProvider).isInOverviewAndShowingOmnibox();
         doReturn(false).when(mLocationBarDataProvider).isIncognito();
+        doReturn(mNewTabPageDelegate).when(mLocationBarDataProvider).getNewTabPageDelegate();
         doAnswer(logoAnswer)
                 .when(mSearchEngineLogoUtils)
                 .getSearchEngineLogo(
@@ -138,9 +139,6 @@ public final class StatusMediatorUnitTest {
     @Test
     @SmallTest
     public void searchEngineLogo_isGoogleLogo() {
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
-
         mMediator.setUrlHasFocus(true);
         mMediator.setShowIconsWhenUrlFocused(true);
         Assert.assertEquals(R.drawable.ic_logo_googleg_20dp,
@@ -150,9 +148,7 @@ public final class StatusMediatorUnitTest {
     @Test
     @SmallTest
     public void searchEngineLogo_isGoogleLogo_hideAfterUnfocusFinished() {
-        doReturn(UrlConstants.NTP_URL).when(mLocationBarDataProvider).getCurrentUrl();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
+        doReturn(true).when(mNewTabPageDelegate).isCurrentlyVisible();
 
         mMediator.setUrlHasFocus(true);
         mMediator.setUrlHasFocus(false);
@@ -162,9 +158,6 @@ public final class StatusMediatorUnitTest {
     @Test
     @SmallTest
     public void searchEngineLogo_isGoogleLogo_noHideIconAfterUnfocusedWhenScrolled() {
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
-
         mMediator.setUrlHasFocus(false);
         mMediator.setShowIconsWhenUrlFocused(true);
         mMediator.setUrlFocusChangePercent(1f);
@@ -176,9 +169,7 @@ public final class StatusMediatorUnitTest {
     @Test
     @SmallTest
     public void searchEngineLogo_isGoogleLogoOnNtp() {
-        doReturn(UrlConstants.NTP_URL).when(mLocationBarDataProvider).getCurrentUrl();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ false, /* loupeEverywhere= */ false);
+        doReturn(true).when(mNewTabPageDelegate).isCurrentlyVisible();
 
         mMediator.setUrlHasFocus(false);
         mMediator.setShowIconsWhenUrlFocused(true);
@@ -190,9 +181,7 @@ public final class StatusMediatorUnitTest {
     @SmallTest
     public void searchEngineLogo_isGoogleLogoOnNtpTablet() {
         setupStatusMediator(/* isTablet= */ true);
-        doReturn(UrlConstants.NTP_URL).when(mLocationBarDataProvider).getCurrentUrl();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ false, /* loupeEverywhere= */ false);
+        doReturn(true).when(mNewTabPageDelegate).isCurrentlyVisible();
 
         mMediator.setUrlHasFocus(false);
         mMediator.setShowIconsWhenUrlFocused(true);
@@ -204,12 +193,7 @@ public final class StatusMediatorUnitTest {
     @SmallTest
     public void searchEngineLogo_isGoogleLogo_whenScrolled() {
         doReturn(false).when(mLocationBarDataProvider).isLoading();
-        doReturn(UrlConstants.NTP_URL).when(mLocationBarDataProvider).getCurrentUrl();
-        doReturn(mNewTabPageDelegate).when(mLocationBarDataProvider).getNewTabPageDelegate();
         doReturn(true).when(mNewTabPageDelegate).isCurrentlyVisible();
-        doReturn(UrlConstants.NTP_URL).when(mLocationBarDataProvider).getCurrentUrl();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
 
         mMediator.setUrlHasFocus(false);
         mMediator.setShowIconsWhenUrlFocused(true);
@@ -220,13 +204,10 @@ public final class StatusMediatorUnitTest {
 
     @Test
     @SmallTest
-
     public void searchEngineLogo_onTextChanged_globeReplacesIconWhenTextIsSite() {
         mMediator.setUrlHasFocus(true);
         mMediator.setShowIconsWhenUrlFocused(true);
         doReturn(TEST_SEARCH_URL).when(mUrlBarEditingTextStateProvider).getTextWithAutocomplete();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
 
         mMediator.updateLocationBarIconForDefaultMatchCategory(false);
         Assert.assertEquals(R.drawable.ic_globe_24dp,
@@ -235,13 +216,10 @@ public final class StatusMediatorUnitTest {
 
     @Test
     @SmallTest
-
     public void searchEngineLogo_onTextChanged_globeReplacesIconWhenAutocompleteSiteContainsText() {
         mMediator.setUrlHasFocus(true);
         mMediator.setShowIconsWhenUrlFocused(true);
         doReturn(TEST_SEARCH_URL).when(mUrlBarEditingTextStateProvider).getTextWithAutocomplete();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
 
         mMediator.updateLocationBarIconForDefaultMatchCategory(false);
         Assert.assertEquals(R.drawable.ic_globe_24dp,
@@ -254,8 +232,6 @@ public final class StatusMediatorUnitTest {
         mMediator.setUrlHasFocus(true);
         mMediator.setShowIconsWhenUrlFocused(true);
         doReturn(TEST_SEARCH_URL).when(mUrlBarEditingTextStateProvider).getTextWithAutocomplete();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
 
         mMediator.updateLocationBarIconForDefaultMatchCategory(true);
         Assert.assertNotEquals(R.drawable.ic_globe_24dp,
@@ -264,14 +240,11 @@ public final class StatusMediatorUnitTest {
 
     @Test
     @SmallTest
-
     public void searchEngineLogo_onTextChanged_noGlobeReplacementWhenUrlBarTextIsEmpty() {
         mMediator.setUrlHasFocus(true);
         mMediator.setShowIconsWhenUrlFocused(true);
         // Setup a valid url to prevent the default "" from matching the url.
         doReturn(TEST_SEARCH_URL).when(mUrlBarEditingTextStateProvider).getTextWithAutocomplete();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
 
         mMediator.updateLocationBarIconForDefaultMatchCategory(false);
         mMediator.updateLocationBarIconForDefaultMatchCategory(true);
@@ -292,12 +265,10 @@ public final class StatusMediatorUnitTest {
     @SmallTest
     public void searchEngineLogo_incognitoNoIcon() {
         doReturn(true).when(mLocationBarDataProvider).isIncognito();
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
 
         mMediator.setUrlHasFocus(false);
         mMediator.setShowIconsWhenUrlFocused(true);
-        mMediator.setSecurityIconResource(0);
+        mMediator.updateSecurityIcon(0, 0, 0);
 
         Assert.assertEquals(null, mModel.get(StatusProperties.STATUS_ICON_RESOURCE));
     }
@@ -307,9 +278,7 @@ public final class StatusMediatorUnitTest {
     public void searchEngineLogo_maybeUpdateStatusIconForSearchEngineIconChanges() {
         mMediator.setUrlHasFocus(true);
         mMediator.setShowIconsWhenUrlFocused(true);
-        mMediator.setSecurityIconResource(0);
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
+        mMediator.updateSecurityIcon(0, 0, 0);
 
         Assert.assertTrue(mMediator.maybeUpdateStatusIconForSearchEngineIcon());
         Assert.assertEquals(R.drawable.ic_logo_googleg_20dp,
@@ -318,13 +287,10 @@ public final class StatusMediatorUnitTest {
 
     @Test
     @SmallTest
-
     public void searchEngineLogo_maybeUpdateStatusIconForSearchEngineIconNoChanges() {
         mMediator.setUrlHasFocus(true);
         mMediator.setShowIconsWhenUrlFocused(false);
-        mMediator.setSecurityIconResource(0);
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
+        mMediator.updateSecurityIcon(0, 0, 0);
 
         Assert.assertFalse(mMediator.maybeUpdateStatusIconForSearchEngineIcon());
     }
@@ -352,8 +318,6 @@ public final class StatusMediatorUnitTest {
     public void testIncognitoStateChange_goingToIncognito() {
         mMediator.setShowIconsWhenUrlFocused(true);
 
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
         doReturn(true).when(mLocationBarDataProvider).isIncognito();
         mMediator.onIncognitoStateChanged();
         Assert.assertEquals(null, mModel.get(StatusProperties.STATUS_ICON_RESOURCE));
@@ -365,8 +329,6 @@ public final class StatusMediatorUnitTest {
     public void testIncognitoStateChange_backFromIncognito() {
         mMediator.setShowIconsWhenUrlFocused(true);
 
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
         doReturn(true).when(mLocationBarDataProvider).isIncognito();
         mMediator.onIncognitoStateChanged();
         doReturn(false).when(mLocationBarDataProvider).isIncognito();
@@ -379,8 +341,7 @@ public final class StatusMediatorUnitTest {
     @SmallTest
     public void testStatusText() {
         mMediator.setUnfocusedLocationBarWidth(10);
-        mMediator.setPageIsOffline(true);
-        mMediator.setPageIsPaintPreview(true);
+        mMediator.updateVerboseStatus(ConnectionSecurityLevel.SECURE, true, true);
         // When both states, offline, and preview are enabled, paint preview has
         // the highest priority.
         Assert.assertEquals("Incorrect text for paint preview status text",
@@ -395,7 +356,7 @@ public final class StatusMediatorUnitTest {
                 mModel.get(StatusProperties.VERBOSE_STATUS_TEXT_COLOR));
 
         // When only offline is enabled, it should be shown.
-        mMediator.setPageIsPaintPreview(false);
+        mMediator.updateVerboseStatus(ConnectionSecurityLevel.SECURE, true, false);
         mMediator.setBrandedColorScheme(BrandedColorScheme.DARK_BRANDED_THEME);
         Assert.assertEquals("Incorrect text for offline page status text",
                 R.string.location_bar_verbose_status_offline,
@@ -412,9 +373,6 @@ public final class StatusMediatorUnitTest {
     @Test
     @SmallTest
     public void testTemplateUrlServiceChanged() {
-        setupSearchEngineLogoForTesting(
-                /* showLogo= */ true, /* isGoogle= */ true, /* loupeEverywhere= */ false);
-
         mMediator.setShowIconsWhenUrlFocused(true);
         mMediator.setUrlHasFocus(true);
 
@@ -510,17 +468,6 @@ public final class StatusMediatorUnitTest {
                 mModel.get(StatusProperties.STATUS_ICON_RESOURCE).getAnimationFinishedCallback());
         mModel.get(StatusProperties.STATUS_ICON_RESOURCE).getAnimationFinishedCallback().run();
         verify(mPageInfoIPHController, times(0)).showStoreIconIPH(anyInt(), eq(0));
-    }
-
-    /**
-     * @param showLogo Whether the search engine logo should be shown.
-     * @param isGoogle Whether the search engine is Google.
-     * @param loupeEverywhere Whether to show the loupe everywhere.
-     */
-    private void setupSearchEngineLogoForTesting(
-            boolean showLogo, boolean isGoogle, boolean loupeEverywhere) {
-        doReturn(showLogo).when(mSearchEngineLogoUtils).shouldShowSearchEngineLogo(false);
-        doReturn(false).when(mSearchEngineLogoUtils).shouldShowSearchEngineLogo(true);
     }
 
     /**

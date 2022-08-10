@@ -10,6 +10,10 @@
 
 namespace blink {
 
+TransferredMediaStreamComponent::TransferredMediaStreamComponent(
+    const TransferredValues& data)
+    : data_(data) {}
+
 MediaStreamComponent* TransferredMediaStreamComponent::Clone(
     std::unique_ptr<MediaStreamTrackPlatform> cloned_platform_track) const {
   if (component_) {
@@ -33,8 +37,7 @@ String TransferredMediaStreamComponent::Id() const {
   if (component_) {
     return component_->Id();
   }
-  // TODO(https://crbug.com/1288839): Return the transferred value.
-  return "";
+  return data_.id;
 }
 
 int TransferredMediaStreamComponent::UniqueId() const {
@@ -43,6 +46,14 @@ int TransferredMediaStreamComponent::UniqueId() const {
   }
   // TODO(crbug.com/1288839): Return the transferred value
   return 0;
+}
+
+bool TransferredMediaStreamComponent::Remote() const {
+  if (component_) {
+    return component_->Remote();
+  }
+  // TODO(crbug.com/1288839): Return the transferred value
+  return false;
 }
 
 bool TransferredMediaStreamComponent::Enabled() const {
@@ -56,23 +67,6 @@ bool TransferredMediaStreamComponent::Enabled() const {
 void TransferredMediaStreamComponent::SetEnabled(bool enabled) {
   if (component_) {
     component_->SetEnabled(enabled);
-    return;
-  }
-  // TODO(https://crbug.com/1288839): Save and forward to component_ once it's
-  // initialized.
-}
-
-bool TransferredMediaStreamComponent::Muted() const {
-  if (component_) {
-    return component_->Muted();
-  }
-  // TODO(https://crbug.com/1288839): Return the transferred value.
-  return false;
-}
-
-void TransferredMediaStreamComponent::SetMuted(bool muted) {
-  if (component_) {
-    component_->SetMuted(muted);
     return;
   }
   // TODO(https://crbug.com/1288839): Save and forward to component_ once it's
@@ -111,27 +105,6 @@ void TransferredMediaStreamComponent::SetConstraints(
     const MediaConstraints& constraints) {
   if (component_) {
     component_->SetConstraints(constraints);
-    return;
-  }
-  // TODO(https://crbug.com/1288839): Save and forward to component_ once it's
-  // initialized.
-}
-
-AudioSourceProvider* TransferredMediaStreamComponent::GetAudioSourceProvider() {
-  if (component_) {
-    return component_->GetAudioSourceProvider();
-  }
-  // TODO(crbug.com/1288839): Remove
-  // MediaStreamComponent::GetAudioSourceProvider() and this implementation +
-  // fix call sites if feasible, otherwise return a proxy for
-  // the AudioSourceProvider here
-  return nullptr;
-}
-
-void TransferredMediaStreamComponent::SetSourceProvider(
-    WebAudioSourceProvider* provider) {
-  if (component_) {
-    component_->SetSourceProvider(provider);
     return;
   }
   // TODO(https://crbug.com/1288839): Save and forward to component_ once it's

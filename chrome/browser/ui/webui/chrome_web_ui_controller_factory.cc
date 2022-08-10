@@ -27,6 +27,7 @@
 #include "chrome/browser/optimization_guide/optimization_guide_keyed_service_factory.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_manager.h"
+#include "chrome/browser/signin/signin_features.h"
 #include "chrome/browser/ui/chrome_select_file_policy.h"
 #include "chrome/browser/ui/webui/about_ui.h"
 #include "chrome/browser/ui/webui/apc_internals/apc_internals_ui.h"
@@ -44,6 +45,7 @@
 #include "chrome/browser/ui/webui/gcm_internals_ui.h"
 #include "chrome/browser/ui/webui/internals/internals_ui.h"
 #include "chrome/browser/ui/webui/interstitials/interstitial_ui.h"
+#include "chrome/browser/ui/webui/intro/intro_ui.h"
 #include "chrome/browser/ui/webui/invalidations/invalidations_ui.h"
 #include "chrome/browser/ui/webui/local_state/local_state_ui.h"
 #include "chrome/browser/ui/webui/log_web_ui_url.h"
@@ -209,8 +211,6 @@
 #include "ash/webui/scanning/url_constants.h"
 #include "ash/webui/shimless_rma/shimless_rma.h"
 #include "ash/webui/shimless_rma/url_constants.h"
-#include "ash/webui/shortcut_customization_ui/shortcut_customization_app_ui.h"
-#include "ash/webui/shortcut_customization_ui/url_constants.h"
 #include "ash/webui/system_extensions_internals_ui/system_extensions_internals_ui.h"
 #include "ash/webui/system_extensions_internals_ui/url_constants.h"
 #include "base/system/sys_info.h"
@@ -1028,10 +1028,6 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
   }
   if (url.host_piece() == ash::kChromeUIMediaAppHost)
     return &NewComponentUI<ash::MediaAppUI, ChromeMediaAppUIDelegate>;
-  if (features::IsShortcutCustomizationAppEnabled()) {
-    if (url.host_piece() == ash::kChromeUIShortcutCustomizationAppHost)
-      return &NewWebUI<ash::ShortcutCustomizationAppUI>;
-  }
   if (ash::features::IsFirmwareUpdaterAppEnabled()) {
     if (url.host_piece() == ash::kChromeUIFirmwareUpdateAppHost)
       return &NewWebUI<ash::FirmwareUpdateAppUI>;
@@ -1168,6 +1164,9 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
 #if !BUILDFLAG(IS_CHROMEOS_ASH) && !BUILDFLAG(IS_ANDROID)
   if (url.host_piece() == chrome::kChromeUIEnterpriseProfileWelcomeHost)
     return &NewWebUI<EnterpriseProfileWelcomeUI>;
+  if (url.host_piece() == chrome::kChromeUIIntroHost &&
+      base::FeatureList::IsEnabled(kForYouFre))
+    return &NewWebUI<IntroUI>;
   if (url.host_piece() == chrome::kChromeUIProfileCustomizationHost)
     return &NewWebUI<ProfileCustomizationUI>;
   if (url.host_piece() == chrome::kChromeUIProfilePickerHost)

@@ -122,6 +122,8 @@ chromium-metrics-reviews@google.com.
 </variants>
 
 <variants name="Autofill.ShadowPredictions.SourcePair">
+  <variant name="DefaultHeuristicToDefaultServer"
+      summary="the default heuristics, the default server prediction"/>
   <variant name="ExperimentalToDefault"
       summary="the heuristics being rolled out, the default heuristics"/>
   <variant name="NextGenToDefault"
@@ -825,7 +827,7 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="Autofill.CardUploadEnabled" enum="AutofillCardUploadEnabled"
-    expires_after="2022-12-04">
+    expires_after="2023-02-05">
   <owner>jsaul@google.com</owner>
   <owner>aneeshali@google.com</owner>
   <summary>
@@ -3284,7 +3286,7 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="Autofill.StoredProfileWithoutCountryCount" units="units"
-    expires_after="2022-12-04">
+    expires_after="2023-02-05">
   <owner>fleimgruber@google.com</owner>
   <owner>chrome-autofill-team@google.com</owner>
   <summary>

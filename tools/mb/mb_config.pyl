@@ -652,6 +652,8 @@
       'chromecast-linux-builder-perf': 'cast_binary_size',
       'chromeos-amd64-generic-lacros-builder-perf': 'chromeos_amd64-generic_lacros_official',
       'chromeos-arm-generic-lacros-builder-perf': 'chromeos_arm-generic_lacros_official',
+      'fuchsia-builder-perf-arm64': 'official_goma_fuchsia_arm64_perf',
+      'fuchsia-builder-perf-x64': 'official_goma_fuchsia_x64_perf',
       'linux-builder-perf': 'official_goma_linux_perf',
       'linux-builder-perf-pgo': 'official_goma_linux_perf_pgo',
       'linux-builder-perf-rel': 'official_goma_linux_perf',
@@ -673,7 +675,6 @@
       'android_arm64-cfi-builder-perf-fyi': 'official_goma_minimal_symbols_android_thin_lto_opt_arm64',
       'chromeos-kevin-builder-perf-fyi': 'chromeos_kevin_include_unwind_tables_official',
       'fuchsia-builder-perf-fyi': 'official_goma_fuchsia_arm64_perf',
-      'fuchsia-builder-perf-x64': 'official_goma_fuchsia_x64_perf',
     },
 
     'chromium.reclient.fyi': {
@@ -1976,11 +1977,11 @@
     # Cast Linux takes very long in linking, possibly due to being on GCE
     # (crbug/794423).
     'cast_release_bot_reclient': [
-      'cast', 'release_bot_reclient', 'minimal_symbols',
+      'cast_receiver', 'cast_os', 'release_bot_reclient', 'minimal_symbols',
     ],
 
     'cast_release_trybot': [
-      'cast', 'release_trybot',
+      'cast_receiver', 'cast_os', 'release_trybot',
     ],
 
     'cfi_full_cfi_icall_cfi_diag_recover_release_static_reclient': [
@@ -3789,6 +3790,10 @@
 
     'cast_audio': {
       'gn_args': 'is_cast_audio_only=true'
+    },
+
+    'cast_os': {
+      'gn_args': 'is_castos=true'
     },
 
     'cast_receiver': {

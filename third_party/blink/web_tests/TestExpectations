@@ -1478,6 +1478,14 @@ crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-004.html [ Fail
 crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-005.html [ Failure ]
 crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-007.html [ Failure ]
 crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/row-008.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/col-wrap-001.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/col-wrap-002.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/col-wrap-003.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/col-wrap-005.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/col-wrap-006.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/col-wrap-007.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/col-wrap-008.html [ Failure ]
+crbug.com/240765 external/wpt/css/css-flexbox/intrinsic-size/col-wrap-009.html [ Failure ]
 
 # These require css-align-3 positional keywords that Blink doesn't yet support for flexbox.
 crbug.com/1011718 external/wpt/css/css-flexbox/flexbox-safe-overflow-position-001.html [ Failure ]
@@ -2395,7 +2403,7 @@ crbug.com/922618 external/wpt/html/semantics/document-metadata/the-link-element/
 crbug.com/922618 external/wpt/html/semantics/document-metadata/the-link-element/link-multiple-load-events.html [ Timeout ]
 
 # crbug.com/1095379: These are flaky-slow, but are already present in SlowTests
-crbug.com/73609 http/tests/media/video-play-stall.html [ Pass Timeout ]
+crbug.com/73609 http/tests/media/video-play-stall.html [ Failure Pass Timeout ]
 crbug.com/518987 http/tests/xmlhttprequest/navigation-abort-detaches-frame.html [ Pass Timeout ]
 crbug.com/538717 [ Win ] http/tests/permissions/chromium/test-request-worker.html [ Pass Timeout ]
 crbug.com/829740 fast/history/history-back-twice-with-subframes-assert.html [ Pass Timeout ]
@@ -3365,6 +3373,8 @@ crbug.com/626703 [ Win ] virtual/prerender/external/wpt/speculation-rules/preren
 crbug.com/626703 [ Win ] virtual/partitioned-cookies/http/tests/inspector-protocol/network/disabled-cache-navigation.js [ Failure ]
 
 # ====== New tests from wpt-importer added here ======
+crbug.com/626703 external/wpt/custom-elements/form-associated/ElementInternals-target-element-is-held-strongly.html [ Timeout ]
+crbug.com/626703 [ Mac11-arm64 ] external/wpt/html/browsers/browsing-the-web/remote-context-helper-tests/navigation-same-document.window.html [ Failure Timeout ]
 crbug.com/626703 external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-construct-xml-parser.xhtml [ Crash ]
 crbug.com/626703 [ Linux ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
 crbug.com/626703 [ Mac10.15 ] external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
@@ -6143,6 +6153,8 @@ crbug.com/1249176 [ Mac11-arm64 ] media/video-replaces-poster.html [ Skip ]
 crbug.com/1249176 [ Mac12-arm64 ] media/video-replaces-poster.html [ Skip ]
 crbug.com/1249176 [ Mac11-arm64 ] virtual/gpu-rasterization/images/color-jpeg-with-color-profile.html [ Failure ]
 crbug.com/1249176 [ Mac12-arm64 ] virtual/gpu-rasterization/images/color-jpeg-with-color-profile.html [ Failure ]
+crbug.com/1249176 [ Mac11-arm64 ] media/controls/overflow-menu-focus.html [ Failure Pass ]
+crbug.com/1249176 [ Mac12-arm64 ] media/controls/overflow-menu-focus.html [ Failure Pass ]
 
 # Failures that surfaced on the mac12-arm64 waterfall
 crbug.com/1249176 [ Mac12-arm64 ] media/color-profile-video-seek.html [ Failure ]
@@ -6165,10 +6177,9 @@ crbug.com/1249176 [ Mac12-arm64 ] virtual/exotic-color-space/images/yuv-decode-e
 # Flakes that surfaced on the mac12 and mac12-arm64 waterfall
 crbug.com/1249176 [ Mac12 ] external/wpt/html/browsers/browsing-the-web/back-forward-cache/service-worker-controlled-after-restore.https.html [ Failure Pass ]
 crbug.com/1249176 [ Mac12 ] fast/dom/Element/scrollTop-scrollLeft-body.html [ Failure Pass ]
-crbug.com/1249176 [ Mac12 ] virtual/basic-card-enabled/payments/payment-request-interface.html [ Failure Pass ]
 crbug.com/1249176 [ Mac12-arm64 ] external/wpt/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ Failure Pass ]
 crbug.com/1249176 [ Mac12-arm64 ] fast/js/instanceof-test.html [ Failure Pass ]
-crbug.com/1249176 [ Mac12-arm64 ] media/controls/overflow-menu-focus.html [ Failure Pass ]
+
 # Sheriff 2022-07-04
 crbug.com/1341689 [ Linux ] media/controls/overflow-menu-focus.html [ Failure Pass ]
 
@@ -6542,9 +6553,7 @@ crbug.com/1285436 virtual/partitioned-cookies/http/tests/inspector-protocol/netw
 # Sheriff 2022-01-12
 crbug.com/1286619 [ Mac ] external/wpt/storage-access-api/storageAccess.testdriver.sub.html [ Failure Pass ]
 
-# Sanitizer API: Namespace-based tests will partially fail until namespace support is complete.
-crbug.com/1225606 external/wpt/sanitizer-api/sanitizer-names.https.tentative.html [ Failure ]
-crbug.com/1225606 virtual/mathml-disabled/sanitizer-api-math-namespace-designator.html [ Failure ]
+crbug.com/1225606 virtual/sanitizer-api-namespaces/external/wpt/sanitizer-api/sanitizer-names.https.tentative.html [ Failure ]
 
 # Temporarily disabled to unblock https://crrev.com/c/3657449
 crbug.com/1183990 http/tests/devtools/bindings/bindings-frame-attach-detach.js [ Failure Pass ]

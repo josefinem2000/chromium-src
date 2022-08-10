@@ -870,6 +870,15 @@ const char kHatsPersonalizationWallpaperSurveyCycleEndTs[] =
 const char kHatsPersonalizationWallpaperSurveyIsSelected[] =
     "hats_personalization_wallpaper_is_selected";
 
+// An int64 pref. This is the timestamp, microseconds after epoch, that
+// indicates the end of the most recent Media App PDF survey cycle.
+const char kHatsMediaAppPdfCycleEndTs[] =
+    "hats_media_app_pdf_cycle_end_timestamp";
+
+// A boolean pref. Indicates if the device is selected for the Media App PDF
+// survey.
+const char kHatsMediaAppPdfIsSelected[] = "hats_media_app_pdf_is_selected";
+
 // A boolean pref. Indicates if we've already shown a notification to inform the
 // current user about the quick unlock feature.
 const char kPinUnlockFeatureNotificationShown[] =
@@ -3423,12 +3432,6 @@ const char kSecurityTokenSessionBehavior[] = "security_token_session_behavior";
 // this pref is set to 0, the action happens immediately.
 const char kSecurityTokenSessionNotificationSeconds[] =
     "security_token_session_notification_seconds";
-// In addition to the notification described directly above, another
-// notification will be displayed after the action happened. This only happens
-// once for a user. This boolean pref saves whether this notification was
-// already displayed for a user.
-const char kSecurityTokenSessionNotificationDisplayed[] =
-    "security_token_session_notification_displayed";
 // This string pref is set when the notification after the action mentioned
 // above is about to be displayed. It contains the domain that manages the user
 // who was logged out, to be used as part of the notification message.

@@ -260,6 +260,10 @@ void WebRuntimeFeatures::EnablePaymentApp(bool enable) {
   RuntimeEnabledFeatures::SetPaymentAppEnabled(enable);
 }
 
+void WebRuntimeFeatures::EnableWebPaymentAPICSP(bool enable) {
+  RuntimeEnabledFeatures::SetWebPaymentAPICSPEnabled(enable);
+}
+
 void WebRuntimeFeatures::EnablePaymentRequest(bool enable) {
   RuntimeEnabledFeatures::SetPaymentRequestEnabled(enable);
   if (!enable) {
@@ -267,10 +271,6 @@ void WebRuntimeFeatures::EnablePaymentRequest(bool enable) {
     RuntimeEnabledFeatures::SetPaymentAppEnabled(false);
     RuntimeEnabledFeatures::SetPaymentMethodChangeEventEnabled(false);
   }
-}
-
-void WebRuntimeFeatures::EnablePaymentRequestBasicCard(bool enable) {
-  RuntimeEnabledFeatures::SetPaymentRequestBasicCardEnabled(enable);
 }
 
 void WebRuntimeFeatures::EnablePercentBasedScrolling(bool enable) {

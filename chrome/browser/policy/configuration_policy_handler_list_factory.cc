@@ -139,6 +139,7 @@
 #include "chrome/browser/policy/browser_signin_policy_handler.h"
 #else
 #include "chrome/browser/policy/system_features_disable_list_policy_handler.h"
+#include "chromeos/ui/wm/fullscreen/pref_names.h"
 #endif  // !BUILDFLAG(IS_CHROMEOS)
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
@@ -187,6 +188,10 @@
 #if BUILDFLAG(ENABLE_SPELLCHECK)
 #include "components/spellcheck/browser/pref_names.h"
 #endif  // BUILDFLAG(ENABLE_SPELLCHECK)
+
+#if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
+#include "components/device_signals/core/browser/pref_names.h"
+#endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
 
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX) || \
     BUILDFLAG(IS_FUCHSIA)
@@ -933,9 +938,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
   { key::kFullscreenAlertEnabled,
     ash::prefs::kFullscreenAlertEnabled,
     base::Value::Type::BOOLEAN },
-  { key::kKeepFullscreenWithoutNotificationUrlAllowList,
-    ash::prefs::kKeepFullscreenWithoutNotificationUrlAllowList,
-    base::Value::Type::LIST },
   { key::kDeviceLoginScreenDefaultLargeCursorEnabled,
     nullptr,
     base::Value::Type::BOOLEAN },
@@ -1400,6 +1402,11 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
     prefs::kBackgroundModeEnabled,
     base::Value::Type::BOOLEAN },
 #endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_LINUX)
+#if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
+  { key::kUnmanagedDeviceSignalsConsentFlowEnabled,
+    device_signals::prefs::kUnmanagedDeviceSignalsConsentFlowEnabled,
+    base::Value::Type::BOOLEAN },
+#endif // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX) \
     || BUILDFLAG(IS_FUCHSIA)
   { key::kDefaultBrowserSettingEnabled,
@@ -1588,6 +1595,9 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
   { key::kEnableSyncConsent,
     prefs::kEnableSyncConsent,
     base::Value::Type::BOOLEAN },
+  { key::kKeepFullscreenWithoutNotificationUrlAllowList,
+    chromeos::prefs::kKeepFullscreenWithoutNotificationUrlAllowList,
+    base::Value::Type::LIST },
   { key::kRestrictedManagedGuestSessionExtensionCleanupExemptList,
     prefs::kRestrictedManagedGuestSessionExtensionCleanupExemptList,
     base::Value::Type::LIST },

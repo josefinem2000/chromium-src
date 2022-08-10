@@ -107,6 +107,7 @@ PRINT STATEMENT: webdriver/tests/support/helpers.py
 
 # semi-legitimate use of console.*
 CONSOLE: console/*
+CONSOLE: custom-elements/resources/garbage-collect.js
 CONSOLE: js/builtins/weakrefs/resources/maybe-garbage-collect.js
 CONSOLE: resources/check-layout-th.js
 CONSOLE: resources/chromium/*
@@ -835,6 +836,7 @@ CSS-COLLIDING-REF-NAME: css/css-break/background-image-001-ref.html
 SET TIMEOUT: editing/crashtests/backcolor-in-nested-editing-host-td-from-DOMAttrModified.html
 SET TIMEOUT: editing/crashtests/contenteditable-will-be-blurred-by-focus-event-listener.html
 SET TIMEOUT: editing/crashtests/designMode-document-will-be-blurred-by-focus-event-listener.html
+SET TIMEOUT: editing/crashtests/indent-outdent-after-closing-editable-dialog-element.html
 SET TIMEOUT: editing/crashtests/inserthtml-after-temporarily-removing-document-element.html
 SET TIMEOUT: editing/crashtests/inserthtml-in-text-adopted-to-other-document.html
 SET TIMEOUT: editing/crashtests/insertorderedlist-in-text-adopted-to-other-document.html

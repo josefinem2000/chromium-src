@@ -74,9 +74,9 @@ class SyncServiceFactoryTest : public testing::Test {
 #if BUILDFLAG(IS_CHROMEOS_ASH)
   SyncServiceFactoryTest() {
     // Fake network stack is required for WIFI_CONFIGURATIONS datatype.
-    chromeos::NetworkHandler::Initialize();
+    ash::NetworkHandler::Initialize();
   }
-  ~SyncServiceFactoryTest() override { chromeos::NetworkHandler::Shutdown(); }
+  ~SyncServiceFactoryTest() override { ash::NetworkHandler::Shutdown(); }
 #else
   SyncServiceFactoryTest() = default;
   ~SyncServiceFactoryTest() override = default;
@@ -185,7 +185,7 @@ TEST_F(SyncServiceFactoryTest, DisableSyncFlag) {
 // and properly initialized.
 TEST_F(SyncServiceFactoryTest, CreateSyncServiceImplDefault) {
   syncer::SyncServiceImpl* sync_service =
-      SyncServiceFactory::GetAsSyncServiceImplForProfile(profile());
+      SyncServiceFactory::GetAsSyncServiceImplForProfileForTesting(profile());
   syncer::ModelTypeSet types = sync_service->GetRegisteredDataTypesForTest();
   const syncer::ModelTypeSet default_types = DefaultDatatypes();
   EXPECT_EQ(default_types.Size(), types.Size());

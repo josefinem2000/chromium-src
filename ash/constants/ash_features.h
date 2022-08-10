@@ -645,6 +645,8 @@ extern const base::Feature kUserActivityPrediction;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kVirtualKeyboardBorderedKey;
 COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kVirtualKeyboardMultitouch;
+COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kVirtualKeyboardRoundCorners;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kWakeOnWifiAllowed;
@@ -837,6 +839,7 @@ bool IsProjectorShowShortPseudoTranscript();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsProjectorUpdateIndexableTextEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS)
 bool IsProjectorUseOAuthForGetVideoInfoEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsQsRevampEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsQuickDimEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS)
 bool IsQuickSettingsNetworkRevampEnabled();

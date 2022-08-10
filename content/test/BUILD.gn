@@ -481,7 +481,6 @@ static_library("test_support") {
     "//content/public/browser",
     "//content/public/common",
     "//content/public/utility",
-    "//content/services/shared_storage_worklet/public/mojom:mojom",
     "//ipc",
     "//media/mojo/clients",
     "//media/mojo/mojom",
@@ -1779,6 +1778,7 @@ test("content_browsertests") {
       "../browser/zygote_host/zygote_browsertest.cc",
     ]
     deps += [
+      "//content/common:sandbox_support_linux",
       "//printing/buildflags",
       "//ui/gfx:test_support",
     ]
@@ -2009,14 +2009,14 @@ test("content_browsertests") {
   if (is_fuchsia) {
     use_test_server = true
 
-    use_cfv2 = false
+    use_cfv1 = false
+    test_runner_shard = "//build/config/fuchsia/test/elf_test_ambient_exec_runner.shard.test-cml"
     additional_manifest_fragments = [
-      "//build/config/fuchsia/test/audio_capabilities.test-cmx",
-      "//build/config/fuchsia/test/font_capabilities.test-cmx",
-      "//build/config/fuchsia/test/jit_capabilities.test-cmx",
-      "//build/config/fuchsia/test/network_capabilities.test-cmx",
-      "//build/config/fuchsia/test/present_view_capabilities.test-cmx",
-      "//build/config/fuchsia/test/vulkan_capabilities.test-cmx",
+      "//build/config/fuchsia/test/audio_output.shard.test-cml",
+      "//build/config/fuchsia/test/fonts.shard.test-cml",
+      "//build/config/fuchsia/test/network.shard.test-cml",
+      "//build/config/fuchsia/test/present_view.shard.test-cml",
+      "//third_party/fuchsia-sdk/sdk/pkg/vulkan/client.shard.cml",
     ]
   }
 }
@@ -2512,6 +2512,8 @@ test("content_unittests") {
     "../renderer/skia_benchmarking_extension_unittest.cc",
     "../renderer/v8_value_converter_impl_unittest.cc",
     "../renderer/worker/worker_thread_registry_unittest.cc",
+    "../services/shared_storage_worklet/module_script_downloader_unittest.cc",
+    "../services/shared_storage_worklet/shared_storage_worklet_global_scope_unittest.cc",
     "attribution_simulator_impl_unittest.cc",
     "attribution_simulator_input_parser_unittest.cc",
     "navigation_simulator_unittest.cc",
@@ -2656,8 +2658,7 @@ test("content_unittests") {
     "//content/public/renderer",
     "//content/renderer:for_content_tests",
     "//content/services/auction_worklet:tests",
-    "//content/services/shared_storage_worklet:tests",
-    "//content/services/shared_storage_worklet/public/mojom",
+    "//content/services/shared_storage_worklet:for_content_tests",
     "//crypto",
     "//device/bluetooth",
     "//device/bluetooth:mocks",

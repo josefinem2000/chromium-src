@@ -618,12 +618,6 @@
     "args": ["--disable-blink-features=PaymentRequestTotalOptional"]
   },
   {
-    "prefix": "basic-card-enabled",
-    "platforms": ["Linux", "Mac", "Win"],
-    "bases": ["payments/payment-request-interface.html", "http/tests/payments/payment-instruments.html"],
-    "args": ["--enable-blink-features=PaymentRequestBasicCard", "--enable-features=PaymentRequestBasicCard"]
-  },
-  {
     "prefix": "json-modules",
     "platforms": ["Linux", "Mac", "Win"],
     "bases": ["external/wpt/html/semantics/scripting-1/the-script-element/json-module"],
@@ -1329,6 +1323,16 @@
       "--bypass-prefetch-proxy-for-host=not-web-platform.test",
       "--isolated-prerender-allow-all-domains"
     ]
+  },
+  {
+    "prefix": "sanitizer-api-namespaces",
+    "platforms": ["Linux", "Mac", "Win"],
+    "bases": [
+      "external/wpt/sanitizer-api/sanitizer-names.https.html",
+      "external/wpt/sanitizer-api/sanitizer-names.https.tentative.html",
+      "virtual/mathml-disabled/sanitizer-api-math-namespace-designator.html"
+    ],
+    "args": ["--enable-features=SanitizerAPINamespacesForTesting"]
   },
   {
     "prefix": "cookie-reject-domain-non-ascii",

@@ -2305,12 +2305,19 @@ def CheckAddedDepsHaveTargetApprovals(input_api, output_api):
     # might not use Gerrit.
     if not input_api.gerrit or input_api.no_diffs:
         return []
-    if (input_api.change.issue and input_api.gerrit.IsOwnersOverrideApproved(
-            input_api.change.issue)):
-        # Skip OWNERS check when Owners-Override label is approved. This is intended
-        # for global owners, trusted bots, and on-call sheriffs. Review is still
-        # required for these changes.
+    if 'PRESUBMIT_SKIP_NETWORK' in input_api.environ:
         return []
+    try:
+        if (input_api.change.issue and
+                input_api.gerrit.IsOwnersOverrideApproved(
+                input_api.change.issue)):
+            # Skip OWNERS check when Owners-Override label is approved. This is
+            # intended for global owners, trusted bots, and on-call sheriffs.
+            # Review is still required for these changes.
+            return []
+    except Exception as e:
+      return [output_api.PresubmitPromptWarning(
+              'Failed to retrieve owner override status - %s' % str(e))]
 
     virtual_depended_on_files = set()
 
@@ -4772,7 +4779,12 @@ def CheckBuildConfigMacrosWithoutInclude(input_api, output_api):
                                       input_api.re.MULTILINE)
     extension_re = input_api.re.compile(r'\.[a-z]+$')
     errors = []
+    config_h_file = input_api.os_path.join('build', 'build_config.h')
     for f in input_api.AffectedFiles(include_deletes=False):
+        # The build-config macros are allowed to be used in build_config.h
+        # without including itself.
+        if f.LocalPath() == config_h_file:
+            continue
         if not f.LocalPath().endswith(
             ('.h', '.c', '.cc', '.cpp', '.m', '.mm')):
             continue
@@ -4875,8 +4887,11 @@ def _CheckForDeprecatedOSMacrosInFile(input_api, f):
 def CheckForDeprecatedOSMacros(input_api, output_api):
     """Check all affected files for invalid OS macros."""
     bad_macros = []
+    # The OS_ macros are allowed to be used in build/build_config.h.
+    config_h_file = input_api.os_path.join('build', 'build_config.h')
     for f in input_api.AffectedSourceFiles(None):
-        if not f.LocalPath().endswith(('.py', '.js', '.html', '.css', '.md')):
+        if not f.LocalPath().endswith(('.py', '.js', '.html', '.css', '.md')) \
+                and f.LocalPath() != config_h_file:
             bad_macros.extend(_CheckForDeprecatedOSMacrosInFile(input_api, f))
 
     if not bad_macros:

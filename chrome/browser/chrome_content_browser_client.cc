@@ -204,6 +204,7 @@
 #include "components/live_caption/caption_util.h"
 #include "components/media_router/browser/presentation/presentation_service_delegate_impl.h"
 #include "components/media_router/browser/presentation/receiver_presentation_service_delegate_impl.h"
+#include "components/media_router/browser/presentation/web_contents_presentation_manager.h"
 #include "components/metrics/client_info.h"
 #include "components/metrics_services_manager/metrics_services_manager.h"
 #include "components/net_log/chrome_net_log.h"
@@ -344,6 +345,7 @@
 #include "chrome/browser/browser_process_platform_part_mac.h"
 #include "chrome/browser/chrome_browser_main_mac.h"
 #include "chrome/browser/mac/auth_session_request.h"
+#include "chrome/browser/mac/chrome_browser_main_extra_parts_mac.h"
 #include "components/soda/constants.h"
 #include "sandbox/mac/seatbelt_exec.h"
 #include "sandbox/policy/mac/params.h"
@@ -1523,6 +1525,10 @@ ChromeContentBrowserClient::CreateBrowserMainParts(bool is_integration_test) {
 #else
   main_parts->AddParts(std::make_unique<ChromeBrowserMainExtraPartsViews>());
 #endif
+#endif
+
+#if BUILDFLAG(IS_MAC)
+  main_parts->AddParts(std::make_unique<ChromeBrowserMainExtraPartsMac>());
 #endif
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
@@ -4350,6 +4356,24 @@ ChromeContentBrowserClient::GetReceiverPresentationServiceDelegate(
     }
   }
   return nullptr;
+}
+
+void ChromeContentBrowserClient::AddPresentationObserver(
+    content::PresentationObserver* observer,
+    content::WebContents* web_contents) {
+  if (media_router::MediaRouterEnabled(web_contents->GetBrowserContext())) {
+    media_router::WebContentsPresentationManager::Get(web_contents)
+        ->AddObserver(observer);
+  }
+}
+
+void ChromeContentBrowserClient::RemovePresentationObserver(
+    content::PresentationObserver* observer,
+    content::WebContents* web_contents) {
+  if (media_router::MediaRouterEnabled(web_contents->GetBrowserContext())) {
+    media_router::WebContentsPresentationManager::Get(web_contents)
+        ->RemoveObserver(observer);
+  }
 }
 
 std::vector<std::unique_ptr<content::NavigationThrottle>>

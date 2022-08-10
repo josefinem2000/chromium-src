@@ -46,6 +46,11 @@ base::expected<std::string, PasswordImporter::Status> ReadFileToString(
   return std::move(contents);
 }
 
+void LogImportDuration(const base::Time& start_time) {
+  base::UmaHistogramLongTimes("PasswordManager.ImportDuration",
+                              base::Time::Now() - start_time);
+}
+
 }  // namespace
 
 PasswordImporter::PasswordImporter(SavedPasswordsPresenter* presenter)
@@ -95,10 +100,20 @@ void PasswordImporter::ConsumePasswords(
   if (!seq)
     return;
 
-  for (const auto& pwd : seq->csv_passwords) {
-    presenter_->AddCredential(password_manager::CredentialUIEntry(pwd),
-                              password_manager::PasswordForm::Type::kImported);
-  }
+  base::Time start_time = base::Time::Now();
+
+  std::vector<password_manager::CredentialUIEntry> credentials;
+  credentials.reserve(seq->csv_passwords.size());
+
+  base::ranges::transform(
+      seq->csv_passwords, std::back_inserter(credentials),
+      [](const password_manager::CSVPassword& csv_password) {
+        return password_manager::CredentialUIEntry(csv_password);
+      });
+
+  presenter_->AddCredentials(credentials,
+                             password_manager::PasswordForm::Type::kImported,
+                             base::BindOnce(&LogImportDuration, start_time));
 
   UMA_HISTOGRAM_COUNTS_1M("PasswordManager.ImportedPasswordsPerUserInCSV",
                           seq->csv_passwords.size());

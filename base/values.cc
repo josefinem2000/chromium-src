@@ -12,6 +12,7 @@
 
 #include "base/as_const.h"
 #include "base/bit_cast.h"
+#include "base/check.h"
 #include "base/check_op.h"
 #include "base/containers/checked_iterators.h"
 #include "base/containers/cxx20_erase_vector.h"
@@ -345,10 +346,12 @@ Value::List* Value::GetIfList() {
 }
 
 bool Value::GetBool() const {
+  DCHECK(is_bool());
   return absl::get<bool>(data_);
 }
 
 int Value::GetInt() const {
+  DCHECK(is_int());
   return absl::get<int>(data_);
 }
 
@@ -362,30 +365,37 @@ double Value::GetDouble() const {
 }
 
 const std::string& Value::GetString() const {
+  DCHECK(is_string());
   return absl::get<std::string>(data_);
 }
 
 std::string& Value::GetString() {
+  DCHECK(is_string());
   return absl::get<std::string>(data_);
 }
 
 const Value::BlobStorage& Value::GetBlob() const {
+  DCHECK(is_blob());
   return absl::get<BlobStorage>(data_);
 }
 
 const Value::Dict& Value::GetDict() const {
+  DCHECK(is_dict());
   return absl::get<Dict>(data_);
 }
 
 Value::Dict& Value::GetDict() {
+  DCHECK(is_dict());
   return absl::get<Dict>(data_);
 }
 
 const Value::List& Value::GetList() const {
+  DCHECK(is_list());
   return absl::get<List>(data_);
 }
 
 Value::List& Value::GetList() {
+  DCHECK(is_list());
   return absl::get<List>(data_);
 }
 
@@ -528,6 +538,20 @@ const Value::List* Value::Dict::FindList(StringPiece key) const {
 Value::List* Value::Dict::FindList(StringPiece key) {
   Value* v = Find(key);
   return v ? v->GetIfList() : nullptr;
+}
+
+Value::Dict* Value::Dict::EnsureDict(StringPiece key) {
+  Value::Dict* dict = FindDict(key);
+  if (dict)
+    return dict;
+  return &Set(key, base::Value::Dict())->GetDict();
+}
+
+Value::List* Value::Dict::EnsureList(StringPiece key) {
+  Value::List* list = FindList(key);
+  if (list)
+    return list;
+  return &Set(key, base::Value::List())->GetList();
 }
 
 Value* Value::Dict::Set(StringPiece key, Value&& value) {

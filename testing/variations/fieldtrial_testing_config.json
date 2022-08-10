@@ -750,6 +750,27 @@
             ]
         }
     ],
+    "AsyncGpuLatencyReporting": [
+        {
+            "platforms": [
+                "android",
+                "chromeos",
+                "chromeos_lacros",
+                "ios",
+                "linux",
+                "mac",
+                "windows"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "disable_features": [
+                        "AsyncGpuLatencyReporting"
+                    ]
+                }
+            ]
+        }
+    ],
     "AudioProcessHighPriorityWin": [
         {
             "platforms": [
@@ -3408,6 +3429,21 @@
             ]
         }
     ],
+    "DeprecateAssistantStylusFeatures": [
+        {
+            "platforms": [
+                "chromeos"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "DeprecateAssistantStylusFeatures"
+                    ]
+                }
+            ]
+        }
+    ],
     "DeprioritizeTimersUntilDOMContentLoadedExperiment": [
         {
             "platforms": [
@@ -5102,6 +5138,16 @@
                     "name": "Enabled",
                     "enable_features": [
                         "CalendarExperienceKit"
+                    ],
+                    "disable_features": [
+                        "EnableExpKitCalendarTextClassifier"
+                    ]
+                },
+                {
+                    "name": "EnabledWithTextClassifier",
+                    "enable_features": [
+                        "CalendarExperienceKit",
+                        "EnableExpKitCalendarTextClassifier"
                     ]
                 }
             ]
@@ -5890,21 +5936,6 @@
                     "name": "Enabled",
                     "enable_features": [
                         "LiteralBufferCreateStringWithEncoding"
-                    ]
-                }
-            ]
-        }
-    ],
-    "LocationBarModelOptimizations": [
-        {
-            "platforms": [
-                "android"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled",
-                    "enable_features": [
-                        "LocationBarModelOptimizations"
                     ]
                 }
             ]
@@ -6802,21 +6833,6 @@
                         "DelayParkingImages",
                         "ParkableImagesToDisk",
                         "UseParkableImageSegmentReader"
-                    ]
-                }
-            ]
-        }
-    ],
-    "PartialCustomTabs": [
-        {
-            "platforms": [
-                "android"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled",
-                    "enable_features": [
-                        "CCTResizableAllowResizeByUserGesture"
                     ]
                 }
             ]

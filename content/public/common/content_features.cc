@@ -533,6 +533,11 @@ const base::Feature kLogJsConsoleMessages {
 #endif
 };
 
+// Configures whether we set a lower limit for renderers that do not have a main
+// frame, similar to the limit that is already done for backgrounded renderers.
+const base::Feature kLowerMemoryLimitForNonMainRenderers{
+    "LowerMemoryLimitForNonMainRenderers", base::FEATURE_DISABLED_BY_DEFAULT};
+
 // The MBI mode controls whether or not communication over the
 // AgentSchedulingGroup is ordered with respect to the render-process-global
 // legacy IPC channel, as well as the granularity of AgentSchedulingGroup
@@ -834,6 +839,10 @@ const base::Feature kSendBeaconThrowForBlobWithNonSimpleType{
 // TODO(rouslan): Remove this.
 const base::Feature kServiceWorkerPaymentApps{"ServiceWorkerPaymentApps",
                                               base::FEATURE_ENABLED_BY_DEFAULT};
+
+// Enable connect-src CSP directive for the Web Payment API.
+const base::Feature kWebPaymentAPICSP{"WebPaymentAPICSP",
+                                      base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Enable the basic-card payment method from the PaymentRequest API. This has
 // been disabled since M100 and is soon to be removed: crbug.com/1209835.

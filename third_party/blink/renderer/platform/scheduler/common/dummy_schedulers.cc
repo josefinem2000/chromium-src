@@ -139,6 +139,9 @@ class DummyFrameScheduler : public FrameScheduler {
     return weak_ptr_factory_.GetWeakPtr();
   }
   void ReportActiveSchedulerTrackedFeatures() override {}
+  scoped_refptr<base::SingleThreadTaskRunner> CompositorTaskRunner() override {
+    return base::ThreadTaskRunnerHandle::Get();
+  }
 
  private:
   std::unique_ptr<PageScheduler> page_scheduler_;
@@ -267,9 +270,6 @@ class DummyWebMainThreadScheduler : public WebThreadScheduler,
   }
   void AddTaskObserver(base::TaskObserver*) override {}
   void RemoveTaskObserver(base::TaskObserver*) override {}
-  NonMainThreadSchedulerImpl* AsNonMainThreadScheduler() override {
-    return nullptr;
-  }
   blink::MainThreadScheduler* ToMainThreadScheduler() override { return this; }
   void SetV8Isolate(v8::Isolate* isolate) override {}
 

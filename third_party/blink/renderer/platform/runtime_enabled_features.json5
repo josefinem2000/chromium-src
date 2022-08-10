@@ -308,10 +308,6 @@
       status: "experimental",
     },
     {
-      name: "CancelFormSubmissionInDefaultHandler",
-      status: "stable",
-    },
-    {
       name: "Canvas2dImageChromium",
     },
     {
@@ -394,12 +390,6 @@
     {
       name: "CoepReflection",
       status: "test",
-
-      // If a feature is implied by one supporting an origin trial, it must also
-      // support origin trial.
-      implied_by: ["AnonymousIframe"],
-      origin_trial_allows_third_party: true,
-      origin_trial_feature_name: "CoepReflection",
     },
     {
       name: "CompositeBGColorAnimation",
@@ -590,7 +580,7 @@
     },
     {
       name: "CSSIcUnit",
-      status: "experimental",
+      status: "stable",
     },
     {
       name: "CSSIndependentTransformProperties",
@@ -1726,10 +1716,6 @@
       name: "PaymentRequest",
       status: "experimental",
     },
-    // TODO(crbug.com/1209835): this feature is getting deprecated.
-    {
-      name: "PaymentRequestBasicCard",
-    },
     {
       name: "PaymentRequestMerchantValidationEvent",
       status: "experimental",
@@ -1758,6 +1744,11 @@
     {
       name: "Permissions",
       status: "stable",
+    },
+    // See https://crbug.com/1324111
+    {
+      name: "PermissionsPolicyUnload",
+      status: "experimental"
     },
     {
       name: "PermissionsRequestRevoke",
@@ -2565,7 +2556,7 @@
     },
     {
       name: "WebCodecsDequeueEvent",
-      status: "experimental",
+      status: "stable",
     },
     {
       name: "WebGLColorManagement",
@@ -2632,6 +2623,11 @@
       name: "WebOTPAssertionFeaturePolicy",
       depends_on: ["WebOTP"],
       status: "stable",
+    },
+    {
+      name: "WebPaymentAPICSP",
+      origin_trial_feature_name: "WebPaymentAPICSP",
+      origin_trial_allows_third_party: true,
     },
     // WebShare is enabled by default on Android.
     {

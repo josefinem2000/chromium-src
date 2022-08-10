@@ -249,7 +249,6 @@ const base::Feature* const kFeaturesExposedToJava[] = {
     &kKitKatSupported,
     &kLensCameraAssistedSearch,
     &kLensOnQuickActionSearchWidget,
-    &kLocationBarModelOptimizations,
     &kMostRecentTabOnBackgroundCloseTab,
     &kNewInstanceFromDraggedLink,
     &kNewTabPageTilesTitleWrapAround,
@@ -547,7 +546,7 @@ const base::Feature kCCTResizable90MaximumHeight{
     "CCTResizable90MaximumHeight", base::FEATURE_DISABLED_BY_DEFAULT};
 
 const base::Feature kCCTResizableAllowResizeByUserGesture{
-    "CCTResizableAllowResizeByUserGesture", base::FEATURE_DISABLED_BY_DEFAULT};
+    "CCTResizableAllowResizeByUserGesture", base::FEATURE_ENABLED_BY_DEFAULT};
 
 const base::Feature kCCTResizableForFirstParties{
     "CCTResizableForFirstParties", base::FEATURE_ENABLED_BY_DEFAULT};
@@ -699,9 +698,6 @@ const base::Feature kIsVoiceSearchEnabledCache{
 
 const base::Feature kKitKatSupported{"KitKatSupported",
                                      base::FEATURE_DISABLED_BY_DEFAULT};
-
-const base::Feature kLocationBarModelOptimizations{
-    "LocationBarModelOptimizations", base::FEATURE_DISABLED_BY_DEFAULT};
 
 const base::Feature kSearchEnginePromoExistingDevice{
     "SearchEnginePromo.ExistingDevice", base::FEATURE_ENABLED_BY_DEFAULT};

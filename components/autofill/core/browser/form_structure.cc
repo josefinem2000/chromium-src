@@ -305,32 +305,6 @@ ServerFieldTypeSet GetNecessaryTypesFor(ServerFieldType type) {
   }
 }
 
-// Creates a uniquely named section that starts with `field`.
-//
-// The section name is a string of the form "%s_%u_%u", where the first string
-// is the field's name and the two integers are the field's frame ID and its
-// renderer ID.
-//
-// For the frame ID, we do not use LocalFrameTokens but instead map them to
-// consecutive integers using |frame_token_ids|, which uniquely identify a frame
-// within a given FormStructure. Since we do not intend to compare sections from
-// different FormStructures, this is sufficient.
-//
-// We intentionally do not include the LocalFrameToken in the section string
-// because frame tokens should not be sent to a renderer.
-//
-// TODO(crbug.com/1257141): Remove special handling of FrameTokens.
-Section GetSection(const AutofillField& field,
-                   base::flat_map<LocalFrameToken, size_t>& frame_token_ids) {
-  size_t id = frame_token_ids.emplace(field.host_frame, frame_token_ids.size())
-                  .first->second;
-  Section section;
-  section.set_prefix(base::StrCat(
-      {base::UTF16ToUTF8(field.name), "_", base::NumberToString(id), "_",
-       base::NumberToString(field.unique_renderer_id.value())}));
-  return section;
-}
-
 }  // namespace
 
 class FormStructure::SectionedFieldsIndexes {
@@ -1279,14 +1253,6 @@ void FormStructure::ParseFieldTypesFromAutocompleteAttributes() {
   has_author_specified_sections_ = false;
   has_author_specified_upi_vpa_hint_ = false;
   for (const std::unique_ptr<AutofillField>& field : fields_) {
-    // To prevent potential section name collisions, add a default suffix for
-    // other fields. Without this, 'autocomplete' attribute values
-    // "section--shipping street-address" and "shipping street-address" would be
-    // parsed identically, given the section handling code below. We do this
-    // before any validation so that fields with invalid attributes still end up
-    // in the default section. These default section names will be overridden
-    // by subsequent heuristic parsing steps if there are no author-specified
-    // section names.
     field->section = Section();
     auto parsing_result = ParseAutocompleteAttribute(*field);
     if (!parsing_result)
@@ -2063,8 +2029,11 @@ void FormStructure::IdentifySectionsWithNewMethod() {
       base::FeatureList::IsEnabled(
           features::kAutofillSectionUponRedundantNameInfo);
 
+  // Create a unique identifier for the section based on the field.
   base::flat_map<LocalFrameToken, size_t> frame_token_ids;
-  Section current_section = GetSection(*fields_.front(), frame_token_ids);
+  Section current_section;
+  current_section.SetPrefixFromFieldIdentifier(*fields_.front(),
+                                               frame_token_ids);
 
   // Keep track of the types we've seen in this section.
   ServerFieldTypeSet seen_types;
@@ -2081,7 +2050,7 @@ void FormStructure::IdentifySectionsWithNewMethod() {
     // All credit card fields belong to the same section that's different
     // from address sections.
     if (AutofillType(current_type).group() == FieldTypeGroup::kCreditCard) {
-      field->section.set_prefix("credit-card");
+      field->section.SetPrefixToCreditCard();
       continue;
     }
 
@@ -2132,23 +2101,20 @@ void FormStructure::IdentifySectionsWithNewMethod() {
     if (current_type == previous_type)
       already_saw_current_type = false;
 
-    // Boolean flag that is set to true when the |field| has
-    // autocomplete-section attribute defined.
-    bool autocomplete_section_attribute_present = field->section != Section();
+    // Boolean flag that is set to true when the section of the `field` is
+    // derived from the autocomplete attribute and its section is different than
+    // the previous field's section.
+    bool different_autocomplete_section_than_previous_field_section =
+        field->section.is_from_autocomplete() &&
+        (field_index == 0 ||
+         fields_[field_index - 1]->section != field->section);
 
-    // Boolean flag that is set to true when the |field| has
-    // autocomplete-section attribute defined and is different than the
-    // previous field.
-    bool different_autocomplete_section_than_previous =
-        (autocomplete_section_attribute_present &&
-         (!field_index || fields_[field_index - 1]->section != field->section));
-
-    // Start a new section if the |current_type| was already seen or the
-    // autocomplete-section attribute is defined for the |field| which is
-    // different than the previous field's.
+    // Start a new section if the `current_type` was already seen or the section
+    // is derived from the autocomplete attribute which is different than the
+    // previous field's section.
     if (current_type != UNKNOWN_TYPE &&
         (already_saw_current_type ||
-         different_autocomplete_section_than_previous)) {
+         different_autocomplete_section_than_previous_field_section)) {
       // Keep track of seen_types if the new section is hidden. The next
       // visible section might be the continuation of the previous visible
       // section.
@@ -2157,15 +2123,17 @@ void FormStructure::IdentifySectionsWithNewMethod() {
         last_visible_section = current_section;
       }
 
-      if (!is_hidden_section && (!autocomplete_section_attribute_present ||
-                                 different_autocomplete_section_than_previous))
+      if (!is_hidden_section &&
+          (!field->section.is_from_autocomplete() ||
+           different_autocomplete_section_than_previous_field_section)) {
         seen_types.clear();
+      }
 
-      if (autocomplete_section_attribute_present &&
+      if (field->section.is_from_autocomplete() &&
           !previous_autocomplete_section_present) {
         // If this field is the first field within the section with a defined
         // autocomplete section, then change the section attribute of all the
-        // parsed fields in the current section to |field->section|.
+        // parsed fields in the current section to `field->section`.
         int i = static_cast<int>(field_index - 1);
         while (i >= 0 && fields_[i]->section == current_section) {
           fields_[i]->section = field->section;
@@ -2174,15 +2142,15 @@ void FormStructure::IdentifySectionsWithNewMethod() {
       }
 
       // The end of a section, so start a new section.
-      current_section = GetSection(*field, frame_token_ids);
+      current_section.SetPrefixFromFieldIdentifier(*field, frame_token_ids);
 
       // The section described in the autocomplete section attribute
       // overrides the value determined by the heuristic.
-      if (autocomplete_section_attribute_present)
+      if (field->section.is_from_autocomplete())
         current_section = field->section;
 
       previous_autocomplete_section_present =
-          autocomplete_section_attribute_present;
+          field->section.is_from_autocomplete();
     }
 
     // Only consider a type "seen" if it was not ignored. Some forms have
@@ -2232,8 +2200,11 @@ void FormStructure::IdentifySections(bool has_author_specified_sections) {
           features::kAutofillSectionUponRedundantNameInfo);
 
   if (!has_author_specified_sections) {
+    // Create a unique identifier based on the field for the section.
     base::flat_map<LocalFrameToken, size_t> frame_token_ids;
-    Section current_section = GetSection(*fields_.front(), frame_token_ids);
+    Section current_section;
+    current_section.SetPrefixFromFieldIdentifier(*fields_.front(),
+                                                 frame_token_ids);
 
     // Keep track of the types we've seen in this section.
     ServerFieldTypeSet seen_types;
@@ -2246,7 +2217,7 @@ void FormStructure::IdentifySections(bool has_author_specified_sections) {
       // All credit card fields belong to the same section that's different
       // from address sections.
       if (AutofillType(current_type).group() == FieldTypeGroup::kCreditCard) {
-        field->section.set_prefix("credit-card");
+        field->section.SetPrefixToCreditCard();
         continue;
       }
 
@@ -2311,7 +2282,7 @@ void FormStructure::IdentifySections(bool has_author_specified_sections) {
           seen_types.clear();
 
         // The end of a section, so start a new section.
-        current_section = GetSection(*field, frame_token_ids);
+        current_section.SetPrefixFromFieldIdentifier(*field, frame_token_ids);
       }
 
       // Only consider a type "seen" if it was not ignored. Some forms have

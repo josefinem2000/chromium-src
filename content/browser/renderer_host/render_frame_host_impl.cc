@@ -1741,12 +1741,6 @@ RenderFrameHostImpl::RenderFrameHostImpl(
   // IdleManager should be unique per RenderFrame to provide proper isolation
   // of overrides.
   idle_manager_ = std::make_unique<IdleManagerImpl>(this);
-
-  preferred_color_scheme_ =
-      ui::NativeTheme::GetInstanceForWeb()->GetPreferredColorScheme() ==
-              ui::NativeTheme::PreferredColorScheme::kDark
-          ? blink::mojom::PreferredColorScheme::kDark
-          : blink::mojom::PreferredColorScheme::kLight;
 }
 
 RenderFrameHostImpl::~RenderFrameHostImpl() {
@@ -4352,11 +4346,12 @@ void RenderFrameHostImpl::DidFailLoadWithError(const GURL& url,
   TRACE_EVENT("navigation", "RenderFrameHostImpl::DidFailLoadWithError",
               ChromeTrackEvent::kRenderFrameHost, *this, "error", error_code);
 
-  // Cancel prerendering if DidFailLoadWithError is called during prerendering.
-  // Don't dispatch the DidFailLoad event in such a case as the embedders are
-  // unaware of prerender page yet and shouldn't show any user-visible changes
-  // from an inactive RenderFrameHost.
-  if (CancelPrerendering(PrerenderHost::FinalStatus::kDidFailLoad)) {
+  // Cancel prerendering if DidFailLoadWithError is called on the outermost main
+  // document during prerendering. Don't dispatch the DidFailLoad event in such
+  // a case as the embedders are unaware of prerender page yet and shouldn't
+  // show any user-visible changes from an inactive RenderFrameHost.
+  if (!GetParentOrOuterDocument() &&
+      CancelPrerendering(PrerenderHost::FinalStatus::kDidFailLoad)) {
     return;
   }
 
@@ -5902,11 +5897,6 @@ void RenderFrameHostImpl::UpdateTitle(
   }
 
   delegate_->UpdateTitle(this, received_title, title_direction);
-}
-
-void RenderFrameHostImpl::DidUpdatePreferredColorScheme(
-    blink::mojom::PreferredColorScheme preferred_color_scheme) {
-  preferred_color_scheme_ = preferred_color_scheme;
 }
 
 void RenderFrameHostImpl::DidInferColorScheme(

@@ -852,29 +852,6 @@ void UserSessionManager::SetFirstLoginPrefs(
                                       public_session_input_method);
 }
 
-bool UserSessionManager::GetAppModeChromeClientOAuthInfo(
-    std::string* chrome_client_id,
-    std::string* chrome_client_secret) {
-  if (!chrome::IsRunningInForcedAppMode() || chrome_client_id_.empty() ||
-      chrome_client_secret_.empty()) {
-    return false;
-  }
-
-  *chrome_client_id = chrome_client_id_;
-  *chrome_client_secret = chrome_client_secret_;
-  return true;
-}
-
-void UserSessionManager::SetAppModeChromeClientOAuthInfo(
-    const std::string& chrome_client_id,
-    const std::string& chrome_client_secret) {
-  if (!chrome::IsRunningInForcedAppMode())
-    return;
-
-  chrome_client_id_ = chrome_client_id;
-  chrome_client_secret_ = chrome_client_secret;
-}
-
 void UserSessionManager::DoBrowserLaunch(Profile* profile) {
   auto* session_manager = session_manager::SessionManager::Get();
   const auto current_session_state = session_manager->session_state();
@@ -1716,6 +1693,9 @@ void UserSessionManager::FinalizePrepareProfile(Profile* profile) {
       PersistChallengeResponseKeys(user_context_);
       login::SecurityTokenSessionControllerFactory::GetForBrowserContext(
           profile)
+          ->OnChallengeResponseKeysUpdated();
+      login::SecurityTokenSessionControllerFactory::GetForBrowserContext(
+          ProfileHelper::GetSigninProfile())
           ->OnChallengeResponseKeysUpdated();
     }
 
