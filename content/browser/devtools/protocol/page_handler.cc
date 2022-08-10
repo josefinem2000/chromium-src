@@ -836,16 +836,14 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     clip->SetWidth(maybe_clip.fromJust()->GetWidth());
     clip->SetHeight(maybe_clip.fromJust()->GetHeight());
     clip->SetScale(maybe_clip.fromJust()->GetScale());
-  }// else {
-  //   // get full page dimensions, TBD
-  //   clip = Page::Viewport::Create()
-  //     .setX(0)
-  //     .setY(0)
-  //     .setWidth(modified_params.view_size.width())
-  //     .setHeight(modified_params.view_size.height())
-  //     .setScale(1)
-  //     .build();
-  // }
+  } else {
+    // get full page dimensions, TBD
+    clip->SetX(0);
+    clip->SetY(0);
+    clip->SetWidth(modified_params.view_size.width());
+    clip->SetHeight(modified_params.view_size.height());
+    clip->SetScale(1);
+  }
 
   // Capture original view size if we know we are going to destroy it. We use
   // it in ScreenshotCaptured to restore.
