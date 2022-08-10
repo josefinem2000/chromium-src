@@ -187,17 +187,33 @@ class PageHandler : public DevToolsDomainHandler,
   // clip & widget_host should live for the entirety of this method
   void CaptureScreenshotBeyondViewport(
       RenderWidgetHostImpl* widget_host,
-      std::string screenshot_format,
+      const std::string& screenshot_format,
       int screenshot_quality,
       Maybe<Page::Viewport> maybe_clip,
       std::unique_ptr<CaptureScreenshotCallback> callback);
   // clip & widget_host should live for the entirety of this method
   void CaptureScreenshotWithinViewport(
       RenderWidgetHostImpl* widget_host,
-      std::string screenshot_format,
+      const std::string& screenshot_format,
       int screenshot_quality,
       Maybe<Page::Viewport> clip,
       std::unique_ptr<CaptureScreenshotCallback> callback);
+  blink::DeviceEmulationParams EmulateDefaultPageSize(
+    blink::DeviceEmulationParams modified_params,
+    gfx::Size original_view_size);
+  blink::DeviceEmulationParams SetUpViewport(
+    blink::DeviceEmulationParams modified_params,
+    double clip_x,
+    double clip_y,
+    double clip_scale,
+    double dpfactor,
+    float widget_host_device_scale_factor);
+  RenderWidgetHostImpl* SetViewSize(
+    RenderWidgetHostImpl* widget_host,
+    double dpfactor,
+    double clip_scale,
+    double clip_width,
+    double clip_height);
 
   bool ShouldCaptureNextScreencastFrame();
   void NotifyScreencastVisibility(bool visible);
