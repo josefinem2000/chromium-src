@@ -21,7 +21,6 @@
 #include "base/task/single_thread_task_runner.h"
 #include "base/task/thread_pool.h"
 #include "base/threading/thread_task_runner_handle.h"
-#include "base/values.h"
 #include "build/build_config.h"
 #include "components/back_forward_cache/disabled_reason_id.h"
 #include "content/browser/child_process_security_policy_impl.h"
@@ -59,6 +58,9 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/blink/public/common/manifest/manifest_util.h"
 #include "third_party/blink/public/mojom/manifest/manifest.mojom.h"
+#include "third_party/blink/renderer/core/frame/local_frame.h"
+#include "third_party/blink/renderer/core/frame/local_frame_client.h"
+#include "third_party/blink/renderer/core/frame/local_frame_view.h"
 #include "third_party/skia/include/core/SkBitmap.h"
 #include "ui/base/page_transition_types.h"
 #include "ui/gfx/codec/jpeg_codec.h"
@@ -837,20 +839,14 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     clip->SetHeight(maybe_clip.fromJust()->GetHeight());
     clip->SetScale(maybe_clip.fromJust()->GetScale());
   } else {
-    // get full page dimensions, TBD
-
-    std::unique_ptr<base::Value> layoutMetrics;
-    // need WebView* for that
-    int status = web_view->SendCommandAndGetResult(
-      "Page.getLayoutMetrics", base::DictionaryValue(), &layoutMetrics);
-    gfx::Size full_page_dimensions;
-    if (status != 0)
-      full_page_dimensions = gfx::Size(1, 1);
-    else {
-      full_page_dimensions = gfx::Size(
-        layoutMetrics->FindDoublePath("contentSize.width"),
-        layoutMetrics->FindDoublePath("contentSize.height"));
-    }
+    // get full page dimensions for clip, TBD
+    LocalFrame* main_frame =
+      host_->GetOutermostMainFrameOrEmbedder()->GetAssociatedLocalFrame()->get();
+    // gfx::Rect css_content_size =
+    //   main_frame->GetPage()->GetChromeClient().ViewportToScreen(
+    //       gfx::Rect(content_size), main_frame->View());
+    gfx::Size full_page_dimensions =
+      main_frame->View()->GetScrollableArea()->ContentsSize();
     clip->SetX(0);
     clip->SetY(0);
     clip->SetWidth(full_page_dimensions.width());
