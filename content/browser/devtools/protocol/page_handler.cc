@@ -21,6 +21,7 @@
 #include "base/task/single_thread_task_runner.h"
 #include "base/task/thread_pool.h"
 #include "base/threading/thread_task_runner_handle.h"
+#include "base/values.h"
 #include "build/build_config.h"
 #include "components/back_forward_cache/disabled_reason_id.h"
 #include "content/browser/child_process_security_policy_impl.h"
@@ -837,10 +838,23 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     clip->SetScale(maybe_clip.fromJust()->GetScale());
   } else {
     // get full page dimensions, TBD
+
+    std::unique_ptr<base::Value> layoutMetrics;
+    // need WebView* for that
+    int status = web_view->SendCommandAndGetResult(
+      "Page.getLayoutMetrics", base::DictionaryValue(), &layoutMetrics);
+    gfx::Size full_page_dimensions;
+    if (status != 0)
+      full_page_dimensions = gfx::Size(1, 1);
+    else {
+      full_page_dimensions = gfx::Size(
+        layoutMetrics->FindDoublePath("contentSize.width"),
+        layoutMetrics->FindDoublePath("contentSize.height"));
+    }
     clip->SetX(0);
     clip->SetY(0);
-    clip->SetWidth(modified_params.view_size.width());
-    clip->SetHeight(modified_params.view_size.height());
+    clip->SetWidth(full_page_dimensions.width());
+    clip->SetHeight(full_page_dimensions.height());
     clip->SetScale(1);
   }
 

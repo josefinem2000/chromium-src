@@ -35,7 +35,9 @@
 class SkBitmap;
 
 namespace base {
+class DictionaryValue;
 class UnguessableToken;
+class Value;
 }
 
 namespace gfx {
