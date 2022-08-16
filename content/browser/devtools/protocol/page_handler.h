@@ -30,11 +30,9 @@
 #include "content/public/common/javascript_dialog_type.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/blink/public/mojom/manifest/manifest.mojom-forward.h"
-#include "third_party/blink/renderer/core/frame/local_frame.h"
 #include "url/gurl.h"
 
 class SkBitmap;
-class LocalFrame;
 
 namespace base {
 class UnguessableToken;
