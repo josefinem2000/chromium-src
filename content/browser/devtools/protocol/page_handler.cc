@@ -842,13 +842,15 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     clip->SetScale(maybe_clip.fromJust()->GetScale());
   } else {
     // get full page dimensions for clip, TBD
-    blink::LocalFrame* main_frame = (blink::LocalFrame*)
-      host_->GetOutermostMainFrameOrEmbedder()->GetAssociatedLocalFrame().get();
+    blink::LocalFrame* main_frame =
+        (blink::LocalFrame*)host_->GetOutermostMainFrameOrEmbedder()
+            ->GetAssociatedLocalFrame()
+            .get();
     gfx::Size full_page_size =
-      main_frame->View()->GetScrollableArea()->ContentsSize();
+        main_frame->View()->GetScrollableArea()->ContentsSize();
     gfx::Rect css_full_page_size =
-      main_frame->GetPage()->GetChromeClient().ViewportToScreen(
-          gfx::Rect(full_page_size), main_frame->View());
+        main_frame->GetPage()->GetChromeClient().ViewportToScreen(
+            gfx::Rect(full_page_size), main_frame->View());
     clip->SetX(0);
     clip->SetY(0);
     clip->SetWidth(css_full_page_size.width());
