@@ -5,16 +5,4 @@
 /**
  * @fileoverview Loads the panel script.
  */
-
-goog.require('AncestryRecoveryStrategy');
-goog.require('AutomationPredicate');
-goog.require('AutomationTreeWalker');
-goog.require('EarconDescription');
-goog.require('PanelNodeMenuData');
-goog.require('PanelNodeMenuItemData');
-goog.require('RecoveryStrategy');
-
-goog.require('constants');
 goog.require('goog.i18n.MessageFormat');
-
-goog.require('ALL_NODE_MENU_DATA');

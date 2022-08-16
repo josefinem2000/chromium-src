@@ -100,6 +100,7 @@
 <translation id="1455242230282523554">भाषा सेटिंग्ज दर्शवा</translation>
 <translation id="1460620680449458626">व्हॉल्यूम म्यूट केलेला आहे.</translation>
 <translation id="1467432559032391204">डावे</translation>
+<translation id="146902737843070955">तुमच्या अ‍ॅडमिनिस्ट्रेटरने या बदलाची विनंती केली आहे</translation>
 <translation id="147310119694673958">फोनची बॅटरी <ph name="BATTERY_PERCENTAGE" />%</translation>
 <translation id="1479909375538722835">फ्लोटिंग अ‍ॅक्सेसिबिलिटी मेनू</translation>
 <translation id="1480845547124508962"><ph name="CURRENT_TIME" />, Calendar दृश्य उघडण्यासाठी एंटर की दाबा</translation>
@@ -445,6 +446,7 @@
 <translation id="3593039967545720377">तुमचे क्लिपबोर्ड पाहण्यासाठी, <ph name="SHORTCUT_KEY_NAME" /> + V दाबून तुमचा क्लिपबोर्ड इतिहास ॲक्सेस करा. सुरुवात करण्यासाठी आयटम कॉपी करा.</translation>
 <translation id="3593646411856133110">उघडी अ‍ॅप्स पाहण्यासाठी वर स्वाइप करा आणि धरून ठेवा</translation>
 <translation id="3595596368722241419">बॅटरी पूर्ण चार्ज</translation>
+<translation id="3596012367874587041">अ‍ॅप सेटिंग्ज</translation>
 <translation id="3600061223661453002">बंद आहे</translation>
 <translation id="3604801046548457007">डेस्क <ph name="DESK_TITILE" /> तयार केले</translation>
 <translation id="3606978283550408104">ब्रेल डिस्प्ले कनेक्ट केला.</translation>
@@ -837,6 +839,7 @@
 <translation id="5779721926447984944">पिन केलेल्या फाइल</translation>
 <translation id="5788127256798019331">Play फाइल</translation>
 <translation id="5790085346892983794">यशस्वी</translation>
+<translation id="5804651031882187592">"सिम लॉक करा" सेटिंग बंद करा</translation>
 <translation id="5805809050170488595"><ph name="NETWORK_NAME" /> अ‍ॅक्टिव्हेट करण्यासाठी क्लिक करा</translation>
 <translation id="5825969630400862129">कनेक्‍ट केलेली डिव्हाइस सेटिंग्ज</translation>
 <translation id="5837036133683224804"><ph name="RECEIVER_NAME" /> वर <ph name="ROUTE_TITLE" /> थांबवा</translation>

@@ -68,11 +68,11 @@ TEST(FirstPartySetParser, AcceptsMinimal) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://aaaa.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST(FirstPartySetParser, RejectsMissingOwner) {
@@ -116,19 +116,19 @@ TEST(FirstPartySetParser, SkipsSetOnNonOriginOwner) {
                   Pair(SerializesTo("https://example2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, 0)),
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://aaaa.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST(FirstPartySetParser, RejectsOwnerWithoutRegisteredDomain) {
@@ -180,19 +180,19 @@ TEST(FirstPartySetParser, SkipsSetOnNonOriginMember) {
                   Pair(SerializesTo("https://example2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, 0)),
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member3.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST(FirstPartySetParser, RejectsMemberWithoutRegisteredDomain) {
@@ -211,11 +211,11 @@ TEST(FirstPartySetParser, TruncatesSubdomain_Owner) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://aaaa.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST(FirstPartySetParser, TruncatesSubdomain_Member) {
@@ -227,11 +227,11 @@ TEST(FirstPartySetParser, TruncatesSubdomain_Member) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://aaaa.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST(FirstPartySetParser, AcceptsMultipleSets) {
@@ -247,19 +247,19 @@ TEST(FirstPartySetParser, AcceptsMultipleSets) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, 0)),
                   Pair(SerializesTo("https://foo.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST(FirstPartySetParser, AcceptsMultipleSetsWithWhitespace) {
@@ -277,19 +277,19 @@ TEST(FirstPartySetParser, AcceptsMultipleSetsWithWhitespace) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, 0)),
                   Pair(SerializesTo("https://foo.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST(FirstPartySetParser, RejectsInvalidSets_InvalidOwner) {
@@ -315,11 +315,11 @@ TEST(FirstPartySetParser, AllowsTrailingCommas) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST(FirstPartySetParser, Rejects_SameOwner) {
@@ -362,19 +362,20 @@ TEST(FirstPartySetParser, SerializeFirstPartySets) {
                 {{net::SchemefulSite(GURL("https://member1.test")),
                   net::FirstPartySetEntry(
                       net::SchemefulSite(GURL("https://example1.test")),
-                      net::SiteType::kAssociated)},
+                      net::SiteType::kAssociated, 0)},
                  {net::SchemefulSite(GURL("https://example1.test")),
                   net::FirstPartySetEntry(
                       net::SchemefulSite(GURL("https://example1.test")),
-                      net::SiteType::kPrimary)}}));
+                      net::SiteType::kPrimary, absl::nullopt)}}));
 }
 
 TEST(FirstPartySetParser, SerializeFirstPartySetsWithOpaqueOrigin) {
-  EXPECT_EQ(R"({"https://member1.test":"null"})",
-            FirstPartySetParser::SerializeFirstPartySets(
-                {{net::SchemefulSite(GURL("https://member1.test")),
-                  net::FirstPartySetEntry(net::SchemefulSite(GURL("")),
-                                          net::SiteType::kPrimary)}}));
+  EXPECT_EQ(
+      R"({"https://member1.test":"null"})",
+      FirstPartySetParser::SerializeFirstPartySets(
+          {{net::SchemefulSite(GURL("https://member1.test")),
+            net::FirstPartySetEntry(net::SchemefulSite(GURL("")),
+                                    net::SiteType::kPrimary, absl::nullopt)}}));
 }
 
 TEST(FirstPartySetParser, SerializeFirstPartySetsEmptySet) {
@@ -394,23 +395,23 @@ TEST(FirstPartySetParser, DeserializeFirstPartySets) {
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example1.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, absl::nullopt)),
                   Pair(SerializesTo("https://member3.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example1.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, absl::nullopt)),
                   Pair(SerializesTo("https://example1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example1.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, absl::nullopt)),
                   Pair(SerializesTo("https://example2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kPrimary))));
+                           net::SiteType::kPrimary, absl::nullopt))));
 }
 
 TEST(FirstPartySetParser, DeserializeFirstPartySetsEmptySet) {
@@ -430,11 +431,11 @@ TEST(FirstPartySetParser, DeserializeFirstPartySetsDuplicatedKey) {
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, absl::nullopt)),
                   Pair(SerializesTo("https://example2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kPrimary))));
+                           net::SiteType::kPrimary, absl::nullopt))));
 }
 
 // Singleton set is ignored.
@@ -449,11 +450,11 @@ TEST(FirstPartySetParser, DeserializeFirstPartySetsSingletonSet) {
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, absl::nullopt)),
                   Pair(SerializesTo("https://example2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example2.test")),
-                           net::SiteType::kPrimary))));
+                           net::SiteType::kPrimary, absl::nullopt))));
 }
 
 class FirstPartySetParserInvalidContentTest
@@ -506,35 +507,20 @@ INSTANTIATE_TEST_SUITE_P(
                         R"({"https://member1.test":"https://example1.test",
             "https://example1.test":"https://example2.test"})")));
 
-TEST(ParseSetsFromEnterprisePolicyTest, Accepts_MissingSetLists) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     Accepts_MissingSetLists) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              Eq(absl::nullopt));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .value(),
+      FirstPartySetParser::ParsedPolicySetLists({}, {}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, Accepts_EmptyLists) {
-  base::Value policy_value = base::JSONReader::Read(R"(
-              {
-                "replacements": [],
-                "additions": []
-              }
-            )")
-                                 .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              Eq(absl::nullopt));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
-}
-
-TEST(ParseSetsFromEnterprisePolicyTest, ValidPolicy_NullOutParam) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest, Accepts_EmptyLists) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
                 "replacements": [],
@@ -542,33 +528,14 @@ TEST(ParseSetsFromEnterprisePolicyTest, ValidPolicy_NullOutParam) {
               }
             )")
                                  .value();
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), nullptr),
-              Eq(absl::nullopt));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .value(),
+      FirstPartySetParser::ParsedPolicySetLists({}, {}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidPolicy_NullOutParam) {
-  base::Value policy_value = base::JSONReader::Read(R"(
-              {
-                "replacements": [],
-                "additions": [
-                  {
-                    "owner": "https://owner1.test",
-                    "members": ["https://owner1.test"]
-                  }
-                ]
-              }
-            )")
-                                 .value();
-  FirstPartySetParser::PolicyParsingError expected_error{
-      FirstPartySetParser::ParseError::kRepeatedDomain,
-      FirstPartySetParser::PolicySetType::kAddition, 0};
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), nullptr),
-              expected_error);
-}
-
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidTypeError_MissingOwner) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     InvalidTypeError_MissingOwner) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
                 "replacements": [
@@ -580,16 +547,16 @@ TEST(ParseSetsFromEnterprisePolicyTest, InvalidTypeError_MissingOwner) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidType,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidType,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidTypeError_MissingMembers) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     InvalidTypeError_MissingMembers) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
                 "replacements": [
@@ -601,16 +568,16 @@ TEST(ParseSetsFromEnterprisePolicyTest, InvalidTypeError_MissingMembers) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidType,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidType,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidTypeError_WrongOwnerType) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     InvalidTypeError_WrongOwnerType) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
                 "replacements": [
@@ -623,16 +590,15 @@ TEST(ParseSetsFromEnterprisePolicyTest, InvalidTypeError_WrongOwnerType) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidType,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidType,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest,
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
      InvalidTypeError_WrongMembersFieldType) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
@@ -646,16 +612,16 @@ TEST(ParseSetsFromEnterprisePolicyTest,
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidType,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidType,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidTypeError_WrongMemberType) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     InvalidTypeError_WrongMemberType) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
           "replacements": [
@@ -669,16 +635,16 @@ TEST(ParseSetsFromEnterprisePolicyTest, InvalidTypeError_WrongMemberType) {
         }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidType,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidType,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidOriginError_OwnerOpaque) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     InvalidOriginError_OwnerOpaque) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
                 "replacements": [
@@ -691,16 +657,16 @@ TEST(ParseSetsFromEnterprisePolicyTest, InvalidOriginError_OwnerOpaque) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidOrigin,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidOrigin,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidOriginError_MemberOpaque) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     InvalidOriginError_MemberOpaque) {
   base::Value policy_value = base::JSONReader::Read(R"(
                {
                 "replacements": [
@@ -713,16 +679,16 @@ TEST(ParseSetsFromEnterprisePolicyTest, InvalidOriginError_MemberOpaque) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidOrigin,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidOrigin,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidOriginError_OwnerNonHttps) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     InvalidOriginError_OwnerNonHttps) {
   base::Value policy_value = base::JSONReader::Read(R"(
                  {
                 "replacements": [
@@ -735,16 +701,16 @@ TEST(ParseSetsFromEnterprisePolicyTest, InvalidOriginError_OwnerNonHttps) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidOrigin,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidOrigin,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, InvalidOriginError_MemberNonHttps) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     InvalidOriginError_MemberNonHttps) {
   base::Value policy_value = base::JSONReader::Read(R"(
                {
                 "replacements": [
@@ -757,16 +723,15 @@ TEST(ParseSetsFromEnterprisePolicyTest, InvalidOriginError_MemberNonHttps) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidOrigin,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidOrigin,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest,
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
      InvalidOriginError_OwnerNonRegisteredDomain) {
   base::Value policy_value = base::JSONReader::Read(R"(
                 {
@@ -780,16 +745,15 @@ TEST(ParseSetsFromEnterprisePolicyTest,
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidOrigin,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidOrigin,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest,
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
      InvalidOriginError_MemberNonRegisteredDomain) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
@@ -803,16 +767,16 @@ TEST(ParseSetsFromEnterprisePolicyTest,
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kInvalidOrigin,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kInvalidOrigin,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, SingletonSetError_EmptyMembers) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     SingletonSetError_EmptyMembers) {
   base::Value policy_value = base::JSONReader::Read(R"(
              {
                 "replacements": [
@@ -825,16 +789,15 @@ TEST(ParseSetsFromEnterprisePolicyTest, SingletonSetError_EmptyMembers) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kSingletonSet,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kSingletonSet,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest,
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
      RepeatedDomainError_WithinReplacements) {
   base::Value policy_value = base::JSONReader::Read(R"(
               {
@@ -848,16 +811,16 @@ TEST(ParseSetsFromEnterprisePolicyTest,
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kRepeatedDomain,
-                   FirstPartySetParser::PolicySetType::kReplacement, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kRepeatedDomain,
+           FirstPartySetParser::PolicySetType::kReplacement, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, NonDisjointError_WithinReplacements) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     NonDisjointError_WithinReplacements) {
   base::Value policy_value = base::JSONReader::Read(R"(
                    {
                 "replacements": [
@@ -874,16 +837,16 @@ TEST(ParseSetsFromEnterprisePolicyTest, NonDisjointError_WithinReplacements) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kNonDisjointSets,
-                   FirstPartySetParser::PolicySetType::kReplacement, 1}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kNonDisjointSets,
+           FirstPartySetParser::PolicySetType::kReplacement, 1}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, NonDisjointError_WithinAdditions) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     NonDisjointError_WithinAdditions) {
   base::Value policy_value = base::JSONReader::Read(R"(
                    {
                 "replacements": [],
@@ -900,16 +863,16 @@ TEST(ParseSetsFromEnterprisePolicyTest, NonDisjointError_WithinAdditions) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kNonDisjointSets,
-                   FirstPartySetParser::PolicySetType::kAddition, 1}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kNonDisjointSets,
+           FirstPartySetParser::PolicySetType::kAddition, 1}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, NonDisjointError_AcrossBothLists) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     NonDisjointError_AcrossBothLists) {
   base::Value policy_value = base::JSONReader::Read(R"(
                {
                 "replacements": [
@@ -927,16 +890,21 @@ TEST(ParseSetsFromEnterprisePolicyTest, NonDisjointError_AcrossBothLists) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              FirstPartySetParser::PolicyParsingError(
-                  {FirstPartySetParser::ParseError::kNonDisjointSets,
-                   FirstPartySetParser::PolicySetType::kAddition, 0}));
-  EXPECT_THAT(out_sets, FirstPartySetParser::ParsedPolicySetLists({}, {}));
+  EXPECT_THAT(
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .error(),
+      FirstPartySetParser::PolicyParsingError(
+          {FirstPartySetParser::ParseError::kNonDisjointSets,
+           FirstPartySetParser::PolicySetType::kAddition, 0}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, SuccessfulMapping_SameList) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     SuccessfulMapping_SameList) {
+  net::SchemefulSite owner1(GURL("https://owner1.test"));
+  net::SchemefulSite member1(GURL("https://member1.test"));
+  net::SchemefulSite owner2(GURL("https://owner2.test"));
+  net::SchemefulSite member2(GURL("https://member2.test"));
+
   base::Value policy_value = base::JSONReader::Read(R"(
              {
                 "replacements": [
@@ -952,21 +920,36 @@ TEST(ParseSetsFromEnterprisePolicyTest, SuccessfulMapping_SameList) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              Eq(absl::nullopt));
   EXPECT_THAT(
-      out_sets.replacements,
-      ElementsAre(
-          Pair(SerializesTo("https://owner1.test"),
-               UnorderedElementsAre(SerializesTo("https://member1.test"))),
-          Pair(SerializesTo("https://owner2.test"),
-               UnorderedElementsAre(SerializesTo("https://member2.test")))));
-  EXPECT_THAT(out_sets.additions, IsEmpty());
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .value(),
+      FirstPartySetParser::ParsedPolicySetLists(
+          {FirstPartySetParser::SetsMap({
+               {owner1, net::FirstPartySetEntry(owner1, net::SiteType::kPrimary,
+                                                absl::nullopt)},
+               {member1,
+                net::FirstPartySetEntry(owner1, net::SiteType::kAssociated,
+                                        absl::nullopt)},
+           }),
+           FirstPartySetParser::SetsMap({
+               {owner2, net::FirstPartySetEntry(owner2, net::SiteType::kPrimary,
+                                                absl::nullopt)},
+               {member2,
+                net::FirstPartySetEntry(owner2, net::SiteType::kAssociated,
+                                        absl::nullopt)},
+           })},
+          {}));
 }
 
-TEST(ParseSetsFromEnterprisePolicyTest, SuccessfulMapping_CrossList) {
+TEST(FirstPartySets_ParseSetsFromEnterprisePolicyTest,
+     SuccessfulMapping_CrossList) {
+  net::SchemefulSite owner1(GURL("https://owner1.test"));
+  net::SchemefulSite member1(GURL("https://member1.test"));
+  net::SchemefulSite owner2(GURL("https://owner2.test"));
+  net::SchemefulSite member2(GURL("https://member2.test"));
+  net::SchemefulSite owner3(GURL("https://owner3.test"));
+  net::SchemefulSite member3(GURL("https://member3.test"));
+
   base::Value policy_value = base::JSONReader::Read(R"(
                 {
                 "replacements": [
@@ -988,22 +971,30 @@ TEST(ParseSetsFromEnterprisePolicyTest, SuccessfulMapping_CrossList) {
               }
             )")
                                  .value();
-  FirstPartySetParser::ParsedPolicySetLists out_sets;
-  EXPECT_THAT(FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-                  policy_value.GetDict(), &out_sets),
-              Eq(absl::nullopt));
   EXPECT_THAT(
-      out_sets.replacements,
-      ElementsAre(
-          Pair(SerializesTo("https://owner1.test"),
-               UnorderedElementsAre(SerializesTo("https://member1.test"))),
-          Pair(SerializesTo("https://owner2.test"),
-               UnorderedElementsAre(SerializesTo("https://member2.test")))));
-
-  EXPECT_THAT(out_sets.additions,
-              ElementsAre(Pair(
-                  SerializesTo("https://owner3.test"),
-                  UnorderedElementsAre(SerializesTo("https://member3.test")))));
+      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy_value.GetDict())
+          .value(),
+      FirstPartySetParser::ParsedPolicySetLists(
+          {FirstPartySetParser::SetsMap({
+               {owner1, net::FirstPartySetEntry(owner1, net::SiteType::kPrimary,
+                                                absl::nullopt)},
+               {member1,
+                net::FirstPartySetEntry(owner1, net::SiteType::kAssociated,
+                                        absl::nullopt)},
+           }),
+           FirstPartySetParser::SetsMap({
+               {owner2, net::FirstPartySetEntry(owner2, net::SiteType::kPrimary,
+                                                absl::nullopt)},
+               {member2,
+                net::FirstPartySetEntry(owner2, net::SiteType::kAssociated,
+                                        absl::nullopt)},
+           })},
+          {FirstPartySetParser::SetsMap({
+              {owner3, net::FirstPartySetEntry(owner3, net::SiteType::kPrimary,
+                                               absl::nullopt)},
+              {member3, net::FirstPartySetEntry(
+                            owner3, net::SiteType::kAssociated, absl::nullopt)},
+          })}));
 }
 
 }  // namespace content

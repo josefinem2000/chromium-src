@@ -1991,8 +1991,10 @@ Color LocalFrameView::DocumentBackgroundColor() {
   Color doc_bg =
       background_source->ResolveColor(GetCSSPropertyBackgroundColor());
   if (background_source->StyleRef().ColorSchemeForced()) {
-    doc_bg = EnsureDarkModeFilter().InvertColorIfNeeded(
-        doc_bg.Rgb(), DarkModeFilter::ElementRole::kBackground);
+    // TODO(https://crbug.com/1351544): The DarkModeFilter operate on SkColor4f,
+    // and DocumentBackgroundColor should return an SkColor4f.
+    doc_bg = Color::FromSkColor(EnsureDarkModeFilter().InvertColorIfNeeded(
+        SkColor(doc_bg), DarkModeFilter::ElementRole::kBackground));
   }
   if (blend_with_base)
     return result.Blend(doc_bg);
@@ -2644,10 +2646,8 @@ bool LocalFrameView::RunPrePaintLifecyclePhase(
           }
         }
 
-        // We skipped pre-paint for this frame while it was throttled, or we
-        // have never run pre-paint for this frame. Either way, we're
-        // unthrottled now, so we must propagate our dirty bits into our
-        // parent frame so that pre-paint reaches into this frame.
+        // Propagate dirty bits in the frame into the parent frame so that
+        // pre-paint reaches into this frame.
         if (LayoutView* layout_view = frame_view.GetLayoutView()) {
           if (auto* owner = frame_view.GetFrame().OwnerLayoutObject()) {
             if (layout_view->NeedsPaintPropertyUpdate() ||
@@ -2664,11 +2664,6 @@ bool LocalFrameView::RunPrePaintLifecyclePhase(
             if (layout_view->BlockingWheelEventHandlerChanged() ||
                 layout_view->DescendantBlockingWheelEventHandlerChanged()) {
               owner->MarkDescendantBlockingWheelEventHandlerChanged();
-            }
-            if (layout_view->Layer()->NeedsCullRectUpdate() ||
-                layout_view->Layer()->DescendantNeedsCullRectUpdate()) {
-              layout_view->Layer()
-                  ->MarkCompositingContainerChainForNeedsCullRectUpdate();
             }
           }
         }
@@ -3200,7 +3195,13 @@ void LocalFrameView::UpdateStyleAndLayout() {
   gfx::SizeF visual_viewport_size(visual_viewport.VisibleWidthCSSPx(),
                                   visual_viewport.VisibleHeightCSSPx());
 
-  bool did_layout = UpdateStyleAndLayoutInternal();
+  bool did_layout = false;
+  {
+    // Script is allowed during the initial style and layout as we will rerun
+    // at least once more if anything was invalidated.
+    ScriptForbiddenScope::AllowUserAgentScript allow_script;
+    did_layout = UpdateStyleAndLayoutInternal();
+  }
 
   // Second pass: run autosize until it stabilizes
   if (auto_size_info_) {
@@ -4689,6 +4690,10 @@ LocalFrameUkmAggregator& LocalFrameView::EnsureUkmAggregator() {
     local_root->ukm_aggregator_ = base::MakeRefCounted<LocalFrameUkmAggregator>(
         local_root->frame_->GetDocument()->UkmSourceID(),
         local_root->frame_->GetDocument()->UkmRecorder());
+    if (base::FeatureList::IsEnabled(
+            features::kThrottleIntersectionObserverUMA)) {
+      local_root->ukm_aggregator_->SetIntersectionObserverSamplePeriod(10);
+    }
   }
   return *local_root->ukm_aggregator_;
 }
@@ -4867,6 +4872,27 @@ PaintLayer* LocalFrameView::GetXROverlayLayer() const {
     return GetXrOverlayLayer(*doc);
 
   return nullptr;
+}
+
+void LocalFrameView::PropagateCullRectNeedsUpdateForFrames() {
+  ForAllNonThrottledLocalFrameViews(
+      [](LocalFrameView& frame_view) {
+        // Propagate child frame PaintLayer NeedsCullRectUpdate flag into the
+        // owner frame.
+        if (auto* frame_layout_view = frame_view.GetLayoutView()) {
+          if (auto* owner = frame_view.GetFrame().OwnerLayoutObject()) {
+            PaintLayer* frame_root_layer = frame_layout_view->Layer();
+            DCHECK(frame_root_layer);
+            DCHECK(owner->Layer());
+            if (frame_root_layer->NeedsCullRectUpdate() ||
+                frame_root_layer->DescendantNeedsCullRectUpdate()) {
+              owner->Layer()->SetDescendantNeedsCullRectUpdate();
+            }
+          }
+        }
+      },
+      // Use post-order to ensure correct flag propagation for nested frames.
+      kPostOrder);
 }
 
 void LocalFrameView::RunPaintBenchmark(int repeat_count,

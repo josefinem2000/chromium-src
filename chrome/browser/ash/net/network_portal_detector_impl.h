@@ -28,10 +28,6 @@
 #include "content/public/browser/notification_registrar.h"
 #include "url/gurl.h"
 
-namespace base {
-class Value;
-}
-
 namespace network {
 class SharedURLLoaderFactory;
 namespace mojom {
@@ -83,7 +79,7 @@ class NetworkPortalDetectorImpl : public NetworkPortalDetector,
   void RetryDetection();
 
   // Initiates Captive Portal detection attempt after |delay|.
-  void ScheduleAttempt(const base::TimeDelta& delay);
+  void ScheduleAttempt(const base::TimeDelta& delay = base::TimeDelta());
 
   // Starts detection attempt.
   void StartAttempt();
@@ -107,8 +103,9 @@ class NetworkPortalDetectorImpl : public NetworkPortalDetector,
   void SetStrategy(PortalDetectorStrategy::StrategyId id) override;
 
   // NetworkStateHandlerObserver implementation:
-  void DefaultNetworkChanged(const NetworkState* network) override;
   void OnShuttingDown() override;
+  void PortalStateChanged(const NetworkState* default_network,
+                          NetworkState::PortalState portal_state) override;
 
   // PortalDetectorStrategy::Delegate implementation:
   int NoResponseResultCount() override;
@@ -120,11 +117,8 @@ class NetworkPortalDetectorImpl : public NetworkPortalDetector,
                const content::NotificationSource& source,
                const content::NotificationDetails& details) override;
 
-  // Called synchronously from OnAttemptCompleted with the current default
-  // network. Stores the captive portal status and notifies observers.
   void DetectionCompleted(const NetworkState* network,
-                          const CaptivePortalStatus& results,
-                          int response_code);
+                          const CaptivePortalStatus& results);
 
   State state() const { return state_; }
 
@@ -166,11 +160,6 @@ class NetworkPortalDetectorImpl : public NetworkPortalDetector,
     time_ticks_for_testing_ = time_ticks;
   }
 
-  // Advances current test time ticks. Used by unit tests.
-  void advance_time_ticks_for_testing(const base::TimeDelta& delta) {
-    time_ticks_for_testing_ += delta;
-  }
-
   const std::string& default_network_id_for_testing() const {
     return default_network_id_;
   }
@@ -178,12 +167,6 @@ class NetworkPortalDetectorImpl : public NetworkPortalDetector,
 
   // Unique identifier of the default network.
   std::string default_network_id_;
-
-  // Connection state of the default network.
-  std::string default_connection_state_;
-
-  // Proxy configuration of the default network.
-  base::Value default_proxy_config_;
 
   CaptivePortalStatus default_portal_status_ = CAPTIVE_PORTAL_STATUS_UNKNOWN;
   int response_code_for_testing_ = -1;
@@ -217,7 +200,7 @@ class NetworkPortalDetectorImpl : public NetworkPortalDetector,
   std::unique_ptr<PortalDetectorStrategy> strategy_;
 
   // Last received result from captive portal detector.
-  CaptivePortalStatus last_detection_result_ = CAPTIVE_PORTAL_STATUS_UNKNOWN;
+  CaptivePortalStatus last_detection_status_ = CAPTIVE_PORTAL_STATUS_UNKNOWN;
 
   // Number of detection attempts with same result in a row.
   int same_detection_result_count_ = 0;

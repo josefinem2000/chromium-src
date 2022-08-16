@@ -202,7 +202,6 @@
 #endif
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
-#include "chrome/browser/apps/app_service/app_launch_params.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
 #include "chrome/common/extensions/api/url_handlers/url_handlers_parser.h"
@@ -3239,12 +3238,17 @@ bool RenderViewContextMenu::IsRegionSearchEnabled() const {
   if (!service)
     return false;
 
+  if (!base::FeatureList::IsEnabled(
+          lens::features::kEnableRegionSearchOnPdfViewer) &&
+      IsFrameInPdfViewer(GetRenderFrameHost())) {
+    return false;
+  }
+
   const TemplateURL* provider = service->GetDefaultSearchProvider();
   const bool provider_supports_image_search =
       provider && !provider->image_url().empty() &&
       provider->image_url_ref().IsValid(service->search_terms_data());
   return base::FeatureList::IsEnabled(lens::features::kLensStandalone) &&
-         !IsFrameInPdfViewer(GetRenderFrameHost()) &&
          provider_supports_image_search &&
          !GetDocumentURL(params_).SchemeIs(content::kChromeUIScheme) &&
          !in_app &&
@@ -3307,7 +3311,7 @@ void RenderViewContextMenu::AppendSendTabToSelfItem(bool add_separator) {
   menu_model_.AddItemWithIcon(
       IDC_SEND_TAB_TO_SELF,
       l10n_util::GetStringUTF16(IDS_CONTEXT_MENU_SEND_TAB_TO_SELF),
-      ui::ImageModel::FromVectorIcon(kSendTabToSelfIcon));
+      ui::ImageModel::FromVectorIcon(kLaptopAndSmartphoneIcon));
 #endif
 }
 
@@ -3581,10 +3585,19 @@ void RenderViewContextMenu::ExecRegionSearch(
     int event_flags,
     bool is_google_default_search_provider) {
 #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
-  if (!lens_region_search_controller_)
+  if (!lens_region_search_controller_) {
+    Browser* browser = GetBrowser();
+    WebContents* web_contents = source_web_contents_;
+    if (base::FeatureList::IsEnabled(
+            lens::features::kEnableRegionSearchOnPdfViewer)) {
+      // We don't use `source_web_contents_` here because it doesn't work with
+      // the PDF reader.
+      web_contents = browser->tab_strip_model()->GetActiveWebContents();
+    }
     lens_region_search_controller_ =
-        std::make_unique<lens::LensRegionSearchController>(source_web_contents_,
-                                                           GetBrowser());
+        std::make_unique<lens::LensRegionSearchController>(web_contents,
+                                                           browser);
+  }
   // If Lens fullscreen search is enabled, we want to send every region search
   // as a fullscreen capture.
   bool use_fullscreen_capture =

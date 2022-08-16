@@ -21,67 +21,6 @@ class Source {
   get anno() { return this.anno_; }
 };
 
-// Represents a thread making a debug call to
-// the visual debugger.
-//
-class Thread {
-  // Keeps track of all threads that debug calls came in from
-  // while the app is running.
-  static registered_threads = {};
-
-  constructor(json) {
-    this.threadName_ = json.thread_name;
-    // Calls from each thread is enabled by default.
-    this.enabled_ = true;
-
-    // Add new thread to a pool of thread objects.
-    Thread.registered_threads[this.threadName_] = this;
-
-    // Create thread filter chip.
-    this.createThreadFilterChip()
-  }
-
-  static isThreadRegistered(threadName) {
-    // If thread already registered, return true.
-    return (threadName in Thread.registered_threads);
-  }
-
-  createThreadFilterChip() {
-    const threadFilters = document.querySelector('#threads');
-    const threadChip = document.createElement('div');
-
-    threadChip.style = 'display:inline-block; margin-right: 10px';
-
-    // Create checkbox for each thread chip.
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = this.threadName_;
-    checkbox.name = this.threadName_;
-    // Check off checkbox by default as calls from each thread
-    // are enabled by default.
-    checkbox.checked = true;
-
-    checkbox.addEventListener('click', () => {
-      Thread.registered_threads[this.threadName_].toggleEnableThread();
-      Player.instance.refresh();
-    });
-
-    // Add label to checkbox with the name of the thread.
-    const checkboxLabel = document.createElement('label');
-    checkboxLabel.for = this.threadName_;
-    checkboxLabel.innerHTML = this.threadName_;
-
-    threadChip.appendChild(checkbox);
-    threadChip.appendChild(checkboxLabel);
-    // Add to DOM list of thread checkbox filters.
-    threadFilters.appendChild(threadChip);
-  }
-
-  toggleEnableThread() {
-    this.enabled_ = !this.enabled_;
-  }
-}
-
 // Represents a draw call.
 // This is currently only used for drawing rect. But this (or something like
 // this) could potentially be also used for drawing logs etc.
@@ -108,6 +47,26 @@ class DrawCall {
       this.alpha_ = DrawCall.alphaIntToHex(json.option.alpha)
     }
     this.buffer_id = json.buff_id;
+    if (json.uv_size && json.uv_pos) {
+      this.uv_size = {
+        width: json.uv_size[0],
+        height: json.uv_size[1],
+      };
+      this.uv_pos = {
+        x: json.uv_pos[0],
+        y: json.uv_pos[1],
+      };
+    }
+    else {
+      this.uv_size = {
+        width: 1.0,
+        height: 1.0,
+      };
+      this.uv_pos = {
+        x: 0.0,
+        y: 0.0,
+      };
+    }
   }
 
   // Used in conversion of Json.
@@ -124,7 +83,8 @@ class DrawCall {
     return value.toString(16).padStart(2, '0');
   }
 
-  draw(canvas, context, scale, orientationDeg, transformMatrix, buffer_map) {
+  draw(canvas, context, scale, orientationDeg, transformMatrix,
+                                                  buffer_map, threadConfig) {
     let filter = undefined;
     const filters = Filter.enabledInstances();
     // TODO: multiple filters can match the same draw call. For now, let's just
@@ -136,13 +96,24 @@ class DrawCall {
       }
     }
 
-    // No filters match this draw. So skip.
-    if (!filter) return;
-    if (!filter.shouldDraw) return;
+    var color;
+    var alpha;
+    // If thread drawing is overriding filters.
+    if (threadConfig.overrideFilters) {
+      color = threadConfig.threadColor;
+      alpha = threadConfig.threadAlpha;
+    }
+    // Otherwise, follow filter draw options.
+    else {
+      // No filters match this draw. So skip.
+      if (!filter) return;
+      if (!filter.shouldDraw) return;
 
-    var color = (filter && filter.drawColor) ? filter.drawColor : this.color_
-    var alpha = (filter && filter.fillAlpha) ?
-    DrawCall.alphaFloatToHex(parseFloat(filter.fillAlpha) / 100) : this.alpha_;
+      color = (filter && filter.drawColor) ? filter.drawColor : this.color_
+      alpha = (filter && filter.fillAlpha) ?
+      DrawCall.alphaFloatToHex(parseFloat(filter.fillAlpha) / 100) :
+                                                              this.alpha_;
+    }
 
     const newCallPosAndDimension = this.rotateCall(canvas, orientationDeg,
                                                       scale, transformMatrix);
@@ -160,8 +131,15 @@ class DrawCall {
                         newCallPosAndDimension[1],
                         newCallPosAndDimension[2],
                         newCallPosAndDimension[3]);
-    if(buffer_map[this.buffer_id.toString()]) {
-      context.drawImage(buffer_map[this.buffer_id.toString()],
+    var buff_id = this.buffer_id.toString();
+    if(buffer_map[buff_id]) {
+      var buff_width = buffer_map[buff_id].width;
+      var buff_height = buffer_map[buff_id].height;
+      context.drawImage(buffer_map[buff_id],
+                        this.uv_pos.x * buff_width,
+                        this.uv_pos.y * buff_height,
+                        this.uv_size.width * buff_width,
+                        this.uv_size.height * buff_height,
                         newCallPosAndDimension[0],
                         newCallPosAndDimension[1],
                         newCallPosAndDimension[2],

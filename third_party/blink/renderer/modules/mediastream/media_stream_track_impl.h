@@ -84,7 +84,7 @@ class MODULES_EXPORT MediaStreamTrackImpl : public MediaStreamTrack,
   String ContentHint() const override;
   void SetContentHint(const String&) override;
   String readyState() const override;
-  MediaStreamTrack* clone(ScriptState*) override;
+  MediaStreamTrack* clone(ExecutionContext*) override;
   void stopTrack(ExecutionContext*) override;
   MediaTrackCapabilities* getCapabilities() const override;
   MediaTrackConstraints* getConstraints() const override;
@@ -149,6 +149,8 @@ class MODULES_EXPORT MediaStreamTrackImpl : public MediaStreamTrack,
   // Useful for sub-classes, as they need to clone both state from
   // this class as well as of their own class.
   void CloneInternal(MediaStreamTrackImpl*);
+
+  std::unique_ptr<MediaStreamTrackPlatform> ClonePlatformTrack();
 
  private:
   friend class CanvasCaptureMediaStreamTrack;

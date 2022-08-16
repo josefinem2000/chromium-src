@@ -100,6 +100,7 @@
 <translation id="1455242230282523554">Показване на езиковите настройки</translation>
 <translation id="1460620680449458626">Звукът е спрян.</translation>
 <translation id="1467432559032391204">Наляво</translation>
+<translation id="146902737843070955">Администраторът ви заяви тази промяна</translation>
 <translation id="147310119694673958">Батерия на телефона: <ph name="BATTERY_PERCENTAGE" />%</translation>
 <translation id="1479909375538722835">Плаващо меню за достъпност</translation>
 <translation id="1480845547124508962"><ph name="CURRENT_TIME" />. Натиснете клавиша Enter, за да отворите календарния изглед</translation>
@@ -445,6 +446,7 @@
 <translation id="3593039967545720377">Можете да видите историята на буферната памет, като натиснете <ph name="SHORTCUT_KEY_NAME" /> + V. За да започнете, копирайте даден елемент.</translation>
 <translation id="3593646411856133110">Прекарайте пръст нагоре и задръжте, за да видите отворените приложения</translation>
 <translation id="3595596368722241419">Батерията е заредена</translation>
+<translation id="3596012367874587041">Настройки за приложението</translation>
 <translation id="3600061223661453002">Изкл.</translation>
 <translation id="3604801046548457007">Работен кът <ph name="DESK_TITILE" /> е създаден</translation>
 <translation id="3606978283550408104">Брайловият дисплей е свързан.</translation>
@@ -837,6 +839,7 @@
 <translation id="5779721926447984944">Фиксирани файлове</translation>
 <translation id="5788127256798019331">Файлове от Google Play</translation>
 <translation id="5790085346892983794">Успех</translation>
+<translation id="5804651031882187592">Изключете настройката за заключване на SIM картата</translation>
 <translation id="5805809050170488595">Кликнете за активиране на <ph name="NETWORK_NAME" /></translation>
 <translation id="5825969630400862129">Настройки за свързани устройства</translation>
 <translation id="5837036133683224804">Спиране на предаването на <ph name="ROUTE_TITLE" /> към „<ph name="RECEIVER_NAME" />“</translation>

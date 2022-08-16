@@ -71,6 +71,7 @@ extern const base::Feature kArcAdbSideloadingFeature;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kArcFuseBoxFileSharing;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kArcInputOverlay;
+COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kArcInputOverlayBeta;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kArcAndGuestOsFileTasksUseAppService;
 COMPONENT_EXPORT(ASH_CONSTANTS)
@@ -102,9 +103,13 @@ COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kAutocorrectParamsTuning;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kAutozoomNudgeSessionReset;
+COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kAvatarsCloudMigration;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kBentoBar;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kBluetoothFixA2dpPacketSize;
+COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kBluetoothQualityReport;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kBluetoothRevamp;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kBluetoothWbsDogfood;
 COMPONENT_EXPORT(ASH_CONSTANTS)
@@ -263,10 +268,6 @@ COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kEnableOAuthIpp;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kEnableOobeChromeVoxHint;
 COMPONENT_EXPORT(ASH_CONSTANTS)
-extern const base::Feature kEnableOobePolymer3;
-COMPONENT_EXPORT(ASH_CONSTANTS)
-extern const base::Feature kOobeAddPersonPolymer3;
-COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kEnableKioskEnrollmentInOobe;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kEnableKioskLoginScreen;
@@ -339,6 +340,8 @@ extern const base::Feature kHandwritingGestureEditing;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kHandwritingLegacyRecognition;
 COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kProductivityLauncherImageSearch;
+COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kLauncherItemColorSync;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kHandwritingLegacyRecognitionAllLang;
@@ -363,6 +366,10 @@ COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature
     kHoldingSpaceInProgressDownloadsNotificationSuppression;
 COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kHoldingSpaceRebrand;
+COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kHoldingSpaceSuggestions;
+COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kHotspot;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kVirtualKeyboardNewHeader;
@@ -385,6 +392,7 @@ COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kImprovedLoginErrorHandling;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kInstantTethering;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kJelly;
+COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kJellyroll;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kKioskEnableImeButton;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kLacrosOnly;
@@ -688,6 +696,7 @@ COMPONENT_EXPORT(ASH_CONSTANTS) bool IsAmbientModePhotoPreviewEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsAppNotificationsPageEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsArcFuseBoxFileSharingEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsArcInputOverlayEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsArcInputOverlayBetaEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsArcNetworkDiagnosticsButtonEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsAssistantNativeIconsEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsAssistiveMultiWordEnabled();
@@ -695,6 +704,7 @@ COMPONENT_EXPORT(ASH_CONSTANTS) bool IsAudioSettingsPageEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsAutoNightLightEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsBackgroundBlurEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsBentoBarEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsBluetoothQualityReportEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsBluetoothRevampEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsCalendarViewEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsCalendarModelDebugModeEnabled();
@@ -752,6 +762,8 @@ COMPONENT_EXPORT(ASH_CONSTANTS) bool IsHideArcMediaNotificationsEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsHideShelfControlsInTabletModeEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS)
 bool IsHoldingSpaceInProgressDownloadsNotificationSuppressionEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsHoldingSpaceRebrandEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsHoldingSpaceSuggestionsEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsHostnameSettingEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsHotspotEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsImprovedDesksKeyboardShortcutsEnabled();
@@ -760,6 +772,7 @@ COMPONENT_EXPORT(ASH_CONSTANTS) bool IsInputNoiseCancellationUiEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS)
 bool IsInstantTetheringBackgroundAdvertisingSupported();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsJellyEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsJellyrollEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS)
 bool IsKeyboardBacklightToggleEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsLanguagePacksEnabled();
@@ -794,8 +807,6 @@ COMPONENT_EXPORT(ASH_CONSTANTS) bool IsNotificationsRefreshEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsOAuthIppEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsOobeChromeVoxHintEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsOobeHidDetectionRevampEnabled();
-COMPONENT_EXPORT(ASH_CONSTANTS) bool IsOobePolymer3Enabled();
-COMPONENT_EXPORT(ASH_CONSTANTS) bool IsOobeAddPersonPolymer3Enabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsKioskEnrollmentInOobeEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsKioskLoginScreenEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsOobeNetworkScreenSkipEnabled();
@@ -823,6 +834,7 @@ COMPONENT_EXPORT(ASH_CONSTANTS) bool IsPipRoundedCornersEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsPolyDevicePairingAllowed();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsPrivacyIndicatorsEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsProductivityLauncherEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsProductivityLauncherImageSearchEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsProjectorEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsProjectorAllUserEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsProjectorManagedUserEnabled();

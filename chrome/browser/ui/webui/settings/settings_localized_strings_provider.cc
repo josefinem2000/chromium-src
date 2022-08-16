@@ -74,7 +74,6 @@
 #include "components/sync/driver/sync_service.h"
 #include "components/sync/driver/sync_service_utils.h"
 #include "components/sync/driver/sync_user_settings.h"
-#include "components/version_info/version_info.h"
 #include "components/zoom/page_zoom_constants.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_ui_data_source.h"
@@ -291,23 +290,7 @@ void AddAboutStrings(content::WebUIDataSource* html_source, Profile* profile) {
       l10n_util::GetStringUTF16(IDS_SETTINGS_UPGRADE_UP_TO_DATE));
 #endif
 
-#if BUILDFLAG(IS_CHROMEOS_LACROS)
-  // On Lacros, we don't have the concept of channels, in their usual semantics.
-  // Replace the channel string with "Lacros". https://crbug.com/1215734.
-  std::string channel_name = "Lacros";
-#else
-  std::string channel_name =
-      chrome::GetChannelName(chrome::WithExtendedStable(true));
-#endif
-
-  std::u16string browser_version = l10n_util::GetStringFUTF16(
-      IDS_SETTINGS_ABOUT_PAGE_BROWSER_VERSION,
-      base::UTF8ToUTF16(version_info::GetVersionNumber()),
-      l10n_util::GetStringUTF16(version_info::IsOfficialBuild()
-                                    ? IDS_VERSION_UI_OFFICIAL
-                                    : IDS_VERSION_UI_UNOFFICIAL),
-      base::UTF8ToUTF16(channel_name),
-      l10n_util::GetStringUTF16(VersionUI::VersionProcessorVariation()));
+  std::u16string browser_version = VersionUI::GetAnnotatedVersionStringForUi();
 
 #if BUILDFLAG(IS_CHROMEOS_LACROS)
   // Lacros is in development so we don't worry about l10n for now. This message
@@ -1006,7 +989,7 @@ void AddAutofillStrings(content::WebUIDataSource* html_source,
     {"addPasswordTitle", IDS_SETTINGS_PASSWORD_ADD_TITLE},
     {"addPasswordFootnote", IDS_SETTINGS_PASSWORD_ADD_FOOTNOTE},
     {"addPasswordStoreOptionAccount",
-     IDS_SETTINGS_PASSWORD_ADD_STORE_OPTION_ACCOUNT},
+     IDS_SETTINGS_PASSWORD_STORE_PICKER_OPTION_ACCOUNT},
     {"addPasswordStoreOptionDevice",
      IDS_PASSWORD_MANAGER_DESTINATION_DROPDOWN_SAVE_TO_DEVICE},
     {"addPasswordStorePickerA11yDescription",
@@ -1112,7 +1095,15 @@ void AddAutofillStrings(content::WebUIDataSource* html_source,
     {"importPasswordsBadFormatError",
      IDS_SETTINGS_PASSWORDS_IMPORT_ERROR_BAD_FORMAT},
     {"importPasswordsGenericDescription",
-     IDS_SETTINGS_PASSWORDS_IMPORT_DESCRIPTION_GENERIC},
+     IDS_SETTINGS_PASSWORDS_IMPORT_DESCRIPTION_ACCOUNT_STORE_USERS},
+    {"importPasswordsDescriptionAccount",
+     IDS_SETTINGS_PASSWORDS_IMPORT_DESCRIPTION_SYNCING_USERS},
+    {"importPasswordsDescriptionDevice",
+     IDS_SETTINGS_PASSWORDS_IMPORT_DESCRIPTION_SIGNEDOUT_USERS},
+    {"importPasswordsStorePickerA11yDescription",
+     IDS_SETTINGS_PASSWORDS_IMPORT_STORE_PICKER_ACCESSIBLE_NAME},
+    {"importPasswordsAlreadyActive",
+     IDS_SETTINGS_PASSWORDS_IMPORT_ALREADY_ACTIVE},
     {"exportMenuItem", IDS_SETTINGS_PASSWORDS_EXPORT_MENU_ITEM},
     {"exportPasswordsTitle", IDS_SETTINGS_PASSWORDS_EXPORT_TITLE},
     {"exportPasswordsDescription", IDS_SETTINGS_PASSWORDS_EXPORT_DESCRIPTION},
@@ -1286,6 +1277,11 @@ void AddAutofillStrings(content::WebUIDataSource* html_source,
           base::UTF8ToUTF16(
               autofill::payments::GetVirtualCardEnrollmentSupportUrl()
                   .spec())));
+
+  html_source->AddBoolean(
+      "virtualCardMetadataEnabled",
+      base::FeatureList::IsEnabled(
+          autofill::features::kAutofillEnableVirtualCardMetadata));
 
   html_source->AddLocalizedStrings(kLocalizedStrings);
 }
@@ -1958,6 +1954,8 @@ void AddSafetyCheckStrings(content::WebUIDataSource* html_source) {
      IDS_SETTINGS_SAFETY_CHECK_ICON_INFO_ARIA_LABEL},
     {"safetyCheckIconWarningAriaLabel",
      IDS_SETTINGS_SAFETY_CHECK_ICON_WARNING_ARIA_LABEL},
+    {"safetyCheckNotificationPermissionsPrimaryLabel",
+     IDS_SETTINGS_SAFETY_CHECK_NOTIFICATION_PERMISSIONS_PRIMARY_LABEL},
     {"safetyCheckReview", IDS_SETTINGS_SAFETY_CHECK_REVIEW},
     {"safetyCheckUnusedSitePermissionsPrimaryLabel",
      IDS_SETTINGS_SAFETY_CHECK_UNUSED_SITE_PERMISSIONS_PRIMARY_LABEL},
@@ -2847,19 +2845,19 @@ void AddSiteSettingsStrings(content::WebUIDataSource* html_source,
     {"siteSettingsVrMidSentence", IDS_SITE_SETTINGS_TYPE_VR_MID_SENTENCE},
     {"siteSettingsVrAskRecommended",
      IDS_SETTINGS_SITE_SETTINGS_VR_ASK_RECOMMENDED},
-    {"siteSettingsWindowPlacement", IDS_SITE_SETTINGS_TYPE_WINDOW_PLACEMENT},
+    {"siteSettingsWindowPlacement", IDS_SITE_SETTINGS_TYPE_WINDOW_MANAGEMENT},
     {"siteSettingsWindowPlacementMidSentence",
-     IDS_SITE_SETTINGS_TYPE_WINDOW_PLACEMENT_MID_SENTENCE},
+     IDS_SITE_SETTINGS_TYPE_WINDOW_MANAGEMENT_MID_SENTENCE},
     {"siteSettingsWindowPlacementDescription",
-     IDS_SETTINGS_SITE_SETTINGS_WINDOW_PLACEMENT_DESCRIPTION},
+     IDS_SETTINGS_SITE_SETTINGS_WINDOW_MANAGEMENT_DESCRIPTION},
     {"siteSettingsWindowPlacementAsk",
-     IDS_SETTINGS_SITE_SETTINGS_WINDOW_PLACEMENT_ASK},
+     IDS_SETTINGS_SITE_SETTINGS_WINDOW_MANAGEMENT_ASK},
     {"siteSettingsWindowPlacementBlocked",
-     IDS_SETTINGS_SITE_SETTINGS_WINDOW_PLACEMENT_BLOCKED},
+     IDS_SETTINGS_SITE_SETTINGS_WINDOW_MANAGEMENT_BLOCKED},
     {"siteSettingsWindowPlacementAskExceptions",
-     IDS_SETTINGS_SITE_SETTINGS_WINDOW_PLACEMENT_ASK_EXCEPTIONS},
+     IDS_SETTINGS_SITE_SETTINGS_WINDOW_MANAGEMENT_ASK_EXCEPTIONS},
     {"siteSettingsWindowPlacementBlockedExceptions",
-     IDS_SETTINGS_SITE_SETTINGS_WINDOW_PLACEMENT_BLOCKED_EXCEPTIONS},
+     IDS_SETTINGS_SITE_SETTINGS_WINDOW_MANAGEMENT_BLOCKED_EXCEPTIONS},
     {"siteSettingsFontAccessMidSentence",
      IDS_SITE_SETTINGS_TYPE_FONT_ACCESS_MID_SENTENCE},
     {"siteSettingsIdleDetection", IDS_SITE_SETTINGS_TYPE_IDLE_DETECTION},

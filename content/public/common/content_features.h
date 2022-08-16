@@ -92,6 +92,7 @@ CONTENT_EXPORT extern const char kFedCmAutoSigninFieldTrialParamName[];
 CONTENT_EXPORT extern const char kFedCmIdpSignoutFieldTrialParamName[];
 CONTENT_EXPORT extern const char kFedCmIframeSupportFieldTrialParamName[];
 CONTENT_EXPORT extern const base::Feature kFedCmManifestValidation;
+CONTENT_EXPORT extern const base::Feature kFedCmMultipleIdentityProviders;
 CONTENT_EXPORT extern const base::Feature kFirstPartySets;
 CONTENT_EXPORT extern const base::FeatureParam<bool> kFirstPartySetsIsDogfooder;
 CONTENT_EXPORT extern const base::Feature kFontManagerEarlyInit;
@@ -181,7 +182,6 @@ CONTENT_EXPORT extern const base::Feature kNotificationTriggers;
 CONTENT_EXPORT extern const base::Feature kOriginIsolationHeader;
 CONTENT_EXPORT extern const base::Feature kOverscrollHistoryNavigation;
 CONTENT_EXPORT extern const base::Feature kWebPaymentAPICSP;
-CONTENT_EXPORT extern const base::Feature kPaymentRequestBasicCard;
 CONTENT_EXPORT extern const base::Feature kPeriodicBackgroundSync;
 CONTENT_EXPORT extern const base::Feature kFeaturePolicyHeader;
 CONTENT_EXPORT extern const base::Feature kPepper3DImageChromium;
@@ -312,6 +312,9 @@ CONTENT_EXPORT extern const base::Feature kWebXrArModule;
 CONTENT_EXPORT extern const base::Feature kAccessibilityPageZoom;
 CONTENT_EXPORT extern const base::Feature
     kBackgroundMediaRendererHasModerateBinding;
+CONTENT_EXPORT extern const base::Feature
+    kBindingManagerUseNotPerceptibleBinding;
+CONTENT_EXPORT extern const base::Feature kReduceGpuPriorityOnBackground;
 CONTENT_EXPORT extern const base::Feature kOnDemandAccessibilityEvents;
 CONTENT_EXPORT extern const base::Feature kRequestDesktopSiteAdditions;
 CONTENT_EXPORT extern const base::Feature kRequestDesktopSiteExceptions;

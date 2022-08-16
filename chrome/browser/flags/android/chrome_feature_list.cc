@@ -97,6 +97,7 @@ const base::Feature* const kFeaturesExposedToJava[] = {
     &autofill::features::kAutofillEnableSupportForMoreStructureInAddresses,
     &autofill::features::kAutofillEnableSupportForMoreStructureInNames,
     &autofill::features::kAutofillEnableUpdateVirtualCardEnrollment,
+    &autofill::features::kAutofillEnableVirtualCardMetadata,
     &blink::features::kPrerender2,
     &blink::features::kForceWebContentsDarkMode,
     &commerce::kCommerceMerchantViewer,
@@ -295,6 +296,7 @@ const base::Feature* const kFeaturesExposedToJava[] = {
     &kTabGroupsForTablets,
     &kTabGridLayoutAndroid,
     &kTabReparenting,
+    &kTabSelectionEditorV2,
     &kTabStripImprovements,
     &kTabSwitcherOnReturn,
     &kTabToGTSAnimation,
@@ -352,8 +354,10 @@ const base::Feature* const kFeaturesExposedToJava[] = {
     &omnibox::kMostVisitedTilesDynamicSpacing,
     &omnibox::kMostVisitedTilesTitleWrapAround,
     &omnibox::kOmniboxAssistantVoiceSearch,
+    &omnibox::kOmniboxHeaderPaddingUpdate,
     &omnibox::kOmniboxRemoveSuggestionHeaderCapitalization,
     &omnibox::kOmniboxRemoveSuggestionHeaderChevron,
+    &omnibox::kOmniboxMostVisitedTilesFadingOnTablet,
     &omnibox::kOmniboxMostVisitedTilesOnSrp,
     &omnibox::kSuggestionAnswersColorReverse,
     &omnibox::kUpdatedConnectionSecurityIndicators,
@@ -834,6 +838,9 @@ const base::Feature kTabGridLayoutAndroid{"TabGridLayoutAndroid",
 
 const base::Feature kTabReparenting{"TabReparenting",
                                     base::FEATURE_ENABLED_BY_DEFAULT};
+
+const base::Feature kTabSelectionEditorV2{"TabSelectionEditorV2",
+                                          base::FEATURE_DISABLED_BY_DEFAULT};
 
 const base::Feature kTabStripImprovements{"TabStripImprovements",
                                           base::FEATURE_ENABLED_BY_DEFAULT};

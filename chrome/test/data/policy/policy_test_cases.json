@@ -6044,30 +6044,7 @@
     ]
   },
   "AppRecommendationZeroStateEnabled": {
-    "os": [
-      "chromeos_ash"
-    ],
-    "policy_pref_mapping_tests": [
-      {
-        "note": "Default value (no policies set).",
-        "prefs": {
-          "zero_state_app_install_recommendation.enabled": {
-            "default_value": false
-          }
-        }
-      },
-      {
-        "note": "Simple value.",
-        "policies": {
-          "AppRecommendationZeroStateEnabled": true
-        },
-        "prefs": {
-          "zero_state_app_install_recommendation.enabled": {
-            "value": true
-          }
-        }
-      }
-    ]
+    "reason_for_missing_test": "Policy was removed"
   },
   "AllowOutdatedPlugins": {
     "reason_for_missing_test": "Policy was removed"
@@ -7038,16 +7015,38 @@
     "os": [
       "win",
       "android",
-      "mac"
+      "mac",
+      "linux"
     ],
     "policy_pref_mapping_tests": [
+      {
+        "policies": {},
+        "prefs": {
+          "profile.force_browser_signin": {
+            "location": "local_state",
+            "default_value": false
+          }
+        }
+      },
       {
         "policies": {
           "ForceBrowserSignin": false
         },
         "prefs": {
           "profile.force_browser_signin": {
-            "location": "local_state"
+            "location": "local_state",
+            "value": false
+          }
+        }
+      },
+      {
+        "policies": {
+          "ForceBrowserSignin": true
+        },
+        "prefs": {
+          "profile.force_browser_signin": {
+            "location": "local_state",
+            "value": true
           }
         }
       }
@@ -7110,6 +7109,10 @@
         "prefs": {
           "signin.allowed_on_next_startup": {
             "value": true
+          },
+          "profile.force_browser_signin": {
+            "location": "local_state",
+            "default_value": false
           }
         }
       }
@@ -7131,6 +7134,52 @@
           "profile.force_browser_signin": {
             "location": "local_state",
             "value": true
+          }
+        }
+      }
+    ]
+  },
+  "BrowserSignin.AndroidOverrideDeprecatedForceBrowserSignin": {
+    "os": [
+      "android"
+    ],
+    "policy_pref_mapping_tests": [
+      {
+        "policies": {
+          "BrowserSignin": 1,
+          "ForceBrowserSignin": true
+        },
+        "prefs": {
+          "signin.allowed": {
+            "value": true
+          },
+          "profile.force_browser_signin": {
+            "location": "local_state",
+            "default_value": false
+          }
+        }
+      }
+    ]
+  },
+  "BrowserSignin.DesktopOverrideDeprecatedForceBrowserSignin": {
+    "os": [
+      "win",
+      "linux",
+      "mac"
+    ],
+    "policy_pref_mapping_tests": [
+      {
+        "policies": {
+          "BrowserSignin": 1,
+          "ForceBrowserSignin": true
+        },
+        "prefs": {
+          "signin.allowed_on_next_startup": {
+            "value": true
+          },
+          "profile.force_browser_signin": {
+            "location": "local_state",
+            "default_value": false
           }
         }
       }
@@ -19164,6 +19213,42 @@
         "policies": { "UnmanagedDeviceSignalsConsentFlowEnabled": true },
         "prefs": {
           "device_signals.consent_collection_enabled": {
+            "value": true
+          }
+        }
+      }
+    ]
+  },
+  "PersistentQuotaEnabled": {
+    "os": [
+      "win",
+      "linux",
+      "mac",
+      "chromeos_ash",
+      "chromeos_lacros",
+      "android"
+    ],
+    "policy_pref_mapping_tests": [
+      {
+        "policies": {},
+        "prefs": {
+          "policy.persistent_quota_enabled": {
+            "default_value": false
+          }
+        }
+      },
+      {
+        "policies": { "PersistentQuotaEnabled": false },
+        "prefs": {
+          "policy.persistent_quota_enabled": {
+            "value": false
+          }
+        }
+      },
+      {
+        "policies": { "PersistentQuotaEnabled": true },
+        "prefs": {
+          "policy.persistent_quota_enabled": {
             "value": true
           }
         }

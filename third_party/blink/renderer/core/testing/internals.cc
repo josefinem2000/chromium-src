@@ -169,6 +169,7 @@
 #include "third_party/blink/renderer/core/testing/type_conversions.h"
 #include "third_party/blink/renderer/core/testing/union_types_test.h"
 #include "third_party/blink/renderer/core/timezone/timezone_controller.h"
+#include "third_party/blink/renderer/core/timing/dom_window_performance.h"
 #include "third_party/blink/renderer/core/typed_arrays/dom_array_buffer.h"
 #include "third_party/blink/renderer/core/workers/worker_thread.h"
 #include "third_party/blink/renderer/platform/bindings/exception_messages.h"
@@ -2038,6 +2039,20 @@ int Internals::lastSpellCheckProcessedSequence(
   }
 
   return requester->LastProcessedSequence();
+}
+
+int Internals::spellCheckedTextLength(Document* document,
+                                      ExceptionState& exception_state) {
+  SpellCheckRequester* requester = GetSpellCheckRequester(document);
+
+  if (!requester) {
+    exception_state.ThrowDOMException(
+        DOMExceptionCode::kInvalidAccessError,
+        "No spell check requestor can be obtained for the provided document.");
+    return -1;
+  }
+
+  return requester->SpellCheckedTextLength();
 }
 
 void Internals::cancelCurrentSpellCheckRequest(
@@ -3918,6 +3933,12 @@ void Internals::setAllowPerChunkTransferring(ReadableStream* stream) {
   }
   stream->SetAllowPerChunkTransferringForTesting(
       AllowPerChunkTransferring(true));
+}
+
+void Internals::setBackForwardCacheRestorationBufferSize(unsigned int maxSize) {
+  WindowPerformance& perf =
+      *DOMWindowPerformance::performance(*document_->domWindow());
+  perf.setBackForwardCacheRestorationBufferSizeForTest(maxSize);
 }
 
 }  // namespace blink

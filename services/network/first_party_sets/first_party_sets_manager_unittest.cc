@@ -58,14 +58,6 @@ class FirstPartySetsManagerTest : public ::testing::Test {
     return result.has_value() ? std::move(result).value() : future.Take();
   }
 
-  FirstPartySetsManager::OwnerResult FindOwnerAndWait(
-      const net::SchemefulSite& site) {
-    base::test::TestFuture<FirstPartySetsManager::OwnerResult> future;
-    absl::optional<FirstPartySetsManager::OwnerResult> result =
-        manager_.FindOwner(site, fps_context_config_, future.GetCallback());
-    return result.has_value() ? result.value() : future.Get();
-  }
-
   FirstPartySetsManager::OwnersResult FindOwnersAndWait(
       const base::flat_set<net::SchemefulSite>& site) {
     base::test::TestFuture<FirstPartySetsManager::OwnersResult> future;
@@ -106,11 +98,11 @@ TEST_F(FirstPartySetsManagerDisabledTest, SetCompleteSets) {
   SetCompleteSets({{net::SchemefulSite(GURL("https://aaaa.test")),
                     net::FirstPartySetEntry(
                         net::SchemefulSite(GURL("https://example.test")),
-                        net::SiteType::kAssociated)},
+                        net::SiteType::kAssociated, 0)},
                    {net::SchemefulSite(GURL("https://example.test")),
                     net::FirstPartySetEntry(
                         net::SchemefulSite(GURL("https://example.test")),
-                        net::SiteType::kPrimary)}});
+                        net::SiteType::kPrimary, absl::nullopt)}});
 
   EXPECT_THAT(FindOwnersAndWait({
                   net::SchemefulSite(GURL("https://aaaa.test")),
@@ -135,11 +127,11 @@ TEST_F(FirstPartySetsManagerDisabledTest, ComputeMetadata_InfersSingletons) {
       true, {{net::SchemefulSite(GURL("https://member1.test")),
               {net::FirstPartySetEntry(
                   net::SchemefulSite(GURL("https://example.test")),
-                  net::SiteType::kAssociated)}},
+                  net::SiteType::kAssociated, 0)}},
              {net::SchemefulSite(GURL("https://example.test")),
               {net::FirstPartySetEntry(
                   net::SchemefulSite(GURL("https://example.test")),
-                  net::SiteType::kPrimary)}}});
+                  net::SiteType::kPrimary, absl::nullopt)}}});
 
   // Works if the site is provided with WSS scheme instead of HTTPS.
   EXPECT_THAT(
@@ -156,32 +148,6 @@ TEST_F(FirstPartySetsManagerDisabledTest, ComputeMetadata_InfersSingletons) {
       net::SamePartyContext(Type::kCrossParty));
 }
 
-TEST_F(FirstPartySetsManagerDisabledTest, FindOwner) {
-  SetCompleteSets({{net::SchemefulSite(GURL("https://member.test")),
-                    net::FirstPartySetEntry(
-                        net::SchemefulSite(GURL("https://example.test")),
-                        net::SiteType::kAssociated)},
-                   {net::SchemefulSite(GURL("https://example.test")),
-                    net::FirstPartySetEntry(
-                        net::SchemefulSite(GURL("https://example.test")),
-                        net::SiteType::kPrimary)}});
-
-  SetFirstPartySetsContextConfig(
-      true, {{net::SchemefulSite(GURL("https://aaaa.test")),
-              {net::FirstPartySetEntry(
-                  net::SchemefulSite(GURL("https://example.test")),
-                  net::SiteType::kAssociated)}},
-             {net::SchemefulSite(GURL("https://example.test")),
-              {net::FirstPartySetEntry(
-                  net::SchemefulSite(GURL("https://example.test")),
-                  net::SiteType::kPrimary)}}});
-
-  EXPECT_FALSE(
-      FindOwnerAndWait(net::SchemefulSite(GURL("https://example.test"))));
-  EXPECT_FALSE(
-      FindOwnerAndWait(net::SchemefulSite(GURL("https://member.test"))));
-}
-
 class FirstPartySetsEnabledTest : public FirstPartySetsManagerTest {
  public:
   FirstPartySetsEnabledTest()
@@ -192,11 +158,11 @@ TEST_F(FirstPartySetsEnabledTest, SetCompleteSets) {
   SetCompleteSets({{net::SchemefulSite(GURL("https://aaaa.test")),
                     net::FirstPartySetEntry(
                         net::SchemefulSite(GURL("https://example.test")),
-                        net::SiteType::kAssociated)},
+                        net::SiteType::kAssociated, 0)},
                    {net::SchemefulSite(GURL("https://example.test")),
                     net::FirstPartySetEntry(
                         net::SchemefulSite(GURL("https://example.test")),
-                        net::SiteType::kPrimary)}});
+                        net::SiteType::kPrimary, absl::nullopt)}});
 
   EXPECT_THAT(FindOwnersAndWait({
                   net::SchemefulSite(GURL("https://aaaa.test")),
@@ -206,11 +172,11 @@ TEST_F(FirstPartySetsEnabledTest, SetCompleteSets) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://aaaa.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST_F(FirstPartySetsEnabledTest, SetCompleteSets_Idempotent) {
@@ -221,11 +187,11 @@ TEST_F(FirstPartySetsEnabledTest, SetCompleteSets_Idempotent) {
   SetCompleteSets({{net::SchemefulSite(GURL("https://aaaa.test")),
                     net::FirstPartySetEntry(
                         net::SchemefulSite(GURL("https://example.test")),
-                        net::SiteType::kAssociated)},
+                        net::SiteType::kAssociated, 0)},
                    {net::SchemefulSite(GURL("https://example.test")),
                     net::FirstPartySetEntry(
                         net::SchemefulSite(GURL("https://example.test")),
-                        net::SiteType::kPrimary)}});
+                        net::SiteType::kPrimary, absl::nullopt)}});
   EXPECT_THAT(FindOwnersAndWait({
                   net::SchemefulSite(GURL("https://aaaa.test")),
                   net::SchemefulSite(GURL("https://example.test")),
@@ -259,21 +225,21 @@ class AsyncPopulatedFirstPartySetsManagerTest
         {net::SchemefulSite(GURL("https://member1.test")),
          net::FirstPartySetEntry(
              net::SchemefulSite(GURL("https://example.test")),
-             net::SiteType::kAssociated)},
+             net::SiteType::kAssociated, 0)},
         {net::SchemefulSite(GURL("https://member3.test")),
          net::FirstPartySetEntry(
              net::SchemefulSite(GURL("https://example.test")),
-             net::SiteType::kAssociated)},
+             net::SiteType::kAssociated, 0)},
         {net::SchemefulSite(GURL("https://example.test")),
          net::FirstPartySetEntry(
              net::SchemefulSite(GURL("https://example.test")),
-             net::SiteType::kPrimary)},
+             net::SiteType::kPrimary, absl::nullopt)},
         {net::SchemefulSite(GURL("https://member2.test")),
          net::FirstPartySetEntry(net::SchemefulSite(GURL("https://foo.test")),
-                                 net::SiteType::kAssociated)},
+                                 net::SiteType::kAssociated, 0)},
         {net::SchemefulSite(GURL("https://foo.test")),
          net::FirstPartySetEntry(net::SchemefulSite(GURL("https://foo.test")),
-                                 net::SiteType::kPrimary)},
+                                 net::SiteType::kPrimary, absl::nullopt)},
     });
 
     // We don't wait for the sets to be loaded before returning, in order to let
@@ -296,26 +262,12 @@ TEST_F(AsyncPopulatedFirstPartySetsManagerTest,
 
   {
     net::SchemefulSite owner(GURL("https://example.test"));
-    net::FirstPartySetEntry entry(owner, net::SiteType::kAssociated);
+    net::FirstPartySetEntry entry(owner, net::SiteType::kAssociated, 0);
 
     EXPECT_EQ(future.Get(),
               net::FirstPartySetMetadata(
                   net::SamePartyContext(Type::kSameParty), &entry, &entry));
   }
-}
-
-TEST_F(AsyncPopulatedFirstPartySetsManagerTest, QueryBeforeReady_FindOwner) {
-  base::test::TestFuture<FirstPartySetsManager::OwnerResult> future;
-  EXPECT_FALSE(
-      manager().FindOwner(net::SchemefulSite(GURL("https://member1.test")),
-                          fps_context_config(), future.GetCallback()));
-
-  Populate();
-
-  EXPECT_THAT(future.Get(),
-              absl::make_optional(net::FirstPartySetEntry(
-                  net::SchemefulSite(GURL("https://example.test")),
-                  net::SiteType::kAssociated)));
 }
 
 TEST_F(AsyncPopulatedFirstPartySetsManagerTest, QueryBeforeReady_FindOwners) {
@@ -334,11 +286,11 @@ TEST_F(AsyncPopulatedFirstPartySetsManagerTest, QueryBeforeReady_FindOwners) {
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, 0)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 class PopulatedFirstPartySetsManagerTest
@@ -784,8 +736,10 @@ TEST_F(PopulatedFirstPartySetsManagerTest, ComputeMetadata) {
   net::SchemefulSite owner(GURL("https://example.test"));
   net::SchemefulSite wss_member(GURL("wss://member1.test"));
   net::SchemefulSite wss_nonmember(GURL("wss://nonmember.test"));
-  net::FirstPartySetEntry primary_entry(owner, net::SiteType::kPrimary);
-  net::FirstPartySetEntry associated_entry(owner, net::SiteType::kAssociated);
+  net::FirstPartySetEntry primary_entry(owner, net::SiteType::kPrimary,
+                                        absl::nullopt);
+  net::FirstPartySetEntry associated_entry(owner, net::SiteType::kAssociated,
+                                           0);
 
   // Works as usual for sites that are in First-Party sets.
   EXPECT_EQ(ComputeMetadataAndWait(member, &member, {member}),
@@ -828,37 +782,6 @@ TEST_F(PopulatedFirstPartySetsManagerTest, ComputeMetadata) {
                                        &associated_entry, &associated_entry));
 }
 
-TEST_F(PopulatedFirstPartySetsManagerTest, FindOwner) {
-  const net::SchemefulSite kSetOwner1(GURL("https://example.test"));
-  const net::SchemefulSite kSetOwner2(GURL("https://foo.test"));
-
-  struct TestCase {
-    const std::string url;
-    const absl::optional<net::FirstPartySetEntry> expected;
-  } test_cases[] = {
-      {"https://example.test",
-       net::FirstPartySetEntry(kSetOwner1, net::SiteType::kPrimary)},
-      // Insecure URL
-      {"http://example.test", absl::nullopt},
-      // Test member
-      {"https://member1.test",
-       net::FirstPartySetEntry(kSetOwner1, net::SiteType::kAssociated)},
-      {"http://member1.test", absl::nullopt},
-      // Test another disjoint set
-      {"https://foo.test",
-       net::FirstPartySetEntry(kSetOwner2, net::SiteType::kPrimary)},
-      {"https://member2.test",
-       net::FirstPartySetEntry(kSetOwner2, net::SiteType::kAssociated)},
-      // Test a site not in a set
-      {"https://nonmember.test", absl::nullopt},
-  };
-
-  for (const auto& test_case : test_cases) {
-    EXPECT_EQ(test_case.expected,
-              FindOwnerAndWait(net::SchemefulSite(GURL(test_case.url))));
-  }
-}
-
 TEST_F(PopulatedFirstPartySetsManagerTest, FindOwners) {
   net::SchemefulSite kExample(GURL("https://example.test"));
   net::SchemefulSite kFoo(GURL("https://foo.test"));
@@ -871,13 +794,13 @@ TEST_F(PopulatedFirstPartySetsManagerTest, FindOwners) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary))));
+                           net::SiteType::kPrimary, absl::nullopt))));
   EXPECT_THAT(FindOwnersAndWait({kMember1}),
               UnorderedElementsAre(
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
   EXPECT_THAT(FindOwnersAndWait({kNonmember}), IsEmpty());
 
   EXPECT_THAT(FindOwnersAndWait({kExample, kNonmember}),
@@ -885,54 +808,54 @@ TEST_F(PopulatedFirstPartySetsManagerTest, FindOwners) {
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary))));
+                           net::SiteType::kPrimary, absl::nullopt))));
   EXPECT_THAT(FindOwnersAndWait({kMember1, kNonmember}),
               UnorderedElementsAre(
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 
   EXPECT_THAT(FindOwnersAndWait({kExample, kFoo}),
               UnorderedElementsAre(
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://foo.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kPrimary))));
+                           net::SiteType::kPrimary, absl::nullopt))));
   EXPECT_THAT(FindOwnersAndWait({kMember1, kFoo}),
               UnorderedElementsAre(
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, 0)),
                   Pair(SerializesTo("https://foo.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kPrimary))));
+                           net::SiteType::kPrimary, absl::nullopt))));
   EXPECT_THAT(FindOwnersAndWait({kExample, kMember2}),
               UnorderedElementsAre(
                   Pair(SerializesTo("https://example.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
   EXPECT_THAT(FindOwnersAndWait({kMember1, kMember2}),
               UnorderedElementsAre(
                   Pair(SerializesTo("https://member1.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://example.test")),
-                           net::SiteType::kAssociated)),
+                           net::SiteType::kAssociated, 0)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 class OverrideSetsFirstPartySetsManagerTest : public FirstPartySetsEnabledTest {
@@ -942,16 +865,16 @@ class OverrideSetsFirstPartySetsManagerTest : public FirstPartySetsEnabledTest {
         {net::SchemefulSite(GURL("https://member1.test")),
          net::FirstPartySetEntry(
              net::SchemefulSite(GURL("https://example.test")),
-             net::SiteType::kAssociated)},
+             net::SiteType::kAssociated, 0)},
         {net::SchemefulSite(GURL("https://member2.test")),
          net::FirstPartySetEntry(
              net::SchemefulSite(GURL("https://example.test")),
-             net::SiteType::kAssociated)},
+             net::SiteType::kAssociated, 0)},
         // Below are the owner self mappings.
         {net::SchemefulSite(GURL("https://example.test")),
          net::FirstPartySetEntry(
              net::SchemefulSite(GURL("https://example.test")),
-             net::SiteType::kPrimary)},
+             net::SiteType::kPrimary, absl::nullopt)},
     });
 
     SetFirstPartySetsContextConfig(
@@ -961,30 +884,17 @@ class OverrideSetsFirstPartySetsManagerTest : public FirstPartySetsEnabledTest {
             {net::SchemefulSite(GURL("https://foo.test")),
              {net::FirstPartySetEntry(
                  net::SchemefulSite(GURL("https://foo.test")),
-                 net::SiteType::kPrimary)}},
+                 net::SiteType::kPrimary, absl::nullopt)}},
             // Removed entry:
             {net::SchemefulSite(GURL("https://member1.test")), absl::nullopt},
             // Remapped entry:
             {net::SchemefulSite(GURL("https://member2.test")),
              {net::FirstPartySetEntry(
                  net::SchemefulSite(GURL("https://foo.test")),
-                 net::SiteType::kAssociated)}},
+                 net::SiteType::kAssociated, 0)}},
         });
   }
 };
-
-TEST_F(OverrideSetsFirstPartySetsManagerTest, FindOwner) {
-  EXPECT_EQ(
-      FindOwnerAndWait(net::SchemefulSite(GURL("https://foo.test"))),
-      net::FirstPartySetEntry(net::SchemefulSite(GURL("https://foo.test")),
-                              net::SiteType::kPrimary));
-  EXPECT_EQ(FindOwnerAndWait(net::SchemefulSite(GURL("https://member1.test"))),
-            absl::nullopt);
-  EXPECT_EQ(
-      FindOwnerAndWait(net::SchemefulSite(GURL("https://member2.test"))),
-      net::FirstPartySetEntry(net::SchemefulSite(GURL("https://foo.test")),
-                              net::SiteType::kAssociated));
-}
 
 TEST_F(OverrideSetsFirstPartySetsManagerTest, FindOwners) {
   EXPECT_THAT(FindOwnersAndWait({
@@ -996,11 +906,11 @@ TEST_F(OverrideSetsFirstPartySetsManagerTest, FindOwners) {
                   Pair(SerializesTo("https://foo.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kPrimary)),
+                           net::SiteType::kPrimary, absl::nullopt)),
                   Pair(SerializesTo("https://member2.test"),
                        net::FirstPartySetEntry(
                            net::SchemefulSite(GURL("https://foo.test")),
-                           net::SiteType::kAssociated))));
+                           net::SiteType::kAssociated, 0))));
 }
 
 TEST_F(OverrideSetsFirstPartySetsManagerTest, ComputeMetadata) {
@@ -1009,28 +919,23 @@ TEST_F(OverrideSetsFirstPartySetsManagerTest, ComputeMetadata) {
   net::SchemefulSite member1(GURL("https://member1.test"));
   net::SchemefulSite member2(GURL("https://member2.test"));
 
-  net::FirstPartySetEntry example_primary_entry(example,
-                                                net::SiteType::kPrimary);
-  net::FirstPartySetEntry foo_primary_entry(foo, net::SiteType::kPrimary);
-  net::FirstPartySetEntry foo_associated_entry(foo, net::SiteType::kAssociated);
-  {
-    // member1 has been removed from its set.
-    net::FirstPartySetMetadata expected(
-        net::SamePartyContext(Type::kCrossParty), nullptr,
-        &example_primary_entry);
+  net::FirstPartySetEntry example_primary_entry(
+      example, net::SiteType::kPrimary, absl::nullopt);
+  net::FirstPartySetEntry foo_primary_entry(foo, net::SiteType::kPrimary,
+                                            absl::nullopt);
+  net::FirstPartySetEntry foo_associated_entry(foo, net::SiteType::kAssociated,
+                                               0);
 
-    EXPECT_THAT(ComputeMetadataAndWait(member1, &example, {}),
-                testing::Eq(std::ref(expected)));
-  }
-  {
-    // member2 and foo are sites in a new set.
-    net::FirstPartySetMetadata expected(net::SamePartyContext(Type::kSameParty),
-                                        &foo_associated_entry,
-                                        &foo_primary_entry);
+  // member1 has been removed from its set.
+  EXPECT_EQ(ComputeMetadataAndWait(member1, &example, {}),
+            net::FirstPartySetMetadata(net::SamePartyContext(Type::kCrossParty),
+                                       nullptr, &example_primary_entry));
 
-    EXPECT_THAT(ComputeMetadataAndWait(member2, &foo, {}),
-                testing::Eq(std::ref(expected)));
-  }
+  // member2 and foo are sites in a new set.
+  EXPECT_EQ(
+      ComputeMetadataAndWait(member2, &foo, {}),
+      net::FirstPartySetMetadata(net::SamePartyContext(Type::kSameParty),
+                                 &foo_associated_entry, &foo_primary_entry));
 }
 
 }  // namespace network

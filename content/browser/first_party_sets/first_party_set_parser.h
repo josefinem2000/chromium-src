@@ -12,6 +12,7 @@
 #include "base/containers/flat_map.h"
 #include "base/containers/flat_set.h"
 #include "base/strings/string_piece_forward.h"
+#include "base/types/expected.h"
 #include "base/values.h"
 #include "content/common/content_export.h"
 #include "content/public/browser/first_party_sets_handler.h"
@@ -27,8 +28,7 @@ namespace content {
 class CONTENT_EXPORT FirstPartySetParser {
  public:
   using SetsMap = base::flat_map<net::SchemefulSite, net::FirstPartySetEntry>;
-  using SingleSet =
-      std::pair<net::SchemefulSite, base::flat_set<net::SchemefulSite>>;
+  using SingleSet = SetsMap;
   using ParseError = FirstPartySetsHandler::ParseError;
   using PolicySetType = FirstPartySetsHandler::PolicySetType;
   using PolicyParsingError = FirstPartySetsHandler::PolicyParsingError;
@@ -89,15 +89,10 @@ class CONTENT_EXPORT FirstPartySetParser {
   // Parses two lists of First-Party Sets from `policy` using the "replacements"
   // and "additions" list fields if present.
   //
-  // Returns an optional PolicyParsingError encoding an error and its location
-  // if any set in these lists violates the required invariants of a First-Party
-  // Set.
-  //
-  // If no errors are found and `out_sets` is non-null, then `out_sets` will
-  // be populated with the parsed replacement sets and parsed addition sets.
-  [[nodiscard]] static absl::optional<PolicyParsingError>
-  ParseSetsFromEnterprisePolicy(const base::Value::Dict& policy,
-                                ParsedPolicySetLists* out_sets);
+  // Returns the parsed lists if successful; otherwise, returns a
+  // PolicyParsingError encoding the error and its location.
+  [[nodiscard]] static base::expected<ParsedPolicySetLists, PolicyParsingError>
+  ParseSetsFromEnterprisePolicy(const base::Value::Dict& policy);
 };
 
 }  // namespace content

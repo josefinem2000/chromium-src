@@ -183,8 +183,7 @@ std::string GetSourcePathForRemovableMedia(const std::string& volume_name) {
   const auto& mount_points =
       ash::disks::DiskMountManager::GetInstance()->mount_points();
   const auto found = mount_points.find(mount_path);
-  return found == mount_points.end() ? std::string()
-                                     : found->second.source_path;
+  return found == mount_points.end() ? std::string() : found->source_path;
 }
 
 // Returns the UUID of a removable device using its volume name as a key.
@@ -393,6 +392,9 @@ std::string GetCrostiniMountPointName(Profile* profile) {
 
 std::string GetGuestOsMountPointName(Profile* profile,
                                      const guest_os::GuestId& id) {
+  if (id.vm_type == guest_os::VmType::ARCVM) {
+    return kAndroidFilesMountPointName;
+  }
   return base::JoinString(
       {"guestos", ash::ProfileHelper::GetUserIdHashFromProfile(profile),
        base::EscapeAllExceptUnreserved(id.vm_name),
@@ -1082,6 +1084,7 @@ absl::optional<base::FilePath> GetDisplayablePath(Profile* profile,
       break;
     case VOLUME_TYPE_ANDROID_FILES:
     case VOLUME_TYPE_CROSTINI:
+    case VOLUME_TYPE_GUEST_OS:
       result = base::FilePath(l10n_util::GetStringUTF8(
                                   IDS_FILE_BROWSER_MY_FILES_ROOT_LABEL))
                    .Append(volume->volume_label());
@@ -1091,7 +1094,6 @@ absl::optional<base::FilePath> GetDisplayablePath(Profile* profile,
     case VOLUME_TYPE_MOUNTED_ARCHIVE_FILE:
     case VOLUME_TYPE_PROVIDED:
     case VOLUME_TYPE_DOCUMENTS_PROVIDER:
-    case VOLUME_TYPE_GUEST_OS:
     case VOLUME_TYPE_MTP:
     case VOLUME_TYPE_SMB:
       result = base::FilePath(volume->volume_label());

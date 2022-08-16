@@ -90,8 +90,8 @@ const base::Feature kEnableOpenInNewTabFromStartSurfaceFeed{
     base::FEATURE_DISABLED_BY_DEFAULT};
 
 const base::Feature kWebUiFeed{"FeedWebUi", base::FEATURE_DISABLED_BY_DEFAULT};
-const base::FeatureParam<std::string> kWebUiScriptFetchUrl{
-    &kWebUiFeed, "scripturl", "chrome-untrusted://feed/feed.js"};
+const base::FeatureParam<std::string> kWebUiFeedUrl{
+    &kWebUiFeed, "feedurl", "https://www.google.com/feed-api/following"};
 const base::FeatureParam<bool> kWebUiDisableContentSecurityPolicy{
     &kWebUiFeed, "disableCsp", false};
 
@@ -105,7 +105,7 @@ std::string GetFeedReferrerUrl() {
 }
 
 const base::Feature kPersonalizeFeedUnsignedUsers{
-    "PersonalizeFeedUnsignedUsers", base::FEATURE_ENABLED_BY_DEFAULT};
+    "PersonalizeFeedUnsignedUsers", base::FEATURE_DISABLED_BY_DEFAULT};
 
 const base::Feature kInfoCardAcknowledgementTracking{
     "InfoCardAcknowledgementTracking", base::FEATURE_DISABLED_BY_DEFAULT};

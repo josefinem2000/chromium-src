@@ -33,6 +33,15 @@ namespace gfx {
 class Vector2dF;
 }
 
+namespace wl {
+
+enum class EventDispatchPolicy {
+  kImmediate,
+  kOnFrame,
+};
+
+}  // namespace wl
+
 namespace ui {
 
 class WaylandConnection;
@@ -104,7 +113,8 @@ class WaylandEventSource : public PlatformEventSource,
 
   // WaylandPointer::Delegate
   void OnPointerFocusChanged(WaylandWindow* window,
-                             const gfx::PointF& location) override;
+                             const gfx::PointF& location,
+                             wl::EventDispatchPolicy dispatch_policy) override;
   void OnPointerButtonEvent(EventType evtype,
                             int changed_button,
                             WaylandWindow* window = nullptr) override;
@@ -120,19 +130,18 @@ class WaylandEventSource : public PlatformEventSource,
   const WaylandWindow* GetPointerTarget() const override;
 
   // WaylandTouch::Delegate
-  using DispatchPolicy = WaylandTouch::Delegate::EventDispatchPolicy;
   void OnTouchPressEvent(WaylandWindow* window,
                          const gfx::PointF& location,
                          base::TimeTicks timestamp,
                          PointerId id,
-                         EventDispatchPolicy dispatch_policy) override;
+                         wl::EventDispatchPolicy dispatch_policy) override;
   void OnTouchReleaseEvent(base::TimeTicks timestamp,
                            PointerId id,
-                           EventDispatchPolicy dispatch_policy) override;
+                           wl::EventDispatchPolicy dispatch_policy) override;
   void OnTouchMotionEvent(const gfx::PointF& location,
                           base::TimeTicks timestamp,
                           PointerId id,
-                          EventDispatchPolicy dispatch_policy) override;
+                          wl::EventDispatchPolicy dispatch_policy) override;
   void OnTouchCancelEvent() override;
   void OnTouchFrame() override;
   void OnTouchFocusChanged(WaylandWindow* window) override;
@@ -172,6 +181,19 @@ class WaylandEventSource : public PlatformEventSource,
     bool is_axis_stop = false;
   };
 
+  // TODO(https://crrev.com/c/1298504): Unify |PointerFrame| and |TouchFrame|
+  // and make them non-copyable/move-only.
+  struct PointerFrame {
+    PointerFrame(const MouseEvent& event,
+                 base::OnceCallback<void()> completion_cb);
+    PointerFrame(const PointerFrame& other) = delete;
+    PointerFrame(PointerFrame&&) = delete;
+    ~PointerFrame();
+
+    std::unique_ptr<Event> event;
+    base::OnceCallback<void()> completion_cb;
+  };
+
   struct TouchFrame {
     TouchFrame(const TouchEvent& event,
                base::OnceCallback<void()> completion_cb);
@@ -189,7 +211,6 @@ class WaylandEventSource : public PlatformEventSource,
   // WaylandWindowObserver:
   void OnWindowRemoved(WaylandWindow* window) override;
 
-  void UpdateKeyboardModifiers(int modifier, bool down);
   void HandleTouchFocusChange(WaylandWindow* window,
                               bool focused,
                               absl::optional<PointerId> id = absl::nullopt);
@@ -211,6 +232,8 @@ class WaylandEventSource : public PlatformEventSource,
 
   // Ensure a valid instance of the PointerScrollData class member.
   PointerScrollData& EnsurePointerScrollData();
+
+  void ProcessPointerScrollData();
 
   // Set the target to the event, then dispatch the event.
   void SetTargetAndDispatchEvent(Event* event, EventTarget* target);
@@ -261,6 +284,10 @@ class WaylandEventSource : public PlatformEventSource,
   // Order set of touch events to be dispatching on the next
   // wl_touch::frame event.
   std::deque<std::unique_ptr<TouchFrame>> touch_frames_;
+
+  // Order set of pointer events to be dispatching on the next
+  // wl_pointer::frame event.
+  std::deque<std::unique_ptr<PointerFrame>> pointer_frames_;
 
   // Map that keeps track of the current touch points, associating touch IDs to
   // to the surface/location where they happened.

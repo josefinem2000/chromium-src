@@ -242,9 +242,6 @@ BLINK_COMMON_EXPORT extern const base::FeatureParam<int>
     kForceDarkForegroundLightnessThresholdParam;
 BLINK_COMMON_EXPORT extern const base::FeatureParam<int>
     kForceDarkBackgroundLightnessThresholdParam;
-BLINK_COMMON_EXPORT extern const base::FeatureParam<
-    ForceDarkIncreaseTextContrast>
-    kForceDarkIncreaseTextContrastParam;
 
 // Returns true when PlzDedicatedWorker is enabled.
 BLINK_COMMON_EXPORT bool IsPlzDedicatedWorkerEnabled();
@@ -526,8 +523,6 @@ BLINK_COMMON_EXPORT extern const base::Feature kUsePageViewportInLCP;
 // other sinks connected do not use alpha.
 BLINK_COMMON_EXPORT extern const base::Feature kAllowDropAlphaForMediaStream;
 
-BLINK_COMMON_EXPORT extern const base::Feature kThirdPartyStoragePartitioning;
-
 BLINK_COMMON_EXPORT extern const base::Feature kDesktopPWAsSubApps;
 
 // Suppresses console errors for CORS problems which report an associated
@@ -537,6 +532,7 @@ BLINK_COMMON_EXPORT extern const base::Feature kCORSErrorsIssueOnly;
 // Makes Persistent quota the same as Temporary quota.
 BLINK_COMMON_EXPORT
 extern const base::Feature kPersistentQuotaIsTemporaryQuota;
+BLINK_COMMON_EXPORT bool IsPersistentQuotaIsTemporaryQuota();
 
 // If enabled, the ResourceLoadScheculer will take the current network state
 // into consideration, when it plans to delay a low-priority throttleable
@@ -651,8 +647,6 @@ BLINK_COMMON_EXPORT extern const base::Feature kClientHintThirdPartyDelegation;
 BLINK_COMMON_EXPORT extern const base::Feature kPrefetchAndroidFonts;
 #endif
 
-BLINK_COMMON_EXPORT extern const base::Feature kCompositedCaret;
-
 // Allows pages that support App Install Banners to stay eligible for the
 // back/forward cache.
 BLINK_COMMON_EXPORT extern const base::Feature kBackForwardCacheAppBanner;
@@ -754,6 +748,8 @@ enum class DelayAsyncScriptDelayType {
 };
 BLINK_COMMON_EXPORT extern const base::FeatureParam<DelayAsyncScriptDelayType>
     kDelayAsyncScriptExecutionDelayParam;
+BLINK_COMMON_EXPORT extern const base::FeatureParam<bool>
+    kDelayAsyncScriptExecutionCrossSiteOnlyParam;
 
 // If enabled, parser-blocking scripts are force-deferred.
 // https://crbug.com/1339112
@@ -847,6 +843,10 @@ BLINK_COMMON_EXPORT extern const base::Feature kClipboardUnsanitizedContent;
 // kResourceEfficient thread type.
 BLINK_COMMON_EXPORT extern const base::Feature
     kWebRtcThreadsUseResourceEfficientType;
+
+// If enabled, fine-grained UMA metrics for IntersectionObserver will only be
+// collected on 10% of animation frames.
+BLINK_COMMON_EXPORT extern const base::Feature kThrottleIntersectionObserverUMA;
 
 }  // namespace features
 }  // namespace blink

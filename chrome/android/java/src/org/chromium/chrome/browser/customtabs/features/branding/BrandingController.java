@@ -18,6 +18,7 @@ import org.chromium.base.supplier.OneshotSupplierImpl;
 import org.chromium.base.task.PostTask;
 import org.chromium.base.task.TaskTraits;
 import org.chromium.chrome.R;
+import org.chromium.chrome.browser.flags.BooleanCachedFieldTrialParameter;
 import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.flags.IntCachedFieldTrialParameter;
 import org.chromium.content_public.browser.UiThreadTaskTraits;
@@ -31,9 +32,9 @@ import java.util.concurrent.TimeUnit;
 public class BrandingController {
     private static final String PARAM_BRANDING_CADENCE_NAME = "branding_cadence";
     private static final String PARAM_MAX_BLANK_TOOLBAR_TIMEOUT_MS = "max_blank_toolbar_timeout";
+    private static final String PARAM_USE_TEMPORARY_STORAGE = "use_temporary_storage";
     private static final int DEFAULT_BRANDING_CADENCE_MS = (int) TimeUnit.HOURS.toMillis(1);
     private static final int DEFAULT_MAX_BLANK_TOOLBAR_TIMEOUT_MS = 500;
-
     /**
      * The maximum time allowed from CCT Toolbar initialized until it should show the URL and title.
      */
@@ -53,6 +54,14 @@ public class BrandingController {
     public static final IntCachedFieldTrialParameter BRANDING_CADENCE_MS =
             new IntCachedFieldTrialParameter(ChromeFeatureList.CCT_BRAND_TRANSPARENCY,
                     PARAM_BRANDING_CADENCE_NAME, DEFAULT_BRANDING_CADENCE_MS);
+    /**
+     * Use temporary storage for branding launch time. The launch time will not persists to the
+     * shared pref, but instead only lasts as long as Chrome is alive. This param is added for
+     * easier manual testing and should not be used for official channels.
+     */
+    public static final BooleanCachedFieldTrialParameter USE_TEMPORARY_STORAGE =
+            new BooleanCachedFieldTrialParameter(
+                    ChromeFeatureList.CCT_BRAND_TRANSPARENCY, PARAM_USE_TEMPORARY_STORAGE, false);
 
     private final CallbackController mCallbackController = new CallbackController();
     private final @BrandingDecision OneshotSupplierImpl<Integer> mBrandingDecision =
@@ -90,9 +99,12 @@ public class BrandingController {
         mToolbarBrandingDelegate = delegate;
 
         // Start the task to timeout the branding check. If mBrandingChecker already finished,
-        // canceling the task does nothing.
+        // canceling the task does nothing. Does not interrupt if the task is running, since the
+        // BrandingChecker#doInBackground will collect metrics at the end.
         PostTask.postDelayedTask(UiThreadTaskTraits.USER_VISIBLE,
-                () -> mBrandingChecker.cancel(true), MAX_BLANK_TOOLBAR_TIMEOUT_MS.getValue());
+                ()
+                        -> mBrandingChecker.cancel(/*mayInterruptIfRunning*/ false),
+                MAX_BLANK_TOOLBAR_TIMEOUT_MS.getValue());
 
         // Set location bar to empty as controller is waiting for mBrandingDecision.
         // This should not cause any UI jank even if a decision is made immediately, as

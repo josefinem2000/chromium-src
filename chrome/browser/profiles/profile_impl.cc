@@ -89,6 +89,7 @@
 #include "chrome/browser/profiles/profile_metrics.h"
 #include "chrome/browser/push_messaging/push_messaging_service_factory.h"
 #include "chrome/browser/push_messaging/push_messaging_service_impl.h"
+#include "chrome/browser/reduce_accept_language/reduce_accept_language_factory.h"
 #include "chrome/browser/safe_browsing/safe_browsing_service.h"
 #include "chrome/browser/sessions/exit_type_service.h"
 #include "chrome/browser/sharing/sharing_service_factory.h"
@@ -779,10 +780,6 @@ void ProfileImpl::DoFinalInit(CreateMode create_mode) {
 
   PushMessagingServiceImpl::InitializeForProfile(this);
 
-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
-  signin_ui_util::InitializePrefsForProfile(this);
-#endif
-
   site_isolation::SiteIsolationPolicy::ApplyPersistedIsolatedOrigins(this);
 
   content::URLDataSource::Add(this,
@@ -1350,6 +1347,11 @@ ProfileImpl::GetFederatedIdentityActiveSessionPermissionContext() {
 content::FederatedIdentitySharingPermissionContextDelegate*
 ProfileImpl::GetFederatedIdentitySharingPermissionContext() {
   return FederatedIdentitySharingPermissionContextFactory::GetForProfile(this);
+}
+
+content::ReduceAcceptLanguageControllerDelegate*
+ProfileImpl::GetReduceAcceptLanguageControllerDelegate() {
+  return ReduceAcceptLanguageFactory::GetForProfile(this);
 }
 
 std::string ProfileImpl::GetMediaDeviceIDSalt() {

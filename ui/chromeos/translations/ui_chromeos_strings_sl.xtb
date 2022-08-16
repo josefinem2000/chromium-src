@@ -5,6 +5,7 @@
 <translation id="1047956942837015229">Brisanje toliko elementov: <ph name="COUNT" /> ...</translation>
 <translation id="1049926623896334335">Wordov dokument</translation>
 <translation id="1056775291175587022">Ni omrežij</translation>
+<translation id="1056898198331236512">Opozorilo</translation>
 <translation id="1060368002126861100">Če želite datoteke odpreti z aplikacijo <ph name="APP_NAME" />, jih najprej premaknite v mapo z datotekami sistema Windows.</translation>
 <translation id="1062407476771304334">Zamenjaj</translation>
 <translation id="1119447706177454957">Notranja napaka</translation>
@@ -244,6 +245,7 @@
 <translation id="3138624403379688522">Neveljavna koda PIN. Imate še toliko poskusov: <ph name="RETRIES" />.</translation>
 <translation id="3160842278951476457"><ph name="ISSUED_BY" /> [<ph name="ISSUED_TO" />] (podprto s strojno opremo)</translation>
 <translation id="3188257591659621405">Moje datoteke</translation>
+<translation id="3194553149358267393">Ni nedavnih zvočnih datotek</translation>
 <translation id="3197563288998582412">Združeno kraljestvo – Dvorak</translation>
 <translation id="3202131003361292969">Pot</translation>
 <translation id="3205852408225871810">portugalščina (Brazilija)</translation>
@@ -289,6 +291,7 @@
 <translation id="3522708245912499433">portugalščina</translation>
 <translation id="3524311639100184459">Pozor: Te datoteke so začasne in bodo morda samodejno izbrisane, da se sprosti prostor na disku.  <ph name="BEGIN_LINK" />Več o tem<ph name="END_LINK" /></translation>
 <translation id="3527085408025491307">Mapa</translation>
+<translation id="3548125359243647069">Prevečkrat ste vnesli napačno kodo PIN.</translation>
 <translation id="3549797760399244642">Pojdite na drive.google.com ...</translation>
 <translation id="3553048479571901246">Če želite datoteke odpreti z aplikacijo <ph name="APP_NAME" />, jih najprej kopirajte v mapo z datotekami sistema Windows.</translation>
 <translation id="3556731189587832921">angleščina (ZDA) z mednarodno računalniško tipkovnico</translation>
@@ -301,6 +304,7 @@
 <translation id="3606220979431771195">Turška tipkovnica F</translation>
 <translation id="3616113530831147358">Zvok</translation>
 <translation id="3619115746895587757">Kapučino</translation>
+<translation id="3619593063686672873">Ni nedavnih videoposnetkov</translation>
 <translation id="3620292326130836921">Vse je varnostno kopirano!</translation>
 <translation id="3634507049637220048">Omrežje <ph name="NETWORK_INDEX" /> od <ph name="NETWORK_COUNT" />, <ph name="NETWORK_NAME" />, <ph name="CONNECTION_STATUS" />, upravlja ga vaš skrbnik, podrobnosti</translation>
 <translation id="3645233063072417428">Toliko elementov je bilo premaknjenih: <ph name="NUMBER_OF_ITEMS" />.</translation>
@@ -399,6 +403,7 @@
 <translation id="4572815280350369984">Datoteka <ph name="FILE_TYPE" /></translation>
 <translation id="457386861538956877">Več ...</translation>
 <translation id="4579744207439506346">Vnos <ph name="ENTRY_NAME" /> je bil dodan v izbor.</translation>
+<translation id="4583436353463424810">Ni nedavnih dokumentov</translation>
 <translation id="4594543368593301662">Prikaz rezultatov za »<ph name="SEARCH_TERM" />«.</translation>
 <translation id="4599600860674643278">Filter je ponastavljen.</translation>
 <translation id="4603392156942865207">Kopiranje datoteke <ph name="FILE_NAME" /> v mapo <ph name="FOLDER_NAME" /></translation>
@@ -487,6 +492,7 @@
 <translation id="516592729076796170">Angleška tipkovnica Dvorak za programerje (ZDA)</translation>
 <translation id="5172749059808361023">Podrobnosti o omejitvi</translation>
 <translation id="5177526793333269655">Pogled sličic</translation>
+<translation id="5181896909298187506">Ni nedavnih datotek</translation>
 <translation id="5194713942430106590">Kliknite, če želite razvrstiti elemente stolpca v naraščajočem vrstnem redu.</translation>
 <translation id="5211614973734216083">ferščina</translation>
 <translation id="5218183485292899140">švicarska francoščina</translation>
@@ -614,6 +620,7 @@
 <translation id="6267547857941397424">Omrežje <ph name="NETWORK_INDEX" /> od <ph name="NETWORK_COUNT" />, <ph name="PHONE_NAME" />, moč signala je <ph name="SIGNAL_STRENGTH" /> %, stanje baterije telefona je <ph name="BATTERY_STATUS" /> %, vzpostavitev povezave</translation>
 <translation id="6269630227984243955">malajščina</translation>
 <translation id="6287852322318138013">Izberite aplikacijo za odpiranje te datoteke</translation>
+<translation id="6295542640242147836">Zaklepanje kartice SIM</translation>
 <translation id="6296410173147755564">Neveljavna koda PUK</translation>
 <translation id="6312403991423642364">Neznana napaka v omrežju</translation>
 <translation id="6317608858038767920">Imenski strežnik po meri <ph name="INPUT_INDEX" /></translation>
@@ -722,6 +729,7 @@
 <translation id="7189874332498648577"><ph name="NUMBER_OF_GB" /> GB</translation>
 <translation id="7191454237977785534">Shrani datoteko kot</translation>
 <translation id="7229570126336867161">Potreben je EVDO</translation>
+<translation id="7230898482850090046">Skrbnik je zahteval, da izklopite nastavitev zaklepanja kartice SIM.</translation>
 <translation id="7238097264433196391">Ime pogona</translation>
 <translation id="7238643356913091553"><ph name="NETWORK_NAME" />, podrobnosti</translation>
 <translation id="7246947237293279874">Proxy FTP</translation>
@@ -742,6 +750,7 @@
 <translation id="7408870451288633753">češčina</translation>
 <translation id="7417453074306512035">Tipkovnica za etiopščino</translation>
 <translation id="7417705661718309329">Googlov zemljevid</translation>
+<translation id="7458955835361612701">Ni nedavnih slik</translation>
 <translation id="7460898608667578234">ukrajinščina</translation>
 <translation id="7469894403370665791">Samodejno vzpostavi povezavo s tem omrežjem</translation>
 <translation id="7486315294984620427">Če želite spustiti datoteke v program Parallels Desktop, morate datoteko kopirati med datoteke sistema Windows.</translation>
@@ -753,6 +762,7 @@
 <translation id="7505167922889582512">Prikaz skritih datotek</translation>
 <translation id="7514365320538308">Prenos</translation>
 <translation id="751507702149411736">beloruščina</translation>
+<translation id="7521790570754130607">Če želite uporabljati prenos podatkov v mobilnem omrežju, potrebujete kodo PIN.</translation>
 <translation id="7532029025027028521">transkripcija perzijščine</translation>
 <translation id="7544830582642184299">Aplikacijam za Linux dovolite dostop do datotek v Googlu Drive. Spremembe bodo sinhronizirane z drugimi napravami.</translation>
 <translation id="7547009467130558110">Športni copat</translation>
@@ -777,6 +787,7 @@
 <translation id="76959938259365003">Smetnjaka ni bilo mogoče izprazniti.</translation>
 <translation id="770015031906360009">grščina</translation>
 <translation id="7705251383879779343">Kopirano: <ph name="FILE_NAME" />.</translation>
+<translation id="7708271999969613024">Če želite uporabiti to omrežje, morate vnesti 8-mestno osebno kodo za odblokiranje (PUK), ki jo zagotovi operater.</translation>
 <translation id="7711920809702896782">Podatki o sliki</translation>
 <translation id="7724603315864178912">Izreži</translation>
 <translation id="7730494089396812859">Prikaz podrobnosti varnostnega kopiranja v oblak</translation>
@@ -871,6 +882,7 @@
 <translation id="8437209419043462667">Združene države</translation>
 <translation id="8452135315243592079">Ni kartice SIM</translation>
 <translation id="8456681095658380701">Neveljavno ime</translation>
+<translation id="8457767749626250697">Vaša kartica SIM je zaklenjena</translation>
 <translation id="8459404855768962328">Če boste kopirali ta element, bo deljen z vsemi osebami, ki jim je vidna deljena mapa »<ph name="DESTINATION_NAME" />«.</translation>
 <translation id="8461467696380332069">Z desnim gumbom kliknite datoteko in izberite »Pripni na polico« za hiter dostop do datotek na polici.</translation>
 <translation id="8461914792118322307">Proxy</translation>

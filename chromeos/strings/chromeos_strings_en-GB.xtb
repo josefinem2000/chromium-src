@@ -211,6 +211,7 @@
 <translation id="2536159006530886390">Cannot connect to Internet.</translation>
 <translation id="2570743873672969996">Running <ph name="TEST_NAME" /> test…</translation>
 <translation id="2584559707064218956">To set up, go to Settings</translation>
+<translation id="2597774443162333062">Files will be sent to Google for debugging</translation>
 <translation id="2619761439309613843">Daily Refresh</translation>
 <translation id="2620436844016719705">System</translation>
 <translation id="2638662041295312666">Sign-in image</translation>
@@ -334,6 +335,7 @@
 <translation id="3866249974567520381">Description</translation>
 <translation id="387301095347517405">The number of times that your battery has gone through a full charging cycle</translation>
 <translation id="3885327323343477505">Change screen saver</translation>
+<translation id="3913541166352922049">System will shut down in <ph name="DELAY_DURATION" /> seconds.</translation>
 <translation id="3923184630988645767">Data usage</translation>
 <translation id="3924044641767672375">Connecting to Wi-Fi is recommended to make the repair process easier. Your network will be saved.</translation>
 <translation id="3932043219784172185">No device connected</translation>
@@ -519,6 +521,7 @@ Try tapping the mic to ask me anything.</translation>
 <translation id="5346687412805619883">Local network</translation>
 <translation id="5358174242040570474">Something went wrong. Try choosing a wallpaper again or reopen the app.</translation>
 <translation id="5372659122375744710">Wi-Fi network is not secure</translation>
+<translation id="5376136733560434719">Preparing to shut down…</translation>
 <translation id="5376354385557966694">Automatic light mode</translation>
 <translation id="537872351913703572">Device will go to a different user or organisation</translation>
 <translation id="5389159777326897627">Wallpaper and style</translation>
@@ -672,6 +675,7 @@ Try tapping the mic to ask me anything.</translation>
 <translation id="6659594942844771486">Tab</translation>
 <translation id="6692996468359469499">Get info related to your selection</translation>
 <translation id="6704062477274546131">DNS resolution</translation>
+<translation id="6719240409382354629">Preparing to restart…</translation>
 <translation id="6723839937902243910">Power</translation>
 <translation id="6723847290197874913">Keyboard backlight</translation>
 <translation id="672609503628871915">See what's new</translation>
@@ -747,6 +751,7 @@ Try tapping the mic to ask me anything.</translation>
 <translation id="7427315641433634153">MSCHAP</translation>
 <translation id="7435977162516949853">{NUMBER_OF_PAGES,plural, =1{Scanning completed. 1 page scanned}other{Scanning completed. {NUMBER_OF_PAGES} pages scanned}}</translation>
 <translation id="7469648432129124067">Portal detected</translation>
+<translation id="7478405245077383528">System will restart in <ph name="DELAY_DURATION" /> seconds.</translation>
 <translation id="7481312909269577407">Forward</translation>
 <translation id="7487067081878637334">Technology</translation>
 <translation id="7490813197707563893">MAC address</translation>
@@ -889,6 +894,7 @@ Try tapping the mic to ask me anything.</translation>
 <translation id="8747900814994928677">Confirm change</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Google Photos album</translation>
+<translation id="8778600430213950389">Something went wrong. This is most likely due to a hardware issue. Replace the main board and try the repair process again.</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">This network may have a captive portal</translation>
 <translation id="8798099450830957504">Default</translation>
@@ -942,6 +948,7 @@ Try tapping the mic to ask me anything.</translation>
 <translation id="910415269708673980">Refresh ticket for <ph name="PRINCIPAL_NAME" /></translation>
 <translation id="9106415115617144481">Scanning page <ph name="PAGE_NUMBER" /></translation>
 <translation id="9111102763498581341">Unlock</translation>
+<translation id="9118126012493516930">Can't complete repair</translation>
 <translation id="9122602430962285795">To reconnect, go to Settings</translation>
 <translation id="9126720536733509015">Save multiple pages to one PDF</translation>
 <translation id="9137526406337347448">Google Services</translation>

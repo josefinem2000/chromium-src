@@ -171,6 +171,11 @@ struct TestCase {
     return *this;
   }
 
+  TestCase& EnableVirtioBlkForData() {
+    options.enable_virtio_blk_for_data = true;
+    return *this;
+  }
+
   TestCase& EnableMirrorSync() {
     options.enable_mirrorsync = true;
     return *this;
@@ -1257,6 +1262,8 @@ WRAPPED_INSTANTIATE_TEST_SUITE_P(
         TestCase("transferDragFileListItemSelects").FilesSwa(),
         TestCase("transferDragAndDrop"),
         TestCase("transferDragAndDrop").FilesSwa(),
+        TestCase("transferDragAndDropFolder"),
+        TestCase("transferDragAndDropFolder").FilesSwa(),
         TestCase("transferDragAndHover"),
         TestCase("transferDragAndHover").FilesSwa(),
         TestCase("transferDropBrowserFile"),
@@ -2226,6 +2233,9 @@ WRAPPED_INSTANTIATE_TEST_SUITE_P(
         TestCase("fakesListed").EnableGuestOsFiles(),
         TestCase("listUpdatedWhenGuestsChanged").EnableGuestOsFiles(),
         TestCase("mountGuestSuccess").EnableGuestOsFiles(),
-        TestCase("notListedWithoutFlag")));
+        TestCase("notListedWithoutFlag"),
+        TestCase("mountAndroidVolumeSuccess")
+            .EnableGuestOsFiles()
+            .EnableVirtioBlkForData()));
 
 }  // namespace file_manager

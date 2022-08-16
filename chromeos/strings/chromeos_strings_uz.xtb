@@ -211,6 +211,7 @@
 <translation id="2536159006530886390">Internetga ulana olmadi.</translation>
 <translation id="2570743873672969996"><ph name="TEST_NAME" /> testi bajarilmoqda...</translation>
 <translation id="2584559707064218956">Sozlash uchun Sozlamalarni oching</translation>
+<translation id="2597774443162333062">Fayllar batafsil koʻrib chiqilishi uchun Google serverlariga yuboriladi</translation>
 <translation id="2619761439309613843">Kundalik yangilash</translation>
 <translation id="2620436844016719705">Tizim</translation>
 <translation id="2638662041295312666">Kirish sahifasidagi rasm</translation>
@@ -334,6 +335,7 @@
 <translation id="3866249974567520381">Tavsif</translation>
 <translation id="387301095347517405">Batareya toʻliq quvvat olgan davrlar soni</translation>
 <translation id="3885327323343477505">Ekran lavhasini oʻzgartirish</translation>
+<translation id="3913541166352922049">Tizim <ph name="DELAY_DURATION" /> soniyadan keyin yakunlanadi.</translation>
 <translation id="3923184630988645767">Trafik sarfi</translation>
 <translation id="3924044641767672375">Taʼmirlash jarayoni oson boʻlishi uchun Wi-Fi orqali ulanish tavsiya etiladi. Tarmoq saqlanib qoladi.</translation>
 <translation id="3932043219784172185">Hech qaysi qurilma ulanmagan!</translation>
@@ -519,6 +521,7 @@ Mikrofon ustiga bosing va savolni ayting.</translation>
 <translation id="5346687412805619883">Mahalliy tarmoq</translation>
 <translation id="5358174242040570474">Xatolik yuz berdi. Fon rasmini qayta tanlang yoki ilovani qaytadan oching.</translation>
 <translation id="5372659122375744710">WiFi tarmoq xavfsiz emas</translation>
+<translation id="5376136733560434719">Tizim yakunlanish arafasida...</translation>
 <translation id="5376354385557966694">Avtomatik kunduzgi rejim</translation>
 <translation id="537872351913703572">Qurilma foydalanuvchisi yoki tashkiloti oʻzgaradi</translation>
 <translation id="5389159777326897627">Fon rasmi va uslubi</translation>
@@ -672,6 +675,7 @@ Mikrofon ustiga bosing va savolni ayting.</translation>
 <translation id="6659594942844771486">Varaq</translation>
 <translation id="6692996468359469499">Tanlovingizga aloqador axborot olish</translation>
 <translation id="6704062477274546131">DNS parametrlari</translation>
+<translation id="6719240409382354629">Qayta ishga tushirilish arafasida...</translation>
 <translation id="6723839937902243910">Quvvat</translation>
 <translation id="6723847290197874913">Klaviatura orqa chirogʻi</translation>
 <translation id="672609503628871915">Nimalar yangiligini ko‘ring</translation>
@@ -747,6 +751,7 @@ Mikrofon ustiga bosing va savolni ayting.</translation>
 <translation id="7427315641433634153">MSCHAP</translation>
 <translation id="7435977162516949853">{NUMBER_OF_PAGES,plural, =1{Skanerlandi. 1 ta sahifa skanerlandi}other{Skanerlandi. {NUMBER_OF_PAGES} ta sahifa skanerlandi}}</translation>
 <translation id="7469648432129124067">Portal aniqlandi</translation>
+<translation id="7478405245077383528">Tizim <ph name="DELAY_DURATION" /> soniyadan keyin qayta ishga tushadi.</translation>
 <translation id="7481312909269577407">Oldinga</translation>
 <translation id="7487067081878637334">Texnologiya</translation>
 <translation id="7490813197707563893">MAC manzil</translation>
@@ -889,6 +894,7 @@ Mikrofon ustiga bosing va savolni ayting.</translation>
 <translation id="8747900814994928677">Almashtiruvni tasdiqlang</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Google Photos albomi</translation>
+<translation id="8778600430213950389">Xatolik yuz berdi. Bu, ehtimol, qurilma muammosi bilan bogʻliq. Asosiy platani almashtiring va tuzatish jarayonini qaytadan boshlang.</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">Bu tarmoqda autentifikatsiya portali boʻlishi mumkin</translation>
 <translation id="8798099450830957504">Standart</translation>
@@ -942,6 +948,7 @@ Mikrofon ustiga bosing va savolni ayting.</translation>
 <translation id="910415269708673980"><ph name="PRINCIPAL_NAME" /> uchun chiptani yangilash</translation>
 <translation id="9106415115617144481"><ph name="PAGE_NUMBER" /> ta sahifa skanerlandi</translation>
 <translation id="9111102763498581341">Qulfdan yechish</translation>
+<translation id="9118126012493516930">Tuzatilmadi</translation>
 <translation id="9122602430962285795">Qayta ulanish uchun Sozlamalarni oching</translation>
 <translation id="9126720536733509015">Bir nechta sahifani bitta PDFga saqlash</translation>
 <translation id="9137526406337347448">Google xizmatlari</translation>

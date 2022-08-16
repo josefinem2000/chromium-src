@@ -15,12 +15,12 @@
 #include "base/memory/ptr_util.h"
 #include "base/run_loop.h"
 #include "base/timer/mock_timer.h"
+#include "chromeos/ash/components/dbus/shill/shill_service_client.h"
 #include "chromeos/ash/components/network/auto_connect_handler.h"
 #include "chromeos/ash/components/network/network_cert_loader.h"
 #include "chromeos/ash/components/network/network_handler.h"
 #include "chromeos/ash/components/network/network_handler_test_helper.h"
 #include "chromeos/ash/components/network/system_token_cert_db_storage.h"
-#include "chromeos/dbus/shill/shill_service_client.h"
 #include "chromeos/services/network_config/public/cpp/cros_network_config_test_helper.h"
 #include "dbus/object_path.h"
 #include "third_party/cros_system_api/dbus/shill/dbus-constants.h"
@@ -64,7 +64,7 @@ class AutoConnectNotifierTest : public AshTestBase {
         ->auto_connect_->set_timer_for_testing(
             base::WrapUnique(mock_notification_timer_));
 
-    chromeos::ShillServiceClient::Get()->GetTestInterface()->AddService(
+    ShillServiceClient::Get()->GetTestInterface()->AddService(
         kTestServicePath, kTestServiceGuid, kTestServiceName, shill::kTypeWifi,
         shill::kStateIdle, true /* visible*/);
     // Ensure fake DBus service initialization completes.
@@ -87,9 +87,9 @@ class AutoConnectNotifierTest : public AshTestBase {
   }
 
   void SuccessfullyJoinWifiNetwork() {
-    chromeos::ShillServiceClient::Get()->Connect(
-        dbus::ObjectPath(kTestServicePath), base::BindOnce([]() {}),
-        chromeos::ShillServiceClient::ErrorCallback());
+    ShillServiceClient::Get()->Connect(dbus::ObjectPath(kTestServicePath),
+                                       base::BindOnce([]() {}),
+                                       ShillServiceClient::ErrorCallback());
     base::RunLoop().RunUntilIdle();
   }
 

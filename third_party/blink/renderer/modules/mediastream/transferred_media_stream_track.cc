@@ -36,7 +36,7 @@
 #include "third_party/blink/renderer/modules/mediastream/media_stream_video_track.h"
 #include "third_party/blink/renderer/modules/mediastream/overconstrained_error.h"
 #include "third_party/blink/renderer/modules/mediastream/processed_local_audio_source.h"
-#include "third_party/blink/renderer/modules/mediastream/user_media_controller.h"
+#include "third_party/blink/renderer/modules/mediastream/user_media_client.h"
 #include "third_party/blink/renderer/modules/mediastream/webaudio_media_stream_audio_sink.h"
 #include "third_party/blink/renderer/platform/heap/collection_support/heap_vector.h"
 #include "third_party/blink/renderer/platform/heap/garbage_collected.h"
@@ -127,13 +127,17 @@ String TransferredMediaStreamTrack::readyState() const {
 }
 
 MediaStreamTrack* TransferredMediaStreamTrack::clone(
-    ScriptState* script_state) {
+    ExecutionContext* execution_context) {
   if (track_) {
-    return track_->clone(script_state);
+    return track_->clone(execution_context);
   }
-  // TODO(https://crbug.com/1288839): Create another TransferredMediaStreamTrack
-  // and call track_->clone() once track_ is initialized.
-  return nullptr;
+
+  auto* cloned_tmst = MakeGarbageCollected<TransferredMediaStreamTrack>(
+      execution_context, data_);
+
+  setter_call_order_.push_back(CLONE);
+  clone_list_.push_back(cloned_tmst);
+  return cloned_tmst;
 }
 
 void TransferredMediaStreamTrack::stopTrack(
@@ -219,6 +223,12 @@ void TransferredMediaStreamTrack::SetImplementation(MediaStreamTrack* track) {
         enabled_state_list_.pop_front();
         break;
       }
+      case CLONE: {
+        MediaStreamTrack* real_track_clone = track->clone(execution_context_);
+        clone_list_.front()->SetImplementation(real_track_clone);
+        clone_list_.pop_front();
+        break;
+      }
     }
   }
 
@@ -234,6 +244,11 @@ void TransferredMediaStreamTrack::SetImplementation(MediaStreamTrack* track) {
     track_->AddObserver(observer);
   }
   observers_.clear();
+}
+
+void TransferredMediaStreamTrack::SetComponentImplementation(
+    MediaStreamComponent* component) {
+  transferred_component_->SetImplementation(component);
 }
 
 void TransferredMediaStreamTrack::SetConstraints(
@@ -384,6 +399,7 @@ void TransferredMediaStreamTrack::Trace(Visitor* visitor) const {
   visitor->Trace(execution_context_);
   visitor->Trace(event_propagator_);
   visitor->Trace(observers_);
+  visitor->Trace(clone_list_);
 }
 
 }  // namespace blink

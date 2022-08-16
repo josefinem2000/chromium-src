@@ -734,9 +734,9 @@
       'filepath': 'chromeos/',
     },
     'chromeos_attestation': {
-      'filepath': 'ash/components/attestation/|'\
-                  'chrome/browser/ash/attestation/|'\
-                  'chrome/browser/extensions/api/enterprise_platform_keys_private/',
+      'filepath': 'chrome/browser/ash/attestation/|'\
+                  'chrome/browser/extensions/api/enterprise_platform_keys_private/|'\
+                  'chromeos/ash/components/attestation/',
     },
     'chromeos_bluetooth': {
       'filepath': 'ash/system/bluetooth/'\
@@ -771,8 +771,8 @@
     },
     'chromeos_net': {
       'filepath': 'ash/system/network/|'\
+                  'chromeos/ash/components/dbus/shill/|'\
                   'chromeos/ash/components/network/|'\
-                  'chromeos/dbus/shill/|'\
                   'chromeos/services/network_config/|'\
                   'chrome/browser/ash/net/|'\
                   'chrome/browser/extensions/api/networking_private/|'\
@@ -795,7 +795,7 @@
                   'chrome/browser/resources/chromeos/',
     },
     'chromeos_wifi_sync': {
-      'filepath': 'chromeos/components/sync_wifi/',
+      'filepath': 'chromeos/ash/components/sync_wifi/',
     },
     'chrometto_proto_extensions': {
       'filepath': 'base/tracing/protos/',

@@ -66,10 +66,10 @@
 #include "chromeos/ash/components/dbus/audio/cras_audio_client.h"
 #include "chromeos/ash/components/dbus/cros_disks/cros_disks_client.h"
 #include "chromeos/ash/components/dbus/hermes/hermes_clients.h"
+#include "chromeos/ash/components/dbus/shill/shill_clients.h"
 #include "chromeos/ash/components/network/network_handler.h"
 #include "chromeos/dbus/dbus_thread_manager.h"
 #include "chromeos/dbus/power/power_manager_client.h"
-#include "chromeos/dbus/shill/shill_clients.h"
 #include "extensions/shell/browser/shell_audio_controller_chromeos.h"
 #include "extensions/shell/browser/shell_network_controller_chromeos.h"
 #endif
@@ -125,13 +125,13 @@ void ShellBrowserMainParts::PostCreateMainMessageLoop() {
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
   if (bus) {
-    chromeos::shill_clients::Initialize(bus);
+    ash::shill_clients::Initialize(bus);
     ash::hermes_clients::Initialize(bus);
     ash::CrasAudioClient::Initialize(bus);
     chromeos::CrosDisksClient::Initialize(bus);
     chromeos::PowerManagerClient::Initialize(bus);
   } else {
-    chromeos::shill_clients::InitializeFakes();
+    ash::shill_clients::InitializeFakes();
     ash::hermes_clients::InitializeFakes();
     ash::CrasAudioClient::InitializeFake();
     chromeos::CrosDisksClient::InitializeFake();
@@ -311,7 +311,7 @@ void ShellBrowserMainParts::PostDestroyThreads() {
   chromeos::PowerManagerClient::Shutdown();
   chromeos::CrosDisksClient::Shutdown();
   ash::CrasAudioClient::Shutdown();
-  chromeos::shill_clients::Shutdown();
+  ash::shill_clients::Shutdown();
 #endif
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)

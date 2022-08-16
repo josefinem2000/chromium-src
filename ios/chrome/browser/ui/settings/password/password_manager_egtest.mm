@@ -295,10 +295,9 @@ id<GREYMatcher> PopUpMenuItemWithLabel(int label) {
       grey_userInteractionEnabled(), nil);
 }
 
-// Returns matcher for the "Add Password" button located at the bottom of the
-// screen.
+// Returns matcher for the "Add Password" button.
 id<GREYMatcher> AddPasswordButton() {
-  return grey_accessibilityID(kSettingsToolbarAddButtonId);
+  return grey_accessibilityID(kAddPasswordButtonId);
 }
 
 // Returns matcher for the "Save" button in the "Add Password" view.
@@ -1703,14 +1702,17 @@ id<GREYMatcher> EditDoneButton() {
 }
 
 // Checks that the "Add" button is not shown on Edit.
-- (void)testNoAddButtonInEditMode {
+- (void)testAddButtonDisabledInEditMode {
   SaveExamplePasswordForm();
   OpenPasswordSettings();
 
   TapEdit();
 
-  // Expect Add Password button to be removed.
   [[EarlGrey selectElementWithMatcher:AddPasswordButton()]
+      performAction:grey_tap()];
+
+  // Verify that the dialog didn't show up after tapping the Add button.
+  [[EarlGrey selectElementWithMatcher:PasswordDetailPassword()]
       assertWithMatcher:grey_nil()];
 }
 
@@ -1807,6 +1809,10 @@ id<GREYMatcher> EditDoneButton() {
 // matches with an existing credential results in showing a section alert for
 // the existing credential.
 - (void)testAddNewDuplicatedPasswordCredential {
+  // TODO(crbug.com/1351802): Re-enable when flake fixed.
+  if (@available(iOS 16, *)) {
+    EARL_GREY_TEST_DISABLED(@"Test consistently failing to tap save.");
+  }
   SaveExamplePasswordForm();
 
   OpenPasswordSettings();
@@ -1866,6 +1872,10 @@ id<GREYMatcher> EditDoneButton() {
 // a credential that has the same website as that of an existing credential
 // (does not contain username).
 - (void)testDuplicatedCredentialWithNoUsername {
+  // TODO(crbug.com/1351802): Re-enable when flake fixed.
+  if (@available(iOS 16, *)) {
+    EARL_GREY_TEST_DISABLED(@"Test consistently failing to tap save.");
+  }
   OpenPasswordSettings();
 
   [[EarlGrey selectElementWithMatcher:AddPasswordButton()]

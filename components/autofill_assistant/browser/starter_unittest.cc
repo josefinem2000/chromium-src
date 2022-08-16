@@ -590,7 +590,7 @@ TEST_F(StarterTest, RegularStartupFailsIfOnboardingRejected) {
 
 TEST_F(StarterTest, RpcTriggerScriptFailsIfMsbbIsDisabled) {
   SetupPlatformDelegateForReturningUser();
-  fake_platform_delegate_.msbb_enabled_ = false;
+  fake_platform_delegate_.fake_common_dependencies_.msbb_enabled_ = false;
   base::flat_map<std::string, std::string> script_parameters = {
       {"ENABLED", "true"},
       {"START_IMMEDIATELY", "false"},
@@ -970,7 +970,7 @@ TEST_F(StarterTest, ImplicitStartupOnSupportedDomainWithoutLogin) {
   auto scoped_feature_list = std::make_unique<base::test::ScopedFeatureList>();
   scoped_feature_list->InitAndEnableFeature(
       features::kAutofillAssistantInCCTTriggering);
-  fake_platform_delegate_.msbb_enabled_ = true;
+  fake_platform_delegate_.fake_common_dependencies_.msbb_enabled_ = true;
   fake_platform_delegate_.proactive_help_enabled_ = true;
   fake_platform_delegate_.is_logged_in_ = false;
   fake_platform_delegate_.is_web_layer_ = false;
@@ -1078,7 +1078,7 @@ TEST_F(StarterTest, DoNotStartImplicitlyIfNotLoggedInForWebLayer) {
   auto scoped_feature_list = std::make_unique<base::test::ScopedFeatureList>();
   scoped_feature_list->InitAndEnableFeature(
       features::kAutofillAssistantInCCTTriggering);
-  fake_platform_delegate_.msbb_enabled_ = true;
+  fake_platform_delegate_.fake_common_dependencies_.msbb_enabled_ = true;
   fake_platform_delegate_.proactive_help_enabled_ = true;
   fake_platform_delegate_.is_logged_in_ = false;
   fake_platform_delegate_.is_web_layer_ = true;
@@ -1096,7 +1096,7 @@ TEST_F(StarterTest, ImplicitStartupOnSupportedDomainWithLoginForWebLayer) {
   auto scoped_feature_list = std::make_unique<base::test::ScopedFeatureList>();
   scoped_feature_list->InitAndEnableFeature(
       features::kAutofillAssistantInCCTTriggering);
-  fake_platform_delegate_.msbb_enabled_ = true;
+  fake_platform_delegate_.fake_common_dependencies_.msbb_enabled_ = true;
   fake_platform_delegate_.proactive_help_enabled_ = true;
   fake_platform_delegate_.is_logged_in_ = true;
   fake_platform_delegate_.is_web_layer_ = true;
@@ -2373,6 +2373,42 @@ TEST_F(StarterTest, RegularStartupFailsForSupervisedUser) {
 TEST_F(StarterTest, RpcTriggerScriptStartupFailsForSupervisedUser) {
   SetupPlatformDelegateForReturningUser();
   fake_platform_delegate_.is_supervised_user_ = true;
+
+  base::flat_map<std::string, std::string> script_parameters = {
+      {"ENABLED", "true"},
+      {"START_IMMEDIATELY", "false"},
+      {"REQUEST_TRIGGER_SCRIPT", "true"},
+      {"ORIGINAL_DEEPLINK", kExampleDeeplink}};
+  EXPECT_CALL(*mock_trigger_script_ui_delegate_, Attach).Times(0);
+  EXPECT_CALL(*mock_trigger_script_service_request_sender_, OnSendRequest)
+      .Times(0);
+  EXPECT_CALL(mock_start_regular_script_callback_, Run).Times(0);
+
+  starter_->Start(std::make_unique<TriggerContext>(
+      std::make_unique<ScriptParameters>(script_parameters),
+      TriggerContext::Options()));
+}
+
+TEST_F(StarterTest, RegularStartupFailsForNotAllowedForMachineLearningUsers) {
+  SetupPlatformDelegateForReturningUser();
+  fake_platform_delegate_.is_allowed_for_machine_learning_ = false;
+
+  base::flat_map<std::string, std::string> script_parameters = {
+      {"ENABLED", "true"},
+      {"START_IMMEDIATELY", "true"},
+      {"ORIGINAL_DEEPLINK", kExampleDeeplink}};
+  TriggerContext::Options options;
+  options.initial_url = "https://redirect.com/to/www/example/com";
+  EXPECT_CALL(mock_start_regular_script_callback_, Run).Times(0);
+
+  starter_->Start(std::make_unique<TriggerContext>(
+      std::make_unique<ScriptParameters>(script_parameters), options));
+}
+
+TEST_F(StarterTest,
+       RpcTriggerScriptStartupFailsForAllowedForMachineLearningUsers) {
+  SetupPlatformDelegateForReturningUser();
+  fake_platform_delegate_.is_allowed_for_machine_learning_ = false;
 
   base::flat_map<std::string, std::string> script_parameters = {
       {"ENABLED", "true"},

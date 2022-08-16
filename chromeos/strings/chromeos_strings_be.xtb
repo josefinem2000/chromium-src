@@ -27,6 +27,7 @@
 <translation id="1199355487114804640">Прайграць (прыпыніць)</translation>
 <translation id="1201402288615127009">Далей</translation>
 <translation id="1204296502688602597">Затрымка DNS</translation>
+<translation id="1207734034680156868">Прапановы асноўваюцца на вашым апісанні</translation>
 <translation id="123124571410524056">Магчыма, выяўлены партал</translation>
 <translation id="1236400083787698183">Перад перазапускам скіньце налады прылады з дапамогай Powerwash. Калі ў вашай прылады ёсць вечка, пачакайце завяршэння працэдуры Powerwash, перш чым яго закрываць. Сама працэдура можа заняць да хвіліны.</translation>
 <translation id="1238612778414822719">Затрымка HTTPS</translation>
@@ -210,6 +211,7 @@
 <translation id="2536159006530886390">Не ўдаецца падключыцца да інтэрнэту.</translation>
 <translation id="2570743873672969996"><ph name="TEST_NAME" /> праходзіць праверку...</translation>
 <translation id="2584559707064218956">Каб задаць канфігурацыю, перайдзіце ў Налады</translation>
+<translation id="2597774443162333062">Файлы будуць адпраўлены ў Google на адладку</translation>
 <translation id="2619761439309613843">Штодзённае абнаўленне</translation>
 <translation id="2620436844016719705">Сістэма</translation>
 <translation id="2638662041295312666">Відарыс уліковага запісу</translation>
@@ -671,6 +673,7 @@
 <translation id="6659594942844771486">Укладка</translation>
 <translation id="6692996468359469499">Атрыманне інфармацыі, звязанай з вылучаным вамі</translation>
 <translation id="6704062477274546131">Супастаўленне імён DNS</translation>
+<translation id="6719240409382354629">Ідзе падрыхтоўка да перазапуску...</translation>
 <translation id="6723839937902243910">Кнопка сілкавання</translation>
 <translation id="6723847290197874913">Падсветка клавіятуры</translation>
 <translation id="672609503628871915">Пазнаёмцеся з навінкамі</translation>
@@ -888,6 +891,7 @@
 <translation id="8747900814994928677">Пацвярджэнне змен</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Альбом Google Фота</translation>
+<translation id="8778600430213950389">Нешта пайшло не так. Хутчэй за ўсё гэта звязана з няспраўнасцю апаратнага забеспячэння. Замяніце мацярынскую плату і паспрабуйце выканаць рамонт яшчэ раз.</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">Гэта сетка можа мець партал узаемадзеяння</translation>
 <translation id="8798099450830957504">Стандартна</translation>
@@ -941,6 +945,7 @@
 <translation id="910415269708673980">Абнавіце білет для <ph name="PRINCIPAL_NAME" /></translation>
 <translation id="9106415115617144481">Сканіруецца старонка <ph name="PAGE_NUMBER" /></translation>
 <translation id="9111102763498581341">Разблакіраваць</translation>
+<translation id="9118126012493516930">Не ўдаецца завяршыць рамонт</translation>
 <translation id="9122602430962285795">Каб зноў падключыцца да сеткі, перайдзіце ў Налады</translation>
 <translation id="9126720536733509015">Захаваць некалькі старонак у адзін PDF-файл</translation>
 <translation id="9137526406337347448">Сэрвісы Google</translation>

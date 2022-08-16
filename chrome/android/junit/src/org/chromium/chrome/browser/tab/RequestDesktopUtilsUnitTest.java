@@ -10,6 +10,14 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import android.app.Activity;
+import android.content.res.Resources;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -17,6 +25,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -29,11 +38,13 @@ import org.chromium.base.FeatureList.TestValues;
 import org.chromium.base.SysUtils;
 import org.chromium.base.test.BaseRobolectricTestRunner;
 import org.chromium.base.test.util.JniMocker;
+import org.chromium.chrome.R;
 import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.preferences.ChromePreferenceKeys;
 import org.chromium.chrome.browser.preferences.SharedPreferencesManager;
 import org.chromium.chrome.browser.profiles.Profile;
 import org.chromium.chrome.browser.tab.RequestDesktopUtilsUnitTest.ShadowSysUtils;
+import org.chromium.chrome.browser.tab.TabUtils.LoadIfNeededCaller;
 import org.chromium.components.browser_ui.site_settings.SingleCategorySettings;
 import org.chromium.components.browser_ui.site_settings.WebsitePreferenceBridge;
 import org.chromium.components.browser_ui.site_settings.WebsitePreferenceBridgeJni;
@@ -41,7 +52,11 @@ import org.chromium.components.content_settings.ContentSettingValues;
 import org.chromium.components.content_settings.ContentSettingsType;
 import org.chromium.components.embedder_support.util.UrlUtilities;
 import org.chromium.components.embedder_support.util.UrlUtilitiesJni;
+import org.chromium.components.messages.MessageBannerProperties;
+import org.chromium.components.messages.MessageDispatcher;
+import org.chromium.components.messages.MessageIdentifier;
 import org.chromium.content_public.browser.BrowserContextHandle;
+import org.chromium.ui.modelutil.PropertyModel;
 import org.chromium.url.GURL;
 import org.chromium.url.JUnitTestGURLs;
 import org.chromium.url.ShadowGURL;
@@ -65,6 +80,12 @@ public class RequestDesktopUtilsUnitTest {
     private UrlUtilities.Natives mUrlUtilitiesJniMock;
     @Mock
     private BrowserContextHandle mBrowserContextHandleMock;
+    @Mock
+    private MessageDispatcher mMessageDispatcher;
+    @Mock
+    private Activity mActivity;
+    @Mock
+    private Profile mProfile;
 
     private @ContentSettingValues int mRdsDefaultValue;
     private SharedPreferencesManager mSharedPreferencesManager;
@@ -72,6 +93,8 @@ public class RequestDesktopUtilsUnitTest {
     private final Map<String, Integer> mContentSettingMap = new HashMap<>();
     private final GURL mGoogleUrl = new GURL(JUnitTestGURLs.GOOGLE_URL);
     private final GURL mMapsUrl = new GURL(JUnitTestGURLs.MAPS_URL);
+
+    private Resources mResources;
 
     private final TestValues mTestValues = new TestValues();
 
@@ -124,6 +147,9 @@ public class RequestDesktopUtilsUnitTest {
 
         mSharedPreferencesManager = SharedPreferencesManager.getInstance();
         mSharedPreferencesManager.disableKeyCheckerForTesting();
+
+        mResources = ApplicationProvider.getApplicationContext().getResources();
+        when(mActivity.getResources()).thenReturn(mResources);
     }
 
     @After
@@ -283,15 +309,173 @@ public class RequestDesktopUtilsUnitTest {
                         && mSharedPreferencesManager.readBoolean(
                                 ChromePreferenceKeys.DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING,
                                 false));
+        Assert.assertTrue(
+                "SharedPreference DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING_SHOW_MESSAGE should be true.",
+                mSharedPreferencesManager.contains(
+                        ChromePreferenceKeys
+                                .DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING_SHOW_MESSAGE)
+                        && mSharedPreferencesManager.readBoolean(
+                                ChromePreferenceKeys
+                                        .DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING_SHOW_MESSAGE,
+                                false));
 
-        // Check whether the desktop site global setting should be default-enabled after the first
-        // attempt.
+        // Verify that the desktop site global setting will be default-enabled at most once.
         boolean shouldDefaultEnable = RequestDesktopUtils.shouldDefaultEnableGlobalSetting(
                 RequestDesktopUtils
                         .DEFAULT_GLOBAL_SETTING_DEFAULT_ON_DISPLAY_SIZE_THRESHOLD_INCHES);
         Assert.assertFalse(
                 "Desktop site global setting should not be default-enabled more than once.",
                 shouldDefaultEnable);
+    }
+
+    @Test
+    public void testMaybeDefaultEnableGlobalSetting_DoNotEnableOnOptInEnabled() {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestDesktopUtils.PARAM_GLOBAL_SETTING_OPT_IN_ENABLED, "true");
+        enableFeatureRequestDesktopSiteDefaults(params);
+
+        boolean didDefaultEnable = RequestDesktopUtils.maybeDefaultEnableGlobalSetting(
+                RequestDesktopUtils.DEFAULT_GLOBAL_SETTING_DEFAULT_ON_DISPLAY_SIZE_THRESHOLD_INCHES,
+                Mockito.mock(Profile.class));
+        Assert.assertFalse(
+                "Desktop site global setting should not be default-enabled when opt-in is enabled.",
+                didDefaultEnable);
+    }
+
+    @Test
+    public void testMaybeShowDefaultEnableGlobalSettingMessage() {
+        enableFeatureRequestDesktopSiteDefaults(null);
+
+        // Default-enable the global setting before the message is shown.
+        RequestDesktopUtils.maybeDefaultEnableGlobalSetting(
+                RequestDesktopUtils.DEFAULT_GLOBAL_SETTING_DEFAULT_ON_DISPLAY_SIZE_THRESHOLD_INCHES,
+                mProfile);
+
+        when(mWebsitePreferenceBridgeJniMock.isContentSettingEnabled(
+                     mProfile, ContentSettingsType.REQUEST_DESKTOP_SITE))
+                .thenReturn(true);
+        RequestDesktopUtils.maybeShowDefaultEnableGlobalSettingMessage(
+                mProfile, mMessageDispatcher, mActivity);
+
+        ArgumentCaptor<PropertyModel> message = ArgumentCaptor.forClass(PropertyModel.class);
+        verify(mMessageDispatcher).enqueueWindowScopedMessage(message.capture(), eq(false));
+        Assert.assertEquals("Message identifier should match.",
+                MessageIdentifier.DESKTOP_SITE_GLOBAL_DEFAULT_OPT_OUT,
+                message.getValue().get(MessageBannerProperties.MESSAGE_IDENTIFIER));
+        Assert.assertEquals("Message title should match.",
+                mResources.getString(R.string.rds_global_default_on_message_title),
+                message.getValue().get(MessageBannerProperties.TITLE));
+        Assert.assertEquals("Message primary button text should match.",
+                mResources.getString(R.string.rds_global_default_on_message_button),
+                message.getValue().get(MessageBannerProperties.PRIMARY_BUTTON_TEXT));
+        Assert.assertEquals("Message icon resource ID should match.", R.drawable.ic_desktop_windows,
+                message.getValue().get(MessageBannerProperties.ICON_RESOURCE_ID));
+        Assert.assertFalse(
+                "SharedPreference DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING_SHOW_MESSAGE should be removed.",
+                mSharedPreferencesManager.contains(
+                        ChromePreferenceKeys
+                                .DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING_SHOW_MESSAGE));
+    }
+
+    @Test
+    public void testMaybeShowDefaultEnableGlobalSettingMessage_DoNotShowIfSettingIsDisabled() {
+        enableFeatureRequestDesktopSiteDefaults(null);
+
+        // Preference is set when the setting is default-enabled.
+        mSharedPreferencesManager.writeBoolean(
+                ChromePreferenceKeys.DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING_SHOW_MESSAGE,
+                true);
+
+        // Simulate disabling of the setting by the user before the message is shown.
+        when(mWebsitePreferenceBridgeJniMock.isContentSettingEnabled(
+                     mProfile, ContentSettingsType.REQUEST_DESKTOP_SITE))
+                .thenReturn(false);
+
+        boolean shown = RequestDesktopUtils.maybeShowDefaultEnableGlobalSettingMessage(
+                mProfile, mMessageDispatcher, mActivity);
+        Assert.assertFalse(
+                "Message should not be shown if the content setting is disabled.", shown);
+        Assert.assertFalse(
+                "SharedPreference DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING_SHOW_MESSAGE should be removed.",
+                mSharedPreferencesManager.contains(
+                        ChromePreferenceKeys
+                                .DEFAULT_ENABLED_DESKTOP_SITE_GLOBAL_SETTING_SHOW_MESSAGE));
+    }
+
+    @Test
+    public void testMaybeShowGlobalSettingOptInMessage() {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestDesktopUtils.PARAM_GLOBAL_SETTING_OPT_IN_ENABLED, "true");
+        enableFeatureRequestDesktopSiteDefaults(params);
+        Tab tab = mock(Tab.class);
+        when(tab.loadIfNeeded(LoadIfNeededCaller.MAYBE_SHOW_GLOBAL_SETTING_OPT_IN_MESSAGE))
+                .thenReturn(true);
+
+        boolean shown = RequestDesktopUtils.maybeShowGlobalSettingOptInMessage(
+                RequestDesktopUtils.DEFAULT_GLOBAL_SETTING_OPT_IN_DISPLAY_SIZE_MIN_THRESHOLD_INCHES,
+                mProfile, mMessageDispatcher, mActivity, tab);
+        Assert.assertTrue("Desktop site global setting opt-in message should be shown.", shown);
+
+        ArgumentCaptor<PropertyModel> message = ArgumentCaptor.forClass(PropertyModel.class);
+        verify(mMessageDispatcher).enqueueWindowScopedMessage(message.capture(), eq(false));
+        Assert.assertEquals("Message identifier should match.",
+                MessageIdentifier.DESKTOP_SITE_GLOBAL_OPT_IN,
+                message.getValue().get(MessageBannerProperties.MESSAGE_IDENTIFIER));
+        Assert.assertEquals("Message title should match.",
+                mResources.getString(R.string.rds_global_opt_in_message_title),
+                message.getValue().get(MessageBannerProperties.TITLE));
+        Assert.assertEquals("Message primary button text should match.",
+                mResources.getString(R.string.yes),
+                message.getValue().get(MessageBannerProperties.PRIMARY_BUTTON_TEXT));
+        Assert.assertEquals("Message icon resource ID should match.", R.drawable.ic_desktop_windows,
+                message.getValue().get(MessageBannerProperties.ICON_RESOURCE_ID));
+        Assert.assertTrue(
+                "SharedPreference DESKTOP_SITE_GLOBAL_SETTING_OPT_IN_MESSAGE_SHOWN should be true.",
+                mSharedPreferencesManager.readBoolean(
+                        ChromePreferenceKeys.DESKTOP_SITE_GLOBAL_SETTING_OPT_IN_MESSAGE_SHOWN,
+                        false));
+    }
+
+    @Test
+    public void testMaybeShowGlobalSettingOptInMessage_ShowAtMostOnce() {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestDesktopUtils.PARAM_GLOBAL_SETTING_OPT_IN_ENABLED, "true");
+        enableFeatureRequestDesktopSiteDefaults(params);
+        Tab tab = mock(Tab.class);
+        when(tab.loadIfNeeded(LoadIfNeededCaller.MAYBE_SHOW_GLOBAL_SETTING_OPT_IN_MESSAGE))
+                .thenReturn(true);
+
+        boolean shown = RequestDesktopUtils.maybeShowGlobalSettingOptInMessage(
+                RequestDesktopUtils.DEFAULT_GLOBAL_SETTING_OPT_IN_DISPLAY_SIZE_MIN_THRESHOLD_INCHES,
+                mProfile, mMessageDispatcher, mActivity, tab);
+
+        boolean shouldShow = RequestDesktopUtils.shouldShowGlobalSettingOptInMessage(
+                RequestDesktopUtils.DEFAULT_GLOBAL_SETTING_OPT_IN_DISPLAY_SIZE_MIN_THRESHOLD_INCHES,
+                mProfile);
+        Assert.assertFalse(
+                "Desktop site global setting opt-in message should be shown at most once.",
+                shouldShow);
+    }
+
+    @Test
+    public void testMaybeShowGlobalSettingOptInMessage_DoNotShowIfSettingIsEnabled() {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestDesktopUtils.PARAM_GLOBAL_SETTING_OPT_IN_ENABLED, "true");
+        enableFeatureRequestDesktopSiteDefaults(params);
+        Tab tab = mock(Tab.class);
+        when(tab.loadIfNeeded(LoadIfNeededCaller.MAYBE_SHOW_GLOBAL_SETTING_OPT_IN_MESSAGE))
+                .thenReturn(true);
+
+        when(mWebsitePreferenceBridgeJniMock.isContentSettingEnabled(
+                     mProfile, ContentSettingsType.REQUEST_DESKTOP_SITE))
+                .thenReturn(true);
+
+        boolean shown = RequestDesktopUtils.maybeShowGlobalSettingOptInMessage(
+                RequestDesktopUtils.DEFAULT_GLOBAL_SETTING_OPT_IN_DISPLAY_SIZE_MIN_THRESHOLD_INCHES,
+                mProfile, mMessageDispatcher, mActivity, tab);
+        Assert.assertFalse(
+                "Desktop site global setting opt-in message should not be shown when the setting is already enabled.",
+                shown);
     }
 
     private void enableFeatureRequestDesktopSiteDefaults(Map<String, String> params) {

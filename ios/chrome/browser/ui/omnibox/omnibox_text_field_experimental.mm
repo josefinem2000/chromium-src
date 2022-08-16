@@ -597,14 +597,18 @@ NSString* const kOmniboxFadeAnimationKey = @"OmniboxFadeAnimation";
 
 // Used by UIPasteControl to check if can paste.
 - (BOOL)canPasteItemProviders:(NSArray<NSItemProvider*>*)itemProviders {
-  // TODO(crbug.com/1349095) Add support for image.
-  return [super canPasteItemProviders:itemProviders];
+  if ([self.delegate respondsToSelector:@selector(canPasteItemProviders:)]) {
+    return [self.delegate canPasteItemProviders:itemProviders];
+  } else {
+    return NO;
+  }
 }
 
 // Used by UIPasteControl to paste.
 - (void)pasteItemProviders:(NSArray<NSItemProvider*>*)itemProviders {
-  // TODO(crbug.com/1349095) Add support for image and paste to search.
-  [super pasteItemProviders:itemProviders];
+  if ([self.delegate respondsToSelector:@selector(pasteItemProviders:)]) {
+    [self.delegate pasteItemProviders:itemProviders];
+  }
 }
 
 #pragma mark UIKeyInput
@@ -657,12 +661,12 @@ NSString* const kOmniboxFadeAnimationKey = @"OmniboxFadeAnimation";
 
 - (void)keyCommandUp {
   [self exitPreEditState];
-  [self.suggestionCommandsEndpoint highlightNextSuggestion];
+  [self.suggestionCommandsEndpoint highlightPreviousSuggestion];
 }
 
 - (void)keyCommandDown {
   [self exitPreEditState];
-  [self.suggestionCommandsEndpoint highlightPreviousSuggestion];
+  [self.suggestionCommandsEndpoint highlightNextSuggestion];
 }
 
 #pragma mark preedit and inline autocomplete key commands

@@ -304,6 +304,8 @@ extern const char kHatsPersonalizationWallpaperSurveyCycleEndTs[];
 extern const char kHatsPersonalizationWallpaperSurveyIsSelected[];
 extern const char kHatsMediaAppPdfCycleEndTs[];
 extern const char kHatsMediaAppPdfIsSelected[];
+extern const char kHatsCameraAppDeviceIsSelected[];
+extern const char kHatsCameraAppSurveyCycleEndTs[];
 extern const char kEolStatus[];
 extern const char kEndOfLifeDate[];
 extern const char kEolNotificationDismissed[];
@@ -448,8 +450,6 @@ extern const char kProfileName[];
 extern const char kProfileUsingDefaultAvatar[];
 extern const char kProfileUsingGAIAAvatar[];
 extern const char kSupervisedUserId[];
-
-extern const char kProfileAvatarTutorialShown[];
 
 extern const char kInvertNotificationShown[];
 

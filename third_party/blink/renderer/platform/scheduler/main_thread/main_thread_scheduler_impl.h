@@ -73,6 +73,8 @@ FORWARD_DECLARE_TEST(MainThreadSchedulerImplTest, ShouldIgnoreTaskForUkm);
 FORWARD_DECLARE_TEST(MainThreadSchedulerImplTest, Tracing);
 FORWARD_DECLARE_TEST(MainThreadSchedulerImplTest,
                      LogIpcsPostedToDocumentsInBackForwardCache);
+FORWARD_DECLARE_TEST(MainThreadSchedulerImplTest,
+                     CanExceedIdleDeadlineIfRequired);
 }  // namespace main_thread_scheduler_impl_unittest
 class AgentGroupSchedulerImpl;
 class FrameSchedulerImpl;
@@ -129,7 +131,6 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
     // Use resource fetch priority for resource loading tasks
     // (crbug.com/860545).
     bool use_resource_fetch_priority;
-    bool use_resource_priorities_only_during_loading;
 
     // Prioritize compositing and loading tasks until first contentful paint.
     // (crbug.com/971191)
@@ -184,7 +185,6 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
   void ResumeTimersForAndroidWebView() override;
 #endif
   bool ShouldYieldForHighPriorityWork() override;
-  bool CanExceedIdleDeadlineIfRequired() const override;
   void AddTaskObserver(base::TaskObserver* task_observer) override;
   void RemoveTaskObserver(base::TaskObserver* task_observer) override;
   void Shutdown() override;
@@ -433,6 +433,9 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
   FRIEND_TEST_ALL_PREFIXES(
       main_thread_scheduler_impl_unittest::MainThreadSchedulerImplTest,
       LogIpcsPostedToDocumentsInBackForwardCache);
+  FRIEND_TEST_ALL_PREFIXES(
+      main_thread_scheduler_impl_unittest::MainThreadSchedulerImplTest,
+      CanExceedIdleDeadlineIfRequired);
 
   enum class TimeDomainType {
     kReal,

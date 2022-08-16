@@ -49,6 +49,7 @@ import org.chromium.chrome.browser.settings.SettingsLauncherImpl;
 import org.chromium.chrome.browser.tab.Tab;
 import org.chromium.chrome.browser.tabmodel.TabCreator;
 import org.chromium.chrome.browser.tabmodel.document.TabDelegate;
+import org.chromium.chrome.browser.tasks.tab_management.TabUiFeatureUtilities;
 import org.chromium.chrome.browser.ui.messages.snackbar.Snackbar;
 import org.chromium.chrome.browser.ui.messages.snackbar.SnackbarManager;
 import org.chromium.chrome.browser.ui.messages.snackbar.SnackbarManager.SnackbarController;
@@ -257,11 +258,16 @@ public class HistoryManager implements OnMenuItemClickListener, SelectionObserve
                 public void onOptOut() {
                     onHistoryClustersOptOutChanged(false);
                 }
+
+                @Override
+                public boolean areTabGroupsEnabled() {
+                    return TabUiFeatureUtilities.isTabGroupsAndroidEnabled(mActivity);
+                }
             };
 
             mHistoryClustersCoordinator = new HistoryClustersCoordinator(
                     Profile.getLastUsedRegularProfile(), activity, TemplateUrlServiceFactory.get(),
-                    historyClustersDelegate, ChromeAccessibilityUtil.get());
+                    historyClustersDelegate, ChromeAccessibilityUtil.get(), mSnackbarManager);
         }
 
         // 1. Create selectable components.
@@ -439,7 +445,7 @@ public class HistoryManager implements OnMenuItemClickListener, SelectionObserve
             return true;
         } else if (item.getItemId() == R.id.search_menu_id) {
             mContentManager.removeHeader();
-            mToolbar.showSearchView();
+            mToolbar.showSearchView(true);
             String searchEmptyString = getSearchEmptyString();
             mSelectableListLayout.onStartSearch(searchEmptyString);
             recordUserAction("Search");

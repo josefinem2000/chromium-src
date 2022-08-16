@@ -1155,6 +1155,9 @@ See your search engine’s instructions for deleting your search history, if app
       <message name="IDS_IOS_INCOGNITO_INTERSTITIAL_TITLE" desc="Title of interstitial which lets the user choose, when they open a link from an external app, whether to open it in Incognito mode or in a regular tab. [iOS only]">
         Open in Incognito?
       </message>
+      <message name="IDS_IOS_INCOGNITO_INTERSTITIAL_URL_READ_MORE_BUTTON" desc="Button to unfold a URL which is being truncated, so as to let the user read more of the URL. [iOS only]">
+        more
+      </message>
       <message name="IDS_IOS_INCOGNITO_INTERSTITIAL_OPEN_IN_CHROME_INCOGNITO" desc="Button to open a link from an external app in Incognito mode rather than a regular tab. [iOS only]">
         Open in Chrome Incognito
       </message>
@@ -2294,6 +2297,9 @@ While in Incognito, sites can't use cookies to see your browsing activity across
       </message>
       <message name="IDS_IOS_PASSWORD_MANAGER_HEADER_NOT_SYNCING" desc="Header text for the view in Settings for managing saved passwords. This string only appears when the user is not syncing their passwords. [Length: unlimited] [iOS only]">
         Passwords are saved to Google Password Manager on this device only.
+      </message>
+      <message name="IDS_IOS_ADD_PASSWORD" desc="Text on a button which allows the user to save a password for a website in their Password Manager.">
+        Add Password...
       </message>
       <message name="IDS_IOS_CHECK_PASSWORDS" desc="Title for the item in Settings for Password Check feature" meaning="Label tells the user about status of Password Check [CHAR_LIMIT=25] [iOS only]">
         Check Passwords
@@ -3513,6 +3519,9 @@ New Search
       </message>
       <message name="IDS_IOS_PASSWORD_SUGGESTIONS_TIP_TITLE" desc="The title of the tip explaining to the user they can tap on Autofill password suggestions. Used as a title in an info bubble." meaning="Used as a title in an info bubble.">
         Autofill Passwords
+      </message>
+      <message name="IDS_IOS_KEYBOARD_ACCESSORY_VIEW_PASTE_SEARCH" desc="Accessibility label for a button that starts a Paste and Search [iOS only]">
+        Paste and Search
       </message>
     </messages>
   </release>

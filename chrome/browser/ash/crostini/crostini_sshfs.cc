@@ -159,14 +159,14 @@ void CrostiniSshfs::OnGetContainerSshKeys(
                   file_manager::util::GetCrostiniMountOptions(
                       hostname, host_private_key, container_public_key),
                   ash::MountType::kNetworkStorage,
-                  chromeos::MOUNT_ACCESS_MODE_READ_WRITE,
+                  ash::MountAccessMode::kReadWrite,
                   base::BindOnce(&CrostiniSshfs::OnMountEvent,
                                  weak_ptr_factory_.GetWeakPtr()));
 }
 
 void CrostiniSshfs::OnMountEvent(
     ash::MountError error_code,
-    const ash::disks::DiskMountManager::MountPointInfo& mount_info) {
+    const ash::disks::DiskMountManager::MountPoint& mount_info) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   if (error_code != ash::MountError::kNone) {

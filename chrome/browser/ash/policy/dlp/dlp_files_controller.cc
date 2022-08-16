@@ -233,55 +233,66 @@ DlpFilesController::GetDlpRestrictionDetails(const std::string& sourceUrl) {
   }
 
   const GURL source(sourceUrl);
-  const DlpRulesManager::AggregatedDestinations destinations =
+  const DlpRulesManager::AggregatedDestinations aggregated_destinations =
       dlp_rules_manager->GetAggregatedDestinations(
           source, DlpRulesManager::Restriction::kFiles);
-  const DlpRulesManager::AggregatedComponents components =
+  const DlpRulesManager::AggregatedComponents aggregated_components =
       dlp_rules_manager->GetAggregatedComponents(
           source, DlpRulesManager::Restriction::kFiles);
 
   std::vector<DlpFilesController::DlpFileRestrictionDetails> result;
-  auto destination_it = destinations.begin();
-  auto component_it = components.begin();
-  while (destination_it != destinations.end() &&
-         component_it != components.end()) {
+  // Add levels for which urls are set.
+  for (const auto& [level, urls] : aggregated_destinations) {
     DlpFileRestrictionDetails details;
-    details.level = std::min(destination_it->first, component_it->first);
-    if (destination_it->first <= component_it->first) {
-      base::ranges::move(destination_it->second.begin(),
-                         destination_it->second.end(),
-                         std::back_inserter(details.urls));
-      ++destination_it;
-    }
-    if (destination_it->first > component_it->first) {
-      base::ranges::move(component_it->second.begin(),
-                         component_it->second.end(),
-                         std::back_inserter(details.components));
-      ++component_it;
-    }
-    result.emplace_back(std::move(details));
-  }
-
-  while (destination_it != destinations.end()) {
-    DlpFileRestrictionDetails details;
-    details.level = destination_it->first;
-    base::ranges::move(destination_it->second.begin(),
-                       destination_it->second.end(),
+    details.level = level;
+    base::ranges::move(urls.begin(), urls.end(),
                        std::back_inserter(details.urls));
-    ++destination_it;
+    // Add the components for this level, if any.
+    const auto it = aggregated_components.find(level);
+    if (it != aggregated_components.end()) {
+      base::ranges::move(it->second.begin(), it->second.end(),
+                         std::back_inserter(details.components));
+    }
     result.emplace_back(std::move(details));
   }
 
-  while (component_it != components.end()) {
+  // There might be levels for which only components are set, so we need to add
+  // those separately.
+  for (const auto& [level, components] : aggregated_components) {
+    if (aggregated_destinations.find(level) != aggregated_destinations.end()) {
+      // Already added in the previous loop.
+      continue;
+    }
     DlpFileRestrictionDetails details;
-    details.level = component_it->first;
-    base::ranges::move(component_it->second.begin(), component_it->second.end(),
+    details.level = level;
+    base::ranges::move(components.begin(), components.end(),
                        std::back_inserter(details.components));
-    ++component_it;
     result.emplace_back(std::move(details));
   }
 
   return result;
+}
+
+bool DlpFilesController::IsDlpPolicyMatched(const std::string& source_url) {
+  bool restricted = false;
+  policy::DlpRulesManager* dlp_rules_manager =
+      policy::DlpRulesManagerFactory::GetForPrimaryProfile();
+  if (dlp_rules_manager) {
+    policy::DlpRulesManager::Level level =
+        dlp_rules_manager->IsRestrictedByAnyRule(
+            GURL(source_url), policy::DlpRulesManager::Restriction::kFiles);
+
+    switch (level) {
+      case policy::DlpRulesManager::Level::kBlock:
+        restricted = true;
+        break;
+      case policy::DlpRulesManager::Level::kWarn:
+        // TODO(crbug.com/1172959): Implement Warning mode for Files restriction
+        break;
+      default:;
+    }
+  }
+  return restricted;
 }
 
 void DlpFilesController::ReturnDisallowedTransfers(

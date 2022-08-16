@@ -5387,7 +5387,7 @@
         'dynamic_refresh': True,
         'per_profile': False,
       },
-      'example_value': 'foobar.example.com',
+      'example_value': '*.example.com,foobar.example.com',
       'id': 746,
       'caption': '''Kerberos delegation server allowlist''',
       'tags': [],
@@ -9629,7 +9629,8 @@
       'owners': ['robsc@chromium.org', 'bartfab@chromium.org'],
       'type': 'main',
       'schema': { 'type': 'boolean' },
-      'supported_on': ['chrome_os:75-'],
+      'supported_on': ['chrome_os:75-99'],
+      'deprecated': True,
       'features': {
         'per_profile': True,
         'dynamic_refresh': True
@@ -9648,7 +9649,9 @@
       'id': 563,
       'caption': '''Enable App Recommendations in Zero State of Search Box''',
       'tags': [],
-      'desc': '''Setting this policy to Enabled will cause recommendations for apps previously installed by the user on other devices. These recommendations will appear in the launcher after the local app recomendations, if no search text has been entered.
+      'desc': '''This feature has been removed in Chrome 100.
+
+      Setting this policy to Enabled will cause recommendations for apps previously installed by the user on other devices. These recommendations will appear in the launcher after the local app recomendations, if no search text has been entered.
 
       Setting this policy as Disabled or leaving it unset means these recommendations do not appear.
 
@@ -10564,7 +10567,7 @@
       'type': 'main',
       'schema': { 'type': 'boolean' },
       'supported_on': ['chrome.*:92-', 'android:97-'],
-      'future_on': ['fuchsia'],
+      'future_on': ['fuchsia', 'ios'],
       'features': {
         'dynamic_refresh': True,
         'per_profile': True,
@@ -17128,6 +17131,7 @@
       'deprecated': True,
       'schema': { 'type': 'boolean' },
       'supported_on': ['chrome.win:64-', 'chrome.mac:66-', 'android:65-'],
+      'future_on': ['chrome.linux'],
       'features': {
         'dynamic_refresh': False,
         'per_profile': False,
@@ -30463,17 +30467,26 @@ When this policy is set, <ph name="PRODUCT_OS_NAME">$2<ex>Google ChromeOS</ex></
       'caption': '''Add restrictions on managed accounts''',
       'tags': [],
       'desc': '''
-      If this policy is set to <ph name="POLICY_VALUE_PRIMARY_ACCOUNT">'primary_account'</ph>, after a signin into an a managed account subjected to this policy, the user be asked to create a new profile for the account.
-      If this policy is set to <ph name="POLICY_VALUE_PRIMARY_ACCOUNT_KEEP_EXISTING_DATA">'primary_account_keep_existing_data'</ph>, after a signin into an a managed account subjected to this policy, the user be asked to create a new profile for the account with an option to keep any existing browsing data. This option is supported on Chrome 102 and higher version.
+Default behavior (Policy unset)
+When an account is added in the content area a small dialog may appear asking the user to create a new profile.  This dialog is dismissable.
 
-      If this policy is set to <ph name="POLICY_VALUE_PRIMARY_ACCOUNT_STRICT">'primary_account_strict'</ph>, after a signin into an a managed account subjected to this policy, the user be asked to create a new profile for the account. This profile will not allow any secondary accounts.
-      If this policy is set to <ph name="POLICY_VALUE_PRIMARY_ACCOUNT_STRICT_KEEP_EXISTING_DATA">'primary_account_strict_keep_existing_data'</ph> after a signin into an a managed account subjected to this policy, the user be asked to create a new profile for the account with an option to keep any existing browsing data. This profile will not allow any secondary accounts. This option is supported on Chrome 102 and higher version.
+<ph name="MANAGED_ACCOUNTS_SIGNIN_RESTRICTION_POLICY_NAME">ManagedAccountsSigninRestriction</ph> = <ph name="POLICY_VALUE_PRIMARY_ACCOUNT">'primary_account'</ph>
+If a user signs into a Google service for the first time in a <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph> browser, a dialog will appear asking the user to create a new profile for their enterprise account. The user may click Cancel and get signed out, or Continue to create a new profile. Any existing browsing data will not be added to the new profile.   The newly created profile is allowed to have secondary accounts, for example the user can sign into another account in the content area.
 
-      If this policy is set to <ph name="POLICY_VALUE_NONE">'none'</ph> or not set, managed accounts have no restrictions. This may result in a managed account being a secondary account, which disables its ability to receive policies set on the account by the admin.
+<ph name="MANAGED_ACCOUNTS_SIGNIN_RESTRICTION_POLICY_NAME">ManagedAccountsSigninRestriction</ph> = <ph name="POLICY_VALUE_PRIMARY_ACCOUNT_STRICT">'primary_account_strict'</ph>
+This is the same behavior as <ph name="POLICY_VALUE_PRIMARY_ACCOUNT">'primary_account'</ph> except the newly created profile is not allowed to have secondary accounts.
 
-      If this policy is set at the device level, all accounts in the browser are subjected to the policy.
-      If this policy is set at an account level, only that account is affected in the browser.
-    ''',
+<ph name="MANAGED_ACCOUNTS_SIGNIN_RESTRICTION_POLICY_NAME">ManagedAccountsSigninRestriction</ph> = <ph name="POLICY_VALUE_PRIMARY_ACCOUNT_KEEP_EXISTING_DATA">'primary_account_keep_existing_data'</ph>
+This is the same behavior as <ph name="POLICY_VALUE_PRIMARY_ACCOUNT">'primary_account'</ph> except a checkbox will be added to the dialog to allow the user to keep local browsing data.
+If the user checks the box, then the existing profile data becomes associated with the Managed account.
+-  All existing browsing data will be present in the new profile.
+-  This data includes bookmarks, history, password, autofill data, open tabs, cookies, cache, web storage, extensions, etc.
+If the user does not check the box:
+-  The old profile will continue to exist, no data will be lost.
+-  A new profile will be created.
+
+<ph name="MANAGED_ACCOUNTS_SIGNIN_RESTRICTION_POLICY_NAME">ManagedAccountsSigninRestriction</ph> = <ph name="POLICY_VALUE_PRIMARY_ACCOUNT_STRICT_KEEP_EXISTING_DATA">'primary_account_strict_keep_existing_data'</ph>
+This is the same behavior as <ph name="POLICY_VALUE_PRIMARY_ACCOUNT_KEEP_EXISTING_DATA">'primary_account_keep_existing_data'</ph> except the newly created profile is not allowed to have secondary accounts.''',
     },
     {
       'name': 'UnmanagedDeviceSignalsConsentFlowEnabled',
@@ -32555,7 +32568,38 @@ Regardless of the value, the user will be able to decide whether or not to keep 
 
 This policy has no effect if the option to keep existing browsing data is not available; this happens if enterprise profile separation is strictly enforced, or if the data would be from an already managed profile.
 ''',
-    }
+    },
+    {
+      'name': 'PersistentQuotaEnabled',
+      'owners': ['ayui@chromium.org', 'chrome-owp-storage@google.com'],
+      'type': 'main',
+      'schema': { 'type': 'boolean' },
+      'supported_on': ['chrome.*:106-107', 'chrome_os:106-107', 'android:106-107'],
+      'future_on': ['fuchsia'],
+      'features': {
+        'dynamic_refresh' : False,
+        'per_profile' : True,
+      },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable persistent quota.',
+        },
+        {
+          'value': False,
+          'caption': 'Disable persistent quota.',
+        }
+      ],
+      'example_value': False,
+      'default': False,
+      'id': 1002,
+      'caption': '''Force persistent quota to be enabled''',
+      'tags': [],
+      'desc': '''Starting M106 persistent quota will no longer be supported. This policy will re-enable persistent quota functionality until M107.
+      If this policy is set to enabled, webkitRequestFileSystem with persistent type will operate with persistent quota.
+      If this policy is unset or disabled, webkitRequestFileSystem with persistent type will operate with temporary quota.
+      ''',
+    },
   ],
   'messages': {
     # Messages that are not associated to any policies.
@@ -33029,7 +33073,7 @@ The recommended way to configure policy on Windows is via GPO, although provisio
     'DeviceKeylockerForStorageEncryptionEnabled': 'keylocker_for_storage_encryption_enabled.enabled',
     'DeviceRunAutomaticCleanupOnLogin': 'device_run_automatic_cleanup_on_login.value',
     'DeviceEncryptedReportingPipelineEnabled': 'device_reporting.encrypted_reporting_pipeline_enabled',
-    'DeviceAutofillSAMLUsername': 'saml_settings.url_parameter_to_autofill_saml_username'
+    'DeviceAutofillSAMLUsername': 'saml_username.url_parameter_to_autofill_saml_username'
   },
   'policy_atomic_group_definitions': [
     {
@@ -33561,6 +33605,6 @@ The recommended way to configure policy on Windows is via GPO, although provisio
   'placeholders': [],
   'deleted_policy_ids': [114, 115, 204, 205, 206, 341, 412, 438, 476, 544, 546, 562, 569, 578, 583, 585, 586, 587, 588, 589, 590, 591, 600, 668, 669, 872],
   'deleted_atomic_policy_group_ids': [19],
-  'highest_id_currently_used': 1001,
+  'highest_id_currently_used': 1002,
   'highest_atomic_group_id_currently_used': 43
 }

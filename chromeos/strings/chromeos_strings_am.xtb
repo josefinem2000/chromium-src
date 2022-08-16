@@ -27,6 +27,7 @@
 <translation id="1199355487114804640">አጫውት/ለአፍታ አቁም</translation>
 <translation id="1201402288615127009">ቀጣይ</translation>
 <translation id="1204296502688602597">የዲኤንስ የሥርዓት ምላሽ ጊዜ</translation>
+<translation id="1207734034680156868">ጥቆማዎች በእርስዎ ገለጻ ላይ የተመሰረቱ ናቸው</translation>
 <translation id="123124571410524056">መግቢያ ተጠርጥሯል</translation>
 <translation id="1236400083787698183">እንደገና ከመጀመር በፊት መሣሪያዎን Powerwash ያድርጉ። መሣሪያዎ ክዳን ካለው ክዳኑን ከመዝጋትዎ በፊት Powerwash እስኪጠናቀቅ ይጠብቁ። Powerwash ለመጠናቀቅ አንድ ደቂቃ ያህል ሊወስድ ይችላል።</translation>
 <translation id="1238612778414822719">የHTTPS የስርዓተ ምላሽ ጊዜ</translation>
@@ -210,6 +211,7 @@
 <translation id="2536159006530886390">ከበይነመረቡ ጋር መገናኘት አልተቻለም።</translation>
 <translation id="2570743873672969996">የ<ph name="TEST_NAME" /> ሙከራን በማሄድ ላይ...</translation>
 <translation id="2584559707064218956">ለማዋቀር ወደ ቅንብሮች ይሂዱ</translation>
+<translation id="2597774443162333062">ፋይሎች ስህተታቸው እንዲታረም ወደ Google ይላካሉ</translation>
 <translation id="2619761439309613843">ዕለታዊ ዕድሳት</translation>
 <translation id="2620436844016719705">ስርዓት</translation>
 <translation id="2638662041295312666">መግቢያ ምስል</translation>
@@ -671,6 +673,7 @@
 <translation id="6659594942844771486">ትር</translation>
 <translation id="6692996468359469499">ከእርስዎ ምርጫ ጋር የተገናኘ መረጃ ያግኙ</translation>
 <translation id="6704062477274546131">የዲኤንኤስ መፍትሔ</translation>
+<translation id="6719240409382354629">ዳግም ለመነሳት በመዘጋጀት ላይ...</translation>
 <translation id="6723839937902243910">ኃይል</translation>
 <translation id="6723847290197874913">የቁልፍ ሰሌዳ የጀርባ ብርሃን</translation>
 <translation id="672609503628871915">ምን አዲስ ነገር እንዳለ ይመልከቱ</translation>
@@ -888,6 +891,7 @@
 <translation id="8747900814994928677">ለውጥን አረጋግጥ</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">የGoogle ፎቶዎች አልበም</translation>
+<translation id="8778600430213950389">የሆነ ችግር ተፈጥሯል። ይህ የሃርድዌር ችግር የመሆን ዕድሉ ከፍተኛ ነው። ዋና ቦርዱን ይተኩ እና የጥገና ሂደቱን እንደገና ይሞክሩ።</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">ይህ አውታረ መረብ ተያዥ መግቢያ ሊኖረው ይችላል</translation>
 <translation id="8798099450830957504">እንደወረደ</translation>
@@ -941,6 +945,7 @@
 <translation id="910415269708673980">የ<ph name="PRINCIPAL_NAME" /> ቲኬትን ያድሱ</translation>
 <translation id="9106415115617144481">ገጽ <ph name="PAGE_NUMBER" />ን በመቃኘት ላይ</translation>
 <translation id="9111102763498581341">ክፈት</translation>
+<translation id="9118126012493516930">ጥገናን ማጠናቀቅ አልተቻለም</translation>
 <translation id="9122602430962285795">ዳግም ለመገናኘት ወደ ቅንብሮች ይሂዱ</translation>
 <translation id="9126720536733509015">በርካታ ገጾችን በአንድ PDF ያስቀምጡ</translation>
 <translation id="9137526406337347448">Google አገልግሎቶች</translation>

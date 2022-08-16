@@ -619,6 +619,7 @@ component("platform") {
     "fonts/generic_font_family_settings.h",
     "fonts/glyph_metrics_map.h",
     "fonts/lock_for_parallel_text_shaping.h",
+    "fonts/ng_text_fragment_paint_info.cc",
     "fonts/ng_text_fragment_paint_info.h",
     "fonts/opentype/font_format_check.cc",
     "fonts/opentype/font_format_check.h",
@@ -1008,6 +1009,7 @@ component("platform") {
     "graphics/paint/paint_canvas.h",
     "graphics/paint/paint_chunk.cc",
     "graphics/paint/paint_chunk.h",
+    "graphics/paint/paint_chunk_subset.cc",
     "graphics/paint/paint_chunk_subset.h",
     "graphics/paint/paint_chunker.cc",
     "graphics/paint/paint_chunker.h",
@@ -2624,6 +2626,7 @@ source_set("unit_tests") {
     "graphics/gpu/drawing_buffer_software_rendering_test.cc",
     "graphics/image_decoding_store_test.cc",
     "graphics/image_frame_generator_test.cc",
+    "graphics/offscreen_canvas_placeholder_test.cc",
     "graphics/paint_worklet_paint_dispatcher_test.cc",
     "graphics/test/stub_image.h",
 

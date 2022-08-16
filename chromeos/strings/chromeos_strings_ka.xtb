@@ -211,6 +211,7 @@
 <translation id="2536159006530886390">ინტერნეტთან დაკავშირება ვერ მოხერხდა.</translation>
 <translation id="2570743873672969996">გაშვებულია <ph name="TEST_NAME" /> ტესტი...</translation>
 <translation id="2584559707064218956">დასაყენებლად გადადით პარამეტრებზე</translation>
+<translation id="2597774443162333062">ფაილები, გამართვის მიზნით, Google-ს გაეგზავნება</translation>
 <translation id="2619761439309613843">ყოველდღიური განახლება</translation>
 <translation id="2620436844016719705">სისტემა</translation>
 <translation id="2638662041295312666">შესვლის სურათი</translation>
@@ -334,6 +335,7 @@
 <translation id="3866249974567520381">აღწერა</translation>
 <translation id="387301095347517405">ბატარეის დატენის სრული ციკლების რაოდენობა</translation>
 <translation id="3885327323343477505">ეკრანმზოგის შეცვლა</translation>
+<translation id="3913541166352922049">სისტემა გამოირთვება <ph name="DELAY_DURATION" /> წამში.</translation>
 <translation id="3923184630988645767">მონაცემთა მოხმარება</translation>
 <translation id="3924044641767672375">აღდგენის პროცესის გასამარტივებლად რეკომენდებულია Wi-Fi ქსელთან დაკავშირება. თქვენი ქსელი შეინახება.</translation>
 <translation id="3932043219784172185">დაკავშირებული მოწყობილობები არ არის</translation>
@@ -519,6 +521,7 @@
 <translation id="5346687412805619883">ადგილობრივი ქსელი</translation>
 <translation id="5358174242040570474">რაღაც შეცდომა მოხდა. ხელახლა ცადეთ ფონის არჩევა ან აპის გახსნა.</translation>
 <translation id="5372659122375744710">Wi-Fi ქსელი არ არის დაცული</translation>
+<translation id="5376136733560434719">მიმდინარეობს გამორთვისთვის მომზადება...</translation>
 <translation id="5376354385557966694">ავტომატური ღია რეჟიმი</translation>
 <translation id="537872351913703572">მოწყობილობას სხვა მომხმარებელი ან ორგანიზაცია მიიღებს</translation>
 <translation id="5389159777326897627">ფონი და სტილი</translation>
@@ -672,6 +675,7 @@
 <translation id="6659594942844771486">ჩანართი</translation>
 <translation id="6692996468359469499">მიიღეთ თქვენს არჩევანთან დაკავშირებული ინფორმაცია</translation>
 <translation id="6704062477274546131">DNS-ის დარეგულირება</translation>
+<translation id="6719240409382354629">მიმდინარეობს გადატვირთვისთვის მომზადება...</translation>
 <translation id="6723839937902243910">ენერგია</translation>
 <translation id="6723847290197874913">კლავიატურის შენათება</translation>
 <translation id="672609503628871915">ნახეთ სიახლეებირა სიახლეა</translation>
@@ -747,6 +751,7 @@
 <translation id="7427315641433634153">MSCHAP</translation>
 <translation id="7435977162516949853">{NUMBER_OF_PAGES,plural, =1{სკანირება დასრულდა. დასკანირდა 1 გვერდი.}other{სკანირება დასრულდა. დასკანირდა {NUMBER_OF_PAGES} გვერდი.}}</translation>
 <translation id="7469648432129124067">აღმოჩენილია პორტალი</translation>
+<translation id="7478405245077383528">სისტემა გადაიტვირთება <ph name="DELAY_DURATION" /> წამში.</translation>
 <translation id="7481312909269577407">გადამისამართება</translation>
 <translation id="7487067081878637334">ტექნოლოგია</translation>
 <translation id="7490813197707563893">MAC მისამართი</translation>
@@ -889,6 +894,7 @@
 <translation id="8747900814994928677">დაადასტურეთ ცვლილება</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Google Photos ალბომი</translation>
+<translation id="8778600430213950389">მოხდა რაღაც შეცდომა. ამის ყველაზე სავარაუდო მიზეზია აპარატურასთან დაკავშირებული პრობლემა. შეცვალეთ დედაპლატა და ხელახლა ცადეთ შეკეთება.</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">ამ ქსელს, შესაძლოა, ავტორიზაციის პორტალი ჰქონდეს</translation>
 <translation id="8798099450830957504">ნაგულისხმევი</translation>
@@ -942,6 +948,7 @@
 <translation id="910415269708673980">განაახლეთ ბილეთი <ph name="PRINCIPAL_NAME" />-ისთვის</translation>
 <translation id="9106415115617144481">სკანირდება გვერდი <ph name="PAGE_NUMBER" /></translation>
 <translation id="9111102763498581341">განბლოკვა</translation>
+<translation id="9118126012493516930">შეკეთება ვერ შესრულდა</translation>
 <translation id="9122602430962285795">ხელახლა დასაკავშირებლად გადადით პარამეტრებზე</translation>
 <translation id="9126720536733509015">რამდენიმე გვერდის შენახვა ერთიანი PDF-ის სახით</translation>
 <translation id="9137526406337347448">Google სერვისები</translation>

@@ -22,6 +22,7 @@
 #include "base/strings/stringprintf.h"
 #include "chromeos/ash/components/dbus/patchpanel/patchpanel_client.h"
 #include "chromeos/ash/components/dbus/patchpanel/patchpanel_service.pb.h"
+#include "chromeos/ash/components/dbus/shill/shill_manager_client.h"
 #include "chromeos/ash/components/network/client_cert_util.h"
 #include "chromeos/ash/components/network/device_state.h"
 #include "chromeos/ash/components/network/managed_network_configuration_handler.h"
@@ -33,7 +34,6 @@
 #include "chromeos/ash/components/network/network_state_handler.h"
 #include "chromeos/ash/components/network/network_type_pattern.h"
 #include "chromeos/ash/components/network/onc/network_onc_utils.h"
-#include "chromeos/dbus/shill/shill_manager_client.h"
 #include "chromeos/login/login_state/login_state.h"
 #include "components/device_event_log/device_event_log.h"
 #include "components/prefs/pref_service.h"
@@ -343,7 +343,7 @@ arc::mojom::NetworkConfigurationPtr TranslateNetworkProperties(
   if (const auto* device =
           GetStateHandler()->GetDeviceState(network_state->device_path())) {
     mojo->network_interface = device->interface();
-    for (const auto kv : device->ip_configs().DictItems())
+    for (const auto kv : device->ip_configs())
       AddIpConfiguration(mojo.get(), &kv.second);
   }
 

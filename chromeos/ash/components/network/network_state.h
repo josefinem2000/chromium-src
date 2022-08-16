@@ -6,6 +6,7 @@
 #define CHROMEOS_ASH_COMPONENTS_NETWORK_NETWORK_STATE_H_
 
 #include <stdint.h>
+#include <sstream>
 
 #include <memory>
 #include <string>
@@ -69,6 +70,8 @@ class COMPONENT_EXPORT(CHROMEOS_NETWORK) NetworkState : public ManagedState {
     kNoInternet,
     kMaxValue = kNoInternet  // For UMA_HISTOGRAM_ENUMERATION
   };
+  friend std::ostream& operator<<(std::ostream& stream,
+                                  const PortalState& portal_state);
 
   // ManagedState overrides
   // If you change this method, update GetProperties too.
@@ -293,6 +296,8 @@ class COMPONENT_EXPORT(CHROMEOS_NETWORK) NetworkState : public ManagedState {
   // true if |name_| changes.
   bool UpdateName(const base::Value& properties);
 
+  // Uses the Shill connection state and PortalDetectionFailedStatus to generate
+  // |shill_portal_state_|.
   void UpdateCaptivePortalState(const base::Value& properties);
 
   void SetVpnProvider(const std::string& id, const std::string& type);
@@ -382,6 +387,10 @@ class COMPONENT_EXPORT(CHROMEOS_NETWORK) NetworkState : public ManagedState {
   // if the request is aborted.
   bool connect_requested_ = false;
 };
+
+std::ostream& COMPONENT_EXPORT(CHROMEOS_NETWORK) operator<<(
+    std::ostream& stream,
+    const NetworkState::PortalState& portal_state);
 
 }  // namespace ash
 

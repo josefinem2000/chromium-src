@@ -21,6 +21,7 @@
 #include "chrome/browser/extensions/api/passwords_private/passwords_private_utils.h"
 #include "chrome/browser/ui/passwords/settings/password_manager_porter.h"
 #include "chrome/common/extensions/api/passwords_private.h"
+#include "components/device_reauth/biometric_authenticator.h"
 #include "components/keyed_service/core/keyed_service.h"
 #include "components/password_manager/core/browser/password_access_authenticator.h"
 #include "components/password_manager/core/browser/password_account_storage_settings_watcher.h"
@@ -81,7 +82,9 @@ class PasswordsPrivateDelegateImpl
                                 content::WebContents* web_contents) override;
   void MovePasswordsToAccount(const std::vector<int>& ids,
                               content::WebContents* web_contents) override;
-  void ImportPasswords(content::WebContents* web_contents) override;
+  void ImportPasswords(api::passwords_private::PasswordStoreSet to_store,
+                       ImportResultsCallback results_callback,
+                       content::WebContents* web_contents) override;
   void ExportPasswords(
       base::OnceCallback<void(const std::string&)> accepted_callback,
       content::WebContents* web_contents) override;
@@ -194,6 +197,9 @@ class PasswordsPrivateDelegateImpl
       const password_manager::CredentialUIEntry& entry,
       api::passwords_private::PlaintextReason reason);
 
+  // Callback for biometric authentication after authentication check.
+  void OnReauthCompleted();
+
   // Not owned by this class.
   raw_ptr<Profile> profile_;
 
@@ -237,6 +243,9 @@ class PasswordsPrivateDelegateImpl
   // The WebContents used when invoking this API. Used to fetch the
   // NativeWindow for the window where the API was called.
   raw_ptr<content::WebContents> web_contents_;
+
+  // Biometric authenticator used to authenticate user on Mac in settings.
+  scoped_refptr<device_reauth::BiometricAuthenticator> biometric_authenticator_;
 
   base::WeakPtrFactory<PasswordsPrivateDelegateImpl> weak_ptr_factory_{this};
 };

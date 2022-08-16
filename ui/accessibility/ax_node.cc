@@ -20,7 +20,6 @@
 #include "ui/accessibility/ax_table_info.h"
 #include "ui/accessibility/ax_tree.h"
 #include "ui/accessibility/ax_tree_manager.h"
-#include "ui/accessibility/ax_tree_manager_map.h"
 #include "ui/gfx/color_utils.h"
 #include "ui/gfx/geometry/transform.h"
 
@@ -63,8 +62,7 @@ size_t AXNode::GetChildCount() const {
 size_t AXNode::GetChildCountCrossingTreeBoundary() const {
   DCHECK(!tree_->GetTreeUpdateInProgressState());
 
-  const AXTreeManager* child_tree_manager =
-      AXTreeManagerMap::GetInstance().GetManagerForChildTree(*this);
+  const AXTreeManager* child_tree_manager = AXTreeManager::ForChildTree(*this);
   if (child_tree_manager)
     return 1u;
 
@@ -81,8 +79,7 @@ size_t AXNode::GetUnignoredChildCountCrossingTreeBoundary() const {
   // TODO(nektar): Should DCHECK that this node is not ignored.
   DCHECK(!tree_->GetTreeUpdateInProgressState());
 
-  const AXTreeManager* child_tree_manager =
-      AXTreeManagerMap::GetInstance().GetManagerForChildTree(*this);
+  const AXTreeManager* child_tree_manager = AXTreeManager::ForChildTree(*this);
   if (child_tree_manager) {
     DCHECK_EQ(unignored_child_count_, 0u)
         << "A node cannot be hosting both a child tree and other nodes as "
@@ -103,8 +100,7 @@ AXNode* AXNode::GetChildAtIndex(size_t index) const {
 AXNode* AXNode::GetChildAtIndexCrossingTreeBoundary(size_t index) const {
   DCHECK(!tree_->GetTreeUpdateInProgressState());
 
-  const AXTreeManager* child_tree_manager =
-      AXTreeManagerMap::GetInstance().GetManagerForChildTree(*this);
+  const AXTreeManager* child_tree_manager = AXTreeManager::ForChildTree(*this);
   if (child_tree_manager) {
     DCHECK_EQ(index, 0u)
         << "A node cannot be hosting both a child tree and other nodes as "
@@ -133,8 +129,7 @@ AXNode* AXNode::GetUnignoredChildAtIndexCrossingTreeBoundary(
   // TODO(nektar): Should DCHECK that this node is not ignored.
   DCHECK(!tree_->GetTreeUpdateInProgressState());
 
-  const AXTreeManager* child_tree_manager =
-      AXTreeManagerMap::GetInstance().GetManagerForChildTree(*this);
+  const AXTreeManager* child_tree_manager = AXTreeManager::ForChildTree(*this);
   if (child_tree_manager) {
     DCHECK_EQ(index, 0u)
         << "A node cannot be hosting both a child tree and other nodes as "
@@ -218,8 +213,7 @@ AXNode* AXNode::GetFirstUnignoredChild() const {
 AXNode* AXNode::GetFirstUnignoredChildCrossingTreeBoundary() const {
   DCHECK(!tree_->GetTreeUpdateInProgressState());
 
-  const AXTreeManager* child_tree_manager =
-      AXTreeManagerMap::GetInstance().GetManagerForChildTree(*this);
+  const AXTreeManager* child_tree_manager = AXTreeManager::ForChildTree(*this);
   if (child_tree_manager)
     return child_tree_manager->GetRootAsAXNode();
 
@@ -250,8 +244,7 @@ AXNode* AXNode::GetLastUnignoredChild() const {
 AXNode* AXNode::GetLastUnignoredChildCrossingTreeBoundary() const {
   DCHECK(!tree_->GetTreeUpdateInProgressState());
 
-  const AXTreeManager* child_tree_manager =
-      AXTreeManagerMap::GetInstance().GetManagerForChildTree(*this);
+  const AXTreeManager* child_tree_manager = AXTreeManager::ForChildTree(*this);
   if (child_tree_manager)
     return child_tree_manager->GetRootAsAXNode();
 
@@ -773,7 +766,75 @@ SkColor AXNode::ComputeColorAttribute(ax::mojom::IntAttribute attr) const {
 }
 
 AXTreeManager* AXNode::GetManager() const {
-  return AXTreeManagerMap::GetInstance().GetManager(tree_->GetAXTreeID());
+  return AXTreeManager::FromID(tree_->GetAXTreeID());
+}
+
+bool AXNode::HasVisibleCaretOrSelection() const {
+  const OwnerTree::Selection selection = GetSelection();
+  const AXNode* focus = tree()->GetFromId(selection.focus_object_id);
+  if (!focus || !focus->IsDescendantOf(this))
+    return false;
+
+  // A selection or the caret will be visible in a focused text field (including
+  // a content editable).
+  const AXNode* text_field = GetTextFieldAncestor();
+  if (text_field)
+    return true;
+
+  // The selection will be visible in non-editable content only if it is not
+  // collapsed.
+  return !selection.IsCollapsed();
+}
+
+AXNode::OwnerTree::Selection AXNode::GetSelection() const {
+  DCHECK(tree()) << "Cannot retrieve the current selection if the node is not "
+                    "attached to an accessibility tree.\n"
+                 << *this;
+  return tree()->GetSelection();
+}
+
+AXNode::OwnerTree::Selection AXNode::GetUnignoredSelection() const {
+  DCHECK(tree()) << "Cannot retrieve the current selection if the node is not "
+                    "attached to an accessibility tree.\n"
+                 << *this;
+  OwnerTree::Selection selection = tree()->GetUnignoredSelection();
+
+  // "selection.anchor_offset" and "selection.focus_ofset" might need to be
+  // adjusted if the anchor or the focus nodes include ignored children.
+  //
+  // TODO(nektar): Move this logic into its own "AXSelection" class and cache
+  // the result for faster reuse.
+  const AXNode* anchor = tree()->GetFromId(selection.anchor_object_id);
+  if (anchor && !anchor->IsLeaf()) {
+    DCHECK_GE(selection.anchor_offset, 0);
+    if (static_cast<size_t>(selection.anchor_offset) <
+        anchor->GetChildCount()) {
+      const AXNode* anchor_child =
+          anchor->GetChildAtIndex(selection.anchor_offset);
+      DCHECK(anchor_child);
+      selection.anchor_offset =
+          static_cast<int>(anchor_child->GetUnignoredIndexInParent());
+    } else {
+      selection.anchor_offset =
+          static_cast<int>(anchor->GetUnignoredChildCount());
+    }
+  }
+
+  const AXNode* focus = tree()->GetFromId(selection.focus_object_id);
+  if (focus && !focus->IsLeaf()) {
+    DCHECK_GE(selection.focus_offset, 0);
+    if (static_cast<size_t>(selection.focus_offset) < focus->GetChildCount()) {
+      const AXNode* focus_child =
+          focus->GetChildAtIndex(selection.focus_offset);
+      DCHECK(focus_child);
+      selection.focus_offset =
+          static_cast<int>(focus_child->GetUnignoredIndexInParent());
+    } else {
+      selection.focus_offset =
+          static_cast<int>(focus->GetUnignoredChildCount());
+    }
+  }
+  return selection;
 }
 
 bool AXNode::HasStringAttribute(ax::mojom::StringAttribute attribute) const {
@@ -879,7 +940,7 @@ const std::string& AXNode::GetNameUTF8() const {
   if (GetRole() == ax::mojom::Role::kPortal &&
       GetNameFrom() == ax::mojom::NameFrom::kNone) {
     const AXTreeManager* child_tree_manager =
-        AXTreeManagerMap::GetInstance().GetManagerForChildTree(*this);
+        AXTreeManager::ForChildTree(*this);
     if (child_tree_manager)
       node = child_tree_manager->GetRootAsAXNode();
   }
@@ -1639,6 +1700,7 @@ bool AXNode::IsIgnoredContainerForOrderedSet() const {
          GetRole() == ax::mojom::Role::kLabelText ||
          GetRole() == ax::mojom::Role::kListItem ||
          GetRole() == ax::mojom::Role::kGenericContainer ||
+         GetRole() == ax::mojom::Role::kScrollView ||
          GetRole() == ax::mojom::Role::kUnknown;
 }
 

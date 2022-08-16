@@ -22,6 +22,7 @@
 #include "third_party/blink/renderer/core/layout/ng/inline/ng_physical_line_box_fragment.h"
 #include "third_party/blink/renderer/core/layout/ng/layout_ng_mixin.h"
 #include "third_party/blink/renderer/core/layout/ng/ng_block_break_token.h"
+#include "third_party/blink/renderer/core/layout/ng/ng_fragmentation_utils.h"
 #include "third_party/blink/renderer/core/layout/ng/ng_outline_utils.h"
 #include "third_party/blink/renderer/core/layout/ng/ng_physical_box_fragment.h"
 #include "third_party/blink/renderer/core/layout/pointer_events_hit_rules.h"
@@ -225,7 +226,10 @@ bool FragmentRequiresLegacyFallback(const NGPhysicalFragment& fragment) {
   // cannot handle block fragmented objects.
   if (!fragment.IsFormattingContextRoot() || fragment.CanTraverse())
     return false;
-  DCHECK(!To<NGPhysicalBoxFragment>(&fragment)->BreakToken());
+  // We may get here in multiple-fragment cases if the object is repeated
+  // (inside table headers and footers, for instance).
+  DCHECK(!To<NGPhysicalBoxFragment>(&fragment)->BreakToken() ||
+         To<NGPhysicalBoxFragment>(&fragment)->BreakToken()->IsRepeated());
   return true;
 }
 
@@ -305,6 +309,8 @@ bool HitTestAllPhasesInFragment(const NGPhysicalBoxFragment& fragment,
   // considered part of the parent stacking context, not this new one.
 
   if (!fragment.CanTraverse()) {
+    if (!fragment.IsFirstForNode() && !CanPaintMultipleFragments(fragment))
+      return false;
     return fragment.GetMutableLayoutObject()->HitTestAllPhases(
         *result, hit_test_location, accumulated_offset);
   }
@@ -322,6 +328,8 @@ bool NodeAtPointInFragment(const NGPhysicalBoxFragment& fragment,
                            HitTestPhase phase,
                            HitTestResult* result) {
   if (!fragment.CanTraverse()) {
+    if (!fragment.IsFirstForNode() && !CanPaintMultipleFragments(fragment))
+      return false;
     return fragment.GetMutableLayoutObject()->NodeAtPoint(
         *result, hit_test_location, accumulated_offset, phase);
   }
@@ -366,6 +374,38 @@ PaintInfo FloatPaintInfo(const PaintInfo& paint_info) {
   return float_paint_info;
 }
 
+// Helper function for painting a child fragment, when there's any likelihood
+// that we need legacy fallback. If it's guaranteed that legacy fallback won't
+// be necessary, on the other hand, there's no need to call this function. In
+// such cases, call sites may just as well invoke NGBoxFragmentPainter::Paint()
+// on their own.
+void PaintFragment(const NGPhysicalBoxFragment& fragment,
+                   const PaintInfo& paint_info) {
+  if (fragment.CanTraverse()) {
+    NGBoxFragmentPainter(fragment).Paint(paint_info);
+    return;
+  }
+
+  if (!fragment.IsFirstForNode() && !CanPaintMultipleFragments(fragment))
+    return;
+
+  // In case this object generated multiple fragments (e.g. repeated table
+  // headers / footers), set a fragment ID now, to help the legacy code look up
+  // the right FragmentData object (to use the right paint offset).
+  PaintInfo modified_paint_info(paint_info);
+  modified_paint_info.SetFragmentID(fragment.GetFragmentData()->FragmentID());
+
+  auto* layout_object = fragment.GetLayoutObject();
+  DCHECK(layout_object);
+  if (fragment.IsPaintedAtomically() && fragment.IsLegacyLayoutRoot()) {
+    ObjectPainter(*layout_object).PaintAllPhasesAtomically(modified_paint_info);
+  } else {
+    // TODO(ikilpatrick): Once FragmentItem ships we should call the
+    // NGBoxFragmentPainter directly for NG objects.
+    layout_object->Paint(modified_paint_info);
+  }
+}
+
 }  // anonymous namespace
 
 PhysicalRect NGBoxFragmentPainter::InkOverflowIncludingFilters() const {
@@ -405,6 +445,10 @@ void NGBoxFragmentPainter::PaintInternal(const PaintInfo& paint_info) {
   // and ScopedPaintState::adjusted_paint_info_.
   STACK_UNINITIALIZED ScopedPaintState paint_state(box_fragment_, paint_info);
   if (!ShouldPaint(paint_state))
+    return;
+
+  if (!box_fragment_.IsFirstForNode() &&
+      !CanPaintMultipleFragments(box_fragment_))
     return;
 
   PaintInfo& info = paint_state.MutablePaintInfo();
@@ -806,17 +850,7 @@ void NGBoxFragmentPainter::PaintBlockChild(
     return;
   }
 
-  auto* layout_object = child_fragment.GetLayoutObject();
-  DCHECK(layout_object);
-  if (child_fragment.IsPaintedAtomically() &&
-      child_fragment.IsLegacyLayoutRoot()) {
-    ObjectPainter(*layout_object)
-        .PaintAllPhasesAtomically(paint_info_for_descendants);
-  } else {
-    // TODO(ikilpatrick): Once FragmentItem ships we should call the
-    // NGBoxFragmentPainter directly for NG objects.
-    layout_object->Paint(paint_info_for_descendants);
-  }
+  PaintFragment(box_child_fragment, paint_info_for_descendants);
 }
 
 void NGBoxFragmentPainter::PaintFloatingItems(const PaintInfo& paint_info,
@@ -835,12 +869,7 @@ void NGBoxFragmentPainter::PaintFloatingItems(const PaintInfo& paint_info,
     }
     if (child_fragment->IsFloating()) {
       PaintInfo float_paint_info = FloatPaintInfo(paint_info);
-      if (child_fragment->CanTraverse()) {
-        NGBoxFragmentPainter(*child_fragment).Paint(float_paint_info);
-      } else {
-        ObjectPainter(*child_fragment->GetLayoutObject())
-            .PaintAllPhasesAtomically(float_paint_info);
-      }
+      PaintFragment(*child_fragment, float_paint_info);
     } else if (child_fragment->IsBlockInInline() &&
                child_fragment->HasFloatingDescendantsForPaint()) {
       NGBoxFragmentPainter(*child_fragment).Paint(paint_info);
@@ -870,35 +899,15 @@ void NGBoxFragmentPainter::PaintFloatingChildren(
     if (child_fragment.HasSelfPaintingLayer())
       continue;
 
-    if (child_fragment.CanTraverse()) {
-      if (child_fragment.IsFloating()) {
-        NGBoxFragmentPainter(To<NGPhysicalBoxFragment>(child_fragment))
-            .Paint(FloatPaintInfo(*local_paint_info));
-        continue;
-      }
-
-      // Any non-floated children which paint atomically shouldn't be traversed.
-      if (child_fragment.IsPaintedAtomically())
-        continue;
-    } else {
-      if (child_fragment.IsFloating()) {
-        // TODO(kojii): The float is outside of the inline formatting context
-        // and that it maybe another NG inline formatting context, NG block
-        // layout, or legacy. NGBoxFragmentPainter can handle only the first
-        // case. In order to cover more tests for other two cases, we always
-        // fallback to legacy, which will forward back to NGBoxFragmentPainter
-        // if the float is for NGBoxFragmentPainter. We can shortcut this for
-        // the first case when we're more stable.
-
-        ObjectPainter(*child_fragment.GetLayoutObject())
-            .PaintAllPhasesAtomically(FloatPaintInfo(*local_paint_info));
-        continue;
-      }
-
-      // Any children which paint atomically shouldn't be traversed.
-      if (child_fragment.IsPaintedAtomically())
-        continue;
+    if (child_fragment.IsFloating()) {
+      PaintFragment(To<NGPhysicalBoxFragment>(child_fragment),
+                    FloatPaintInfo(*local_paint_info));
+      continue;
     }
+
+    // Any non-floated children which paint atomically shouldn't be traversed.
+    if (child_fragment.IsPaintedAtomically())
+      continue;
 
     // The selection paint traversal is special. We will visit all fragments
     // (including floats) in the normal paint traversal. There isn't any point
@@ -1669,7 +1678,7 @@ void NGBoxFragmentPainter::PaintBoxItem(
           child_fragment.GetLayoutObject();
       DCHECK(child_layout_object);
       DCHECK(child_layout_object->IsAtomicInlineLevel());
-      ObjectPainter(*child_layout_object).PaintAllPhasesAtomically(paint_info);
+      PaintFragment(To<NGPhysicalBoxFragment>(child_fragment), paint_info);
       return;
     }
     NGBoxFragmentPainter(child_fragment).PaintAllPhasesAtomically(paint_info);
@@ -1876,6 +1885,9 @@ bool NGBoxFragmentPainter::NodeAtPoint(const HitTestContext& hit_test,
   // a fragment that doesn't intersect, and turn this into a DCHECK.
   if (!fragment.MayIntersect(*hit_test.result, hit_test.location,
                              physical_offset))
+    return false;
+
+  if (!fragment.IsFirstForNode() && !CanPaintMultipleFragments(fragment))
     return false;
 
   if (hit_test.phase == HitTestPhase::kForeground &&

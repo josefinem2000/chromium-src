@@ -140,9 +140,13 @@ const base::Feature kArcAdbSideloadingFeature{
 const base::Feature kArcFuseBoxFileSharing{"ArcFuseBoxFileSharing",
                                            base::FEATURE_ENABLED_BY_DEFAULT};
 
-// Controls whether to enable support for ARC Input Overlay.
+// Controls whether to enable support for ARC Input Overlay Alpha.
 const base::Feature kArcInputOverlay{"ArcInputOverlay",
                                      base::FEATURE_ENABLED_BY_DEFAULT};
+
+// Controls whether to enable support for ARC Input Overlay Beta.
+const base::Feature kArcInputOverlayBeta{"ArcInputOverlayBeta",
+                                         base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Controls whether to enable support for ARC ADB sideloading for managed
 // accounts and/or devices.
@@ -223,6 +227,10 @@ const base::Feature kAutocorrectParamsTuning{"AutocorrectParamsTuning",
 const base::Feature kAutozoomNudgeSessionReset{
     "AutozoomNudgeSessionReset", base::FEATURE_DISABLED_BY_DEFAULT};
 
+// Enables loading avatar images from the cloud on ChromeOS.
+const base::Feature kAvatarsCloudMigration{"AvatarsCloudMigration",
+                                           base::FEATURE_DISABLED_BY_DEFAULT};
+
 // Enables the persistent desks bar at the top of the screen in clamshell mode
 // when there are more than one desk.
 const base::Feature kBentoBar{"BentoBar", base::FEATURE_DISABLED_BY_DEFAULT};
@@ -231,6 +239,10 @@ const base::Feature kBentoBar{"BentoBar", base::FEATURE_DISABLED_BY_DEFAULT};
 // audio performance in noisy environment.
 const base::Feature kBluetoothFixA2dpPacketSize{
     "BluetoothFixA2dpPacketSize", base::FEATURE_DISABLED_BY_DEFAULT};
+
+// Enables or disables the Bluetooth Quality Report feature.
+const base::Feature kBluetoothQualityReport{"BluetoothQualityReport",
+                                            base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Enables or disables the ChromeOS Bluetooth Revamp, which updates Bluetooth
 // system UI and related infrastructure. See https://crbug.com/1010321.
@@ -612,13 +624,6 @@ const base::Feature kEnableOAuthIpp{"EnableOAuthIpp",
 const base::Feature kEnableOobeChromeVoxHint{"EnableOobeChromeVoxHint",
                                              base::FEATURE_ENABLED_BY_DEFAULT};
 
-// Enables Polymer3 for OOBE and AddPerson flows.
-const base::Feature kEnableOobePolymer3{"EnableOobePolymer3",
-                                        base::FEATURE_ENABLED_BY_DEFAULT};
-// Enables Polymer3 for only the 'Add Person' flow on the login screen.
-const base::Feature kOobeAddPersonPolymer3{"OobeAddPersonPolymer3",
-                                           base::FEATURE_DISABLED_BY_DEFAULT};
-
 // Enables Kiosk enrollment option in OOBE.
 const base::Feature kEnableKioskEnrollmentInOobe{
     "EnableKioskEnrollmentInOobe", base::FEATURE_ENABLED_BY_DEFAULT};
@@ -836,6 +841,10 @@ const base::Feature kHelpAppLauncherSearch{"HelpAppLauncherSearch",
 // Enable ChromeOS hibernation features.
 const base::Feature kHibernate{"Hibernate", base::FEATURE_DISABLED_BY_DEFAULT};
 
+// Enables image search for productivity launcher.
+const base::Feature kProductivityLauncherImageSearch{
+    "ProductivityLauncherImageSearch", base::FEATURE_DISABLED_BY_DEFAULT};
+
 // Enables or disables the flag to synchronize launcher item colors. It is
 // in effect only when kLauncherAppSort is enabled.
 const base::Feature kLauncherItemColorSync{"LauncherItemColorSync",
@@ -870,6 +879,15 @@ const base::Feature kHideShelfControlsInTabletMode{
 const base::Feature kHoldingSpaceInProgressDownloadsNotificationSuppression{
     "HoldingSpaceInProgressNotificationSuppression",
     base::FEATURE_DISABLED_BY_DEFAULT};
+
+// Enables rebranding of holding space to convey the relationship with
+// Files to simplify feature comprehension.
+const base::Feature kHoldingSpaceRebrand{"HoldingSpaceRebrand",
+                                         base::FEATURE_DISABLED_BY_DEFAULT};
+
+// Enables suggestions in the pinned files section of Holding Space.
+const base::Feature kHoldingSpaceSuggestions{"HoldingSpaceSuggestions",
+                                             base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Control whether the hotspot tethering is enabled. When enabled, it will allow
 // the Chromebook to share its cellular internet connection to other devices.
@@ -927,6 +945,9 @@ const base::Feature kInstantTethering{"InstantTethering",
 
 // Enables Jelly features.
 const base::Feature kJelly{"Jelly", base::FEATURE_DISABLED_BY_DEFAULT};
+
+// Enables Jellyroll features.
+const base::Feature kJellyroll{"Jellyroll", base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Enables IME button in the floating accessibility menu for the Kiosk session.
 const base::Feature kKioskEnableImeButton{"KioskEnableImeButton",
@@ -1763,6 +1784,10 @@ bool IsArcInputOverlayEnabled() {
   return base::FeatureList::IsEnabled(kArcInputOverlay);
 }
 
+bool IsArcInputOverlayBetaEnabled() {
+  return base::FeatureList::IsEnabled(kArcInputOverlayBeta);
+}
+
 bool IsArcNetworkDiagnosticsButtonEnabled() {
   return IsNetworkingInDiagnosticsAppEnabled();
 }
@@ -1799,6 +1824,10 @@ bool IsBackgroundBlurEnabled() {
 
 bool IsBentoBarEnabled() {
   return base::FeatureList::IsEnabled(kBentoBar);
+}
+
+bool IsBluetoothQualityReportEnabled() {
+  return base::FeatureList::IsEnabled(kBluetoothQualityReport);
 }
 
 bool IsBluetoothRevampEnabled() {
@@ -2004,6 +2033,14 @@ bool IsHoldingSpaceInProgressDownloadsNotificationSuppressionEnabled() {
       kHoldingSpaceInProgressDownloadsNotificationSuppression);
 }
 
+bool IsHoldingSpaceRebrandEnabled() {
+  return base::FeatureList::IsEnabled(kHoldingSpaceRebrand);
+}
+
+bool IsHoldingSpaceSuggestionsEnabled() {
+  return base::FeatureList::IsEnabled(kHoldingSpaceSuggestions);
+}
+
 bool IsHostnameSettingEnabled() {
   return base::FeatureList::IsEnabled(kEnableHostnameSetting);
 }
@@ -2036,6 +2073,10 @@ bool IsInstantTetheringBackgroundAdvertisingSupported() {
 
 bool IsJellyEnabled() {
   return base::FeatureList::IsEnabled(kJelly);
+}
+
+bool IsJellyrollEnabled() {
+  return base::FeatureList::IsEnabled(kJellyroll);
 }
 
 bool IsKeyboardBacklightToggleEnabled() {
@@ -2097,6 +2138,11 @@ bool IsLockScreenInlineReplyEnabled() {
 
 bool IsLockScreenNotificationsEnabled() {
   return base::FeatureList::IsEnabled(kLockScreenNotifications);
+}
+
+bool IsProductivityLauncherImageSearchEnabled() {
+  return base::FeatureList::IsEnabled(kProductivityLauncher) &&
+         base::FeatureList::IsEnabled(kProductivityLauncherImageSearch);
 }
 
 bool IsMacAddressRandomizationEnabled() {
@@ -2162,14 +2208,6 @@ bool IsOobeChromeVoxHintEnabled() {
 bool IsOobeHidDetectionRevampEnabled() {
   return base::FeatureList::IsEnabled(kOobeHidDetectionRevamp) &&
          base::FeatureList::IsEnabled(kBluetoothRevamp);
-}
-
-bool IsOobePolymer3Enabled() {
-  return true;
-}
-
-bool IsOobeAddPersonPolymer3Enabled() {
-  return base::FeatureList::IsEnabled(kOobeAddPersonPolymer3);
 }
 
 bool IsKioskEnrollmentInOobeEnabled() {

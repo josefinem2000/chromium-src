@@ -352,6 +352,11 @@ const char kFedCmIframeSupportFieldTrialParamName[] = "IframeSupport";
 const base::Feature kFedCmManifestValidation{"FedCmManifestValidation",
                                              base::FEATURE_ENABLED_BY_DEFAULT};
 
+// Enables usage of the FedCM API with multiple identity providers at the same
+// time.
+const base::Feature kFedCmMultipleIdentityProviders{
+    "FedCmMultipleIdentityProviders", base::FEATURE_DISABLED_BY_DEFAULT};
+
 // Enables usage of First Party Sets to determine cookie availability.
 constexpr base::Feature kFirstPartySets{"FirstPartySets",
                                         base::FEATURE_DISABLED_BY_DEFAULT};
@@ -844,11 +849,6 @@ const base::Feature kServiceWorkerPaymentApps{"ServiceWorkerPaymentApps",
 const base::Feature kWebPaymentAPICSP{"WebPaymentAPICSP",
                                       base::FEATURE_DISABLED_BY_DEFAULT};
 
-// Enable the basic-card payment method from the PaymentRequest API. This has
-// been disabled since M100 and is soon to be removed: crbug.com/1209835.
-const base::Feature kPaymentRequestBasicCard{"PaymentRequestBasicCard",
-                                             base::FEATURE_DISABLED_BY_DEFAULT};
-
 // Use this feature to experiment terminating a service worker when it doesn't
 // control any clients: https://crbug.com/1043845.
 const base::Feature kServiceWorkerTerminationOnNoControllee{
@@ -1198,6 +1198,17 @@ const base::Feature kAccessibilityPageZoom{"AccessibilityPageZoom",
 const base::Feature kBackgroundMediaRendererHasModerateBinding{
     "BackgroundMediaRendererHasModerateBinding",
     base::FEATURE_DISABLED_BY_DEFAULT};
+
+// When this feature is enabled the BindingManager for non-low-end devices will
+// use a not perceptible binding for background renderers on Android Q+.
+const base::Feature kBindingManagerUseNotPerceptibleBinding{
+    "BindingManagerUseNotPerceptibleBinding",
+    base::FEATURE_DISABLED_BY_DEFAULT};
+
+// Reduce the priority of GPU process when in background so it is more likely
+// to be killed first if the OS needs more memory.
+const base::Feature kReduceGpuPriorityOnBackground{
+    "ReduceGpuPriorityOnBackground", base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Allows the use of an experimental feature to drop any AccessibilityEvents
 // that are not relevant to currently enabled accessibility services.

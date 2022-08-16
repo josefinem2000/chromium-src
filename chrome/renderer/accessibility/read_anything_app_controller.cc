@@ -132,9 +132,9 @@ ui::AXTreeUpdate GetSnapshotFromV8SnapshotLite(
       continue;
     ui::AXNodeData ax_node_data;
     SetAXNodeDataId(isolate, &v8_node_dict, &ax_node_data);
+    SetAXNodeDataRole(isolate, &v8_node_dict, &ax_node_data);
     SetAXNodeDataName(isolate, &v8_node_dict, &ax_node_data);
     SetAXNodeDataChildIds(isolate, &v8_node_dict, &ax_node_data);
-    SetAXNodeDataRole(isolate, &v8_node_dict, &ax_node_data);
     SetAXNodeDataHierarchicalLevel(isolate, &v8_node_dict, &ax_node_data);
     SetAXNodeDataUrl(isolate, &v8_node_dict, &ax_node_data);
     snapshot.nodes.push_back(ax_node_data);
@@ -203,6 +203,8 @@ void ReadAnythingAppController::OnAXTreeDistilled(
 void ReadAnythingAppController::OnThemeChanged(ReadAnythingThemePtr new_theme) {
   font_name_ = new_theme->font_name;
   font_size_ = new_theme->font_size;
+  foreground_color_ = new_theme->foreground_color;
+  background_color_ = new_theme->background_color;
 
   // TODO(abigailbklein): Use v8::Function rather than javascript. If possible,
   // replace this function call with firing an event.
@@ -217,6 +219,10 @@ gin::ObjectTemplateBuilder ReadAnythingAppController::GetObjectTemplateBuilder(
       .SetProperty("contentNodeIds", &ReadAnythingAppController::ContentNodeIds)
       .SetProperty("fontName", &ReadAnythingAppController::FontName)
       .SetProperty("fontSize", &ReadAnythingAppController::FontSize)
+      .SetProperty("foregroundColor",
+                   &ReadAnythingAppController::ForegroundColor)
+      .SetProperty("backgroundColor",
+                   &ReadAnythingAppController::BackgroundColor)
       .SetMethod("getChildren", &ReadAnythingAppController::GetChildren)
       .SetMethod("getHeadingLevel", &ReadAnythingAppController::GetHeadingLevel)
       .SetMethod("getTextContent", &ReadAnythingAppController::GetTextContent)
@@ -242,6 +248,14 @@ std::string ReadAnythingAppController::FontName() {
 
 float ReadAnythingAppController::FontSize() {
   return font_size_;
+}
+
+SkColor ReadAnythingAppController::ForegroundColor() {
+  return foreground_color_;
+}
+
+SkColor ReadAnythingAppController::BackgroundColor() {
+  return background_color_;
 }
 
 std::vector<ui::AXNodeID> ReadAnythingAppController::GetChildren(
@@ -318,8 +332,11 @@ void ReadAnythingAppController::OnConnected() {
 }
 
 void ReadAnythingAppController::SetThemeForTesting(const std::string& font_name,
-                                                   float font_size) {
-  OnThemeChanged(ReadAnythingTheme::New(font_name, font_size));
+                                                   float font_size,
+                                                   SkColor foreground_color,
+                                                   SkColor background_color) {
+  OnThemeChanged(ReadAnythingTheme::New(font_name, font_size, foreground_color,
+                                        background_color));
 }
 
 void ReadAnythingAppController::SetContentForTesting(

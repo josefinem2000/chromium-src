@@ -575,4 +575,52 @@ export function shimlessRMAAppTest() {
         component.shadowRoot.querySelector('hardware-error-page');
     assertTrue(!!hardwareErrorPage);
   });
+
+  test('RebootErrorCodeResultsInShowingRebootPage', async () => {
+    await initializeShimlessRMAApp(fakeStates, fakeChromeVersion[0]);
+
+    // Emulate platform sending a reboot error code.
+    component.dispatchEvent(new CustomEvent(
+        'transition-state',
+        {
+          bubbles: true,
+          composed: true,
+          detail: () => Promise.resolve({
+            stateResult: {
+              state: State.kWPDisableComplete,
+              error: RmadErrorCode.kExpectReboot,
+            },
+          }),
+        },
+        ));
+    await flushTasks();
+
+    // Confirm transition to the reboot page.
+    const rebootPage = component.shadowRoot.querySelector('reboot-page');
+    assertTrue(!!rebootPage);
+  });
+
+  test('ShutdownErrorCodeResultsInShowingShutdownPage', async () => {
+    await initializeShimlessRMAApp(fakeStates, fakeChromeVersion[0]);
+
+    // Emulate platform sending a shut down error code.
+    component.dispatchEvent(new CustomEvent(
+        'transition-state',
+        {
+          bubbles: true,
+          composed: true,
+          detail: () => Promise.resolve({
+            stateResult: {
+              state: State.kWPDisableComplete,
+              error: RmadErrorCode.kExpectShutdown,
+            },
+          }),
+        },
+        ));
+    await flushTasks();
+
+    // Confirm transition to the reboot page.
+    const rebootPage = component.shadowRoot.querySelector('reboot-page');
+    assertTrue(!!rebootPage);
+  });
 }

@@ -130,6 +130,15 @@ MediaStreamComponentImpl::GetCaptureHandle() {
   return platform_track_->GetCaptureHandle();
 }
 
+void MediaStreamComponentImpl::SetEnabled(bool enabled) {
+  enabled_ = enabled;
+  // TODO(https://crbug.com/1302689): Change to a DCHECK(platform_track) once
+  // the platform_track is always set in the constructor.
+  if (platform_track_) {
+    platform_track_->SetEnabled(enabled_);
+  }
+}
+
 void MediaStreamComponentImpl::SetContentHint(
     WebMediaStreamTrack::ContentHintType hint) {
   switch (hint) {
@@ -137,12 +146,12 @@ void MediaStreamComponentImpl::SetContentHint(
       break;
     case WebMediaStreamTrack::ContentHintType::kAudioSpeech:
     case WebMediaStreamTrack::ContentHintType::kAudioMusic:
-      DCHECK_EQ(MediaStreamSource::kTypeAudio, Source()->GetType());
+      DCHECK_EQ(MediaStreamSource::kTypeAudio, GetSourceType());
       break;
     case WebMediaStreamTrack::ContentHintType::kVideoMotion:
     case WebMediaStreamTrack::ContentHintType::kVideoDetail:
     case WebMediaStreamTrack::ContentHintType::kVideoText:
-      DCHECK_EQ(MediaStreamSource::kTypeVideo, Source()->GetType());
+      DCHECK_EQ(MediaStreamSource::kTypeVideo, GetSourceType());
       break;
   }
   if (hint == content_hint_)

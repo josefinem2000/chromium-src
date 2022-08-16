@@ -100,6 +100,7 @@ Başlamak için şunları deneyebilirsin.</translation>
 <translation id="1455242230282523554">Dil ayarlarını gösterin</translation>
 <translation id="1460620680449458626">Ses kapalı.</translation>
 <translation id="1467432559032391204">Sola</translation>
+<translation id="146902737843070955">Yöneticiniz bu değişikliği istedi</translation>
 <translation id="147310119694673958">Telefon pili %<ph name="BATTERY_PERCENTAGE" /></translation>
 <translation id="1479909375538722835">Kayan erişilebilirlik menüsü</translation>
 <translation id="1480845547124508962"><ph name="CURRENT_TIME" />, Takvim görünümünü açmak için Enter tuşuna basın</translation>
@@ -445,6 +446,7 @@ Başlamak için şunları deneyebilirsin.</translation>
 <translation id="3593039967545720377">Panonuzu görüntülemek üzere <ph name="SHORTCUT_KEY_NAME" /> + V tuşlarına basarak pano geçmişinize erişin. Başlamak için bir öğe kopyalayın.</translation>
 <translation id="3593646411856133110">Açık uygulamaları görmek için yukarı kaydırıp basılı tutun</translation>
 <translation id="3595596368722241419">Pil tam dolu</translation>
+<translation id="3596012367874587041">Uygulama ayarları</translation>
 <translation id="3600061223661453002">Kapalı</translation>
 <translation id="3604801046548457007">Masa <ph name="DESK_TITILE" /> oluşturuldu</translation>
 <translation id="3606978283550408104">Braille ekranı bağlandı.</translation>
@@ -775,7 +777,7 @@ Cihazınızı güç kaynağına bağlayın.</translation>
 <translation id="5426063383988017631">Ayarlar menüsü kapatıldı</translation>
 <translation id="5428899915242071344">Seçmeye başla</translation>
 <translation id="5429993543155113935">Gizli pencereler şu anda desteklenmiyor</translation>
-<translation id="5430931332414098647">Anında Tethering</translation>
+<translation id="5430931332414098647">Hızlı Tethering</translation>
 <translation id="5431318178759467895">Renk</translation>
 <translation id="5433020815079095860">Ses girişi</translation>
 <translation id="544691375626129091">Mevcut tüm kullanıcılar zaten bu oturuma eklenmiş.</translation>
@@ -837,6 +839,7 @@ Cihazınızı güç kaynağına bağlayın.</translation>
 <translation id="5779721926447984944">Sabitlenmiş dosyalar</translation>
 <translation id="5788127256798019331">Play dosyaları</translation>
 <translation id="5790085346892983794">Başarılı</translation>
+<translation id="5804651031882187592">"SIM kilidi" ayarını devre dışı bırakın</translation>
 <translation id="5805809050170488595"><ph name="NETWORK_NAME" /> ağını etkinleştirmek için tıklayın</translation>
 <translation id="5825969630400862129">Bağlı cihaz ayarları</translation>
 <translation id="5837036133683224804"><ph name="RECEIVER_NAME" /> adlı alıcıya <ph name="ROUTE_TITLE" /> yayınını durdur</translation>

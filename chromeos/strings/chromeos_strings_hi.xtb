@@ -27,6 +27,7 @@
 <translation id="1199355487114804640">चलाएं/रोकें वाला बटन</translation>
 <translation id="1201402288615127009">अगला</translation>
 <translation id="1204296502688602597">डिवाइस और डीएनएस के बीच के इंतज़ार का समय</translation>
+<translation id="1207734034680156868">आपकी जानकारी के आधार पर सुझाव दिए जाते हैं</translation>
 <translation id="123124571410524056">पोर्टल में गड़बड़ी हो सकती है</translation>
 <translation id="1236400083787698183">रीस्टार्ट करने से पहले, डिवाइस को पावरवॉश करें. अगर आपके डिवाइस का कोई लिड है, तो पावरवॉश पूरा होने के बाद ही उसे बंद करें. पावरवॉश पूरा होने में एक मिनट तक लग सकता है.</translation>
 <translation id="1238612778414822719">एचटीटीपीएस पेजों के खुलने में इंतज़ार का समय</translation>
@@ -210,6 +211,7 @@
 <translation id="2536159006530886390">इंटरनेट से कनेक्ट नहीं किया जा सका.</translation>
 <translation id="2570743873672969996"><ph name="TEST_NAME" /> की जांच की जा रही है...</translation>
 <translation id="2584559707064218956">सेट अप के लिए, सेटिंग पर जाएं</translation>
+<translation id="2597774443162333062">Google को फ़ाइलें डीबग करने के लिए भेजी जाएंगी</translation>
 <translation id="2619761439309613843">हर दिन रीफ़्रेश करें</translation>
 <translation id="2620436844016719705">सिस्टम</translation>
 <translation id="2638662041295312666">साइन इन इमेज</translation>
@@ -671,6 +673,7 @@
 <translation id="6659594942844771486">ब्राउज़र टैब</translation>
 <translation id="6692996468359469499">चुनी हुई सामग्री से जुड़ी जानकारी पाएं</translation>
 <translation id="6704062477274546131">डीएनएस रिज़ॉल्यूशन</translation>
+<translation id="6719240409382354629">डिवाइस रीस्टार्ट होने वाला है...</translation>
 <translation id="6723839937902243910">पावर</translation>
 <translation id="6723847290197874913">कीबोर्ड की बैकलाइट</translation>
 <translation id="672609503628871915">देखें कि नया क्या है</translation>
@@ -888,6 +891,7 @@
 <translation id="8747900814994928677">बदलाव की पुष्टि करें</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Google Photos की एल्बम</translation>
+<translation id="8778600430213950389">कोई गड़बड़ी हुई. हार्डवेयर में समस्या की वजह से ऐसा हो सकता है. मुख्य बोर्ड को बदलें और फिर से ठीक करने की कोशिश करें.</translation>
 <translation id="877985182522063539">ए4</translation>
 <translation id="879568662008399081">इस नेटवर्क में कैप्टिव पोर्टल हो सकता है</translation>
 <translation id="8798099450830957504">सामान्य</translation>
@@ -941,6 +945,7 @@
 <translation id="910415269708673980"><ph name="PRINCIPAL_NAME" /> के लिए टिकट रीफ़्रेश करें</translation>
 <translation id="9106415115617144481">पेज <ph name="PAGE_NUMBER" /> को स्कैन किया जा रहा है</translation>
 <translation id="9111102763498581341">अनलॉक करें</translation>
+<translation id="9118126012493516930">मरम्मत पूरी नहीं हो सकी</translation>
 <translation id="9122602430962285795">फिर से कनेक्ट करने के लिए, सेटिंग पर जाएं</translation>
 <translation id="9126720536733509015">सारे पेज सेव करके एक PDF बना लें</translation>
 <translation id="9137526406337347448">Google Services</translation>

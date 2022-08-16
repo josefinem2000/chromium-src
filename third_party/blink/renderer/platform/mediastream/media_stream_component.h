@@ -38,6 +38,7 @@
 #include "third_party/blink/renderer/platform/heap/garbage_collected.h"
 #include "third_party/blink/renderer/platform/heap/prefinalizer.h"
 #include "third_party/blink/renderer/platform/mediastream/media_constraints.h"
+#include "third_party/blink/renderer/platform/mediastream/media_stream_source.h"
 #include "third_party/blink/renderer/platform/mediastream/media_stream_track_platform.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 
@@ -51,6 +52,8 @@ class WebLocalFrame;
 
 class PLATFORM_EXPORT MediaStreamComponent : public GarbageCollectedMixin {
  public:
+  // TODO(crbug.com/1302689): Clone the platform track internally rather than
+  // taking it as a parameter.
   virtual MediaStreamComponent* Clone(
       std::unique_ptr<MediaStreamTrackPlatform> cloned_platform_track =
           nullptr) const = 0;
@@ -64,6 +67,9 @@ class PLATFORM_EXPORT MediaStreamComponent : public GarbageCollectedMixin {
   virtual String Id() const = 0;
   // Uniquely identifies this component.
   virtual int UniqueId() const = 0;
+  virtual MediaStreamSource::StreamType GetSourceType() const = 0;
+  virtual const String& GetSourceName() const = 0;
+  virtual MediaStreamSource::ReadyState GetReadyState() const = 0;
   virtual bool Remote() const = 0;
   virtual bool Enabled() const = 0;
   virtual void SetEnabled(bool enabled) = 0;

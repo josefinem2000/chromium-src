@@ -27,6 +27,7 @@
 <translation id="1199355487114804640">প্লে’/পজ কৰক</translation>
 <translation id="1201402288615127009">পৰৱৰ্তী</translation>
 <translation id="1204296502688602597">DNS বিলম্বতা</translation>
+<translation id="1207734034680156868">পৰামর্শৰ ভিত্তি আপোনাৰ বিৱৰণ</translation>
 <translation id="123124571410524056">প’ৰ্টেলৰ সন্দেহ কৰা হৈছে</translation>
 <translation id="1236400083787698183">ৰিষ্টাৰ্ট কৰাৰ আগতে আপোনাৰ ডিভাইচটো পাৱাৰৱাশ্ব কৰক। যদি আপোনাৰ ডিভাইচটোৰ ঢাকনী আছে, ঢাকনীখন বন্ধ কৰাৰ আগতে পাৱাৰৱাশ্ব সম্পূৰ্ণ হোৱালৈ অপেক্ষা কৰক। পাৱাৰৱাশ্ব সম্পূৰ্ণ হ’বলৈ এক মিনিটলৈকে সময় ল’ব পাৰে।</translation>
 <translation id="1238612778414822719">HTTPSৰ বিলম্বতা</translation>
@@ -210,6 +211,7 @@
 <translation id="2536159006530886390">ইণ্টাৰনেটৰ সৈতে সংযোগ কৰিব নোৱাৰি।</translation>
 <translation id="2570743873672969996"><ph name="TEST_NAME" /> পৰীক্ষা চলাই থকা হৈছে...</translation>
 <translation id="2584559707064218956">ছেট আপ কৰিবলৈ, ছেটিঙলৈ যাওক</translation>
+<translation id="2597774443162333062">ডিবাগ কৰাৰ বাবে ফাইলসমূহ Googleলৈ পঠিওৱা হ’ব</translation>
 <translation id="2619761439309613843">দৈনিক নতুন ৱালপেপাৰ</translation>
 <translation id="2620436844016719705">ছিষ্টেম</translation>
 <translation id="2638662041295312666">ছাইন-ইন প্ৰতিচ্ছবি</translation>
@@ -671,6 +673,7 @@
 <translation id="6659594942844771486">ব্ৰাউজাৰ টেব</translation>
 <translation id="6692996468359469499">আপুনি বাছনি সম্পর্কীয় তথ্য পাওক</translation>
 <translation id="6704062477274546131">DNS ৰিজ’লিউশ্বন</translation>
+<translation id="6719240409382354629">ৰিষ্টাৰ্ট কৰিবলৈ সাজু কৰি থকা হৈছে...</translation>
 <translation id="6723839937902243910">পাৱাৰ</translation>
 <translation id="6723847290197874913">কীব’ৰ্ডৰ বেকলাইট</translation>
 <translation id="672609503628871915">নতুন কি আছে চাওক</translation>
@@ -888,6 +891,7 @@
 <translation id="8747900814994928677">সলনি কৰাটো নিশ্চিত কৰক</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Google Photosৰ এলবাম</translation>
+<translation id="8778600430213950389">কিবা ভুল হ’ল। এইটো খুব সম্ভৱ হাৰ্ডৱেৰৰ সমস্যাৰ কাৰণে হৈছে। মুখ্য ব’ৰ্ডখন সলনি কৰক আৰু পুনৰ মেৰামতিৰ প্ৰক্ৰিয়াটো চলাই চাওক।</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">এই নেটৱৰ্কটোৰ এটা কেপ্টিভ প’ৰ্টেল থাকিব পাৰে</translation>
 <translation id="8798099450830957504">ডিফ’ল্ট</translation>
@@ -941,6 +945,7 @@
 <translation id="910415269708673980"><ph name="PRINCIPAL_NAME" />ৰ টিকেট ৰিফ্ৰেশ্ব কৰক</translation>
 <translation id="9106415115617144481"><ph name="PAGE_NUMBER" /> নম্বৰ পৃষ্ঠাখন স্কেন কৰি থকা হৈছে</translation>
 <translation id="9111102763498581341">আনলক</translation>
+<translation id="9118126012493516930">মেৰামতিৰ কাৰ্য সম্পূৰ্ণ কৰিব নোৱাৰি</translation>
 <translation id="9122602430962285795">পুনৰ সংযোগ কৰিবলৈ, ছেটিঙলৈ যাওক</translation>
 <translation id="9126720536733509015">একেটা PDFত একাধিক পৃষ্ঠা ছেভ কৰক</translation>
 <translation id="9137526406337347448">Google সেৱা</translation>

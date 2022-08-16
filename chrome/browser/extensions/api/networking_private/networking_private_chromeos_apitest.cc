@@ -47,6 +47,11 @@
 #if BUILDFLAG(IS_CHROMEOS_ASH)
 #include "ash/components/cryptohome/cryptohome_parameters.h"
 #include "ash/constants/ash_switches.h"
+#include "chromeos/ash/components/dbus/shill/shill_device_client.h"
+#include "chromeos/ash/components/dbus/shill/shill_ipconfig_client.h"
+#include "chromeos/ash/components/dbus/shill/shill_manager_client.h"
+#include "chromeos/ash/components/dbus/shill/shill_profile_client.h"
+#include "chromeos/ash/components/dbus/shill/shill_service_client.h"
 #include "chromeos/ash/components/dbus/userdataauth/cryptohome_misc_client.h"
 #include "chromeos/ash/components/dbus/userdataauth/userdataauth_client.h"
 #include "chromeos/ash/components/network/cellular_metrics_logger.h"
@@ -59,11 +64,6 @@
 #include "chromeos/ash/components/network/network_type_pattern.h"
 #include "chromeos/ash/components/network/onc/network_onc_utils.h"
 #include "chromeos/dbus/dbus_thread_manager.h"
-#include "chromeos/dbus/shill/shill_device_client.h"
-#include "chromeos/dbus/shill/shill_ipconfig_client.h"
-#include "chromeos/dbus/shill/shill_manager_client.h"
-#include "chromeos/dbus/shill/shill_profile_client.h"
-#include "chromeos/dbus/shill/shill_service_client.h"
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
 
 #if BUILDFLAG(IS_CHROMEOS_LACROS)
@@ -83,12 +83,12 @@ using testing::Return;
 using testing::_;
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
+using ash::ShillDeviceClient;
+using ash::ShillIPConfigClient;
+using ash::ShillManagerClient;
+using ash::ShillProfileClient;
+using ash::ShillServiceClient;
 using ash::UserDataAuthClient;
-using chromeos::ShillDeviceClient;
-using chromeos::ShillIPConfigClient;
-using chromeos::ShillManagerClient;
-using chromeos::ShillProfileClient;
-using chromeos::ShillServiceClient;
 
 using extensions::NetworkingPrivateDelegate;
 using extensions::NetworkingPrivateDelegateFactory;

@@ -27,6 +27,7 @@
 <translation id="1199355487114804640">Тоглуулах/Түр зогсоох</translation>
 <translation id="1201402288615127009">Дараагийнх</translation>
 <translation id="1204296502688602597">DNS-н хоцролт</translation>
+<translation id="1207734034680156868">Зөвлөмжүүд нь таны тодорхойлолтод тулгуурласан</translation>
 <translation id="123124571410524056">Портал байж магадгүй</translation>
 <translation id="1236400083787698183">Дахин эхлүүлэхээс өмнө төхөөрөмжөө powerwash хийнэ үү. Хэрэв таны төхөөрөмж тагтай бол тагийг нь хаахаас өмнө powerwash хийж дуустал хүлээнэ үү. Powerwash хийж дуусахад хэдэн минут зарцуулж магадгүй.</translation>
 <translation id="1238612778414822719">HTTPS хоцролт</translation>
@@ -210,6 +211,7 @@
 <translation id="2536159006530886390">Интернэтэд холбогдох боломжгүй байна.</translation>
 <translation id="2570743873672969996"><ph name="TEST_NAME" /> тестийг ажиллуулж байна...</translation>
 <translation id="2584559707064218956">Тохируулахын тулд Тохиргоо руу очно уу</translation>
+<translation id="2597774443162333062">Файлыг дебаг хийхээр Google-д илгээж байна</translation>
 <translation id="2619761439309613843">Өдөр тутам сэргээх</translation>
 <translation id="2620436844016719705">Систем</translation>
 <translation id="2638662041295312666">Нэвтрэх зураг</translation>
@@ -333,6 +335,7 @@
 <translation id="3866249974567520381">Тодорхойлолт</translation>
 <translation id="387301095347517405">Таны батарейн бүтэн цэнэглэлийн мөчлөгт орсон тоо</translation>
 <translation id="3885327323343477505">Дэлгэц амраагчийг өөрчлөх</translation>
+<translation id="3913541166352922049">Систем <ph name="DELAY_DURATION" /> секундийн дараа унтарна.</translation>
 <translation id="3923184630988645767">Дата ашиглалт</translation>
 <translation id="3924044641767672375">Засварын явцыг илүү хялбар болгохын тулд Wi-Fi-д холбогдохыг зөвлөж байна. Таны сүлжээг хадгална.</translation>
 <translation id="3932043219784172185">Холбогдсон төхөөрөмж алга</translation>
@@ -518,6 +521,7 @@
 <translation id="5346687412805619883">Дотоод сүлжээ</translation>
 <translation id="5358174242040570474">Алдаа гарлаа. Дэлгэцийн зураг дахин сонгох эсвэл аппыг дахин нээж үзнэ үү.</translation>
 <translation id="5372659122375744710">Wi-Fi сүлжээ аюулгүй биш байна</translation>
+<translation id="5376136733560434719">Унтраахаар бэлтгэж байна...</translation>
 <translation id="5376354385557966694">Автомат гэрэлтэй горим</translation>
 <translation id="537872351913703572">Төхөөрөмж өөр хэрэглэгч эсвэл байгууллага руу очих болно</translation>
 <translation id="5389159777326897627">Дэлгэцийн зураг &amp; стиль</translation>
@@ -671,6 +675,7 @@
 <translation id="6659594942844771486">Таб</translation>
 <translation id="6692996468359469499">Сонголттойгоо холбоотой мэдээлэл авах</translation>
 <translation id="6704062477274546131">DNS-н тайлал</translation>
+<translation id="6719240409382354629">Дахин эхлүүлэхээр бэлтгэж байна...</translation>
 <translation id="6723839937902243910">Эрчим хүч</translation>
 <translation id="6723847290197874913">Гарын дэвсгэр өнгө</translation>
 <translation id="672609503628871915">Шинэ зүйл юу байна?</translation>
@@ -746,6 +751,7 @@
 <translation id="7427315641433634153">MSCHAP</translation>
 <translation id="7435977162516949853">{NUMBER_OF_PAGES,plural, =1{Скан хийж дууссан. 1 хуудсыг скан хийсэн}other{Скан хийж дууссан. {NUMBER_OF_PAGES} хуудсыг скан хийсэн}}</translation>
 <translation id="7469648432129124067">Портал илэрсэн</translation>
+<translation id="7478405245077383528">Систем <ph name="DELAY_DURATION" /> секундийн дараа дахин эхэлнэ.</translation>
 <translation id="7481312909269577407">Forward</translation>
 <translation id="7487067081878637334">Технологи</translation>
 <translation id="7490813197707563893">MAC хаяг</translation>
@@ -888,6 +894,7 @@
 <translation id="8747900814994928677">Өөрчлөлтийг баталгаажуулах</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Google Зургийн цомог</translation>
+<translation id="8778600430213950389">Алдаа гарлаа. Энэ нь техник хангамжийн асуудалтай холбоотой байх магадлалтай. Үндсэн хавтанг сольж, засварын процессыг дахин оролдоно уу.</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">Энэ сүлжээнд дамжих портал байж болзошгүй</translation>
 <translation id="8798099450830957504">Гэрээ үл биелүүлэх</translation>
@@ -941,6 +948,7 @@
 <translation id="910415269708673980"><ph name="PRINCIPAL_NAME" />-н тасалбарыг дахин шинэчлэх</translation>
 <translation id="9106415115617144481"><ph name="PAGE_NUMBER" />-р хуудсыг скан хийж байна</translation>
 <translation id="9111102763498581341">Нээх</translation>
+<translation id="9118126012493516930">Засвар хийж чадахгүй байна</translation>
 <translation id="9122602430962285795">Дахин холбогдохын тулд Тохиргоо руу очно уу</translation>
 <translation id="9126720536733509015">Олон хуудсыг нэг PDF болгож хадгалах</translation>
 <translation id="9137526406337347448">Google-н үйлчилгээнүүд</translation>

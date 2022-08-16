@@ -756,7 +756,7 @@ ci.thin_tester(
     builderless = False,
     os = os.MAC_DEFAULT,
     cores = 12,
-    triggered_by = ["ci/Mac Builder"],
+    triggered_by = ["ci/Mac Builder (dbg)"],
 )
 
 ci.builder(
@@ -767,6 +767,24 @@ ci.builder(
     ),
     notifies = ["headless-owners"],
     os = os.LINUX_DEFAULT,
+    goma_backend = None,
+    reclient_jobs = reclient.jobs.DEFAULT,
+    reclient_instance = reclient.instance.DEFAULT_TRUSTED,
+)
+
+# TODO(crbug.com/1320004): Remove this builder after experimentation.
+ci.builder(
+    name = "linux-rel-no-external-ip",
+    builderless = False,
+    console_view_entry = consoles.console_view_entry(
+        category = "linux",
+    ),
+    os = os.LINUX_DEFAULT,
+    builder_spec = builder_config.copy_from(
+        "ci/Linux Builder",
+    ),
+    # Limited test pool is likely to cause long build times.
+    execution_timeout = 24 * time.hour,
     goma_backend = None,
     reclient_jobs = reclient.jobs.DEFAULT,
     reclient_instance = reclient.instance.DEFAULT_TRUSTED,
@@ -809,6 +827,24 @@ ci.builder(
     os = os.WINDOWS_ANY,
     goma_backend = None,
     reclient_jobs = reclient.jobs.LOW_JOBS_FOR_CI,
+    reclient_instance = reclient.instance.DEFAULT_TRUSTED,
+)
+
+# TODO(crbug.com/1320004): Remove this builder after experimentation.
+ci.builder(
+    name = "win10-rel-no-external-ip",
+    builderless = False,
+    console_view_entry = consoles.console_view_entry(
+        category = "win",
+    ),
+    os = os.WINDOWS_ANY,
+    builder_spec = builder_config.copy_from(
+        "ci/Win x64 Builder",
+    ),
+    # Limited test pool is likely to cause long build times.
+    execution_timeout = 24 * time.hour,
+    goma_backend = None,
+    reclient_jobs = reclient.jobs.DEFAULT,
     reclient_instance = reclient.instance.DEFAULT_TRUSTED,
 )
 
@@ -900,7 +936,7 @@ ci.builder(
     executable = "recipe:reclient_goma_comparison",
     execution_timeout = 10 * time.hour,
     reclient_cache_silo = "Comparison Mac - cache siloed",
-    reclient_instance = reclient.instance.DEFAULT_TRUSTED,
+    reclient_instance = reclient.instance.TEST_TRUSTED,
     reclient_jobs = 250,
     os = os.MAC_DEFAULT,
     cores = None,
@@ -917,7 +953,7 @@ ci.builder(
     executable = "recipe:reclient_goma_comparison",
     execution_timeout = 10 * time.hour,
     reclient_cache_silo = "Comparison Mac - cache siloed",
-    reclient_instance = reclient.instance.DEFAULT_TRUSTED,
+    reclient_instance = reclient.instance.TEST_TRUSTED,
     reclient_jobs = 250,
     os = os.MAC_DEFAULT,
     cores = None,
@@ -985,7 +1021,7 @@ ci.builder(
     executable = "recipe:reclient_goma_comparison",
     execution_timeout = 10 * time.hour,
     reclient_cache_silo = "Comparison ios - cache siloed",
-    reclient_instance = reclient.instance.DEFAULT_TRUSTED,
+    reclient_instance = reclient.instance.TEST_TRUSTED,
     reclient_jobs = 250,
     os = os.MAC_DEFAULT,
     cores = None,

@@ -486,6 +486,7 @@
 <translation id="2219658597883514593">Оқулықты қайта бастау</translation>
 <translation id="2219735899272417925">Құрылғыны бастапқы күйге қайтару қажет.</translation>
 <translation id="2224337661447660594">Интернет жоқ</translation>
+<translation id="2225927550500503913">Виртуалдық карта қосулы.</translation>
 <translation id="2230458221926704099"><ph name="BEGIN_LINK" />Диагностика қолданбасы<ph name="END_LINK" /> көмегімен байланысты жөндеңіз</translation>
 <translation id="2239100178324503013">Қазір жіберу</translation>
 <translation id="2241693394036365668">Файл жүктеп алынды</translation>
@@ -520,7 +521,6 @@
 <translation id="2318594867107319532">Саясаттың соңғы рет жаңартылған уақыт белгісі:</translation>
 <translation id="2324604504973636700">Тұрмыстық техника</translation>
 <translation id="2328651992442742497">Рұқсат етілген (әдепкі)</translation>
-<translation id="2329182534073751090">терезені орналастыру</translation>
 <translation id="2329473609445770916">Бұл сайт басқа сайттар сізге жарнама көрсету үшін сүйене алатын қызығушылықтарды анықтайды.</translation>
 <translation id="2330137317877982892"><ph name="CREDIT_CARD" />, жарамдылық мерзімі: <ph name="EXPIRATION_DATE_ABBR" /></translation>
 <translation id="2337852623177822836">Әкімші басқаратын параметр</translation>
@@ -632,7 +632,6 @@
           <ph name="LIST_ITEM" />үлгілерге енгізілген ақпарат.
         <ph name="END_LIST" /></translation>
 <translation id="2618023639789766142">C10 (Envelope)</translation>
-<translation id="2623663032199728144">Экрандар туралы ақпаратты пайдалануға рұқсат сұрай алады.</translation>
 <translation id="2625385379895617796">Сағатыңыз алда</translation>
 <translation id="262745152991669301">USB құрылғыларына қосылуға рұқсат сұрайды</translation>
 <translation id="2629325967560697240">Chrome-ның ең жоғарғы деңгейдегі қауіпсіздігіне ие болу үшін <ph name="BEGIN_ENHANCED_PROTECTION_LINK" />жақсартылған қорғанысты<ph name="END_ENHANCED_PROTECTION_LINK" /> қосыңыз.</translation>
@@ -711,7 +710,6 @@
 <translation id="2876949457278336305"><ph name="MANAGE_SECURITY_SETTINGS_FOCUSED_FRIENDLY_MATCH_TEXT" />. Chrome параметрлерінен Safe Browsing және т.б. басқару үшін Tab, сосын Enter пернесін басыңыз.</translation>
 <translation id="2878197950673342043">Постер тәрізді бүктеу</translation>
 <translation id="2878424575911748999">A1</translation>
-<translation id="2880660355386638022">Терезені орналастыру</translation>
 <translation id="2881276955470682203">Карта сақталсын ба?</translation>
 <translation id="2882949212241984732">Қақпа тәрізді қос бүктеу</translation>
 <translation id="2893773853358652045">Төртінші орам</translation>
@@ -1241,6 +1239,7 @@
 <translation id="4329871760342656885">Саясатты талдау қатесі: <ph name="ERROR" /></translation>
 <translation id="4331519897422864041">5-жинастырушы</translation>
 <translation id="4331708818696583467">Қауіпсіз емес</translation>
+<translation id="4333561522337981382">Барлық дисплейде терезелерді басқару</translation>
 <translation id="4340575312453649552">Бұл жарнама құрылғыңыздың тым көп ресурсын пайдаланғандықтан, Chrome оны өшірді.</translation>
 <translation id="4340982228985273705">Бұл компьютерді кәсіпорын басқармайтындықтан, саясат тек Chrome Webstore дүкенінде орналасқан кеңейтімдерді автоматты түрде орната алады. Chrome Webstore жаңартылған нұсқасының URL мекенжайы: "<ph name="CWS_UPDATE_URL" />".</translation>
 <translation id="4346197816712207223">Қабылданатын несиелік карталар</translation>
@@ -1454,6 +1453,7 @@
 <translation id="4926340098269537727"><ph name="ACTIVE_MATCH" />/<ph name="TOTAL_MATCHCOUNT" /></translation>
 <translation id="4929871932072157101"><ph name="KEYWORD_FOCUSED_FRIENDLY_MATCH_TEXT" />. Іздеу үшін алдымен Tab, одан кейін Enter пернесін басыңыз.</translation>
 <translation id="4930153903256238152">Үлкен сыйымдылық</translation>
+<translation id="4934780484581617878">Терезені басқару</translation>
 <translation id="4936134414789135531">Енгізілген <ph name="VALUE_NAME" /> табылмады.</translation>
 <translation id="4936675324097895694">Қаржы</translation>
 <translation id="4940163644868678279">Chrome браузеріндегі инкогнито режимі</translation>
@@ -1466,6 +1466,7 @@
 <translation id="4958444002117714549">Тізімді жаю</translation>
 <translation id="4964505745997821360">Денсаулықты сақтандыру</translation>
 <translation id="4968522289500246572">Бұл қолданба мобильдік құрылғыға арналған. Өлшемін өзгерту кезінде қолданба дұрыс жұмыс істемеуі немесе өшіп қосылуы мүмкін.</translation>
+<translation id="4968665849807487749">Барлық дисплейде терезелерді басқару сұралуы мүмкін.</translation>
 <translation id="4969341057194253438">Жазбаны жою</translation>
 <translation id="4973922308112707173">Жоғарғы жағын екі рет тесу</translation>
 <translation id="4976702386844183910">Cоңғы кіру: <ph name="DATE" /></translation>
@@ -1947,6 +1948,7 @@
 <translation id="6300452962057769623">{0,plural, =0{Құрылғыңыз қазір қайта қосылады}=1{Құрылғыңыз 1 секундтан кейін қайта қосылады}other{Құрылғыңыз # секундтан кейін қайта қосылады}}</translation>
 <translation id="6302269476990306341">Chrome браузеріндегі Google Assistant тоқтатылуда</translation>
 <translation id="6305205051461490394"><ph name="URL" /> мекенжайына кіру мүмкін емес.</translation>
+<translation id="6311165245110979290">Виртуалдық карта қолжетімді.</translation>
 <translation id="6312113039770857350">Веб-бет қол жетімді емес</translation>
 <translation id="6316226860534107313">Скутерлер мен мопедтер</translation>
 <translation id="63172326633386613">Арнайы мүмкіндіктер параметрлерін басқару</translation>
@@ -1968,6 +1970,7 @@
 <translation id="6361757823711327522">B7</translation>
 <translation id="6364095313648930329"><ph name="BEGIN_LINK" />Прокси-серверді, брандмауэрді және қауіпсіз DNS конфигурациясын тексеру<ph name="END_LINK" /></translation>
 <translation id="6366710531182496394">Сол жағын екі рет қапсыру</translation>
+<translation id="6374865374745447009">терезені басқару</translation>
 <translation id="6377268785556383139">"<ph name="SEARCH_TEXT" />" сұрауы бойынша 1 нәтиже шықты</translation>
 <translation id="6380497234672085559">A0</translation>
 <translation id="6383221683286411806">Сізден ақы алынуы мүмкін.</translation>
@@ -2291,6 +2294,7 @@
 <translation id="7305756307268530424">Баяуырақ жылдамдықпен бастау</translation>
 <translation id="7308436126008021607">фондық синхрондау</translation>
 <translation id="7310392214323165548">Құрылғы сәлден соң өшіп, қайта қосылады.</translation>
+<translation id="7311244614769792472">Ешбір нәтиже табылмады</translation>
 <translation id="7319430975418800333">A3</translation>
 <translation id="7320336641823683070">Байланыс анықтамасы</translation>
 <translation id="7323804146520582233">"<ph name="SECTION" />" бөлімін жасыру</translation>
@@ -2778,7 +2782,6 @@
 <translation id="865032292777205197">қозғалыс датчиктері</translation>
 <translation id="8663226718884576429">Тапсырыс қорытындысы, <ph name="TOTAL_LABEL" />, толығырақ деректер</translation>
 <translation id="8666678546361132282">ағылшын</translation>
-<translation id="8669306706049782872">Терезелерді ашып, орналастыру үшін экрандар туралы ақпаратты пайдалану</translation>
 <translation id="867224526087042813">Қолтаңба</translation>
 <translation id="8672264262457010862">Бизнес және өндіріс</translation>
 <translation id="8676424191133491403">Кідіріс жоқ</translation>

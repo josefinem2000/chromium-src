@@ -1207,6 +1207,7 @@ _GENERIC_PYDEPS_FILES = [
     'testing/merge_scripts/code_coverage/merge_steps.pydeps',
     'third_party/android_platform/development/scripts/stack.pydeps',
     'third_party/blink/renderer/bindings/scripts/build_web_idl_database.pydeps',
+    'third_party/blink/renderer/bindings/scripts/check_generated_file_list.pydeps',
     'third_party/blink/renderer/bindings/scripts/collect_idl_files.pydeps',
     'third_party/blink/renderer/bindings/scripts/generate_bindings.pydeps',
     'third_party/blink/renderer/bindings/scripts/validate_web_idl.pydeps',
@@ -1214,6 +1215,7 @@ _GENERIC_PYDEPS_FILES = [
     'third_party/blink/tools/merge_web_test_results.pydeps',
     'tools/binary_size/sizes.pydeps',
     'tools/binary_size/supersize.pydeps',
+    'tools/perf/process_perf_results.pydeps',
 ]
 
 
@@ -2216,8 +2218,12 @@ def CheckNoProductIconsAddedToPublicRepo(input_api, output_api):
 
     results = []
     if errors:
+        # Give warnings instead of errors on presubmit --all and presubmit
+        # --files.
+        message_type = (output_api.PresubmitNotifyResult if input_api.no_diffs
+                        else output_api.PresubmitError)
         results.append(
-            output_api.PresubmitError(
+            message_type(
                 'Trademarked images should not be added to the public repo. '
                 'See crbug.com/944754', errors))
     return results

@@ -22,6 +22,7 @@ class Profile;
 
 namespace ash {
 
+class SystemExtensionsPersistenceManager;
 class SystemExtensionsRegistry;
 class SystemExtensionsRegistryManager;
 
@@ -51,7 +52,8 @@ class SystemExtensionsInstallManager {
   SystemExtensionsInstallManager(
       Profile* profile,
       SystemExtensionsRegistryManager& registry_manager,
-      SystemExtensionsRegistry& registry);
+      SystemExtensionsRegistry& registry,
+      SystemExtensionsPersistenceManager& persistence_manager);
   SystemExtensionsInstallManager(const SystemExtensionsInstallManager&) =
       delete;
   SystemExtensionsInstallManager& operator=(
@@ -70,8 +72,17 @@ class SystemExtensionsInstallManager {
       const base::FilePath& unpacked_system_extension_dir,
       OnceInstallCallback final_callback);
 
+  // Event that signals when a System Extension is installed from the command
+  // line. Signals even if the System Extension failed to be installed, but
+  // doesn't if there were no command line arguments to install.
   const base::OneShotEvent& on_command_line_install_finished() {
     return on_command_line_install_finished_;
+  }
+
+  // Event that signals when all System Extensions that were persisted in a
+  // previous session are registered.
+  const base::OneShotEvent& on_register_previously_persisted_finished() {
+    return on_register_previously_persisted_finished_;
   }
 
   // Uninstallation always succeeds.
@@ -94,6 +105,7 @@ class SystemExtensionsInstallManager {
     bool RemoveExtensionAssets(const base::FilePath& system_extension_dir);
   };
 
+  void RegisterPreviouslyPersistedSystemExtensions();
   void InstallFromCommandLineIfNecessary();
   void OnInstallFromCommandLineFinished(
       InstallStatusOrSystemExtensionId result);
@@ -107,6 +119,7 @@ class SystemExtensionsInstallManager {
   void OnAssetsCopiedToProfileDir(OnceInstallCallback final_callback,
                                   SystemExtension system_extension,
                                   bool did_succeed);
+  void RegisterSystemExtension(SystemExtension system_extension);
   void RegisterServiceWorker(const SystemExtensionId& id);
   void DispatchWindowManagerStartEvent(const SystemExtensionId& id,
                                        int64_t version_id,
@@ -129,10 +142,12 @@ class SystemExtensionsInstallManager {
   // destroyed before the classes below.
   const raw_ref<SystemExtensionsRegistryManager> registry_manager_;
   const raw_ref<SystemExtensionsRegistry> registry_;
+  const raw_ref<SystemExtensionsPersistenceManager> persistence_manager_;
 
   std::map<SystemExtensionId, SystemExtension> system_extensions_;
 
   base::OneShotEvent on_command_line_install_finished_;
+  base::OneShotEvent on_register_previously_persisted_finished_;
 
   SystemExtensionsSandboxedUnpacker sandboxed_unpacker_;
 

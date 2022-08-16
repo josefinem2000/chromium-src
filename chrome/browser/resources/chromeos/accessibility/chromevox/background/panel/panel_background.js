@@ -6,10 +6,13 @@
  * @fileoverview Handles logic for the ChromeVox panel that requires state from
  * the background context.
  */
+import {constants} from '../../../common/constants.js';
 import {CursorRange} from '../../../common/cursors/range.js';
+import {Earcon} from '../../common/abstract_earcons.js';
 import {BridgeConstants} from '../../common/bridge_constants.js';
 import {BridgeHelper} from '../../common/bridge_helper.js';
 import {PanelBridge} from '../../common/panel_bridge.js';
+import {ALL_PANEL_MENU_NODE_DATA} from '../../common/panel_menu_data.js';
 import {QueueMode} from '../../common/tts_interface.js';
 import {ChromeVox} from '../chromevox.js';
 import {ChromeVoxState, ChromeVoxStateObserver} from '../chromevox_state.js';
@@ -109,7 +112,7 @@ export class PanelBackground {
     if (!this.savedNode_) {
       return;
     }
-    for (const data of ALL_NODE_MENU_DATA) {
+    for (const data of ALL_PANEL_MENU_NODE_DATA) {
       const isActivatedMenu = opt_activateMenuTitleId === data.titleId;
       const menuBackground =
           new PanelNodeMenuBackground(data, this.savedNode_, isActivatedMenu);

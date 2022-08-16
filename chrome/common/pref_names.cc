@@ -879,6 +879,16 @@ const char kHatsMediaAppPdfCycleEndTs[] =
 // survey.
 const char kHatsMediaAppPdfIsSelected[] = "hats_media_app_pdf_is_selected";
 
+// An int64 pref. This is the timestamp, microseconds after epoch, that
+// indicates the end of the most recent Camera App survey cycle.
+const char kHatsCameraAppSurveyCycleEndTs[] =
+    "hats_camera_app_cycle_end_timestamp";
+
+// A boolean pref. Indicates if the device is selected for the Camera App
+// survey.
+const char kHatsCameraAppDeviceIsSelected[] =
+    "hats_camera_app_device_is_selected";
+
 // A boolean pref. Indicates if we've already shown a notification to inform the
 // current user about the quick unlock feature.
 const char kPinUnlockFeatureNotificationShown[] =
@@ -1417,11 +1427,6 @@ const char kProfileUsingGAIAAvatar[] = "profile.using_gaia_avatar";
 
 // The supervised user ID.
 const char kSupervisedUserId[] = "profile.managed_user_id";
-
-// Integer that specifies the number of times that we have shown the upgrade
-// tutorial card in the avatar menu bubble.
-const char kProfileAvatarTutorialShown[] =
-    "profile.avatar_bubble_tutorial_shown";
 
 // Indicates if we've already shown a notification that high contrast
 // mode is on, recommending high-contrast extensions and themes.

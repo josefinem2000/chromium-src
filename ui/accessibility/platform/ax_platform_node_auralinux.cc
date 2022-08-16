@@ -613,10 +613,6 @@ gboolean DoAction(AtkAction* atk_action, gint index) {
       obj->GetDelegate()->GetSupportedActions();
   g_return_val_if_fail(index < static_cast<gint>(actions.size()), FALSE);
 
-  if (index == 0 && obj->GetDelegate()->HasDefaultActionVerb()) {
-    // If there is a default action, it will always be at index 0.
-    return obj->DoDefaultAction();
-  }
   AXActionData data;
   data.action = actions[index];
   return obj->GetDelegate()->AccessibilityPerformAction(data);
@@ -3899,14 +3895,7 @@ void AXPlatformNodeAuraLinux::EmitCaretChangedSignal() {
     return;
   }
 
-#if DCHECK_IS_ON()
-  AXTree::Selection unignored_selection =
-      GetDelegate()->GetUnignoredSelection();
-  DCHECK(HasCaret(&unignored_selection));
-#endif
-
   std::pair<int, int> selection = GetSelectionOffsetsForAtk();
-
   AtkObject* atk_object = GetOrCreateAtkObject();
   if (!atk_object)
     return;
@@ -4625,12 +4614,6 @@ bool AXPlatformNodeAuraLinux::
   return false;
 }
 
-bool AXPlatformNodeAuraLinux::DoDefaultAction() {
-  AXActionData action_data;
-  action_data.action = ax::mojom::Action::kDoDefault;
-  return delegate_->AccessibilityPerformAction(action_data);
-}
-
 const gchar* AXPlatformNodeAuraLinux::GetDefaultActionName() {
   int action;
   if (!GetIntAttribute(ax::mojom::IntAttribute::kDefaultActionVerb, &action))
@@ -4739,9 +4722,7 @@ bool AXPlatformNodeAuraLinux::IsNameExposed() {
 }
 
 int AXPlatformNodeAuraLinux::GetCaretOffset() {
-  AXTree::Selection unignored_selection =
-      GetDelegate()->GetUnignoredSelection();
-  if (!HasCaret(&unignored_selection)) {
+  if (!HasVisibleCaretOrSelection()) {
     absl::optional<FindInPageResultInfo> result =
         GetSelectionOffsetsFromFindInPage();
     AtkObject* atk_object = GetOrCreateAtkObject();

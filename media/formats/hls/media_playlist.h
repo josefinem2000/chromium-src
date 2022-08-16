@@ -7,6 +7,7 @@
 
 #include <vector>
 
+#include "base/memory/scoped_refptr.h"
 #include "base/time/time.h"
 #include "media/base/media_export.h"
 #include "media/formats/hls/parse_status.h"
@@ -41,11 +42,16 @@ class MEDIA_EXPORT MediaPlaylist final : public Playlist {
   MediaPlaylist(MediaPlaylist&&);
   MediaPlaylist& operator=(const MediaPlaylist&) = delete;
   MediaPlaylist& operator=(MediaPlaylist&&);
-  ~MediaPlaylist();
+  ~MediaPlaylist() override;
+
+  // `Playlist` implementation
+  Kind GetKind() const override;
 
   // Returns all segments in this playlist, in chronological order. This vector
   // may be copied independently of this Playlist.
-  const std::vector<MediaSegment>& GetSegments() const { return segments_; }
+  const std::vector<scoped_refptr<MediaSegment>>& GetSegments() const {
+    return segments_;
+  }
 
   // Returns the target duration (maximum length of any segment, rounded to the
   // nearest integer) for this playlist.
@@ -140,7 +146,7 @@ class MEDIA_EXPORT MediaPlaylist final : public Playlist {
 
   base::TimeDelta target_duration_;
   absl::optional<PartialSegmentInfo> partial_segment_info_;
-  std::vector<MediaSegment> segments_;
+  std::vector<scoped_refptr<MediaSegment>> segments_;
   base::TimeDelta computed_duration_;
   absl::optional<PlaylistType> playlist_type_;
   bool end_list_;

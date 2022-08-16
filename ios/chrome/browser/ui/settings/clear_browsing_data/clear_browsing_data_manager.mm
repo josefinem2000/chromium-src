@@ -21,6 +21,7 @@
 #include "components/prefs/pref_service.h"
 #include "components/search_engines/template_url_service.h"
 #include "components/search_engines/template_url_service_observer.h"
+#import "components/signin/public/base/signin_switches.h"
 #include "components/signin/public/identity_manager/identity_manager.h"
 #include "components/strings/grit/components_strings.h"
 #include "components/sync/driver/sync_service.h"
@@ -59,7 +60,6 @@
 #import "ios/chrome/browser/ui/table_view/cells/table_view_text_button_item.h"
 #import "ios/chrome/browser/ui/table_view/cells/table_view_text_item.h"
 #import "ios/chrome/browser/ui/table_view/cells/table_view_text_link_item.h"
-#include "ios/chrome/browser/ui/ui_feature_flags.h"
 #import "ios/chrome/browser/ui/util/uikit_ui_util.h"
 #include "ios/chrome/common/channel_info.h"
 #import "ios/chrome/common/ui/colors/semantic_color_names.h"
@@ -412,10 +412,10 @@ static NSDictionary* imageNamesByItemTypes = @{
         forSectionWithIdentifier:SectionIdentifierGoogleAccount];
   }
 
-  [model addSectionWithIdentifier:SectionIdentifierSavedSiteData];
   syncer::SyncService* syncService =
       SyncServiceFactory::GetForBrowserState(self.browserState);
-  if (!base::FeatureList::IsEnabled(kEnableCBDSignOut)) {
+  if (!base::FeatureList::IsEnabled(switches::kEnableCbdSignOut)) {
+    [model addSectionWithIdentifier:SectionIdentifierSavedSiteData];
     if (syncService && syncService->IsSyncFeatureActive()) {
       [model setFooter:[self footerClearSyncAndSavedSiteDataItem]
           forSectionWithIdentifier:SectionIdentifierSavedSiteData];
@@ -424,6 +424,7 @@ static NSDictionary* imageNamesByItemTypes = @{
           forSectionWithIdentifier:SectionIdentifierSavedSiteData];
     }
   } else if (loggedIn) {
+    [model addSectionWithIdentifier:SectionIdentifierSavedSiteData];
     [model setFooter:[self signOutFooterItem]
         forSectionWithIdentifier:SectionIdentifierSavedSiteData];
   }
@@ -682,9 +683,11 @@ static NSDictionary* imageNamesByItemTypes = @{
     AuthenticationService* authenticationService =
         AuthenticationServiceFactory::GetForBrowserState(_browserState);
     DCHECK(authenticationService);
-    authenticationService->SignOut(
-        signin_metrics::ProfileSignout::USER_DELETED_ACCOUNT_COOKIES,
-        /*force_clear_browsing_data=*/false, nil);
+    if (!base::FeatureList::IsEnabled(switches::kEnableCbdSignOut)) {
+      authenticationService->SignOut(
+          signin_metrics::ProfileSignout::USER_DELETED_ACCOUNT_COOKIES,
+          /*force_clear_browsing_data=*/false, nil);
+    }
   }
 }
 

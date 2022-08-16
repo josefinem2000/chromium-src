@@ -82,9 +82,16 @@ class PLATFORM_EXPORT MediaStreamComponentImpl final
 
   String Id() const override { return id_; }
   int UniqueId() const override { return unique_id_; }
+  MediaStreamSource::StreamType GetSourceType() const override {
+    return Source()->GetType();
+  }
+  const String& GetSourceName() const override { return Source()->GetName(); }
+  MediaStreamSource::ReadyState GetReadyState() const override {
+    return Source()->GetReadyState();
+  }
   bool Remote() const override { return Source()->Remote(); }
   bool Enabled() const override { return enabled_; }
-  void SetEnabled(bool enabled) override { enabled_ = enabled; }
+  void SetEnabled(bool enabled) override;
   WebMediaStreamTrack::ContentHintType ContentHint() override {
     return content_hint_;
   }

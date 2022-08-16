@@ -1348,6 +1348,24 @@ chromium-metrics-reviews@google.com.
   </summary>
 </histogram>
 
+<histogram
+    name="Accessibility.Performance.BrowserAccessibilityManager::OnAccessibilityEvents"
+    units="ms" expires_after="2023-01-22">
+  <owner>aleventhal@chromium.org</owner>
+  <owner>chrome-a11y-core@google.com</owner>
+  <summary>
+    Tracks time spent on the browser main thread handling accessibility events
+    sent from the renderer process and processed by BrowserAccessibilityManager.
+
+    Accessibility.Performance.HandleAXEvents can still often record values when
+    processing is relatively cheap because we exit before handing off the nodes
+    to BrowserAccessibilityManager for various reasons (e.g. BFCache). This
+    histogram only measures events which are processed by
+    BrowserAccessibilityManager and thus should have a better histogram to
+    understand the cost of doing so, and be used to meaure optimizations.
+  </summary>
+</histogram>
+
 <histogram name="Accessibility.Performance.HandleAXEvents" units="ms"
     expires_after="2023-01-22">
   <owner>aleventhal@chromium.org</owner>
@@ -1517,7 +1535,7 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="Accessibility.WebSpeech.Duration" units="ms"
-    expires_after="2022-12-11">
+    expires_after="2023-02-12">
   <owner>evliu@google.com</owner>
   <owner>chrome-media-ux@google.com</owner>
   <summary>
@@ -1527,7 +1545,7 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="Accessibility.WinAPIs" enum="AccessibilityWinAPIEnum"
-    expires_after="2022-12-04">
+    expires_after="2023-02-12">
   <owner>aleventhal@chromium.org</owner>
   <owner>nektar@chromium.org</owner>
   <owner>chrome-a11y-core@google.com</owner>
@@ -1750,7 +1768,7 @@ chromium-metrics-reviews@google.com.
 </histogram>
 
 <histogram name="DomDistiller.ReaderMode.EntryPoint"
-    enum="ReaderModeEntryPoint" expires_after="2022-11-27">
+    enum="ReaderModeEntryPoint" expires_after="2023-02-12">
   <owner>katie@chromium.org</owner>
   <owner>gilmanmh@google.com</owner>
   <owner>chrome-a11y-core@google.com</owner>

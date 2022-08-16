@@ -183,6 +183,7 @@ TEST_F(AssistiveWindowControllerTest, ConfirmedLength0SetsBoundsToCaretBounds) {
   Bounds bounds;
   bounds.caret = caret_bounds;
   controller_->SetBounds(bounds);
+
   EXPECT_NE(suggestion_view->GetAnchorRect(), current_bounds);
   EXPECT_EQ(suggestion_view->GetAnchorRect(), caret_bounds);
 }
@@ -203,6 +204,7 @@ TEST_F(AssistiveWindowControllerTest, ConfirmedLengthNSetsBoundsToCaretBounds) {
   Bounds bounds;
   bounds.caret = caret_bounds;
   controller_->SetBounds(bounds);
+
   EXPECT_NE(suggestion_view->GetAnchorRect(), current_bounds);
   EXPECT_EQ(suggestion_view->GetAnchorRect(), caret_bounds);
 }

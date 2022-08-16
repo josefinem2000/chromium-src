@@ -37,6 +37,7 @@ import org.chromium.base.test.util.Feature;
 import org.chromium.chrome.browser.tab.Tab;
 import org.chromium.chrome.browser.tabmodel.TabModel;
 import org.chromium.chrome.browser.tabmodel.TabModelSelector;
+import org.chromium.chrome.browser.tasks.tab_management.TabSelectionEditorAction.ActionDelegate;
 import org.chromium.chrome.browser.tasks.tab_management.TabSelectionEditorAction.ActionObserver;
 import org.chromium.chrome.browser.tasks.tab_management.TabSelectionEditorAction.ButtonType;
 import org.chromium.chrome.browser.tasks.tab_management.TabSelectionEditorAction.IconPosition;
@@ -105,10 +106,17 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
         }
 
         @Override
-        public void onSelectionStateChanged(List<Integer> tabs) {
+        public void onSelectionStateChange(List<Integer> tabs) {
             mLastTabIdList = tabs;
-            getPropertyModel().set(TabSelectionEditorActionProperties.ENABLED, mShouldEnableAction);
-            getPropertyModel().set(TabSelectionEditorActionProperties.ITEM_COUNT, tabs.size());
+            setEnabledAndItemCount(mShouldEnableAction, tabs.size());
+        }
+
+        @Override
+        public void performAction(List<Tab> tabs) {}
+
+        @Override
+        public boolean shouldHideEditorAfterAction() {
+            return false;
         }
     }
 
@@ -118,6 +126,8 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     private TabModelSelector mTabModelSelector;
     @Mock
     private SelectionDelegate<Integer> mSelectionDelegate;
+    @Mock
+    private ActionDelegate mDelegate;
 
     private List<Tab> mTabs = new ArrayList<>();
 
@@ -180,7 +190,7 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
             action.getPropertyModel().set(TabSelectionEditorActionProperties.ICON_TINT,
                     AppCompatResources.getColorStateList(
                             getActivity(), R.color.default_icon_color_tint_list));
-            action.configure(mTabModelSelector, mSelectionDelegate);
+            action.configure(mTabModelSelector, mSelectionDelegate, mDelegate);
             models.add(action.getPropertyModel());
         }
         mPropertyListModel.addAll(models, 0);
@@ -189,7 +199,7 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     private void changeSelectionStateAndAssert(
             List<Integer> tabIds, List<FakeTabSelectionEditorAction> actions) {
         TestThreadUtils.runOnUiThreadBlocking(
-                () -> { mTabSelectionEditorMenu.onSelectionStateChanged(tabIds); });
+                () -> { mTabSelectionEditorMenu.onSelectionStateChange(tabIds); });
         for (FakeTabSelectionEditorAction action : actions) {
             Assert.assertEquals(tabIds.size(), action.getLastTabIdList().size());
             for (int i = 0; i < tabIds.size(); i++) {
@@ -204,8 +214,9 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     public void testSingleActionView_Enabled() throws Exception {
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/0,
-                    ShowMode.IF_ROOM, ButtonType.ICON_AND_TEXT, IconPosition.END,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.IF_ROOM,
+                    ButtonType.ICON_AND_TEXT, IconPosition.END,
                     R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
@@ -222,8 +233,9 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     public void testSingleActionView_Disabled() throws Exception {
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/0,
-                    ShowMode.IF_ROOM, ButtonType.ICON_AND_TEXT, IconPosition.END,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.IF_ROOM,
+                    ButtonType.ICON_AND_TEXT, IconPosition.END,
                     R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
@@ -241,8 +253,9 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     public void testSingleActionView_Click() throws Exception {
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/0,
-                    ShowMode.IF_ROOM, ButtonType.ICON_AND_TEXT, IconPosition.END,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.IF_ROOM,
+                    ButtonType.ICON_AND_TEXT, IconPosition.END,
                     R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
@@ -264,7 +277,7 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
                 () -> { actions.get(0).addActionObserver(observer); });
         when(mSelectionDelegate.getSelectedItems())
                 .thenReturn(new HashSet<Integer>(Arrays.asList(new Integer[] {TAB_ID_1})));
-        clickActionView(R.id.tab_selection_editor_action_view);
+        clickActionView(R.id.tab_selection_editor_close_menu_item);
 
         helper.waitForCallback(0);
         Assert.assertEquals(1, processedTabs.size());
@@ -277,9 +290,9 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     public void testSingleMenuItem_Enabled() throws Exception {
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/0,
-                    ShowMode.MENU_ONLY, ButtonType.TEXT, IconPosition.START,
-                    R.string.tab_suggestion_close_tab_action_button,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.MENU_ONLY, ButtonType.TEXT,
+                    IconPosition.START, R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
         });
@@ -287,8 +300,12 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
         changeSelectionStateAndAssert(Arrays.asList(new Integer[] {TAB_ID_0}), actions);
         TestThreadUtils.runOnUiThreadBlocking(() -> {
             mToolbar.showOverflowMenu();
-            Assert.assertTrue(mToolbar.getMenu().findItem(0).isVisible());
-            Assert.assertTrue(mToolbar.getMenu().findItem(0).isEnabled());
+            Assert.assertTrue(mToolbar.getMenu()
+                                      .findItem(R.id.tab_selection_editor_close_menu_item)
+                                      .isVisible());
+            Assert.assertTrue(mToolbar.getMenu()
+                                      .findItem(R.id.tab_selection_editor_close_menu_item)
+                                      .isEnabled());
         });
 
         mRenderTestRule.render(mToolbar, "singleMenuItemToolbar");
@@ -299,9 +316,9 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     public void testSingleMenuItem_Disabled() {
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/0,
-                    ShowMode.MENU_ONLY, ButtonType.TEXT, IconPosition.START,
-                    R.string.tab_suggestion_close_tab_action_button,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.MENU_ONLY, ButtonType.TEXT,
+                    IconPosition.START, R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
         });
@@ -312,20 +329,23 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
 
         TestThreadUtils.runOnUiThreadBlocking(() -> {
             mToolbar.showOverflowMenu();
-            Assert.assertTrue(mToolbar.getMenu().findItem(0).isVisible());
-            Assert.assertFalse(mToolbar.getMenu().findItem(0).isEnabled());
+            Assert.assertTrue(mToolbar.getMenu()
+                                      .findItem(R.id.tab_selection_editor_close_menu_item)
+                                      .isVisible());
+            Assert.assertFalse(mToolbar.getMenu()
+                                       .findItem(R.id.tab_selection_editor_close_menu_item)
+                                       .isEnabled());
         });
     }
 
     @Test
     @MediumTest
     public void testSingleMenuItem_Click() throws Exception {
-        final int menuId = 50; // Arbitrary.
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), menuId, ShowMode.MENU_ONLY,
-                    ButtonType.TEXT, IconPosition.START,
-                    R.string.tab_suggestion_close_tab_action_button,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.MENU_ONLY, ButtonType.TEXT,
+                    IconPosition.START, R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
         });
@@ -347,7 +367,7 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
             mToolbar.showOverflowMenu();
             actions.get(0).addActionObserver(observer);
         });
-        clickMenuItem(menuId, "Close");
+        clickMenuItem(R.id.tab_selection_editor_close_menu_item, "Close");
 
         helper.waitForCallback(0);
         Assert.assertEquals(1, processedTabs.size());
@@ -360,12 +380,12 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     public void testTwoActionView_OneActionDisabled() throws Exception {
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/0,
-                    ShowMode.IF_ROOM, ButtonType.TEXT, IconPosition.START,
-                    R.string.tab_suggestion_close_tab_action_button, null));
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/1,
-                    ShowMode.IF_ROOM, ButtonType.ICON, IconPosition.END,
-                    R.string.tab_suggestion_close_tab_action_button,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.IF_ROOM, ButtonType.TEXT,
+                    IconPosition.START, R.string.tab_suggestion_close_tab_action_button, null));
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_group_menu_item, ShowMode.IF_ROOM, ButtonType.ICON,
+                    IconPosition.END, R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
         });
@@ -383,12 +403,12 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     public void testActionViewAndMenuItem_Enabled() throws Exception {
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/0,
-                    ShowMode.MENU_ONLY, ButtonType.TEXT, IconPosition.START,
-                    R.string.tab_suggestion_close_tab_action_button, null));
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/1,
-                    ShowMode.IF_ROOM, ButtonType.ICON, IconPosition.START,
-                    R.string.tab_suggestion_close_tab_action_button,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.MENU_ONLY, ButtonType.TEXT,
+                    IconPosition.START, R.string.tab_suggestion_close_tab_action_button, null));
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_group_menu_item, ShowMode.IF_ROOM, ButtonType.ICON,
+                    IconPosition.START, R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
         });
@@ -396,8 +416,12 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
         changeSelectionStateAndAssert(Arrays.asList(new Integer[] {TAB_ID_2}), actions);
         TestThreadUtils.runOnUiThreadBlocking(() -> {
             mToolbar.showOverflowMenu();
-            Assert.assertTrue(mToolbar.getMenu().findItem(0).isVisible());
-            Assert.assertTrue(mToolbar.getMenu().findItem(0).isEnabled());
+            Assert.assertTrue(mToolbar.getMenu()
+                                      .findItem(R.id.tab_selection_editor_close_menu_item)
+                                      .isVisible());
+            Assert.assertTrue(mToolbar.getMenu()
+                                      .findItem(R.id.tab_selection_editor_close_menu_item)
+                                      .isEnabled());
             mToolbar.hideOverflowMenu();
         });
 
@@ -409,13 +433,13 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
     public void testTwoMenuItems_OneMenuItemDisabled() {
         List<FakeTabSelectionEditorAction> actions = new ArrayList<>();
         TestThreadUtils.runOnUiThreadBlocking(() -> {
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/0,
-                    ShowMode.MENU_ONLY, ButtonType.TEXT, IconPosition.END,
-                    R.string.tab_suggestion_close_tab_action_button,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_close_menu_item, ShowMode.MENU_ONLY, ButtonType.TEXT,
+                    IconPosition.END, R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
-            actions.add(new FakeTabSelectionEditorAction(getActivity(), /*menuId=*/1,
-                    ShowMode.MENU_ONLY, ButtonType.ICON, IconPosition.START,
-                    R.string.tab_suggestion_close_tab_action_button,
+            actions.add(new FakeTabSelectionEditorAction(getActivity(),
+                    R.id.tab_selection_editor_group_menu_item, ShowMode.MENU_ONLY, ButtonType.ICON,
+                    IconPosition.START, R.string.tab_suggestion_close_tab_action_button,
                     R.drawable.ic_group_icon_16dp));
             configureMenuWithActions(actions);
         });
@@ -426,10 +450,18 @@ public class TabSelectionEditorMenuTest extends BlankUiTestActivityTestCase {
 
         TestThreadUtils.runOnUiThreadBlocking(() -> {
             mToolbar.showOverflowMenu();
-            Assert.assertTrue(mToolbar.getMenu().findItem(0).isVisible());
-            Assert.assertTrue(mToolbar.getMenu().findItem(0).isEnabled());
-            Assert.assertTrue(mToolbar.getMenu().findItem(1).isVisible());
-            Assert.assertFalse(mToolbar.getMenu().findItem(1).isEnabled());
+            Assert.assertTrue(mToolbar.getMenu()
+                                      .findItem(R.id.tab_selection_editor_close_menu_item)
+                                      .isVisible());
+            Assert.assertTrue(mToolbar.getMenu()
+                                      .findItem(R.id.tab_selection_editor_close_menu_item)
+                                      .isEnabled());
+            Assert.assertTrue(mToolbar.getMenu()
+                                      .findItem(R.id.tab_selection_editor_group_menu_item)
+                                      .isVisible());
+            Assert.assertFalse(mToolbar.getMenu()
+                                       .findItem(R.id.tab_selection_editor_group_menu_item)
+                                       .isEnabled());
             mToolbar.hideOverflowMenu();
         });
     }

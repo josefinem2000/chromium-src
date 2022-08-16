@@ -27,6 +27,7 @@
 <translation id="1199355487114804640">Oxudun/Durdurun</translation>
 <translation id="1201402288615127009">Növbəti</translation>
 <translation id="1204296502688602597">DNS Gecikməsi</translation>
+<translation id="1207734034680156868">Təkliflər təsvirinizə əsaslanır</translation>
 <translation id="123124571410524056">Portal şübhəsi var</translation>
 <translation id="1236400083787698183">Yenidən başlamazdan əvvəl cihazınızı yenidən formatlayın. Cihazınızın qapağı varsa, qapağı bağlamazdan əvvəl yenidən formatlamanın tamamlanmasını gözləyin. Yenidən formatlamanın tamamlanması bir dəqiqə çəkə bilər.</translation>
 <translation id="1238612778414822719">HTTPS Gecikməsi</translation>
@@ -210,6 +211,7 @@
 <translation id="2536159006530886390">İnternetə qoşulmaq olmur.</translation>
 <translation id="2570743873672969996"><ph name="TEST_NAME" /> testi icra edilir...</translation>
 <translation id="2584559707064218956">Ayarlamaq üçün Ayarlara keçin</translation>
+<translation id="2597774443162333062">Fayllar sazlama üçün Google'a göndəriləcək</translation>
 <translation id="2619761439309613843">Gündəlik Yenilənmə</translation>
 <translation id="2620436844016719705">Sistem</translation>
 <translation id="2638662041295312666">Daxil olma şəkli</translation>
@@ -670,6 +672,7 @@
 <translation id="6659594942844771486">Səkmə</translation>
 <translation id="6692996468359469499">Seçiminizlə bağlı məlumat əldə edin</translation>
 <translation id="6704062477274546131">DNS Həlli</translation>
+<translation id="6719240409382354629">Yenidən başladılmağa hazırlanır...</translation>
 <translation id="6723839937902243910">Enerji</translation>
 <translation id="6723847290197874913">Klaviaturanın arxa işığı</translation>
 <translation id="672609503628871915">Yeniliklərə baxın</translation>
@@ -887,6 +890,7 @@
 <translation id="8747900814994928677">Dəyişikliyi təsdiqləyin</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Google Foto albomu</translation>
+<translation id="8778600430213950389">Xəta oldu. Bu, çox güman ki, avadanlıq problemi ilə bağlıdır. Əsas lövhəni dəyişdirin və təmir prosesinə yenidən cəhd edin.</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">Bu şəbəkənin avtorizasiya portalı ola bilər</translation>
 <translation id="8798099450830957504">Defolt</translation>
@@ -940,6 +944,7 @@
 <translation id="910415269708673980"><ph name="PRINCIPAL_NAME" /> üçün bileti yeniləyin</translation>
 <translation id="9106415115617144481"><ph name="PAGE_NUMBER" /> saylı səhifə skanlanır</translation>
 <translation id="9111102763498581341">Kiliddən çıxarın</translation>
+<translation id="9118126012493516930">Təmiri başa çatdırmaq mümkün deyil</translation>
 <translation id="9122602430962285795">Yenidən qoşulmaq üçün Ayarlara keçin</translation>
 <translation id="9126720536733509015">Birdən çox səhifəni bir PDF-də saxlayın</translation>
 <translation id="9137526406337347448">Google Xidmətləri</translation>

@@ -35,6 +35,7 @@
 #include "content/browser/interest_group/interest_group_manager_impl.h"
 #include "content/browser/interest_group/interest_group_storage.h"
 #include "content/common/aggregatable_report.mojom-shared.h"
+#include "content/common/private_aggregation_features.h"
 #include "content/public/browser/site_instance.h"
 #include "content/public/test/test_renderer_host.h"
 #include "content/services/auction_worklet/auction_v8_helper.h"
@@ -864,6 +865,7 @@ class MockBidderWorklet : public auction_worklet::mojom::BidderWorklet {
   void GenerateBid(
       auction_worklet::mojom::BidderWorkletNonSharedParamsPtr
           bidder_worklet_non_shared_params,
+      const url::Origin& interest_group_join_origin,
       const absl::optional<std::string>& auction_signals_json,
       const absl::optional<std::string>& per_buyer_signals_json,
       const absl::optional<base::TimeDelta> per_buyer_timeout,
@@ -1494,11 +1496,13 @@ class AuctionRunnerTest : public testing::Test,
     std::vector<auction_worklet::mojom::PreviousWinPtr> bidder2_prev_wins;
   };
 
-  AuctionRunnerTest()
+  explicit AuctionRunnerTest(bool should_enable_private_aggregation = true)
       : task_environment_(base::test::TaskEnvironment::TimeSource::MOCK_TIME) {
     mojo::SetDefaultProcessErrorHandler(base::BindRepeating(
         &AuctionRunnerTest::OnBadMessage, base::Unretained(this)));
     DebuggableAuctionWorkletTracker::GetInstance()->AddObserver(this);
+    scoped_feature_list_.InitWithFeatureState(
+        content::kPrivateAggregationApi, should_enable_private_aggregation);
   }
 
   ~AuctionRunnerTest() override {
@@ -1618,7 +1622,7 @@ class AuctionRunnerTest : public testing::Test,
     for (auto& bidder : bidders) {
       for (int i = 0; i < bidder.bidding_browser_signals->join_count; i++) {
         interest_group_manager_->JoinInterestGroup(
-            bidder.interest_group, bidder.interest_group.owner.GetURL());
+            bidder.interest_group, bidder.joining_origin.GetURL());
       }
       for (int i = 0; i < bidder.bidding_browser_signals->bid_count; i++) {
         interest_group_manager_->RecordInterestGroupBids(
@@ -1777,6 +1781,7 @@ class AuctionRunnerTest : public testing::Test,
     storage_group.bidding_browser_signals =
         auction_worklet::mojom::BiddingBrowserSignals::New(
             3, 5, std::move(previous_wins));
+    storage_group.joining_origin = storage_group.interest_group.owner;
     return storage_group;
   }
 
@@ -2057,6 +2062,8 @@ class AuctionRunnerTest : public testing::Test,
   // corresponding participant types.
   std::set<url::Origin> disallowed_sellers_;
   std::set<url::Origin> disallowed_buyers_;
+
+  base::test::ScopedFeatureList scoped_feature_list_;
 
   base::test::TaskEnvironment task_environment_;
 
@@ -7635,6 +7642,69 @@ TEST_F(AuctionRunnerTest, SizeLimitHighestPriorityGroupHasNoBidScript) {
   EXPECT_EQ(GURL("https://ad1.com/"), result_.ad_url);
 }
 
+TEST_F(AuctionRunnerTest, ExecutionModeGroupByOrigin) {
+  // Test of GroupByOrigin execution mode at AuctionRunner level;
+  // this primarily shows that the sorting actually groups things, and that
+  // distinct groups are kept separate.
+  const char kScript[] = R"(
+    if (!('count' in globalThis))
+      globalThis.count = 0;
+    function generateBid() {
+      ++count;
+      return {ad: ["ad"], bid:count, render:"https://response.test/"};
+    }
+    function reportWin(auctionSignals, perBuyerSignals, sellerSignals,
+                       browserSignals) {
+      sendReportTo("https://adplatform.com/metrics/" + browserSignals.bid);
+    }
+  )";
+
+  const char kSellerScript[] = R"(
+    function scoreAd(adMetadata, bid, auctionConfig, trustedScoringSignals,
+                     browserSignals) {
+      return {desirability: bid,
+              ad: adMetadata};
+    }
+    function reportResult() {}
+  )";
+
+  auction_worklet::AddJavascriptResponse(&url_loader_factory_, kBidder1Url,
+                                         kScript);
+  auction_worklet::AddJavascriptResponse(&url_loader_factory_, kSellerUrl,
+                                         kSellerScript);
+
+  std::vector<StorageInterestGroup> bidders;
+  // Add 5 groupByOrigin, 2 regular execution mode IGs.
+  for (int i = 0; i < 7; ++i) {
+    StorageInterestGroup ig = MakeInterestGroup(
+        kBidder1, kBidder1Name + base::NumberToString(i), kBidder1Url,
+        /* trusted_bidding_signals_url=*/absl::nullopt,
+        /* trusted_bidding_signals_keys=*/{}, GURL("https://response.test/"));
+    ig.joining_origin = url::Origin::Create(GURL("https://sports.example.org"));
+    ig.interest_group.execution_mode =
+        i < 5 ? blink::InterestGroup::ExecutionMode::kGroupedByOriginMode
+              : blink::InterestGroup::ExecutionMode::kCompatibilityMode;
+    bidders.push_back(std::move(ig));
+  }
+
+  // Add one with different join origin.
+  StorageInterestGroup ig = MakeInterestGroup(
+      kBidder1, kBidder1Name + std::string("8"), kBidder1Url,
+      /* trusted_bidding_signals_url=*/absl::nullopt,
+      /* trusted_bidding_signals_keys=*/{}, GURL("https://response.test/"));
+  ig.joining_origin = url::Origin::Create(GURL("https://shopping.example.us"));
+  ig.interest_group.execution_mode =
+      blink::InterestGroup::ExecutionMode::kGroupedByOriginMode;
+  bidders.push_back(std::move(ig));
+
+  StartAuction(kSellerUrl, std::move(bidders));
+  auction_run_loop_->Run();
+  EXPECT_THAT(result_.errors, testing::ElementsAre());
+  ASSERT_TRUE(result_.winning_group_id);
+  EXPECT_THAT(result_.report_urls,
+              testing::ElementsAre(GURL("https://adplatform.com/metrics/5")));
+}
+
 // Enable and test forDebuggingOnly.reportAdAuctionLoss() and
 // forDebuggingOnly.reportAdAuctionWin() APIs.
 class AuctionRunnerBiddingAndScoringDebugReportingAPIEnabledTest
@@ -9033,6 +9103,46 @@ TEST_F(AuctionRunnerBiddingAndScoringDebugReportingAPIEnabledTest,
       testing::UnorderedElementsAre(GURL("https://bidder11.test/win/"),
                                     GURL("https://seller3.test/win/11"),
                                     GURL("https://seller0.test/win/11")));
+}
+
+// Enable and test forDebuggingOnly.reportAdAuctionLoss() and
+// forDebuggingOnly.reportAdAuctionWin() APIs.
+class AuctionRunnerPrivateAggregationAPIDisabledTest
+    : public AuctionRunnerTest {
+ public:
+  AuctionRunnerPrivateAggregationAPIDisabledTest()
+      : AuctionRunnerTest(/*should_enable_private_aggregation=*/false) {}
+};
+
+TEST_F(AuctionRunnerPrivateAggregationAPIDisabledTest, ReportsNotSent) {
+  auction_worklet::AddJavascriptResponse(
+      &url_loader_factory_, kBidder1Url,
+      MakeBidScript(kSeller, "1", "https://ad1.com/", /*num_ad_components=*/2,
+                    kBidder1, kBidder1Name,
+                    /*has_signals=*/true, "k1", "a",
+                    /*report_post_auction_signals=*/true));
+  auction_worklet::AddJavascriptResponse(
+      &url_loader_factory_, kBidder2Url,
+      MakeBidScript(kSeller, "2", "https://ad2.com/", /*num_ad_components=*/2,
+                    kBidder2, kBidder2Name,
+                    /*has_signals=*/true, "l2", "b",
+                    /*report_post_auction_signals=*/true));
+  auction_worklet::AddJavascriptResponse(
+      &url_loader_factory_, kSellerUrl,
+      MakeAuctionScript(/*report_post_auction_signals=*/true));
+  auction_worklet::AddBidderJsonResponse(
+      &url_loader_factory_,
+      GURL(kBidder1TrustedSignalsUrl.spec() +
+           "?hostname=publisher1.com&keys=k1,k2"),
+      kBidder1SignalsJson);
+  auction_worklet::AddBidderJsonResponse(
+      &url_loader_factory_,
+      GURL(kBidder2TrustedSignalsUrl.spec() +
+           "?hostname=publisher1.com&keys=l1,l2"),
+      kBidder2SignalsJson);
+
+  const Result& res = RunStandardAuction();
+  EXPECT_TRUE(res.private_aggregation_requests.empty());
 }
 
 }  // namespace

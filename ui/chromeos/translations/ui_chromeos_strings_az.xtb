@@ -5,6 +5,7 @@
 <translation id="1047956942837015229"><ph name="COUNT" /> element silinir...</translation>
 <translation id="1049926623896334335">Word sənədi</translation>
 <translation id="1056775291175587022">Şəbəkə yoxdur</translation>
+<translation id="1056898198331236512">Xəbərdarlıq</translation>
 <translation id="1060368002126861100">Faylları <ph name="APP_NAME" /> ilə açmaq üçün əvvəlcə onları Windows fayllar qovluğuna köçürün.</translation>
 <translation id="1062407476771304334">Əvəz edin</translation>
 <translation id="1119447706177454957">Daxili xəta</translation>
@@ -244,6 +245,7 @@
 <translation id="3138624403379688522">Yanlış PIN. <ph name="RETRIES" /> cəhdiniz qalıb.</translation>
 <translation id="3160842278951476457"><ph name="ISSUED_BY" /> [<ph name="ISSUED_TO" />] (avadanlıqla yedəklənmiş)</translation>
 <translation id="3188257591659621405">Fayllarım</translation>
+<translation id="3194553149358267393">Son audio fayllar yoxdur</translation>
 <translation id="3197563288998582412">UK Dvorak</translation>
 <translation id="3202131003361292969">Yol</translation>
 <translation id="3205852408225871810">Portuqaliya dili</translation>
@@ -284,10 +286,12 @@
 <translation id="3479552764303398839">İndi yox</translation>
 <translation id="3486821258960016770">Monqol</translation>
 <translation id="3495304270784461826"><ph name="COUNT" /> xətalar.</translation>
+<translation id="3495810061346586977">Bu fayl məxfidir və administrator siyasəti ilə məhdudiyyətlər tətbiq olunur. <ph name="BEGIN_LINK_HELP" />Ətraflı məlumat<ph name="END_LINK_HELP" /></translation>
 <translation id="3509680540198371098"><ph name="NETWORK_INDEX" />/<ph name="NETWORK_COUNT" /> şəbəkə, <ph name="NETWORK_NAME" />, <ph name="SECURITY_STATUS" />, <ph name="CONNECTION_STATUS" />, Siqnal Gücü <ph name="SIGNAL_STRENGTH" />%, Detallar</translation>
 <translation id="3522708245912499433">Portuqal</translation>
 <translation id="3524311639100184459">Xəbərdarlıq: Bu fayllar müvəqqətidir və diskdə yer boşaltmaq üçün avtomatik silinə bilər.  <ph name="BEGIN_LINK" />Ətraflı Məlumat<ph name="END_LINK" /></translation>
 <translation id="3527085408025491307">Qovluq</translation>
+<translation id="3548125359243647069">Yanlış PIN kod dəfələrlə daxil edilib.</translation>
 <translation id="3549797760399244642">drive.google.com saytına keçin...</translation>
 <translation id="3553048479571901246">Faylları <ph name="APP_NAME" /> ilə açmaq üçün əvvəlcə onları Windows fayllar qovluğuna kopyalayın.</translation>
 <translation id="3556731189587832921">Beynəlxalq kompüter klaviaturası ilə İngilis dili (ABŞ)</translation>
@@ -300,6 +304,7 @@
 <translation id="3606220979431771195">Türk-F</translation>
 <translation id="3616113530831147358">Audio</translation>
 <translation id="3619115746895587757">Kappuçino</translation>
+<translation id="3619593063686672873">Son videolar yoxdur</translation>
 <translation id="3620292326130836921">Hamısı yedəklənib!</translation>
 <translation id="3634507049637220048"><ph name="NETWORK_INDEX" />/<ph name="NETWORK_COUNT" /> şəbəkə, <ph name="NETWORK_NAME" />, <ph name="CONNECTION_STATUS" />, Administratorunuz tərəfindən idarə olunur, Detallar</translation>
 <translation id="3645233063072417428"><ph name="NUMBER_OF_ITEMS" /> element köçürüldü</translation>
@@ -398,6 +403,7 @@
 <translation id="4572815280350369984"><ph name="FILE_TYPE" /> faylı</translation>
 <translation id="457386861538956877">Digər...</translation>
 <translation id="4579744207439506346"><ph name="ENTRY_NAME" /> seçimə əlavə edildi.</translation>
+<translation id="4583436353463424810">Son sənədlər yoxdur</translation>
 <translation id="4594543368593301662"><ph name="SEARCH_TERM" /> üçün nəticələr göstərilir.</translation>
 <translation id="4599600860674643278">Filtr sıfırlanıb.</translation>
 <translation id="4603392156942865207"><ph name="FILE_NAME" /> faylı <ph name="FOLDER_NAME" /> qovluğuna kopyalanır</translation>
@@ -486,6 +492,7 @@
 <translation id="516592729076796170">US Programmer Dvorak</translation>
 <translation id="5172749059808361023">Məhdudiyyət detalları</translation>
 <translation id="5177526793333269655">Eskiz görünüşü</translation>
+<translation id="5181896909298187506">Son fayllar yoxdur</translation>
 <translation id="5194713942430106590">Sütunu azalan sıra ilə çeşidləmək üçün klikləyin.</translation>
 <translation id="5211614973734216083">Farer</translation>
 <translation id="5218183485292899140">İsveçrə-Fransız</translation>
@@ -612,6 +619,7 @@
 <translation id="6267547857941397424"><ph name="NETWORK_INDEX" />/<ph name="NETWORK_COUNT" /> şəbəkə, <ph name="PHONE_NAME" />, Siqnal Gücü <ph name="SIGNAL_STRENGTH" />%, Telefonun Batareyası <ph name="BATTERY_STATUS" />%, Qoşulun</translation>
 <translation id="6269630227984243955">Malay</translation>
 <translation id="6287852322318138013">Bu faylı açmaq üçün bir tətbiq seçin</translation>
+<translation id="6295542640242147836">SIM'i kilidləyin</translation>
 <translation id="6296410173147755564">Yanlış PUK</translation>
 <translation id="6312403991423642364">Naməlum şəbəkə xətası</translation>
 <translation id="6317608858038767920">Fərdi ad serveri <ph name="INPUT_INDEX" /></translation>
@@ -720,6 +728,7 @@
 <translation id="7189874332498648577"><ph name="NUMBER_OF_GB" /> GB</translation>
 <translation id="7191454237977785534">Faylın saxlanma formatı:</translation>
 <translation id="7229570126336867161">EVDO lazımdır</translation>
+<translation id="7230898482850090046">Administratorunuz "SIM'i kilidləyin" ayarını deaktiv etməyi tələb edib</translation>
 <translation id="7238097264433196391">Cihazın adı</translation>
 <translation id="7238643356913091553"><ph name="NETWORK_NAME" />, Detallar</translation>
 <translation id="7246947237293279874">FTP Proksisi</translation>
@@ -740,6 +749,7 @@
 <translation id="7408870451288633753">Çex</translation>
 <translation id="7417453074306512035">Efiop klaviaturası</translation>
 <translation id="7417705661718309329">Google xəritə</translation>
+<translation id="7458955835361612701">Son şəkillər yoxdur</translation>
 <translation id="7460898608667578234">Ukrayna</translation>
 <translation id="7469894403370665791">Bu şəbəkəyə avtomatik olaraq qoşulun</translation>
 <translation id="7486315294984620427">Paralellər Masaüstünə faylları əlavə etmək üçün fayl Windows fayllarına kopyalanmalıdır.</translation>
@@ -751,6 +761,7 @@
 <translation id="7505167922889582512">Gizlədilmiş faylları göstərin</translation>
 <translation id="7514365320538308">Endirmə</translation>
 <translation id="751507702149411736">Belarusca</translation>
+<translation id="7521790570754130607">Mobil datadan istifadə etmək üçün PIN tələb olunur</translation>
 <translation id="7532029025027028521">Fars dilində Transliterasiya</translation>
 <translation id="7544830582642184299">Linux tətbiqlərinə Google Diskinizdəki fayllara giriş icazəsi verin. Dəyişikliklər digər cihazlara sinxronizasiya ediləcək.</translation>
 <translation id="7547009467130558110">İdman ayaqqabısı</translation>
@@ -775,6 +786,7 @@
 <translation id="76959938259365003">Zibil qutusunu boşaltmaq alınmadı.</translation>
 <translation id="770015031906360009">Yunan</translation>
 <translation id="7705251383879779343"><ph name="FILE_NAME" /> kopyalanıb.</translation>
+<translation id="7708271999969613024">Bu şəbəkədən istifadə etmək üçün operator tərəfindən təqdim olunan 8 rəqəmli Fərdi Blokdan Çıxarma Açarını (PUK) daxil etməlisiniz.</translation>
 <translation id="7711920809702896782">Şəkil məlumatı</translation>
 <translation id="7724603315864178912">Kəsin</translation>
 <translation id="7730494089396812859">Bulud yedəklənməsi detallarını göstərin</translation>
@@ -867,6 +879,7 @@
 <translation id="8437209419043462667">ABŞ</translation>
 <translation id="8452135315243592079">SIM kart yoxdur</translation>
 <translation id="8456681095658380701">Yanlış ad</translation>
+<translation id="8457767749626250697">SIM kilidlənib</translation>
 <translation id="8459404855768962328">Bu elementi kopyalasanız, '<ph name="DESTINATION_NAME" />' paylaşılan qovluğunu görə bilən hər kəslə paylaşacaqdır.</translation>
 <translation id="8461467696380332069">Fayla sağ düymə ilə toxunun və rəfdəki fayllarınıza sürətli giriş üçün "Rəfə bərkidin" seçimini edin.</translation>
 <translation id="8461914792118322307">Proksi</translation>

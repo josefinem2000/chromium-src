@@ -526,10 +526,18 @@ void DesksController::NewDesk(DesksCreationRemovalSource source) {
                       /*set_by_user=*/false);
   }
 
-  auto* shell = Shell::Get();
-  shell->accessibility_controller()->TriggerAccessibilityAlertWithMessage(
-      l10n_util::GetStringFUTF8(IDS_ASH_VIRTUAL_DESKS_ALERT_NEW_DESK_CREATED,
-                                base::NumberToString16(desks_.size())));
+  // Don't trigger an a11y alert when the source is kLaunchTemplate because
+  // CreateNewDeskForTemplate will trigger an alert instead.
+  // Dont trigger when the source is kSaveAndRecall because the
+  // DESK_TEMPLATES_MODE_ENTERED alert triggered in
+  // OverviewSession::ShowDesksTemplatesGrids should be shown instead.
+  if (source != DesksCreationRemovalSource::kLaunchTemplate &&
+      source != DesksCreationRemovalSource::kSaveAndRecall) {
+    auto* shell = Shell::Get();
+    shell->accessibility_controller()->TriggerAccessibilityAlertWithMessage(
+        l10n_util::GetStringFUTF8(IDS_ASH_VIRTUAL_DESKS_ALERT_NEW_DESK_CREATED,
+                                  base::NumberToString16(desks_.size())));
+  }
 
   for (auto& observer : observers_)
     observer.OnDeskAdded(new_desk);
@@ -552,10 +560,11 @@ void DesksController::RemoveDesk(const Desk* desk,
 
   auto* overview_controller = Shell::Get()->overview_controller();
   const bool in_overview = overview_controller->InOverviewSession();
-  if (!in_overview && active_desk_ == desk) {
-    // When removing the active desk outside of overview, we trigger the remove
-    // desk animation. We will activate the desk to its left if any, otherwise,
-    // we activate one on the right.
+  if (!in_overview && active_desk_ == desk &&
+      source != DesksCreationRemovalSource::kSaveAndRecall) {
+    // When removing the active desk outside of overview (and the source is not
+    // Save & Recall), we trigger the remove desk animation. We will activate
+    // the desk to its left if any, otherwise, we activate one on the right.
     const int current_desk_index = GetDeskIndex(active_desk_);
     const int target_desk_index =
         current_desk_index + ((current_desk_index > 0) ? -1 : 1);
@@ -1076,6 +1085,10 @@ void DesksController::CreateNewDeskForTemplate(
 
   if (!desk_name.empty()) {
     desk->SetName(desk_name, /*set_by_user=*/true);
+    Shell::Get()
+        ->accessibility_controller()
+        ->TriggerAccessibilityAlertWithMessage(l10n_util::GetStringFUTF8(
+            IDS_ASH_VIRTUAL_DESKS_ALERT_NEW_DESK_CREATED, desk_name));
   }
   // Force update user prefs because `SetName()` does not trigger it.
   desks_restore_util::UpdatePrimaryUserDeskNamesPrefs();

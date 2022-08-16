@@ -504,7 +504,7 @@ UserMediaProcessor::RequestInfo::RequestInfo(UserMediaRequest* request)
 void UserMediaProcessor::RequestInfo::StartAudioTrack(
     MediaStreamComponent* component,
     bool is_pending) {
-  DCHECK(component->Source()->GetType() == MediaStreamSource::kTypeAudio);
+  DCHECK(component->GetSourceType() == MediaStreamSource::kTypeAudio);
   DCHECK(request()->Audio());
 #if DCHECK_IS_ON()
   DCHECK(audio_capture_settings_.HasValue());
@@ -1639,7 +1639,12 @@ MediaStreamComponent* UserMediaProcessor::CreateVideoTrack(
   if (!device)
     return nullptr;
   MediaStreamSource* source = InitializeVideoSourceObject(*device);
-  return current_request_info_->CreateAndStartVideoTrack(source);
+  MediaStreamComponent* component =
+      current_request_info_->CreateAndStartVideoTrack(source);
+  if (current_request_info_->request()->IsTransferredTrackRequest()) {
+    current_request_info_->request()->SetTransferredTrackComponent(component);
+  }
+  return component;
 }
 
 MediaStreamComponent* UserMediaProcessor::CreateAudioTrack(
@@ -1672,6 +1677,9 @@ MediaStreamComponent* UserMediaProcessor::CreateAudioTrack(
       MakeGarbageCollected<MediaStreamComponentImpl>(
           source,
           std::make_unique<MediaStreamAudioTrack>(true /* is_local_track */));
+  if (current_request_info_->request()->IsTransferredTrackRequest()) {
+    current_request_info_->request()->SetTransferredTrackComponent(component);
+  }
   current_request_info_->StartAudioTrack(component, is_pending);
 
   // At this point the source has started, and its audio parameters have been

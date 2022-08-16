@@ -574,8 +574,6 @@ MainThreadSchedulerImpl::SchedulingSettings::SchedulingSettings() {
 
   use_resource_fetch_priority =
       base::FeatureList::IsEnabled(kUseResourceFetchPriority);
-  use_resource_priorities_only_during_loading =
-      base::FeatureList::IsEnabled(kUseResourceFetchPriorityOnlyWhenLoading);
 
   prioritize_compositing_and_loading_during_early_loading =
       base::FeatureList::IsEnabled(
@@ -584,8 +582,7 @@ MainThreadSchedulerImpl::SchedulingSettings::SchedulingSettings() {
   prioritize_compositing_after_input =
       base::FeatureList::IsEnabled(kPrioritizeCompositingAfterInput);
 
-  if (use_resource_fetch_priority ||
-      use_resource_priorities_only_during_loading) {
+  if (use_resource_fetch_priority) {
     base::FieldTrialParams params;
     base::GetFieldTrialParams(kResourceFetchPriorityExperiment, &params);
     for (size_t net_priority = 0;
@@ -889,10 +886,6 @@ void MainThreadSchedulerImpl::OnShutdownTaskQueue(
 
   task_queue.get()->DetachOnIPCTaskPostedWhileInBackForwardCache();
   task_runners_.erase(task_queue.get());
-}
-
-bool MainThreadSchedulerImpl::CanExceedIdleDeadlineIfRequired() const {
-  return idle_helper_.CanExceedIdleDeadlineIfRequired();
 }
 
 void MainThreadSchedulerImpl::AddTaskObserver(
@@ -1369,9 +1362,7 @@ void MainThreadSchedulerImpl::DidHandleInputEventOnMainThread(
       UpdatePolicyLocked(UpdateType::kMayEarlyOutIfPolicyUnchanged);
     }
   }
-  if (result != WebInputEventResult::kNotHandled &&
-      result != WebInputEventResult::kHandledSuppressed &&
-      !PendingUserInput::IsContinuousEventType(web_input_event.GetType())) {
+  if (!PendingUserInput::IsContinuousEventType(web_input_event.GetType())) {
     main_thread_only().did_handle_discrete_input_event = true;
   }
 }

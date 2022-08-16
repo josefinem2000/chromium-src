@@ -176,11 +176,6 @@ extern const char kDefaultBrowserIntentsShowSettingsDescription[];
 extern const char kAddSettingForDefaultPageModeName[];
 extern const char kAddSettingForDefaultPageModeDescription[];
 
-// Title and description for the flag to use default WebKit context menu in web
-// content.
-extern const char kDefaultWebViewContextMenuName[];
-extern const char kDefaultWebViewContextMenuDescription[];
-
 // Title and description for the flag to control the delay (in minutes) for
 // polling for the existence of Gaia cookies for google.com.
 extern const char kDelayThresholdMinutesToUpdateGaiaCookieName[];
@@ -254,10 +249,6 @@ extern const char kEnableDiscoverFeedPreviewDescription[];
 extern const char kEnableDiscoverFeedGhostCardsName[];
 extern const char kEnableDiscoverFeedGhostCardsDescription[];
 
-// Title and description for the flag to shorten the cache.
-extern const char kEnableDiscoverFeedShorterCacheName[];
-extern const char kEnableDiscoverFeedShorterCacheDescription[];
-
 // Title and description for the flag to enable the discover feed static
 // resource serving.
 extern const char kEnableDiscoverFeedStaticResourceServingName[];
@@ -284,11 +275,6 @@ extern const char kEnableFREUIModuleIOSDescription[];
 // Title and description for the flag to enable the Fullscreen API.
 extern const char kEnableFullscreenAPIName[];
 extern const char kEnableFullscreenAPIDescription[];
-
-// Title and description for the flag to enable shorted password auto-fill
-// instructions and button.
-extern const char kEnableShortenedPasswordAutoFillInstructionName[];
-extern const char kEnableShortenedPasswordAutoFillInstructionDescription[];
 
 // Title and description for the flag to enable omnibox suggestions scrolling on
 // iPad.
@@ -343,11 +329,6 @@ extern const char kFullscreenSmoothScrollingDescription[];
 // Title and description for the flag to enable HTTPS-Only Mode setting.
 extern const char kHttpsOnlyModeName[];
 extern const char kHttpsOnlyModeDescription[];
-
-// Title and description for the flag to enable dark mode colors while in
-// Incognito mode.
-extern const char kIncognitoBrandConsistencyForIOSName[];
-extern const char kIncognitoBrandConsistencyForIOSDescription[];
 
 // Title and description for the flag to enable revamped Incognito NTP page.
 extern const char kIncognitoNtpRevampName[];
@@ -412,6 +393,11 @@ extern const char kLockBottomToolbarDescription[];
 // are captured.
 extern const char kLogBreadcrumbsName[];
 extern const char kLogBreadcrumbsDescription[];
+
+// Title and description for the flag to control camera and/or microphone access
+// for a specific site through site settings during its lifespan.
+extern const char kMediaPermissionsControlName[];
+extern const char kMediaPermissionsControlDescription[];
 
 // Title and description for the flag that controls sending metrickit crash
 // reports.

@@ -101,6 +101,7 @@
 #include "ui/views/controls/scroll_view.h"
 #include "ui/views/interaction/element_tracker_views.h"
 #include "ui/views/layout/fill_layout.h"
+#include "ui/views/layout/flex_layout.h"
 #include "ui/views/rect_based_targeting_utils.h"
 #include "ui/views/view_class_properties.h"
 #include "ui/views/view_model_utils.h"
@@ -1402,7 +1403,7 @@ void TabStrip::SelectTab(Tab* tab, const ui::Event& event) {
       base::UmaHistogramSparse("Tabs.DesktopTabOffsetFromRightOfSwitch",
                                GetModelCount() - model_index - 1);
       base::UmaHistogramEnumeration("TabStrip.Tab.Views.ActivationAction",
-                                    TabStripModel::TabActivationTypes::kTab);
+                                    TabActivationTypes::kTab);
 
       if (tab->group().has_value()) {
         base::RecordAction(
@@ -1802,14 +1803,6 @@ void TabStrip::ChildPreferredSizeChanged(views::View* child) {
   PreferredSizeChanged();
 }
 
-gfx::Size TabStrip::GetMinimumSize() const {
-  return tab_container_->GetMinimumSize();
-}
-
-gfx::Size TabStrip::CalculatePreferredSize() const {
-  return tab_container_->CalculatePreferredSize();
-}
-
 bool TabStrip::CanDrop(const OSExchangeData& data) {
   return WantsToReceiveAllDragEvents();
 }
@@ -1868,15 +1861,14 @@ void TabStrip::Init() {
 
   UpdateContrastRatioValues();
 
-  if (!base::FeatureList::IsEnabled(features::kScrollableTabStrip)) {
-    // Our size should match that of |tab_container_|, our only child.
-    // With tab scrolling disabled, FillLayout will size us based on the size of
-    // our container and |tab_container_|'s min/preferred sizes.
-    // With tab scrolling enabled, we instead ignore the size of our container
-    // and simply match TabContainer's size unconditionally.
-    SetLayoutManager(std::make_unique<views::FillLayout>())
-        ->SetChildViewIgnoredByLayout(&*drag_context_, true);
-  }
+  SetLayoutManager(std::make_unique<views::FlexLayout>())
+      ->SetOrientation(views::LayoutOrientation::kHorizontal)
+      .SetChildViewIgnoredByLayout(&*drag_context_, true);
+  tab_container_->SetProperty(
+      views::kFlexBehaviorKey,
+      views::FlexSpecification(views::LayoutOrientation::kHorizontal,
+                               views::MinimumFlexSizeRule::kScaleToMinimum,
+                               views::MaximumFlexSizeRule::kPreferred));
 }
 
 std::map<tab_groups::TabGroupId, TabGroupHeader*> TabStrip::GetGroupHeaders() {
@@ -1892,8 +1884,8 @@ void TabStrip::NewTabButtonPressed(const ui::Event& event) {
   new_tab_button_pressed_start_time_ = base::TimeTicks::Now();
 
   base::RecordAction(base::UserMetricsAction("NewTab_Button"));
-  UMA_HISTOGRAM_ENUMERATION("Tab.NewTab", TabStripModel::NEW_TAB_BUTTON,
-                            TabStripModel::NEW_TAB_ENUM_COUNT);
+  UMA_HISTOGRAM_ENUMERATION("Tab.NewTab", NewTabTypes::NEW_TAB_BUTTON,
+                            NewTabTypes::NEW_TAB_ENUM_COUNT);
   if (event.IsMouseEvent()) {
     // Prevent the hover card from popping back in immediately. This forces a
     // normal fade-in.

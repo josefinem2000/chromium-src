@@ -676,6 +676,12 @@ const NGLayoutResult* NGBlockNode::SimplifiedLayout(
 const NGLayoutResult* NGBlockNode::LayoutRepeatableRoot(
     const NGConstraintSpace& constraint_space,
     const NGBlockBreakToken* break_token) const {
+  // We read and write the physical fragments vector in LayoutBox here, which
+  // isn't allowed if side-effects are disabled. However, if side-effects are
+  // disabled, we shouldn't be here anyway, since we shouldn't be performing
+  // block fragmentation then (and therefore never repeat content).
+  DCHECK(!NGDisableSideEffectsScope::IsDisabled());
+
   // When laying out repeatable content, we cannot at the same time allow it to
   // break inside.
   DCHECK(!constraint_space.HasBlockFragmentation());
@@ -704,16 +710,21 @@ const NGLayoutResult* NGBlockNode::LayoutRepeatableRoot(
   // numbers right, which is important when adding the result to the LayoutBox,
   // and it's also needed by pre-paint / paint.
   const NGBlockBreakToken* outgoing_break_token = nullptr;
-  if (constraint_space.IsRepeatable())
+  if (constraint_space.ShouldRepeat())
     outgoing_break_token = NGBlockBreakToken::CreateRepeated(*this, index);
   auto mutator = fragment.GetMutableForCloning();
   mutator.SetBreakToken(outgoing_break_token);
   if (!is_first) {
     mutator.ClearIsFirstForNode();
+
+    // Any OOFs whose containing block is an ancestor of the repeated section is
+    // not to be repeated.
+    mutator.ClearPropagatedOOFs();
+
     box_->SetLayoutResult(result, index);
   }
 
-  if (!constraint_space.IsRepeatable()) {
+  if (!constraint_space.ShouldRepeat()) {
     // This is the last fragment. It won't be repeated again. We have already
     // created fragments for the repeated nodes, but the cloning was shallow.
     // We're now ready to deep-clone the entire subtree for each repeated
@@ -1839,9 +1850,11 @@ const NGLayoutResult* NGBlockNode::LayoutAtomicInline(
       parent_constraint_space.ReplacedPercentageResolutionSize());
   NGConstraintSpace constraint_space = builder.ToConstraintSpace();
   const NGLayoutResult* result = Layout(constraint_space);
-  // TODO(kojii): Investigate why ClearNeedsLayout() isn't called automatically
-  // when it's being laid out.
-  GetLayoutBox()->ClearNeedsLayout();
+  if (!NGDisableSideEffectsScope::IsDisabled()) {
+    // TODO(kojii): Investigate why ClearNeedsLayout() isn't called
+    // automatically when it's being laid out.
+    GetLayoutBox()->ClearNeedsLayout();
+  }
   return result;
 }
 

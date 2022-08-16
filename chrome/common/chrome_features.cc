@@ -385,6 +385,12 @@ const base::Feature kExtensionWorkflowJustification{
 const base::Feature kExternalExtensionDefaultButtonControl{
     "ExternalExtensionDefaultButtonControl", base::FEATURE_DISABLED_BY_DEFAULT};
 
+#if BUILDFLAG(IS_CHROMEOS_ASH)
+COMPONENT_EXPORT(CHROME_FEATURES)
+const base::Feature kFileTransferEnterpriseConnector{
+    "FileTransferEnterpriseConnector", base::FEATURE_DISABLED_BY_DEFAULT};
+#endif
+
 #if BUILDFLAG(ENABLE_PLUGINS)
 // Show Flash deprecation warning to users who have manually enabled Flash.
 // https://crbug.com/918428
@@ -541,6 +547,9 @@ const base::Feature kHappinessTrackingPersonalizationWallpaper{
 // Enables the Happiness Tracking System for Media App PDF survey.
 const base::Feature kHappinessTrackingMediaAppPdf{
     "HappinessTrackingMediaAppPdf", base::FEATURE_DISABLED_BY_DEFAULT};
+// Enables or disables the Happiness Tracking System for Camera App survey.
+const base::Feature kHappinessTrackingSystemCameraApp{
+    "HappinessTrackingCameraApp", base::FEATURE_DISABLED_BY_DEFAULT};
 #endif
 
 // Hides the origin text from showing up briefly in WebApp windows.
@@ -575,12 +584,6 @@ const base::Feature kInSessionPasswordChange{"InSessionPasswordChange",
 // the "Apps & Features" system settings.
 const base::Feature kIncompatibleApplicationsWarning{
     "IncompatibleApplicationsWarning", base::FEATURE_DISABLED_BY_DEFAULT};
-#endif
-
-#if BUILDFLAG(IS_ANDROID)
-// When enabled, keeps Incognito UI consistent regardless of any selected theme.
-const base::Feature kIncognitoBrandConsistencyForAndroid{
-    "IncognitoBrandConsistencyForAndroid", base::FEATURE_DISABLED_BY_DEFAULT};
 #endif
 
 #if BUILDFLAG(IS_ANDROID)

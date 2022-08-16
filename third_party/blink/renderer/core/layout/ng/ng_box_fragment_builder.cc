@@ -356,7 +356,6 @@ EBreakBetween NGBoxFragmentBuilder::JoinedBreakBetweenValue(
 
 void NGBoxFragmentBuilder::MoveChildrenInBlockDirection(LayoutUnit delta) {
   DCHECK(is_new_fc_);
-  DCHECK(!has_oof_candidate_that_needs_block_offset_adjustment_);
   DCHECK_NE(FragmentBlockSize(), kIndefiniteSize);
   DCHECK(oof_positioned_descendants_.IsEmpty());
 
@@ -683,7 +682,7 @@ void NGBoxFragmentBuilder::CheckNoBlockFragmentation() const {
   DCHECK(!HasInflowChildBreakInside());
   DCHECK(!DidBreakSelf());
   DCHECK(!has_forced_break_);
-  DCHECK(ConstraintSpace().IsRepeatable() || !HasBreakTokenData());
+  DCHECK(ConstraintSpace().ShouldRepeat() || !HasBreakTokenData());
   DCHECK_EQ(minimal_space_shortage_, kIndefiniteSize);
   if (!ConstraintSpace().ShouldPropagateChildBreakValues()) {
     DCHECK(!initial_break_before_);

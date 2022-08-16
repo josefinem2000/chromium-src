@@ -19,6 +19,8 @@
 #import "ios/chrome/browser/ui/omnibox/popup/omnibox_popup_row_cell.h"
 #include "ios/chrome/browser/ui/toolbar/buttons/toolbar_configuration.h"
 #import "ios/chrome/browser/ui/util/keyboard_observer_helper.h"
+#import "ios/chrome/browser/ui/util/layout_guide_names.h"
+#import "ios/chrome/browser/ui/util/named_guide.h"
 #include "ios/chrome/browser/ui/util/uikit_ui_util.h"
 #import "ios/chrome/common/ui/colors/semantic_color_names.h"
 #include "ios/chrome/common/ui/util/constraints_ui_util.h"
@@ -31,6 +33,11 @@
 
 namespace {
 const CGFloat kTopAndBottomPadding = 8.0;
+const CGFloat kTopPaddingVariation1 = 8.0;
+const CGFloat kTopPaddingVariation2 = 10.0;
+const CGFloat kTopBottomPaddingVariation2Ipad = 16.0;
+const CGFloat kFooterHeightVariation1 = 12.0;
+const CGFloat kFooterHeightVariation2 = 16.0;
 // Percentage of the suggestion height that needs to be visible in order to
 // consider the suggestion as visible.
 const CGFloat kVisibleSuggestionThreshold = 0.6;
@@ -156,9 +163,13 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
     [self.tableView setLayoutMargins:UIEdgeInsetsZero];
   }
   self.tableView.contentInsetAdjustmentBehavior =
-      UIScrollViewContentInsetAdjustmentAutomatic;
-  [self.tableView setContentInset:UIEdgeInsetsMake(kTopAndBottomPadding, 0,
-                                                   kTopAndBottomPadding, 0)];
+      IsOmniboxActionsVisualTreatment2()
+          ? UIScrollViewContentInsetAdjustmentNever
+          : UIScrollViewContentInsetAdjustmentAutomatic;
+  [self.tableView setContentInset:UIEdgeInsetsMake(self.topPadding, 0,
+                                                   self.bottomPadding, 0)];
+
+  self.tableView.sectionHeaderHeight = 0.1;
   self.tableView.estimatedRowHeight = 0;
 
   self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -167,10 +178,18 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
   [self.tableView registerClass:[OmniboxPopupRowCell class]
          forCellReuseIdentifier:OmniboxPopupRowCellReuseIdentifier];
   self.shouldUpdateVisibleSuggestionCount = YES;
+
+  if (@available(iOS 15.0, *)) {
+    self.tableView.sectionHeaderTopPadding = 0;
+  }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
+  if (IsOmniboxActionsVisualTreatment2()) {
+    [self adjustMarginsToMatchOmniboxWidth];
+  }
+
   self.viewAppearanceTime = base::TimeTicks::Now();
 }
 
@@ -186,6 +205,37 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
   [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
   [self.tableView setEditing:NO animated:NO];
   self.shouldUpdateVisibleSuggestionCount = YES;
+
+  if (IsOmniboxActionsVisualTreatment2()) {
+    [coordinator
+        animateAlongsideTransition:^(
+            id<UIViewControllerTransitionCoordinatorContext> context) {
+          [self adjustMarginsToMatchOmniboxWidth];
+        }
+                        completion:nil];
+  }
+}
+
+- (void)adjustMarginsToMatchOmniboxWidth {
+  NamedGuide* layoutGuide = [NamedGuide guideWithName:kOmniboxGuide
+                                                 view:self.view];
+  if (!layoutGuide) {
+    return;
+  }
+
+  CGRect omniboxFrame = [layoutGuide.constrainedView
+      convertRect:layoutGuide.constrainedView.bounds
+           toView:self.view];
+  CGFloat leftMargin =
+      IsRegularXRegularSizeClass(self) ? omniboxFrame.origin.x : 0;
+  CGFloat rightMargin = IsRegularXRegularSizeClass(self)
+                            ? self.view.bounds.size.width -
+                                  omniboxFrame.origin.x -
+                                  omniboxFrame.size.width
+                            : 0;
+  self.tableView.layoutMargins =
+      UIEdgeInsetsMake(self.tableView.layoutMargins.top, leftMargin,
+                       self.tableView.layoutMargins.bottom, rightMargin);
 }
 
 #pragma mark - AutocompleteResultConsumer
@@ -230,7 +280,7 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
 
 #pragma mark - OmniboxSuggestionCommands
 
-- (void)highlightNextSuggestion {
+- (void)highlightPreviousSuggestion {
   NSIndexPath* path = self.highlightedIndexPath;
   if (path == nil) {
     // When nothing is highlighted, pressing Up Arrow doesn't do anything.
@@ -271,7 +321,7 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
                                   inSection:self.highlightedIndexPath.section];
 }
 
-- (void)highlightPreviousSuggestion {
+- (void)highlightNextSuggestion {
   if (!self.highlightedIndexPath) {
     // Initialize the highlighted row to -1, so that pressing down when nothing
     // is highlighted highlights the first row (at index 0).
@@ -358,6 +408,57 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
                                   inSection:indexPath.section];
 }
 
+- (CGFloat)tableView:(UITableView*)tableView
+    heightForHeaderInSection:(NSInteger)section {
+  return FLT_MIN;
+}
+
+- (CGFloat)tableView:(UITableView*)tableView
+    heightForFooterInSection:(NSInteger)section {
+  if (!IsOmniboxActionsEnabled()) {
+    return FLT_MIN;
+  }
+  if (section == (tableView.numberOfSections - 1)) {
+    return FLT_MIN;
+  }
+
+  return IsOmniboxActionsVisualTreatment1() ? kFooterHeightVariation1
+                                            : kFooterHeightVariation2;
+}
+
+- (UIView*)tableView:(UITableView*)tableView
+    viewForFooterInSection:(NSInteger)section {
+  if (!IsOmniboxActionsEnabled()) {
+    return nil;
+  }
+
+  // Do not show footer for the last section
+  if (section == (tableView.numberOfSections - 1)) {
+    return nil;
+  }
+  if (IsOmniboxActionsVisualTreatment2()) {
+    return [[UIView alloc] init];
+  }
+
+  UIView* footer = [[UIView alloc] init];
+  footer.backgroundColor = tableView.backgroundColor;
+  UIView* hairline = [[UIView alloc]
+      initWithFrame:CGRectMake(0, 8, tableView.bounds.size.width,
+                               2 / tableView.window.screen.scale)];
+  hairline.backgroundColor =
+      self.incognito ? [UIColor.whiteColor colorWithAlphaComponent:0.12]
+                     : [UIColor.blackColor colorWithAlphaComponent:0.12];
+  [footer addSubview:hairline];
+  hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+
+  return footer;
+}
+
+- (UIView*)tableView:(UITableView*)tableView
+    viewForHeaderInSection:(NSInteger)section {
+  return nil;
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {
@@ -406,10 +507,10 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
   CGFloat screenHeight = currentScreen.bounds.size.height;
   CGFloat bottomInset = screenHeight - self.tableView.contentSize.height -
                         _keyboardHeight - absoluteRect.origin.y -
-                        kTopAndBottomPadding * 2;
-  bottomInset = MAX(kTopAndBottomPadding, -bottomInset);
+                        self.bottomPadding - self.topPadding;
+  bottomInset = MAX(self.bottomPadding, -bottomInset);
   self.tableView.contentInset =
-      UIEdgeInsetsMake(kTopAndBottomPadding, 0, bottomInset, 0);
+      UIEdgeInsetsMake(self.topPadding, 0, bottomInset, 0);
   self.tableView.scrollIndicatorInsets = self.tableView.contentInset;
 }
 
@@ -419,13 +520,16 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
   ToolbarConfiguration* configuration = [[ToolbarConfiguration alloc]
       initWithStyle:self.incognito ? INCOGNITO : NORMAL];
 
+  if (IsOmniboxActionsVisualTreatment2()) {
+    self.view.backgroundColor =
+        [UIColor colorNamed:kGroupedPrimaryBackgroundColor];
+    return;
+  }
+
   if (IsRegularXRegularSizeClass(self)) {
     self.view.backgroundColor = configuration.backgroundColor;
   } else {
-    self.view.backgroundColor =
-        IsOmniboxActionsVisualTreatment2()
-            ? [UIColor colorNamed:kGroupedPrimaryBackgroundColor]
-            : [UIColor clearColor];
+    self.view.backgroundColor = [UIColor clearColor];
   }
 }
 
@@ -538,14 +642,8 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
 #pragma mark - ContentProviding
 
 - (BOOL)hasContent {
-  if (IsOmniboxActionsVisualTreatment2()) {
-    return self.tableView.numberOfSections > 0 &&
-           [self.tableView numberOfRowsInSection:0] > 0;
-  }
-
-  // The table view is a `SelfSizingTableView`, so its intrinsic content size
-  // can tell whether it has content.
-  return self.view.intrinsicContentSize.height > 0;
+  return self.tableView.numberOfSections > 0 &&
+         [self.tableView numberOfRowsInSection:0] > 0;
 }
 
 #pragma mark - Private Methods
@@ -579,6 +677,30 @@ const CGFloat kVisibleSuggestionThreshold = 0.6;
   self.visibleSuggestionCount =
       floor(visibleRows + (1.0 - kVisibleSuggestionThreshold));
   self.shouldUpdateVisibleSuggestionCount = NO;
+}
+
+- (CGFloat)topPadding {
+  CGFloat topPadding = kTopAndBottomPadding;
+  if (IsOmniboxActionsVisualTreatment1()) {
+    topPadding = kTopPaddingVariation1;
+  }
+  if (IsOmniboxActionsVisualTreatment2()) {
+    // On iPad, even in compact width, the popup is displayed differently than
+    // on the iPhone (it's "under" the always visible toolbar). So the check
+    // here is intentionally for device type, not size class.
+    BOOL isIpad = ui::GetDeviceFormFactor() == ui::DEVICE_FORM_FACTOR_TABLET;
+    topPadding =
+        isIpad ? kTopBottomPaddingVariation2Ipad : kTopPaddingVariation2;
+  }
+  return topPadding;
+}
+
+- (CGFloat)bottomPadding {
+  if (IsOmniboxActionsVisualTreatment2() &&
+      (ui::GetDeviceFormFactor() == ui::DEVICE_FORM_FACTOR_TABLET)) {
+    return kTopBottomPaddingVariation2Ipad;
+  }
+  return kTopAndBottomPadding;
 }
 
 @end

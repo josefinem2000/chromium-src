@@ -37,6 +37,8 @@ class PLATFORM_EXPORT TransferredMediaStreamComponent final
   TransferredMediaStreamComponent& operator=(
       const TransferredMediaStreamComponent&) = delete;
 
+  void SetImplementation(MediaStreamComponent* component);
+
   MediaStreamComponent* Clone(
       std::unique_ptr<MediaStreamTrackPlatform> cloned_platform_track =
           nullptr) const override;
@@ -45,6 +47,9 @@ class PLATFORM_EXPORT TransferredMediaStreamComponent final
 
   String Id() const override;
   int UniqueId() const override;
+  MediaStreamSource::StreamType GetSourceType() const override;
+  const String& GetSourceName() const override;
+  MediaStreamSource::ReadyState GetReadyState() const override;
   bool Remote() const override;
   bool Enabled() const override;
   void SetEnabled(bool enabled) override;

@@ -66,12 +66,12 @@ void MaybeWriteSetsToDisk(const base::FilePath& path, base::StringPiece sets) {
 // representation.
 FlattenedSets SetListToFlattenedSets(const std::vector<SingleSet>& set_list) {
   FlattenedSets sets;
-  for (const auto& [owner, members] : set_list) {
-    sets.emplace(owner,
-                 net::FirstPartySetEntry(owner, net::SiteType::kPrimary));
-    for (const net::SchemefulSite& member : members)
-      sets.emplace(member,
-                   net::FirstPartySetEntry(owner, net::SiteType::kAssociated));
+  for (const auto& set : set_list) {
+    for (const auto& site_and_entry : set) {
+      bool inserted =
+          sets.emplace(site_and_entry.first, site_and_entry.second).second;
+      DCHECK(inserted);
+    }
   }
   return sets;
 }
@@ -81,12 +81,13 @@ FlattenedSets SetListToFlattenedSets(const std::vector<SingleSet>& set_list) {
 void UpdateCustomizationMap(
     const std::vector<SingleSet>& set_list,
     FirstPartySetsHandlerImpl::PolicyCustomization& site_to_entry) {
-  for (const auto& [owner, members] : set_list) {
-    site_to_entry.emplace(
-        owner, net::FirstPartySetEntry(owner, net::SiteType::kPrimary));
-    for (const net::SchemefulSite& member : members)
-      site_to_entry.emplace(
-          member, net::FirstPartySetEntry(owner, net::SiteType::kAssociated));
+  for (const auto& set : set_list) {
+    for (const auto& site_and_entry : set) {
+      bool inserted =
+          site_to_entry.emplace(site_and_entry.first, site_and_entry.second)
+              .second;
+      DCHECK(inserted);
+    }
   }
 }
 
@@ -97,7 +98,7 @@ void UpdateCustomizationMap(
 void AddIfPolicySetOverlaps(
     const net::SchemefulSite& site,
     size_t policy_set_index,
-    FlattenedSets existing_sets,
+    const FlattenedSets& existing_sets,
     base::flat_map<net::SchemefulSite, base::flat_set<size_t>>&
         policy_set_overlaps) {
   // Check `site` for membership in `existing_sets`.
@@ -118,10 +119,8 @@ std::vector<SingleSet> NormalizeAdditionSets(
   base::flat_map<net::SchemefulSite, base::flat_set<size_t>>
       policy_set_overlaps;
   for (size_t set_idx = 0; set_idx < addition_sets.size(); set_idx++) {
-    const net::SchemefulSite& owner = addition_sets[set_idx].first;
-    AddIfPolicySetOverlaps(owner, set_idx, existing_sets, policy_set_overlaps);
-    for (const net::SchemefulSite& member : addition_sets[set_idx].second) {
-      AddIfPolicySetOverlaps(member, set_idx, existing_sets,
+    for (const auto& site_and_entry : addition_sets[set_idx]) {
+      AddIfPolicySetOverlaps(site_and_entry.first, set_idx, existing_sets,
                              policy_set_overlaps);
     }
   }
@@ -142,12 +141,21 @@ std::vector<SingleSet> NormalizeAdditionSets(
   std::vector<SingleSet> normalized_additions;
   for (auto& [rep, children] : union_finder.SetsMapping()) {
     SingleSet normalized = addition_sets[rep];
+    const net::SchemefulSite& rep_primary =
+        addition_sets[rep].begin()->second.primary();
     for (size_t child_set_idx : children) {
-      // Update normalized to absorb the child_set_idx-th addition set.
-      const SingleSet& child_set = addition_sets[child_set_idx];
-      normalized.second.insert(child_set.first);
-      normalized.second.insert(child_set.second.begin(),
-                               child_set.second.end());
+      // Update normalized to absorb the child_set_idx-th addition set. Rewrite
+      // the entry's primary as needed.
+      for (const auto& child_site_and_entry : addition_sets[child_set_idx]) {
+        bool inserted =
+            normalized
+                .emplace(
+                    child_site_and_entry.first,
+                    net::FirstPartySetEntry(
+                        rep_primary, net::SiteType::kAssociated, absl::nullopt))
+                .second;
+        DCHECK(inserted);
+      }
     }
     normalized_additions.push_back(normalized);
   }
@@ -195,11 +203,11 @@ FirstPartySetsHandlerImpl* FirstPartySetsHandlerImpl::GetInstance() {
 absl::optional<FirstPartySetsHandler::PolicyParsingError>
 FirstPartySetsHandler::ValidateEnterprisePolicy(
     const base::Value::Dict& policy) {
-  // Call ParseSetsFromEnterprisePolicy to determine if the all sets in the
-  // policy are valid First-Party Sets. A nullptr is provided since we don't
-  // have use for the actual parsed sets.
-  return FirstPartySetParser::ParseSetsFromEnterprisePolicy(
-      policy, /*out_sets=*/nullptr);
+  base::expected<FirstPartySetParser::ParsedPolicySetLists,
+                 FirstPartySetParser::PolicyParsingError>
+      parsed = FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy);
+  return parsed.has_value() ? absl::nullopt
+                            : absl::make_optional(parsed.error());
 }
 
 void FirstPartySetsHandlerImpl::GetCustomizationForPolicy(
@@ -298,7 +306,8 @@ FirstPartySetsHandlerImpl::ComputeEnterpriseCustomizations(
           member, net::FirstPartySetEntry(entry->second.primary(),
                                           member == entry->second.primary()
                                               ? net::SiteType::kPrimary
-                                              : net::SiteType::kAssociated));
+                                              : net::SiteType::kAssociated,
+                                          absl::nullopt));
     }
     if (member == set_entry.primary())
       continue;
@@ -547,15 +556,15 @@ FirstPartySetsHandler::PolicyCustomization
 FirstPartySetsHandlerImpl::GetCustomizationForPolicyInternal(
     const base::Value::Dict& policy) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-  FirstPartySetParser::ParsedPolicySetLists parsed_policy;
-  absl::optional<FirstPartySetParser::PolicyParsingError> error =
-      FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy,
-                                                         &parsed_policy);
+  base::expected<FirstPartySetParser::ParsedPolicySetLists,
+                 FirstPartySetParser::PolicyParsingError>
+      parsed_policy =
+          FirstPartySetParser::ParseSetsFromEnterprisePolicy(policy);
   // Provide empty customization if the policy is malformed.
-  return error.has_value()
-             ? FirstPartySetsHandlerImpl::PolicyCustomization()
-             : FirstPartySetsHandlerImpl::ComputeEnterpriseCustomizations(
-                   sets_.value(), parsed_policy);
+  return parsed_policy.has_value()
+             ? FirstPartySetsHandlerImpl::ComputeEnterpriseCustomizations(
+                   sets_.value(), parsed_policy.value())
+             : FirstPartySetsHandlerImpl::PolicyCustomization();
 }
 
 }  // namespace content

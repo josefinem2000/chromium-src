@@ -52,8 +52,15 @@ using ::base::android::ScopedJavaLocalRef;
 namespace autofill_assistant {
 namespace {
 
+// Experiment for "Data Input via QR Code Scanning". This is an Experiment id
+// which is passed as part of the script parameters and is used to indicate
+// whether QR Code Scan can be used for data input.
+const char kDataInputViaQrCodeScanningExperiment[] = "4835818";
+
 // Strings for Synthetic Field Trials.
 const char kAutofillAssistantTtsTrialName[] = "AutofillAssistantEnableTtsParam";
+const char kAutofillAssistantQrCodeScanningTrialName[] =
+    "AutofillAssistantQrCodeScanning";
 const char kEnabledGroupName[] = "Enabled";
 const char kDisabledGroupName[] = "Disabled";
 
@@ -167,6 +174,16 @@ void ClientAndroid::Start(
       ->RegisterSyntheticFieldTrial(
           kAutofillAssistantTtsTrialName,
           enable_tts ? kEnabledGroupName : kDisabledGroupName);
+
+  // Register QR Code Scanning Synthetic Field Trial.
+  const bool can_use_qr_code_scanning =
+      trigger_context->GetScriptParameters().HasExperimentId(
+          kDataInputViaQrCodeScanningExperiment);
+  dependencies_->GetCommonDependencies()
+      ->CreateFieldTrialUtil()
+      ->RegisterSyntheticFieldTrial(
+          kAutofillAssistantQrCodeScanningTrialName,
+          can_use_qr_code_scanning ? kEnabledGroupName : kDisabledGroupName);
 
   DCHECK(!trigger_context->GetDirectAction());
   if (VLOG_IS_ON(2)) {
@@ -708,7 +725,8 @@ void ClientAndroid::CreateController(
       GetWebContents(), /* client= */ this,
       base::DefaultTickClock::GetInstance(),
       RuntimeManager::GetForWebContents(GetWebContents())->GetWeakPtr(),
-      std::move(service), ukm::UkmRecorder::Get(), annotate_dom_model_service_);
+      std::move(service), /* web_controller= */ nullptr,
+      ukm::UkmRecorder::Get(), annotate_dom_model_service_);
   ui_controller_ = std::make_unique<UiController>(
       /* client= */ this, controller_.get(), std::move(tts_controller));
   ui_controller_->StartListening();

@@ -293,10 +293,9 @@ void AppServiceProxyLacros::SetPermission(
   NOTIMPLEMENTED();
 }
 
-void AppServiceProxyLacros::Uninstall(
-    const std::string& app_id,
-    apps::mojom::UninstallSource uninstall_source,
-    gfx::NativeWindow parent_window) {
+void AppServiceProxyLacros::Uninstall(const std::string& app_id,
+                                      UninstallSource uninstall_source,
+                                      gfx::NativeWindow parent_window) {
   // On non-ChromeOS, publishers run the remove dialog.
   auto app_type = app_registry_cache_.GetAppType(app_id);
   if (app_type == AppType::kWeb) {
@@ -307,9 +306,18 @@ void AppServiceProxyLacros::Uninstall(
   }
 }
 
+void AppServiceProxyLacros::Uninstall(
+    const std::string& app_id,
+    apps::mojom::UninstallSource uninstall_source,
+    gfx::NativeWindow parent_window) {
+  Uninstall(app_id,
+            ConvertMojomUninstallSourceToUninstallSource(uninstall_source),
+            parent_window);
+}
+
 void AppServiceProxyLacros::UninstallSilently(
     const std::string& app_id,
-    apps::mojom::UninstallSource uninstall_source) {
+    UninstallSource uninstall_source) {
   if (!remote_crosapi_app_service_proxy_) {
     return;
   }
@@ -325,6 +333,13 @@ void AppServiceProxyLacros::UninstallSilently(
 
   remote_crosapi_app_service_proxy_->UninstallSilently(app_id,
                                                        uninstall_source);
+}
+
+void AppServiceProxyLacros::UninstallSilently(
+    const std::string& app_id,
+    apps::mojom::UninstallSource uninstall_source) {
+  UninstallSilently(
+      app_id, ConvertMojomUninstallSourceToUninstallSource(uninstall_source));
 }
 
 void AppServiceProxyLacros::StopApp(const std::string& app_id) {

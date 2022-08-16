@@ -1680,7 +1680,7 @@ void AXObjectCacheImpl::Remove(AXID ax_id) {
   if (!objects_.Take(ax_id))
     return;
 
-  DCHECK_GE(objects_.size(), ids_in_use_.size());
+  DCHECK_EQ(objects_.size(), ids_in_use_.size());
 }
 
 // This is safe to call even if there isn't a current mapping.
@@ -2241,6 +2241,13 @@ void AXObjectCacheImpl::DidInsertChildrenOfNode(Node* node) {
 void AXObjectCacheImpl::ChildrenChangedOnAncestorOf(AXObject* obj) {
   DCHECK(obj);
   DCHECK(!obj->IsDetached());
+  DCHECK(!IsFrozen())
+      << "Attempting to change children on an ancestor is dangerous during "
+         "serialization, because the ancestor may have already been "
+         "visited. Reaching this line indicates that AXObjectCacheImpl did "
+         "not handle a signal and call ChilldrenChanged() earlier."
+      << "\nChild: " << obj->ToString(true)
+      << "\nParent: " << obj->CachedParentObject()->ToString(true);
 
   // If |obj| is not included, and it has no included descendants, then there is
   // nothing in any ancestor's cached children that needs clearing. This rule

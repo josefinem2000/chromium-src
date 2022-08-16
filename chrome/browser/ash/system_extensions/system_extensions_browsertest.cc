@@ -13,6 +13,7 @@
 #include "base/test/scoped_feature_list.h"
 #include "base/threading/thread_restrictions.h"
 #include "chrome/browser/ash/system_extensions/system_extensions_install_manager.h"
+#include "chrome/browser/ash/system_extensions/system_extensions_persistence_manager.h"
 #include "chrome/browser/ash/system_extensions/system_extensions_profile_utils.h"
 #include "chrome/browser/ash/system_extensions/system_extensions_provider.h"
 #include "chrome/browser/ash/system_extensions/system_extensions_provider_factory.h"
@@ -21,6 +22,7 @@
 #include "chrome/common/chrome_paths.h"
 #include "chrome/test/base/in_process_browser_test.h"
 #include "chrome/test/base/ui_test_utils.h"
+#include "components/prefs/pref_service.h"
 #include "content/public/browser/navigation_entry.h"
 #include "content/public/browser/service_worker_context.h"
 #include "content/public/browser/storage_partition.h"
@@ -33,6 +35,15 @@ namespace ash {
 namespace {
 
 constexpr SystemExtensionId kTestSystemExtensionId = {1, 2, 3, 4};
+
+constexpr char kTestSystemExtensionManifest[] = R"({
+   "id": "01020304",
+   "name": "Sample System Web Extension",
+   "service_worker_url": "/sw.js",
+   "short_name": "Sample SWX",
+   "type": "echo"
+}
+)";
 
 constexpr char kTestSystemExtensionIndexURL[] =
     "chrome-untrusted://system-extension-echo-01020304/html/index.html";
@@ -210,6 +221,13 @@ class SystemExtensionsBrowserTest : public InProcessBrowserTest {
               extension_ids);
     EXPECT_TRUE(registry.GetById(kTestSystemExtensionId));
 
+    // Test we persisted the System Extension.
+    absl::optional<SystemExtensionPersistenceInfo> persistence_info =
+        provider.persistence_manager().Get(kTestSystemExtensionId);
+    ASSERT_TRUE(persistence_info);
+    EXPECT_EQ(kTestSystemExtensionManifest,
+              persistence_info->manifest.DebugString());
+
     auto* tab = browser()->tab_strip_model()->GetActiveWebContents();
     {
       ASSERT_TRUE(ui_test_utils::NavigateToURL(
@@ -231,6 +249,55 @@ class SystemExtensionsBrowserTest : public InProcessBrowserTest {
           browser(), GURL(kTestSystemExtensionEmptyPathURL)));
       content::NavigationEntry* entry = tab->GetController().GetVisibleEntry();
       EXPECT_EQ(content::PAGE_TYPE_ERROR, entry->GetPageType());
+    }
+  }
+
+  void TestExtensionUninstalled() {
+    auto& provider = SystemExtensionsProvider::Get(browser()->profile());
+    auto& registry = provider.registry();
+
+    EXPECT_TRUE(registry.GetIds().empty());
+    EXPECT_FALSE(registry.GetById(kTestSystemExtensionId));
+
+    // Tests that the System Extension is no longer in persistent storage.
+    absl::optional<SystemExtensionPersistenceInfo> persistence_info =
+        provider.persistence_manager().Get(kTestSystemExtensionId);
+    EXPECT_FALSE(persistence_info);
+
+    // Test that navigating to the System Extension's resources fails.
+    auto* tab = browser()->tab_strip_model()->GetActiveWebContents();
+    ASSERT_TRUE(ui_test_utils::NavigateToURL(
+        browser(), GURL(kTestSystemExtensionIndexURL)));
+    content::NavigationEntry* entry = tab->GetController().GetVisibleEntry();
+    EXPECT_EQ(content::PAGE_TYPE_ERROR, entry->GetPageType());
+
+    {
+      // Test that the resources have been deleted.
+      base::ScopedAllowBlockingForTesting allow_blocking;
+      const base::FilePath system_extension_dir =
+          GetDirectoryForSystemExtension(*browser()->profile(),
+                                         kTestSystemExtensionId);
+      EXPECT_FALSE(base::PathExists(system_extension_dir));
+    }
+
+    {
+      // Test that the service worker has been unregistered.
+      const GURL scope(kTestSystemExtensionEmptyPathURL);
+      auto* worker_context = browser()
+                                 ->profile()
+                                 ->GetDefaultStoragePartition()
+                                 ->GetServiceWorkerContext();
+
+      base::RunLoop run_loop;
+      worker_context->CheckHasServiceWorker(
+          scope, blink::StorageKey(url::Origin::Create(scope)),
+          base::BindLambdaForTesting(
+              [&](content::ServiceWorkerCapability capability) {
+                EXPECT_EQ(capability,
+                          content::ServiceWorkerCapability::NO_SERVICE_WORKER);
+                run_loop.Quit();
+              }));
+      run_loop.Run();
     }
   }
 
@@ -296,52 +363,137 @@ IN_PROC_BROWSER_TEST_F(SystemExtensionsBrowserTest, Uninstall_Success) {
   // Uninstall the extension.
   install_manager.Uninstall(kTestSystemExtensionId);
 
-  auto& registry = provider.registry();
-  EXPECT_TRUE(registry.GetIds().empty());
-  EXPECT_FALSE(registry.GetById(kTestSystemExtensionId));
-
-  // Test that navigating to the System Extension's resources fails.
-  auto* tab = browser()->tab_strip_model()->GetActiveWebContents();
-  ASSERT_TRUE(ui_test_utils::NavigateToURL(browser(),
-                                           GURL(kTestSystemExtensionIndexURL)));
-  content::NavigationEntry* entry = tab->GetController().GetVisibleEntry();
-  EXPECT_EQ(content::PAGE_TYPE_ERROR, entry->GetPageType());
-
   {
-    // Test that the resources have been deleted.
     const auto [id, deletion_succeeded] = waiter.WaitForAssetsDeleted();
     EXPECT_EQ(id, kTestSystemExtensionId);
     EXPECT_TRUE(deletion_succeeded);
-    base::ScopedAllowBlockingForTesting allow_blocking;
-    const base::FilePath system_extension_dir = GetDirectoryForSystemExtension(
-        *browser()->profile(), kTestSystemExtensionId);
-    EXPECT_FALSE(base::PathExists(system_extension_dir));
   }
 
   {
-    // Test that the service worker has been unregistered.
     const auto [id, unregistration_succeeded] =
         waiter.WaitForServiceWorkerUnregistered();
     EXPECT_EQ(id, kTestSystemExtensionId);
     EXPECT_TRUE(unregistration_succeeded);
-
-    const GURL scope(kTestSystemExtensionEmptyPathURL);
-    auto* worker_context = browser()
-                               ->profile()
-                               ->GetDefaultStoragePartition()
-                               ->GetServiceWorkerContext();
-
-    base::RunLoop run_loop;
-    worker_context->CheckHasServiceWorker(
-        scope, blink::StorageKey(url::Origin::Create(scope)),
-        base::BindLambdaForTesting(
-            [&](content::ServiceWorkerCapability capability) {
-              EXPECT_EQ(capability,
-                        content::ServiceWorkerCapability::NO_SERVICE_WORKER);
-              run_loop.Quit();
-            }));
-    run_loop.Run();
   }
+
+  TestExtensionUninstalled();
+}
+
+// Tests that extensions are persisted across restarts.
+IN_PROC_BROWSER_TEST_F(SystemExtensionsBrowserTest,
+                       PRE_PersistedAcrossRestart) {
+  auto& provider = SystemExtensionsProvider::Get(browser()->profile());
+  auto& install_manager = provider.install_manager();
+
+  TestInstallationEventsWaiter waiter(provider);
+
+  {
+    // Install and wait for the service worker to be registered.
+    base::RunLoop run_loop;
+    install_manager.InstallUnpackedExtensionFromDir(
+        GetBasicSystemExtensionDir(),
+        base::BindLambdaForTesting(
+            [&](InstallStatusOrSystemExtensionId result) { run_loop.Quit(); }));
+    run_loop.Run();
+    waiter.WaitForServiceWorkerRegistered();
+  }
+}
+
+IN_PROC_BROWSER_TEST_F(SystemExtensionsBrowserTest, PersistedAcrossRestart) {
+  auto& provider = SystemExtensionsProvider::Get(browser()->profile());
+  auto& install_manager = provider.install_manager();
+
+  // Wait for previously persisted System Extensions to be registered.
+  base::RunLoop run_loop;
+  install_manager.on_register_previously_persisted_finished().Post(
+      FROM_HERE, run_loop.QuitClosure());
+  run_loop.Run();
+
+  TestInstalledTestExtensionWorks();
+}
+
+// Tests that an extension can be uninstalled after restart.
+IN_PROC_BROWSER_TEST_F(SystemExtensionsBrowserTest, PRE_UninstallAfterRestart) {
+  auto& provider = SystemExtensionsProvider::Get(browser()->profile());
+  auto& install_manager = provider.install_manager();
+
+  TestInstallationEventsWaiter waiter(provider);
+
+  {
+    // Install and wait for the service worker to be registered.
+    base::RunLoop run_loop;
+    install_manager.InstallUnpackedExtensionFromDir(
+        GetBasicSystemExtensionDir(),
+        base::BindLambdaForTesting(
+            [&](InstallStatusOrSystemExtensionId result) { run_loop.Quit(); }));
+    run_loop.Run();
+    waiter.WaitForServiceWorkerRegistered();
+  }
+}
+
+IN_PROC_BROWSER_TEST_F(SystemExtensionsBrowserTest, UninstallAfterRestart) {
+  auto& provider = SystemExtensionsProvider::Get(browser()->profile());
+  auto& install_manager = provider.install_manager();
+
+  // Wait for previously persisted System Extensions to be registered.
+  base::RunLoop run_loop;
+  install_manager.on_register_previously_persisted_finished().Post(
+      FROM_HERE, run_loop.QuitClosure());
+  run_loop.Run();
+
+  // Uninstall the extension.
+  install_manager.Uninstall(kTestSystemExtensionId);
+  TestExtensionUninstalled();
+}
+
+// Tests that if an extension is uninstalled, it stays uninstalled.
+IN_PROC_BROWSER_TEST_F(SystemExtensionsBrowserTest,
+                       PRE_PRE_PermanentlyUninstalled) {
+  auto& provider = SystemExtensionsProvider::Get(browser()->profile());
+  auto& install_manager = provider.install_manager();
+
+  TestInstallationEventsWaiter waiter(provider);
+
+  {
+    // Install and wait for the service worker to be registered.
+    base::RunLoop run_loop;
+    install_manager.InstallUnpackedExtensionFromDir(
+        GetBasicSystemExtensionDir(),
+        base::BindLambdaForTesting(
+            [&](InstallStatusOrSystemExtensionId result) { run_loop.Quit(); }));
+    run_loop.Run();
+    waiter.WaitForServiceWorkerRegistered();
+  }
+}
+
+IN_PROC_BROWSER_TEST_F(SystemExtensionsBrowserTest,
+                       PRE_PermanentlyUninstalled) {
+  auto& provider = SystemExtensionsProvider::Get(browser()->profile());
+  auto& install_manager = provider.install_manager();
+
+  // Wait for previously persisted System Extensions to be registered.
+  base::RunLoop run_loop;
+  install_manager.on_register_previously_persisted_finished().Post(
+      FROM_HERE, run_loop.QuitClosure());
+  run_loop.Run();
+
+  // Uninstall the extension.
+  install_manager.Uninstall(kTestSystemExtensionId);
+
+  TestExtensionUninstalled();
+}
+
+IN_PROC_BROWSER_TEST_F(SystemExtensionsBrowserTest, PermanentlyUninstalled) {
+  auto& provider = SystemExtensionsProvider::Get(browser()->profile());
+  auto& install_manager = provider.install_manager();
+
+  // Wait for previously persisted System Extensions to be registered.
+  base::RunLoop run_loop;
+  install_manager.on_register_previously_persisted_finished().Post(
+      FROM_HERE, run_loop.QuitClosure());
+  run_loop.Run();
+
+  TestExtensionUninstalled();
 }
 
 IN_PROC_BROWSER_TEST_F(SystemExtensionsSwitchBrowserTest, ExtensionInstalled) {

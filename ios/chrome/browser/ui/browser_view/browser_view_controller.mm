@@ -3210,6 +3210,15 @@ NSString* const kBrowserViewControllerSnackbarCategory =
   NewTabPageTabHelper* NTPHelper =
       NewTabPageTabHelper::FromWebState(newWebState);
   if (NTPHelper && NTPHelper->IsActive()) {
+    // If a new web state is inserted, the user has opened a new NTP. Since we
+    // share the NTP coordinator across web states, the feed type could be
+    // different from default, so we reset it.
+    // TODO(crbug.com/1352935): Use NTPHelper in NTPCoordinator.
+    FeedType defaultFeedType = NTPHelper->DefaultFeedType();
+    if (reason == ActiveWebStateChangeReason::Inserted &&
+        self.ntpCoordinator.selectedFeed != defaultFeedType) {
+      [self.ntpCoordinator selectFeedType:defaultFeedType];
+    }
     [self.ntpCoordinator ntpDidChangeVisibility:YES];
   }
 
@@ -3420,6 +3429,11 @@ NSString* const kBrowserViewControllerSnackbarCategory =
   };
   [self.contentArea addSubview:animatedView];
   [animatedView animateFrom:origin withCompletion:completionBlock];
+  // Manually set the NTP frame here in case `-didLayoutSubviews` is not called
+  // to set the incognito NTP frame.
+  if (self.isNTPActiveForCurrentWebState && self.webUsageEnabled) {
+    newPage.frame = [self ntpFrameForWebState:self.currentWebState];
+  }
 }
 
 #pragma mark - IncognitoReauthConsumer

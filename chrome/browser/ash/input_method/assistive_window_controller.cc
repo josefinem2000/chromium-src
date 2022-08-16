@@ -147,7 +147,6 @@ void AssistiveWindowController::AcceptSuggestion(
 void AssistiveWindowController::HideSuggestion() {
   suggestion_text_ = base::EmptyString16();
   confirmed_length_ = 0;
-  ClearPendingSuggestionTimer();
   if (suggestion_window_view_)
     suggestion_window_view_->GetWidget()->Close();
   if (grammar_suggestion_window_)
@@ -160,7 +159,7 @@ void AssistiveWindowController::SetBounds(const Bounds& bounds) {
 
   bounds_ = bounds;
   if (suggestion_window_view_)
-    suggestion_window_view_->SetAnchorRect(bounds_.caret);
+    suggestion_window_view_->SetAnchorRect(bounds.caret);
   if (grammar_suggestion_window_)
     grammar_suggestion_window_->SetBounds(bounds_.caret);
   if (pending_suggestion_timer_ && pending_suggestion_timer_->IsRunning()) {
@@ -283,6 +282,7 @@ void AssistiveWindowController::SetAssistiveWindowProperties(
       if (!suggestion_window_view_)
         InitSuggestionWindow(WindowOrientationFor(window.type));
       if (window_.visible) {
+        suggestion_window_view_->SetAnchorRect(bounds_.caret);
         suggestion_window_view_->ShowMultipleCandidates(window);
       } else {
         HideSuggestion();

@@ -355,16 +355,14 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
 // Tests entering and leaving the tab grid.
 - (void)testEnteringAndLeavingTabGrid {
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
   [[EarlGrey selectElementWithMatcher:chrome_test_util::TabGridDoneButton()]
       performAction:grey_tap()];
 }
 
 // Tests that tapping on the first cell shows that tab.
 - (void)testTappingOnFirstCell {
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
   [[EarlGrey selectElementWithMatcher:chrome_test_util::TabGridCellAtIndex(0)]
       performAction:grey_tap()];
   [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
@@ -373,8 +371,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
 // Tests that closing the cell shows no tabs, and displays the empty state.
 - (void)testClosingFirstCell {
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
   [[EarlGrey selectElementWithMatcher:chrome_test_util::
                                           TabGridCloseButtonForCellAtIndex(0)]
       performAction:grey_tap()];
@@ -388,14 +385,14 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 // Tests that tapping Close All shows no tabs, shows Undo button, and displays
 // the empty state. Then tests tapping Undo shows Close All button again.
 // Validates this case when Tab Grid Bulk Actions feature is enabled.
-- (void)testCloseAllAndUndoCloseAll {
-  // TODO(crbug.com/1350734): Re-enable when flake fixed.
-  if (@available(iOS 16, *)) {
-    EARL_GREY_TEST_DISABLED(@"Test consistently failing on iOS16 iPhone 8.")
-  }
-
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+// TODO(crbug.com/1353093): failing on small devices on simulator
+#if TARGET_IPHONE_SIMULATOR
+#define MAYBE_testCloseAllAndUndoCloseAll DISABLED_testCloseAllAndUndoCloseAll
+#else
+#define MAYBE_testCloseAllAndUndoCloseAll testCloseAllAndUndoCloseAll
+#endif
+- (void)MAYBE_testCloseAllAndUndoCloseAll {
+  [ChromeEarlGreyUI openTabGrid];
 
   // Close all tabs
   [[EarlGrey selectElementWithMatcher:VisibleTabGridEditButton()]
@@ -434,8 +431,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 // then creating a new tab, then coming back to the tab grid.
 // Validates this case when Tab Grid Bulk Actions feature is enabled.
 - (void)testUndoCloseAllNotAvailableAfterNewTabCreation {
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [[EarlGrey selectElementWithMatcher:VisibleTabGridEditButton()]
       performAction:grey_tap()];
@@ -449,8 +445,10 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   // Create a new tab then come back to tab grid.
   [[EarlGrey selectElementWithMatcher:chrome_test_util::TabGridNewTabButton()]
       performAction:grey_tap()];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+
+  [ChromeEarlGrey waitForSufficientlyVisibleElementWithMatcher:
+                      chrome_test_util::ShowTabsButton()];
+  [ChromeEarlGreyUI openTabGrid];
   // Undo is no longer available.
   [[EarlGrey
       selectElementWithMatcher:chrome_test_util::TabGridUndoCloseAllButton()]
@@ -464,8 +462,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   // Load history
   [self loadTestURLs];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   // Switch over to Recent Tabs.
   [[EarlGrey selectElementWithMatcher:TabGridOtherDevicesPanelButton()]
@@ -534,8 +531,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL1];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse1];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [self longPressTabWithTitle:[NSString stringWithUTF8String:kTitle1]];
 
@@ -549,8 +545,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL1];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse1];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [self longPressTabWithTitle:[NSString stringWithUTF8String:kTitle1]];
 
@@ -563,8 +558,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL1];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse1];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [self longPressTabWithTitle:[NSString stringWithUTF8String:kTitle1]];
 
@@ -595,8 +589,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL1];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse1];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [self longPressTabWithTitle:[NSString stringWithUTF8String:kTitle1]];
   [[EarlGrey selectElementWithMatcher:AddToBookmarksButton()]
@@ -615,8 +608,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL1];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse1];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [self longPressTabWithTitle:[NSString stringWithUTF8String:kTitle1]];
 
@@ -637,8 +629,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL1];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse1];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [self longPressTabWithTitle:[NSString stringWithUTF8String:kTitle1]];
 
@@ -685,8 +676,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
   [ChromeEarlGrey waitForMainTabCount:2 inWindowWithNumber:0];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   GREYWaitForAppToIdle(@"App failed to idle");
 
@@ -736,8 +726,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
   [ChromeEarlGrey waitForIncognitoTabCount:2 inWindowWithNumber:0];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   GREYWaitForAppToIdle(@"App failed to idle");
 
@@ -802,12 +791,10 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
   // Open tab grid in both window.
   [EarlGrey setRootMatcherForSubsequentInteractions:WindowWithNumber(0)];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [EarlGrey setRootMatcherForSubsequentInteractions:WindowWithNumber(1)];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   GREYWaitForAppToIdle(@"App failed to idle");
 
@@ -874,12 +861,10 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
   // Open tab grid in both window.
   [EarlGrey setRootMatcherForSubsequentInteractions:WindowWithNumber(0)];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [EarlGrey setRootMatcherForSubsequentInteractions:WindowWithNumber(1)];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   GREYWaitForAppToIdle(@"App failed to idle");
 
@@ -953,8 +938,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
   // Open tab grid in first window.
   [EarlGrey setRootMatcherForSubsequentInteractions:WindowWithNumber(0)];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   GREYWaitForAppToIdle(@"App failed to idle");
 
@@ -1013,8 +997,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
   // Open incognito tab grid in first window.
   [EarlGrey setRootMatcherForSubsequentInteractions:WindowWithNumber(0)];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
   [[EarlGrey selectElementWithMatcher:chrome_test_util::
                                           TabGridIncognitoTabsPanelButton()]
       performAction:grey_tap()];
@@ -1077,8 +1060,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
   // Open incognito tab grid in first window.
   [EarlGrey setRootMatcherForSubsequentInteractions:WindowWithNumber(1)];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   GREYWaitForAppToIdle(@"App failed to idle");
 
@@ -1118,8 +1100,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL1];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse1];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [[EarlGrey selectElementWithMatcher:VisibleTabGridEditButton()]
       performAction:grey_tap()];
@@ -1173,8 +1154,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL3];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse3];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [[EarlGrey selectElementWithMatcher:VisibleTabGridEditButton()]
       performAction:grey_tap()];
@@ -1220,8 +1200,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL3];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse3];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [[EarlGrey selectElementWithMatcher:VisibleTabGridEditButton()]
       performAction:grey_tap()];
@@ -1278,8 +1257,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL3];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse3];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [[EarlGrey selectElementWithMatcher:VisibleTabGridEditButton()]
       performAction:grey_tap()];
@@ -1333,8 +1311,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL3];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse3];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [[EarlGrey selectElementWithMatcher:VisibleTabGridEditButton()]
       performAction:grey_tap()];
@@ -1378,8 +1355,7 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
   [ChromeEarlGrey loadURL:_URL3];
   [ChromeEarlGrey waitForWebStateContainingText:kResponse3];
 
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGreyUI openTabGrid];
 
   [[EarlGrey selectElementWithMatcher:VisibleTabGridEditButton()]
       performAction:grey_tap()];
@@ -1734,7 +1710,8 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
 
 // Tests that the search suggested actions section has the right rows in the
 // recent tabs page.
-- (void)testSearchSuggestedActionsSectionContentInRecentTabs {
+// TODO(crbug.com/1352109): Re-enable.
+- (void)DISABLED_testSearchSuggestedActionsSectionContentInRecentTabs {
   [self loadTestURLsInNewTabs];
   [ChromeEarlGrey showTabSwitcher];
   [[EarlGrey selectElementWithMatcher:TabGridOtherDevicesPanelButton()]
@@ -2483,8 +2460,9 @@ void EchoURLDefaultSearchEngineResponseProvider::GetResponseHeadersAndBody(
                                           tabIndex)] performAction:grey_tap()];
   [ChromeEarlGrey waitForWebStateContainingText:text
                              inWindowWithNumber:windowNumber];
-  [[EarlGrey selectElementWithMatcher:chrome_test_util::ShowTabsButton()]
-      performAction:grey_tap()];
+  [ChromeEarlGrey waitForSufficientlyVisibleElementWithMatcher:
+                      chrome_test_util::ShowTabsButton()];
+  [ChromeEarlGreyUI openTabGrid];
 }
 
 - (void)waitForSnackBarMessage:(int)messageIdentifier

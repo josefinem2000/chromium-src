@@ -35,6 +35,7 @@
 #include "chromeos/crosapi/mojom/desk_template.mojom.h"
 #include "chromeos/crosapi/mojom/device_oauth2_token_service.mojom.h"
 #include "chromeos/crosapi/mojom/device_settings_service.mojom.h"
+#include "chromeos/crosapi/mojom/diagnostics_service.mojom.h"
 #include "chromeos/crosapi/mojom/digital_goods.mojom.h"
 #include "chromeos/crosapi/mojom/dlp.mojom.h"
 #include "chromeos/crosapi/mojom/document_scan.mojom.h"
@@ -175,9 +176,7 @@ LacrosService* LacrosService::Get() {
 }
 
 LacrosService::LacrosService()
-    :  // If crosapi is disabled, use the empty params.
-       // Otherwise, read the startup data from the inherited FD.
-      never_blocking_sequence_(base::ThreadPool::CreateSequencedTaskRunner(
+    : never_blocking_sequence_(base::ThreadPool::CreateSequencedTaskRunner(
           {base::TaskPriority::USER_BLOCKING,
            base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN})),
       sequenced_state_(new LacrosServiceNeverBlockingState(),
@@ -291,6 +290,9 @@ LacrosService::LacrosService()
       crosapi::mojom::DeviceSettingsService,
       &Crosapi::BindDeviceSettingsService,
       Crosapi::MethodMinVersions::kBindDeviceSettingsServiceMinVersion>();
+  ConstructRemote<
+      crosapi::mojom::DiagnosticsService, &Crosapi::BindDiagnosticsService,
+      Crosapi::MethodMinVersions::kBindDiagnosticsServiceMinVersion>();
   ConstructRemote<
       crosapi::mojom::DigitalGoodsFactory, &Crosapi::BindDigitalGoodsFactory,
       Crosapi::MethodMinVersions::kBindDigitalGoodsFactoryMinVersion>();

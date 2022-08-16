@@ -14,6 +14,11 @@ TransferredMediaStreamComponent::TransferredMediaStreamComponent(
     const TransferredValues& data)
     : data_(data) {}
 
+void TransferredMediaStreamComponent::SetImplementation(
+    MediaStreamComponent* component) {
+  component_ = component;
+}
+
 MediaStreamComponent* TransferredMediaStreamComponent::Clone(
     std::unique_ptr<MediaStreamTrackPlatform> cloned_platform_track) const {
   if (component_) {
@@ -46,6 +51,32 @@ int TransferredMediaStreamComponent::UniqueId() const {
   }
   // TODO(crbug.com/1288839): Return the transferred value
   return 0;
+}
+
+MediaStreamSource::StreamType TransferredMediaStreamComponent::GetSourceType()
+    const {
+  if (component_) {
+    return component_->GetSourceType();
+  }
+  // TODO(crbug.com/1288839): Return the transferred value
+  return MediaStreamSource::StreamType::kTypeVideo;
+}
+const String& TransferredMediaStreamComponent::GetSourceName() const {
+  if (component_) {
+    return component_->GetSourceName();
+  }
+  // TODO(crbug.com/1288839): Return the transferred value
+  static String name;
+  return name;
+}
+
+MediaStreamSource::ReadyState TransferredMediaStreamComponent::GetReadyState()
+    const {
+  if (component_) {
+    return component_->GetReadyState();
+  }
+  // TODO(crbug.com/1288839): Return the transferred value
+  return MediaStreamSource::ReadyState::kReadyStateEnded;
 }
 
 bool TransferredMediaStreamComponent::Remote() const {

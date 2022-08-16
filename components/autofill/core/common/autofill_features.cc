@@ -216,7 +216,7 @@ const base::Feature kAutofillEnableExtendedAddressFormats{
 
 // Controls whether to save the first number in a form with multiple phone
 // numbers instead of aborting the import.
-// TODO(crbug.com/1167484) Remove once launched
+// TODO(crbug.com/1167484) Remove once launched.
 const base::Feature kAutofillEnableImportWhenMultiplePhoneNumbers{
     "AutofillEnableImportWhenMultiplePhoneNumbers",
     base::FEATURE_DISABLED_BY_DEFAULT};
@@ -321,14 +321,6 @@ const base::Feature kAutofillExtractAllDatalists{
 const base::Feature kAutofillTypeSpecificPopupWidth{
     "AutofillTypeSpecificPopupWidth", base::FEATURE_DISABLED_BY_DEFAULT};
 
-// Autofill uses the local heuristic such that address forms are only filled if
-// at least 3 fields are fillable according to local heuristics. Unfortunately,
-// the criterion for fillability is only that the field type is unknown. So many
-// field types that we don't fill (search term, price, ...) count towards that
-// counter, effectively reducing the threshold for some forms.
-const base::Feature kAutofillFixFillableFieldTypes{
-    "AutofillFixFillableFieldTypes", base::FEATURE_ENABLED_BY_DEFAULT};
-
 // When enabled, the Autofill popup ignores second clicks for a certain period
 // (kAutofillIgnoreEarlyClicksOnPopupDuration) after the Autofill popup was
 // shown. This is to prevent double clicks accidentally accepting suggestions.
@@ -351,6 +343,12 @@ const base::FeatureParam<base::TimeDelta>
 const base::Feature kAutofillIgnoreUnmappableAutocompleteValues{
     "AutofillIgnoreUnmappableAutocompleteValues",
     base::FEATURE_DISABLED_BY_DEFAULT};
+
+// When enabled, <label for=..> inference relies on control.labels() instead of
+// iterating through all <label> tags manually.
+// TODO(crbug.com/1339277) Remove once launched.
+const base::Feature kAutofillImprovedLabelForInference{
+    "AutofillImprovedLabelForInference", base::FEATURE_DISABLED_BY_DEFAULT};
 
 // When enabled, only changed values are highlighted in preview mode.
 // TODO(crbug/1248585): Remove when launched.
@@ -434,6 +432,12 @@ const base::Feature kAutofillPageLanguageDetection{
 // TODO(crbug.com/1309848) Remove once launched.
 const base::Feature kAutofillParseAsync{"AutofillParseAsync",
                                         base::FEATURE_DISABLED_BY_DEFAULT};
+
+// If enabled, local heuristics fall back to interpreting the fields' name as an
+// autocomplete type.
+// TODO(crbug.com/TODO) Remove once launched.
+const base::Feature kAutofillParseNameAsAutocompleteType{
+    "AutofillParseNameAsAutocompleteType", base::FEATURE_DISABLED_BY_DEFAULT};
 
 // If the feature is enabled, FormTracker's probable-form-submission detection
 // is disabled and replaced with browser-side detection.

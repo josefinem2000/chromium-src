@@ -5,18 +5,6 @@
 /**
  * @fileoverview Loader for the background page.
  */
-
-goog.require('AbstractEarcons');
-goog.require('AncestryRecoveryStrategy');
-goog.require('AutomationPredicate');
-goog.require('AutomationTreeWalker');
 goog.require('JaPhoneticData');
-goog.require('PanelNodeMenuData');
-goog.require('PanelTabMenuItemData');
-goog.require('RecoveryStrategy');
-goog.require('TreePathRecoveryStrategy');
 
-goog.require('constants');
 goog.require('goog.i18n.MessageFormat');
-
-goog.require('ALL_NODE_MENU_DATA');

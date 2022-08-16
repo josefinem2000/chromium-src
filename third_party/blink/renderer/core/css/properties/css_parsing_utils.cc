@@ -1713,8 +1713,8 @@ CSSValue* ConsumeColorContrast(CSSParserTokenRange& range,
                                          SK_ColorWHITE) >
                    color_utils::GetContrastRatio(resolved_background_color,
                                                  SK_ColorBLACK)
-               ? MakeGarbageCollected<cssvalue::CSSColor>(SK_ColorWHITE)
-               : MakeGarbageCollected<cssvalue::CSSColor>(SK_ColorBLACK);
+               ? MakeGarbageCollected<cssvalue::CSSColor>(Color::kWhite)
+               : MakeGarbageCollected<cssvalue::CSSColor>(Color::kBlack);
   }
 
   return MakeGarbageCollected<cssvalue::CSSColor>(
@@ -1741,13 +1741,13 @@ CSSValue* ConsumeColor(CSSParserTokenRange& range,
     CSSIdentifierValue* color = ConsumeIdent(range);
     return color;
   }
-  RGBA32 color = Color::kTransparent;
+  RGBA32 color = Color::kTransparent.Rgb();
   if (!ParseHexColor(range, color, accept_quirky_colors) &&
       !ParseColorFunction(range, context, color)) {
     return ConsumeInternalLightDark(ConsumeColor, range, context,
                                     accept_quirky_colors, allowed_keywords);
   }
-  return cssvalue::CSSColor::Create(color);
+  return cssvalue::CSSColor::Create(Color::FromRGBA32(color));
 }
 
 CSSValue* ConsumeLineWidth(CSSParserTokenRange& range,

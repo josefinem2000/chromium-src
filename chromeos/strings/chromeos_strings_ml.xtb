@@ -211,6 +211,7 @@
 <translation id="2536159006530886390">ഇന്റർനെറ്റിലേക്ക് കണക്റ്റ് ചെയ്യാനാകുന്നില്ല.</translation>
 <translation id="2570743873672969996"><ph name="TEST_NAME" /> പരീക്ഷണം റൺ ചെയ്യുന്നു...</translation>
 <translation id="2584559707064218956">സജ്ജീകരിക്കാൻ ക്രമീകരണത്തിലേക്ക് പോകുക</translation>
+<translation id="2597774443162333062">ഡീബഗ് ചെയ്യുന്നതിന് ഫയലുകൾ Google-ലേക്ക് അയയ്‌ക്കും</translation>
 <translation id="2619761439309613843">പ്രതിദിന റീഫ്രഷ് ചെയ്യൽ</translation>
 <translation id="2620436844016719705">സിസ്റ്റം</translation>
 <translation id="2638662041295312666">സൈൻ ഇൻ ചിത്രം</translation>
@@ -224,7 +225,7 @@
 <translation id="2756652381241102009">ഡയഗ്‌നോസ്‌റ്റിക്‌സ് റൺ ചെയ്യുക</translation>
 <translation id="2783010256799387990">വിജയിച്ചു</translation>
 <translation id="2789486458103222910">ശരി</translation>
-<translation id="2805756323405976993">ആപ്സ്</translation>
+<translation id="2805756323405976993">ആപ്പുകൾ</translation>
 <translation id="28232023175184696">ഇന്റർനെറ്റിലേക്ക് കണക്റ്റ് ചെയ്യാനാകുന്നില്ല. വീണ്ടും ശ്രമിക്കാൻ ക്ലിക്ക് ചെയ്യുക.</translation>
 <translation id="2827359915699915567">RSU കോഡ് നേടാൻ ഈ URL നേരിട്ട് ടൈപ്പ് ചെയ്യുക</translation>
 <translation id="2859243502336719778">നിർണ്ണായക അപ്ഡേറ്റ്</translation>
@@ -671,6 +672,7 @@
 <translation id="6659594942844771486">ബ്രൗസർ ടാബ്</translation>
 <translation id="6692996468359469499">നിങ്ങളുടെ തിരഞ്ഞെടുക്കലുമായി ബന്ധപ്പെട്ട വിവരങ്ങൾ നേടുക</translation>
 <translation id="6704062477274546131">DNS റെസല്യൂഷൻ</translation>
+<translation id="6719240409382354629">റീസ്റ്റാർട്ട് ചെയ്യാൻ തയ്യാറെടുക്കുന്നു...</translation>
 <translation id="6723839937902243910">പവർ</translation>
 <translation id="6723847290197874913">കീബോർഡ് ബാക്ക്‌ലൈറ്റ്</translation>
 <translation id="672609503628871915">പുതിയതെന്താണെന്ന് കാണുക</translation>
@@ -888,6 +890,7 @@
 <translation id="8747900814994928677">മാറ്റം സ്ഥിരീകരിക്കുക</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Google Photos ആൽബം</translation>
+<translation id="8778600430213950389">എന്തോ കുഴപ്പമുണ്ടായി. ഇത് ഒരു ഹാർഡ്‍വെയർ പ്രശ്‌നം കൊണ്ടാകാനാണ് സാധ്യത. പ്രധാന ബോർഡ് മാറ്റി പകരം മറ്റൊന്ന് നൽകിയതിന് ശേഷം, റിപ്പയർ പ്രോസസ് വീണ്ടും ചെയ്യാൻ ശ്രമിക്കുക.</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">ഈ നെറ്റ്‌വർക്കിന് ക്യാപ്റ്റീവ് പോർട്ടൽ ഉണ്ടായിരിക്കാം</translation>
 <translation id="8798099450830957504">ഡിഫോൾട്ട്</translation>
@@ -941,6 +944,7 @@
 <translation id="910415269708673980"><ph name="PRINCIPAL_NAME" /> എന്നതിനുള്ള ടിക്കറ്റ് റീഫ്രഷ് ചെയ്യുക</translation>
 <translation id="9106415115617144481"><ph name="PAGE_NUMBER" />-ാമത്തെ പേജ് സ്‌കാൻ ചെയ്യുന്നു</translation>
 <translation id="9111102763498581341">അണ്‍ലോക്ക് ചെയ്യുക</translation>
+<translation id="9118126012493516930">റിപ്പയർ പൂർത്തിയാക്കാനാകുന്നില്ല</translation>
 <translation id="9122602430962285795">വീണ്ടും കണക്റ്റ് ചെയ്യാൻ, ക്രമീകരണത്തിലേക്ക് പോകുക</translation>
 <translation id="9126720536733509015">ഒരു PDF-ൽ ഒന്നിലധികം പേജുകൾ സംരക്ഷിക്കുക</translation>
 <translation id="9137526406337347448">Google സേവനങ്ങൾ</translation>

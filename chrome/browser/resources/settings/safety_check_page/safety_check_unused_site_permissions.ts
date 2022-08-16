@@ -16,12 +16,12 @@ import {PolymerElement} from 'chrome://resources/polymer/v3_0/polymer/polymer_bu
 import {routes} from '../route.js';
 import {Router} from '../router.js';
 
-import {SafetyCheckIconStatus} from './safety_check_child.js';
+import {SafetyCheckIconStatus, SettingsSafetyCheckChildElement} from './safety_check_child.js';
 import {getTemplate} from './safety_check_unused_site_permissions.html.js';
 
 export interface SettingsSafetyCheckUnusedSitePermissionsElement {
   $: {
-    'safetyCheckChild': SettingsSafetyCheckUnusedSitePermissionsElement,
+    'safetyCheckChild': SettingsSafetyCheckChildElement,
   };
 }
 

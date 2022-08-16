@@ -71,8 +71,8 @@ PreloadingFailureReason ToPreloadingFailureReason(
 
 PrerenderHost::PrerenderHost(const PrerenderAttributes& attributes,
                              WebContents& web_contents,
-                             PreloadingAttemptImpl* attempt)
-    : attributes_(attributes), attempt_(attempt) {
+                             base::WeakPtr<PreloadingAttempt> attempt)
+    : attributes_(attributes), attempt_(std::move(attempt)) {
   DCHECK(blink::features::IsPrerender2Enabled());
   // If the prerendering is browser-initiated, it is expected to have no
   // initiator. All initiator related information should be null or invalid. On
@@ -644,9 +644,8 @@ void PrerenderHost::SetFailureReason(FinalStatus status) {
     // explicitly do not propagate failure reasons if the prerender was actually
     // successful (kActivated), or if prerender was successfully prepared but
     // then destroyed because it wasn't needed for a subsequent navigation
-    // (kTriggerDestroyed, kEmbedderTriggeredAndDestroyed).
+    // (kTriggerDestroyed).
     case FinalStatus::kActivated:
-    case FinalStatus::kEmbedderTriggeredAndDestroyed:
     case FinalStatus::kTriggerDestroyed:
       return;
     case FinalStatus::kDestroyed:
@@ -681,6 +680,7 @@ void PrerenderHost::SetFailureReason(FinalStatus status) {
     case FinalStatus::kEmbedderTriggeredAndCrossOriginRedirected:
     case FinalStatus::kMemoryLimitExceeded:
     case FinalStatus::kFailToGetMemoryUsage:
+    case FinalStatus::kDataSaverEnabled:
       attempt_->SetFailureReason(ToPreloadingFailureReason(status));
       return;
   }

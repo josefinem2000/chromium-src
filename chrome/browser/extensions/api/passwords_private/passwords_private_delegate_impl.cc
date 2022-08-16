@@ -36,6 +36,7 @@
 #include "components/password_manager/core/browser/password_manager_features_util.h"
 #include "components/password_manager/core/browser/password_manager_util.h"
 #include "components/password_manager/core/browser/password_sync_util.h"
+#include "components/password_manager/core/common/password_manager_features.h"
 #include "components/prefs/pref_service.h"
 #include "components/signin/public/base/signin_metrics.h"
 #include "components/sync/driver/sync_service.h"
@@ -53,6 +54,7 @@
 #endif
 
 #if BUILDFLAG(IS_MAC)
+#include "chrome/browser/device_reauth/chrome_biometric_authenticator_factory.h"
 #include "chrome/browser/password_manager/password_manager_util_mac.h"
 #endif
 
@@ -175,6 +177,33 @@ CreatePasswordUiEntryFromCredentialUiEntry(
             IDS_PASSWORDS_VIA_FEDERATION, formatted_origin));
   }
   return entry;
+}
+
+extensions::api::passwords_private::ImportEntry ConvertImportEntry(
+    const password_manager::ImportEntry& entry) {
+  extensions::api::passwords_private::ImportEntry result;
+  result.status =
+      static_cast<extensions::api::passwords_private::ImportEntryStatus>(
+          entry.status);
+  result.url = entry.url;
+  result.username = entry.username;
+  return result;
+}
+
+// Maps password_manager::ImportResults to
+// extensions::api::passwords_private::ImportResults.
+extensions::api::passwords_private::ImportResults ConvertImportResults(
+    const password_manager::ImportResults& results) {
+  extensions::api::passwords_private::ImportResults private_results;
+  private_results.status =
+      static_cast<extensions::api::passwords_private::ImportResultsStatus>(
+          results.status);
+  private_results.number_imported = results.number_imported;
+  private_results.file_name = results.file_name;
+  private_results.failed_imports.reserve(results.failed_imports.size());
+  for (const auto& entry : results.failed_imports)
+    private_results.failed_imports.emplace_back(ConvertImportEntry(entry));
+  return private_results;
 }
 
 }  // namespace
@@ -409,8 +438,31 @@ void PasswordsPrivateDelegateImpl::OsReauthCall(
       web_contents_->GetTopLevelNativeWindow(), purpose);
   std::move(callback).Run(result);
 #elif BUILDFLAG(IS_MAC)
-  bool result = password_manager_util_mac::AuthenticateUser(purpose);
-  std::move(callback).Run(result);
+  if (base::FeatureList::IsEnabled(
+          password_manager::features::kBiometricAuthenticationInSettings)) {
+    scoped_refptr<device_reauth::BiometricAuthenticator>
+        biometric_authenticator =
+            ChromeBiometricAuthenticatorFactory::GetInstance()
+                ->GetOrCreateBiometricAuthenticator();
+    base::OnceCallback<void()> on_reauth_completed =
+        base::BindOnce(&PasswordsPrivateDelegateImpl::OnReauthCompleted,
+                       weak_ptr_factory_.GetWeakPtr());
+
+    biometric_authenticator->AuthenticateWithMessage(
+        device_reauth::BiometricAuthRequester::kPasswordsInSettings,
+        password_manager_util_mac::GetMessageForBiometricLoginPrompt(purpose),
+        std::move(callback).Then(std::move(on_reauth_completed)));
+
+    // If AuthenticateWithMessage is called again(UI isn't blocked so user might
+    // click multiple times on the button), it invalidates the old request which
+    // triggers PasswordsPrivateDelegateImpl::OnReauthCompleted which resets
+    // biometric_authenticator_. Having a local variable solves that problem as
+    // there's a second scoped_refptr for the authenticator object.
+    biometric_authenticator_ = std::move(biometric_authenticator);
+  } else {
+    bool result = password_manager_util_mac::AuthenticateUser(purpose);
+    std::move(callback).Run(result);
+  }
 #elif BUILDFLAG(IS_CHROMEOS_ASH)
   bool result =
       IsOsReauthAllowedAsh(profile_, GetAuthTokenLifetimeForPurpose(purpose));
@@ -502,8 +554,15 @@ void PasswordsPrivateDelegateImpl::MovePasswordsToAccount(
 }
 
 void PasswordsPrivateDelegateImpl::ImportPasswords(
+    api::passwords_private::PasswordStoreSet to_store,
+    ImportResultsCallback results_callback,
     content::WebContents* web_contents) {
-  password_manager_porter_->Import(web_contents);
+  DCHECK_NE(api::passwords_private::PasswordStoreSet::
+                PASSWORD_STORE_SET_DEVICE_AND_ACCOUNT,
+            to_store);
+  password_manager_porter_->Import(
+      web_contents, *ConvertToPasswordFormStores(to_store).begin(),
+      base::BindOnce(&ConvertImportResults).Then(std::move(results_callback)));
 }
 
 void PasswordsPrivateDelegateImpl::ExportPasswords(
@@ -728,6 +787,11 @@ void PasswordsPrivateDelegateImpl::OnAccountStorageOptInStateChanged() {
 void PasswordsPrivateDelegateImpl::Shutdown() {
   password_account_storage_settings_watcher_.reset();
   password_manager_porter_.reset();
+  biometric_authenticator_.reset();
+}
+
+void PasswordsPrivateDelegateImpl::OnReauthCompleted() {
+  biometric_authenticator_.reset();
 }
 
 void PasswordsPrivateDelegateImpl::ExecuteFunction(base::OnceClosure callback) {

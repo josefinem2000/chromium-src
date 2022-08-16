@@ -13,10 +13,10 @@
 #include "base/run_loop.h"
 #include "base/timer/mock_timer.h"
 #include "chromeos/ash/components/dbus/hermes/hermes_clients.h"
+#include "chromeos/ash/components/dbus/shill/shill_clients.h"
 #include "chromeos/ash/components/network/network_cert_loader.h"
 #include "chromeos/ash/components/network/network_handler.h"
 #include "chromeos/ash/components/network/system_token_cert_db_storage.h"
-#include "chromeos/dbus/shill/shill_clients.h"
 #include "chromeos/services/network_config/public/cpp/cros_network_config_test_helper.h"
 #include "chromeos/services/network_config/public/mojom/cros_network_config.mojom.h"
 #include "components/prefs/pref_service.h"
@@ -45,7 +45,7 @@ class CellularSetupNotifierTest : public NoSessionAshTestBase {
   void SetUp() override {
     SystemTokenCertDbStorage::Initialize();
     NetworkCertLoader::Initialize();
-    chromeos::shill_clients::InitializeFakes();
+    shill_clients::InitializeFakes();
     hermes_clients::InitializeFakes();
     NetworkHandler::Initialize();
     network_config_helper_ = std::make_unique<
@@ -68,7 +68,7 @@ class CellularSetupNotifierTest : public NoSessionAshTestBase {
     network_config_helper_.reset();
     NetworkHandler::Shutdown();
     hermes_clients::Shutdown();
-    chromeos::shill_clients::Shutdown();
+    shill_clients::Shutdown();
     NetworkCertLoader::Shutdown();
     SystemTokenCertDbStorage::Shutdown();
   }

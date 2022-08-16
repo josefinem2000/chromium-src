@@ -43,6 +43,13 @@ AccountCapabilities::GetSupportedAccountCapabilityNames() {
 bool AccountCapabilities::AreAllCapabilitiesKnown() const {
   for (const std::string& capability_name :
        GetSupportedAccountCapabilityNames()) {
+    // kIsAllowedForMachineLearningCapabilityName has not been rolled out yet.
+    // It's expected to be unknown for now.
+    // TODO(https://crbug.com/1352081): remove this once the capability is
+    // ready.
+    if (capability_name == kIsAllowedForMachineLearningCapabilityName)
+      continue;
+
     if (GetCapabilityByName(capability_name) == signin::Tribool::kUnknown) {
       return false;
     }
@@ -75,6 +82,10 @@ signin::Tribool AccountCapabilities::can_stop_parental_supervision() const {
 
 signin::Tribool AccountCapabilities::is_subject_to_parental_controls() const {
   return GetCapabilityByName(kIsSubjectToParentalControlsCapabilityName);
+}
+
+signin::Tribool AccountCapabilities::is_allowed_for_machine_learning() const {
+  return GetCapabilityByName(kIsAllowedForMachineLearningCapabilityName);
 }
 
 signin::Tribool AccountCapabilities::can_toggle_auto_updates() const {

@@ -848,9 +848,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
   { key::kSuggestLogoutAfterClosingLastWindow,
     ash::prefs::kSuggestLogoutAfterClosingLastWindow,
     base::Value::Type::BOOLEAN },
-  { key::kAppRecommendationZeroStateEnabled,
-    prefs::kAppReinstallRecommendationEnabled,
-    base::Value::Type::BOOLEAN },
   { key::kShelfAutoHideBehavior,
     ash::prefs::kShelfAutoHideBehaviorLocal,
     base::Value::Type::STRING },
@@ -1716,6 +1713,9 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
     ash::prefs::kUrlParameterToAutofillSAMLUsername,
     base::Value::Type::STRING },
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+  { key::kPersistentQuotaEnabled,
+    storage::kPersistentQuotaEnabled,
+    base::Value::Type::BOOLEAN },
 };
 // clang-format on
 
@@ -1909,7 +1909,7 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
           enterprise_connectors::kOnSecurityEventPref,
           enterprise_connectors::kOnSecurityEventScopePref, chrome_schema));
 
-#if BUILDFLAG(ENABLE_PRINTING)
+#if BUILDFLAG(ENABLE_PRINT_PREVIEW)
   handlers->AddHandler(
       std::make_unique<PrintingAllowedBackgroundGraphicsModesPolicyHandler>());
   handlers->AddHandler(
@@ -2026,11 +2026,13 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
 #else   // BUILDFLAG(IS_CHROMEOS)
   std::vector<std::unique_ptr<ConfigurationPolicyHandler>>
       signin_legacy_policies;
-#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
+#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) || \
+    BUILDFLAG(IS_LINUX)
   signin_legacy_policies.push_back(std::make_unique<SimplePolicyHandler>(
       key::kForceBrowserSignin, prefs::kForceBrowserSignin,
       base::Value::Type::BOOLEAN));
-#endif  // BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
+#endif  // BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) ||
+        // BUILDFLAG(IS_LINUX)
   signin_legacy_policies.push_back(std::make_unique<SimplePolicyHandler>(
       key::kSigninAllowed,
 #if BUILDFLAG(IS_ANDROID)

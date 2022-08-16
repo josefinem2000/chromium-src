@@ -24,7 +24,7 @@ enum class FedCmRequestIdTokenStatus {
   kTooManyRequests,
   kAborted,
   kUnhandledRequest,
-  kNoNetworkManager,
+  kIdpNotPotentiallyTrustworthy,
   kNotSelectAccount,
   kManifestHttpNotFound,
   kManifestNoResponse,
@@ -38,7 +38,7 @@ enum class FedCmRequestIdTokenStatus {
   kIdTokenHttpNotFound,
   kIdTokenNoResponse,
   kIdTokenInvalidResponse,
-  kIdTokenInvalidRequest,
+  kIdTokenInvalidRequest,                  // obsolete
   kClientMetadataMissingPrivacyPolicyUrl,  // obsolete
   kThirdPartyCookiesBlocked,
   kDisabledInSettings,

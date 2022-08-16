@@ -211,6 +211,7 @@
 <translation id="2536159006530886390">Δεν είναι δυνατή η σύνδεση στο διαδίκτυο.</translation>
 <translation id="2570743873672969996">Εκτέλεση δοκιμής <ph name="TEST_NAME" />…</translation>
 <translation id="2584559707064218956">Για να ρυθμίσετε το δίκτυο, μεταβείτε στις Ρυθμίσεις.</translation>
+<translation id="2597774443162333062">Τα αρχεία θα σταλούν στην Google για εντοπισμό και διόρθωση σφαλμάτων</translation>
 <translation id="2619761439309613843">Ημερήσια ανανέωση</translation>
 <translation id="2620436844016719705">Σύστημα</translation>
 <translation id="2638662041295312666">Εικόνα σύνδεσης</translation>
@@ -672,6 +673,7 @@
 <translation id="6659594942844771486">Καρτέλα</translation>
 <translation id="6692996468359469499">Λάβετε πληροφορίες σχετικά με την επιλογή σας.</translation>
 <translation id="6704062477274546131">Επίλυση DNS</translation>
+<translation id="6719240409382354629">Προετοιμασία για επανεκκίνηση…</translation>
 <translation id="6723839937902243910">Ενεργοποίηση</translation>
 <translation id="6723847290197874913">Οπίσθιος φωτισμός πληκτρολογίου</translation>
 <translation id="672609503628871915">Δείτε τι νέο υπάρχει</translation>
@@ -889,6 +891,7 @@
 <translation id="8747900814994928677">Επιβεβαίωση αλλαγής</translation>
 <translation id="8764414543112028321">WireGuard</translation>
 <translation id="87646919272181953">Λεύκωμα Φωτογραφιών Google</translation>
+<translation id="8778600430213950389">Παρουσιάστηκε κάποιο πρόβλημα. Αυτό πιθανότατα οφείλεται σε πρόβλημα εξοπλισμού. Αντικαταστήστε την κύρια πλακέτα και δοκιμάστε ξανά τη διαδικασία επισκευής.</translation>
 <translation id="877985182522063539">A4</translation>
 <translation id="879568662008399081">Αυτό το δίκτυο μπορεί να έχει πύλη υποδοχής</translation>
 <translation id="8798099450830957504">Προεπιλογή</translation>
@@ -942,6 +945,7 @@
 <translation id="910415269708673980">Ανανέωση εισιτηρίου για το <ph name="PRINCIPAL_NAME" /></translation>
 <translation id="9106415115617144481">Σάρωση σελίδας <ph name="PAGE_NUMBER" /></translation>
 <translation id="9111102763498581341">Ξεκλείδωμα</translation>
+<translation id="9118126012493516930">Δεν είναι δυνατή η ολοκλήρωση της επισκευής</translation>
 <translation id="9122602430962285795">Για επανασύνδεση, μεταβείτε στις Ρυθμίσεις.</translation>
 <translation id="9126720536733509015">Αποθηκεύστε πολλές σελίδες σε ένα PDF</translation>
 <translation id="9137526406337347448">Υπηρεσίες Google</translation>

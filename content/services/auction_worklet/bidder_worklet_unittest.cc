@@ -21,6 +21,7 @@
 #include "base/test/scoped_feature_list.h"
 #include "base/test/task_environment.h"
 #include "base/time/time.h"
+#include "content/common/private_aggregation_features.h"
 #include "content/services/auction_worklet/auction_v8_helper.h"
 #include "content/services/auction_worklet/public/mojom/auction_worklet_service.mojom.h"
 #include "content/services/auction_worklet/public/mojom/private_aggregation_request.mojom.h"
@@ -144,6 +145,9 @@ class BidderWorkletTest : public testing::Test {
   void SetDefaultParameters() {
     interest_group_name_ = "Fred";
     interest_group_user_bidding_signals_ = absl::nullopt;
+    join_origin_ = url::Origin::Create(GURL("https://url.test/"));
+    execution_mode_ =
+        blink::mojom::InterestGroup::ExecutionMode::kCompatibilityMode;
 
     interest_group_ads_.clear();
     interest_group_ads_.emplace_back(blink::InterestGroup::Ad(
@@ -348,7 +352,7 @@ class BidderWorkletTest : public testing::Test {
   // configuration.
   mojom::BidderWorkletNonSharedParamsPtr CreateBidderWorkletNonSharedParams() {
     return mojom::BidderWorkletNonSharedParams::New(
-        interest_group_name_, daily_update_url_,
+        interest_group_name_, execution_mode_, daily_update_url_,
         interest_group_trusted_bidding_signals_keys_,
         interest_group_user_bidding_signals_, interest_group_ads_,
         interest_group_ad_components_);
@@ -397,7 +401,7 @@ class BidderWorkletTest : public testing::Test {
 
   void GenerateBid(mojom::BidderWorklet* bidder_worklet) {
     bidder_worklet->GenerateBid(
-        CreateBidderWorkletNonSharedParams(), auction_signals_,
+        CreateBidderWorkletNonSharedParams(), join_origin_, auction_signals_,
         per_buyer_signals_, per_buyer_timeout_, browser_signal_seller_origin_,
         browser_signal_top_level_seller_origin_, CreateBiddingBrowserSignals(),
         auction_start_time_,
@@ -411,7 +415,7 @@ class BidderWorkletTest : public testing::Test {
   void GenerateBidExpectingCallbackNotInvoked(
       mojom::BidderWorklet* bidder_worklet) {
     bidder_worklet->GenerateBid(
-        CreateBidderWorkletNonSharedParams(), auction_signals_,
+        CreateBidderWorkletNonSharedParams(), join_origin_, auction_signals_,
         per_buyer_signals_, per_buyer_timeout_, browser_signal_seller_origin_,
         browser_signal_top_level_seller_origin_, CreateBiddingBrowserSignals(),
         auction_start_time_,
@@ -514,6 +518,9 @@ class BidderWorkletTest : public testing::Test {
   // BidderWorklet.
   std::string interest_group_name_;
   GURL interest_group_bidding_url_ = GURL("https://url.test/");
+  url::Origin join_origin_;
+  blink::mojom::InterestGroup::ExecutionMode execution_mode_ =
+      blink::mojom::InterestGroup::ExecutionMode::kCompatibilityMode;
   absl::optional<GURL> interest_group_wasm_url_;
   absl::optional<std::string> interest_group_user_bidding_signals_;
   std::vector<blink::InterestGroup::Ad> interest_group_ads_;
@@ -1573,7 +1580,7 @@ TEST_F(BidderWorkletTest, GenerateBidParallel) {
     for (size_t i = 0; i < kNumGenerateBidCalls; ++i) {
       size_t bid_value = i + 1;
       bidder_worklet->GenerateBid(
-          CreateBidderWorkletNonSharedParams(),
+          CreateBidderWorkletNonSharedParams(), join_origin_,
           /*auction_signals_json=*/base::NumberToString(bid_value),
           per_buyer_signals_, per_buyer_timeout_, browser_signal_seller_origin_,
           browser_signal_top_level_seller_origin_,
@@ -1668,8 +1675,8 @@ TEST_F(BidderWorkletTest, GenerateBidTrustedBiddingSignalsParallelBatched1) {
     interest_group_fields->trusted_bidding_signals_keys->push_back(
         base::NumberToString(i));
     bidder_worklet->GenerateBid(
-        std::move(interest_group_fields), auction_signals_, per_buyer_signals_,
-        per_buyer_timeout_, browser_signal_seller_origin_,
+        std::move(interest_group_fields), join_origin_, auction_signals_,
+        per_buyer_signals_, per_buyer_timeout_, browser_signal_seller_origin_,
         browser_signal_top_level_seller_origin_, CreateBiddingBrowserSignals(),
         auction_start_time_,
         /*trace_id=*/1,
@@ -1770,8 +1777,8 @@ TEST_F(BidderWorkletTest, GenerateBidTrustedBiddingSignalsParallelBatched2) {
     interest_group_fields->trusted_bidding_signals_keys->push_back(
         base::NumberToString(i));
     bidder_worklet->GenerateBid(
-        std::move(interest_group_fields), auction_signals_, per_buyer_signals_,
-        per_buyer_timeout_, browser_signal_seller_origin_,
+        std::move(interest_group_fields), join_origin_, auction_signals_,
+        per_buyer_signals_, per_buyer_timeout_, browser_signal_seller_origin_,
         browser_signal_top_level_seller_origin_, CreateBiddingBrowserSignals(),
         auction_start_time_,
         /*trace_id=*/1,
@@ -1878,8 +1885,8 @@ TEST_F(BidderWorkletTest, GenerateBidTrustedBiddingSignalsParallelBatched3) {
     interest_group_fields->trusted_bidding_signals_keys->push_back(
         base::NumberToString(i));
     bidder_worklet->GenerateBid(
-        std::move(interest_group_fields), auction_signals_, per_buyer_signals_,
-        per_buyer_timeout_, browser_signal_seller_origin_,
+        std::move(interest_group_fields), join_origin_, auction_signals_,
+        per_buyer_signals_, per_buyer_timeout_, browser_signal_seller_origin_,
         browser_signal_top_level_seller_origin_, CreateBiddingBrowserSignals(),
         auction_start_time_,
         /*trace_id=*/1,
@@ -1965,8 +1972,8 @@ TEST_F(BidderWorkletTest, GenerateBidTrustedBiddingSignalsParallelNotBatched) {
     interest_group_fields->trusted_bidding_signals_keys->push_back(
         base::NumberToString(i));
     bidder_worklet->GenerateBid(
-        std::move(interest_group_fields), auction_signals_, per_buyer_signals_,
-        per_buyer_timeout_, browser_signal_seller_origin_,
+        std::move(interest_group_fields), join_origin_, auction_signals_,
+        per_buyer_signals_, per_buyer_timeout_, browser_signal_seller_origin_,
         browser_signal_top_level_seller_origin_, CreateBiddingBrowserSignals(),
         auction_start_time_,
         /*trace_id=*/1,
@@ -2864,138 +2871,6 @@ TEST_F(BidderWorkletTest, GenerateBidSetPriority) {
       /*expected_set_priority=*/9.0);
 }
 
-TEST_F(BidderWorkletTest, GenerateBidPrivateAggregationRequests) {
-  auction_worklet::mojom::PrivateAggregationRequestPtr kExpectedRequest1 =
-      auction_worklet::mojom::PrivateAggregationRequest::New(
-          content::mojom::AggregatableReportHistogramContribution::New(
-              /*bucket=*/123,
-              /*value=*/45),
-          content::mojom::AggregationServiceMode::kDefault);
-  auction_worklet::mojom::PrivateAggregationRequestPtr kExpectedRequest2 =
-      auction_worklet::mojom::PrivateAggregationRequest::New(
-          content::mojom::AggregatableReportHistogramContribution::New(
-              /*bucket=*/absl::MakeInt128(/*high=*/1, /*low=*/0),
-              /*value=*/1),
-          content::mojom::AggregationServiceMode::kDefault);
-
-  {
-    PrivateAggregationRequests expected_pa_requests;
-    expected_pa_requests.push_back(kExpectedRequest1.Clone());
-
-    RunGenerateBidWithJavascriptExpectingResult(
-        CreateGenerateBidScript(
-            R"({ad: "ad", bid:1, render:"https://response.test/" })",
-            /*extra_code=*/R"(
-            privateAggregation.sendHistogramReport({bucket: 123, value: 45});
-          )"),
-        /*expected_bid=*/
-        mojom::BidderWorkletBid::New(
-            "\"ad\"", 1, GURL("https://response.test/"),
-            /*ad_components=*/absl::nullopt, base::TimeDelta()),
-        /*expected_data_version=*/absl::nullopt,
-        /*expected_errors=*/{},
-        /*expected_debug_loss_report_url=*/absl::nullopt,
-        /*expected_debug_win_report_url=*/absl::nullopt,
-        /*expected_set_priority=*/absl::nullopt,
-        std::move(expected_pa_requests));
-  }
-
-  // BigInt bucket
-  {
-    PrivateAggregationRequests expected_pa_requests;
-    expected_pa_requests.push_back(kExpectedRequest1.Clone());
-
-    RunGenerateBidWithJavascriptExpectingResult(
-        CreateGenerateBidScript(
-            R"({ad: "ad", bid:1, render:"https://response.test/" })",
-            /*extra_code=*/R"(
-            privateAggregation.sendHistogramReport({bucket: 123n, value: 45});
-          )"),
-        /*expected_bid=*/
-        mojom::BidderWorkletBid::New(
-            "\"ad\"", 1, GURL("https://response.test/"),
-            /*ad_components=*/absl::nullopt, base::TimeDelta()),
-        /*expected_data_version=*/absl::nullopt,
-        /*expected_errors=*/{},
-        /*expected_debug_loss_report_url=*/absl::nullopt,
-        /*expected_debug_win_report_url=*/absl::nullopt,
-        /*expected_set_priority=*/absl::nullopt,
-        std::move(expected_pa_requests));
-  }
-
-  // Large bucket
-  {
-    PrivateAggregationRequests expected_pa_requests;
-    expected_pa_requests.push_back(kExpectedRequest2.Clone());
-
-    RunGenerateBidWithJavascriptExpectingResult(
-        CreateGenerateBidScript(
-            R"({ad: "ad", bid:1, render:"https://response.test/" })",
-            /*extra_code=*/R"(
-            privateAggregation.sendHistogramReport(
-                {bucket: 18446744073709551616n, value: 1});
-          )"),
-        /*expected_bid=*/
-        mojom::BidderWorkletBid::New(
-            "\"ad\"", 1, GURL("https://response.test/"),
-            /*ad_components=*/absl::nullopt, base::TimeDelta()),
-        /*expected_data_version=*/absl::nullopt,
-        /*expected_errors=*/{},
-        /*expected_debug_loss_report_url=*/absl::nullopt,
-        /*expected_debug_win_report_url=*/absl::nullopt,
-        /*expected_set_priority=*/absl::nullopt,
-        std::move(expected_pa_requests));
-  }
-
-  // Multiple requests
-  {
-    PrivateAggregationRequests expected_pa_requests;
-    expected_pa_requests.push_back(kExpectedRequest1.Clone());
-    expected_pa_requests.push_back(kExpectedRequest2.Clone());
-
-    RunGenerateBidWithJavascriptExpectingResult(
-        CreateGenerateBidScript(
-            R"({ad: "ad", bid:1, render:"https://response.test/" })",
-            /*extra_code=*/R"(
-            privateAggregation.sendHistogramReport({bucket: 123, value: 45});
-            privateAggregation.sendHistogramReport(
-                {bucket: 18446744073709551616n, value: 1});
-          )"),
-        /*expected_bid=*/
-        mojom::BidderWorkletBid::New(
-            "\"ad\"", 1, GURL("https://response.test/"),
-            /*ad_components=*/absl::nullopt, base::TimeDelta()),
-        /*expected_data_version=*/absl::nullopt,
-        /*expected_errors=*/{},
-        /*expected_debug_loss_report_url=*/absl::nullopt,
-        /*expected_debug_win_report_url=*/absl::nullopt,
-        /*expected_set_priority=*/absl::nullopt,
-        std::move(expected_pa_requests));
-  }
-
-  // An unrelated exception after sendHistogramReport shouldn't block the report
-  {
-    PrivateAggregationRequests expected_pa_requests;
-    expected_pa_requests.push_back(kExpectedRequest1.Clone());
-
-    RunGenerateBidWithJavascriptExpectingResult(
-        CreateGenerateBidScript(
-            R"({ad: "ad", bid:1, render:"https://response.test/" })",
-            /*extra_code=*/R"(
-            privateAggregation.sendHistogramReport({bucket: 123, value: 45});
-            error;
-          )"),
-        /*expected_bid=*/mojom::BidderWorkletBidPtr(),
-        /*expected_data_version=*/absl::nullopt,
-        /*expected_errors=*/
-        {"https://url.test/:6 Uncaught ReferenceError: error is not defined."},
-        /*expected_debug_loss_report_url=*/absl::nullopt,
-        /*expected_debug_win_report_url=*/absl::nullopt,
-        /*expected_set_priority=*/absl::nullopt,
-        std::move(expected_pa_requests));
-  }
-}
-
 TEST_F(BidderWorkletTest, ReportWin) {
   RunReportWinWithFunctionBodyExpectingResult(
       "", /*expected_report_url =*/absl::nullopt);
@@ -3873,6 +3748,73 @@ TEST_F(BidderWorkletTest, UnloadWhilePaused) {
   task_environment_.RunUntilIdle();
 }
 
+TEST_F(BidderWorkletTest, ExecutionModeGroupByOrigin) {
+  const char kScript[] = R"(
+    if (!('count' in globalThis))
+      globalThis.count = 0;
+    function generateBid() {
+      ++count;
+      return {ad: ["ad"], bid:count, render:"https://response.test/"};
+    }
+  )";
+
+  mojo::Remote<mojom::BidderWorklet> bidder_worklet = CreateWorklet();
+  AddJavascriptResponse(&url_loader_factory_, interest_group_bidding_url_,
+                        kScript);
+
+  // Run 1, start group.
+  execution_mode_ =
+      blink::mojom::InterestGroup::ExecutionMode::kGroupedByOriginMode;
+  join_origin_ = url::Origin::Create(GURL("https://url.test/"));
+  GenerateBid(bidder_worklet.get());
+  load_script_run_loop_ = std::make_unique<base::RunLoop>();
+  load_script_run_loop_->Run();
+  ASSERT_TRUE(bid_);
+  EXPECT_EQ(1, bid_->bid);
+
+  // Run 2, same group.
+  GenerateBid(bidder_worklet.get());
+  load_script_run_loop_ = std::make_unique<base::RunLoop>();
+  load_script_run_loop_->Run();
+  ASSERT_TRUE(bid_);
+  EXPECT_EQ(2, bid_->bid);
+
+  // Run 3, not in group.
+  execution_mode_ =
+      blink::mojom::InterestGroup::ExecutionMode::kCompatibilityMode;
+  join_origin_ = url::Origin::Create(GURL("https://url2.test/"));
+  GenerateBid(bidder_worklet.get());
+  load_script_run_loop_ = std::make_unique<base::RunLoop>();
+  load_script_run_loop_->Run();
+  ASSERT_TRUE(bid_);
+  EXPECT_EQ(1, bid_->bid);
+
+  // Run 4, back to group.
+  execution_mode_ =
+      blink::mojom::InterestGroup::ExecutionMode::kGroupedByOriginMode;
+  join_origin_ = url::Origin::Create(GURL("https://url.test/"));
+  GenerateBid(bidder_worklet.get());
+  load_script_run_loop_ = std::make_unique<base::RunLoop>();
+  load_script_run_loop_->Run();
+  ASSERT_TRUE(bid_);
+  EXPECT_EQ(3, bid_->bid);
+
+  // Run 5, different group.
+  join_origin_ = url::Origin::Create(GURL("https://url2.test/"));
+  GenerateBid(bidder_worklet.get());
+  load_script_run_loop_ = std::make_unique<base::RunLoop>();
+  load_script_run_loop_->Run();
+  ASSERT_TRUE(bid_);
+  EXPECT_EQ(1, bid_->bid);
+
+  // Run 5, different group cont'd.
+  GenerateBid(bidder_worklet.get());
+  load_script_run_loop_ = std::make_unique<base::RunLoop>();
+  load_script_run_loop_->Run();
+  ASSERT_TRUE(bid_);
+  EXPECT_EQ(2, bid_->bid);
+}
+
 class BidderWorkletBiddingAndScoringDebugReportingAPIEnabledTest
     : public BidderWorkletTest {
  public:
@@ -4156,7 +4098,149 @@ TEST_F(BidderWorkletTest, ReportWinRegisterAdBeacon) {
        "reporting url for key 'view': 'http://view.example.com/'."});
 }
 
-TEST_F(BidderWorkletTest, ReportWinPrivateAggregationRequests) {
+class BidderWorkletPrivateAggregationEnabledTest : public BidderWorkletTest {
+ public:
+  BidderWorkletPrivateAggregationEnabledTest() {
+    scoped_feature_list_.InitAndEnableFeature(content::kPrivateAggregationApi);
+  }
+
+ private:
+  base::test::ScopedFeatureList scoped_feature_list_;
+};
+
+TEST_F(BidderWorkletPrivateAggregationEnabledTest, GenerateBid) {
+  auction_worklet::mojom::PrivateAggregationRequestPtr kExpectedRequest1 =
+      auction_worklet::mojom::PrivateAggregationRequest::New(
+          content::mojom::AggregatableReportHistogramContribution::New(
+              /*bucket=*/123,
+              /*value=*/45),
+          content::mojom::AggregationServiceMode::kDefault);
+  auction_worklet::mojom::PrivateAggregationRequestPtr kExpectedRequest2 =
+      auction_worklet::mojom::PrivateAggregationRequest::New(
+          content::mojom::AggregatableReportHistogramContribution::New(
+              /*bucket=*/absl::MakeInt128(/*high=*/1, /*low=*/0),
+              /*value=*/1),
+          content::mojom::AggregationServiceMode::kDefault);
+
+  {
+    PrivateAggregationRequests expected_pa_requests;
+    expected_pa_requests.push_back(kExpectedRequest1.Clone());
+
+    RunGenerateBidWithJavascriptExpectingResult(
+        CreateGenerateBidScript(
+            R"({ad: "ad", bid:1, render:"https://response.test/" })",
+            /*extra_code=*/R"(
+            privateAggregation.sendHistogramReport({bucket: 123, value: 45});
+          )"),
+        /*expected_bid=*/
+        mojom::BidderWorkletBid::New(
+            "\"ad\"", 1, GURL("https://response.test/"),
+            /*ad_components=*/absl::nullopt, base::TimeDelta()),
+        /*expected_data_version=*/absl::nullopt,
+        /*expected_errors=*/{},
+        /*expected_debug_loss_report_url=*/absl::nullopt,
+        /*expected_debug_win_report_url=*/absl::nullopt,
+        /*expected_set_priority=*/absl::nullopt,
+        std::move(expected_pa_requests));
+  }
+
+  // BigInt bucket
+  {
+    PrivateAggregationRequests expected_pa_requests;
+    expected_pa_requests.push_back(kExpectedRequest1.Clone());
+
+    RunGenerateBidWithJavascriptExpectingResult(
+        CreateGenerateBidScript(
+            R"({ad: "ad", bid:1, render:"https://response.test/" })",
+            /*extra_code=*/R"(
+            privateAggregation.sendHistogramReport({bucket: 123n, value: 45});
+          )"),
+        /*expected_bid=*/
+        mojom::BidderWorkletBid::New(
+            "\"ad\"", 1, GURL("https://response.test/"),
+            /*ad_components=*/absl::nullopt, base::TimeDelta()),
+        /*expected_data_version=*/absl::nullopt,
+        /*expected_errors=*/{},
+        /*expected_debug_loss_report_url=*/absl::nullopt,
+        /*expected_debug_win_report_url=*/absl::nullopt,
+        /*expected_set_priority=*/absl::nullopt,
+        std::move(expected_pa_requests));
+  }
+
+  // Large bucket
+  {
+    PrivateAggregationRequests expected_pa_requests;
+    expected_pa_requests.push_back(kExpectedRequest2.Clone());
+
+    RunGenerateBidWithJavascriptExpectingResult(
+        CreateGenerateBidScript(
+            R"({ad: "ad", bid:1, render:"https://response.test/" })",
+            /*extra_code=*/R"(
+            privateAggregation.sendHistogramReport(
+                {bucket: 18446744073709551616n, value: 1});
+          )"),
+        /*expected_bid=*/
+        mojom::BidderWorkletBid::New(
+            "\"ad\"", 1, GURL("https://response.test/"),
+            /*ad_components=*/absl::nullopt, base::TimeDelta()),
+        /*expected_data_version=*/absl::nullopt,
+        /*expected_errors=*/{},
+        /*expected_debug_loss_report_url=*/absl::nullopt,
+        /*expected_debug_win_report_url=*/absl::nullopt,
+        /*expected_set_priority=*/absl::nullopt,
+        std::move(expected_pa_requests));
+  }
+
+  // Multiple requests
+  {
+    PrivateAggregationRequests expected_pa_requests;
+    expected_pa_requests.push_back(kExpectedRequest1.Clone());
+    expected_pa_requests.push_back(kExpectedRequest2.Clone());
+
+    RunGenerateBidWithJavascriptExpectingResult(
+        CreateGenerateBidScript(
+            R"({ad: "ad", bid:1, render:"https://response.test/" })",
+            /*extra_code=*/R"(
+            privateAggregation.sendHistogramReport({bucket: 123, value: 45});
+            privateAggregation.sendHistogramReport(
+                {bucket: 18446744073709551616n, value: 1});
+          )"),
+        /*expected_bid=*/
+        mojom::BidderWorkletBid::New(
+            "\"ad\"", 1, GURL("https://response.test/"),
+            /*ad_components=*/absl::nullopt, base::TimeDelta()),
+        /*expected_data_version=*/absl::nullopt,
+        /*expected_errors=*/{},
+        /*expected_debug_loss_report_url=*/absl::nullopt,
+        /*expected_debug_win_report_url=*/absl::nullopt,
+        /*expected_set_priority=*/absl::nullopt,
+        std::move(expected_pa_requests));
+  }
+
+  // An unrelated exception after sendHistogramReport shouldn't block the report
+  {
+    PrivateAggregationRequests expected_pa_requests;
+    expected_pa_requests.push_back(kExpectedRequest1.Clone());
+
+    RunGenerateBidWithJavascriptExpectingResult(
+        CreateGenerateBidScript(
+            R"({ad: "ad", bid:1, render:"https://response.test/" })",
+            /*extra_code=*/R"(
+            privateAggregation.sendHistogramReport({bucket: 123, value: 45});
+            error;
+          )"),
+        /*expected_bid=*/mojom::BidderWorkletBidPtr(),
+        /*expected_data_version=*/absl::nullopt,
+        /*expected_errors=*/
+        {"https://url.test/:6 Uncaught ReferenceError: error is not defined."},
+        /*expected_debug_loss_report_url=*/absl::nullopt,
+        /*expected_debug_win_report_url=*/absl::nullopt,
+        /*expected_set_priority=*/absl::nullopt,
+        std::move(expected_pa_requests));
+  }
+}
+
+TEST_F(BidderWorkletPrivateAggregationEnabledTest, ReportWin) {
   auction_worklet::mojom::PrivateAggregationRequestPtr kExpectedRequest1 =
       auction_worklet::mojom::PrivateAggregationRequest::New(
           content::mojom::AggregatableReportHistogramContribution::New(
@@ -4245,6 +4329,46 @@ TEST_F(BidderWorkletTest, ReportWinPrivateAggregationRequests) {
         {"https://url.test/:12 Uncaught ReferenceError: error is not "
          "defined."});
   }
+}
+
+class BidderWorkletPrivateAggregationDisabledTest : public BidderWorkletTest {
+ public:
+  BidderWorkletPrivateAggregationDisabledTest() {
+    scoped_feature_list_.InitAndDisableFeature(content::kPrivateAggregationApi);
+  }
+
+ private:
+  base::test::ScopedFeatureList scoped_feature_list_;
+};
+
+TEST_F(BidderWorkletPrivateAggregationDisabledTest, GenerateBid) {
+  RunGenerateBidWithJavascriptExpectingResult(
+      CreateGenerateBidScript(
+          R"({ad: "ad", bid:1, render:"https://response.test/" })",
+          /*extra_code=*/R"(
+            privateAggregation.sendHistogramReport({bucket: 123, value: 45});
+          )"),
+      /*expected_bid=*/mojom::BidderWorkletBidPtr(),
+      /*expected_data_version=*/absl::nullopt,
+      /*expected_errors=*/
+      {"https://url.test/:5 Uncaught ReferenceError: privateAggregation is not "
+       "defined."},
+      /*expected_debug_loss_report_url=*/absl::nullopt,
+      /*expected_debug_win_report_url=*/absl::nullopt,
+      /*expected_set_priority=*/absl::nullopt,
+      /*expected_pa_requests=*/{});
+}
+
+TEST_F(BidderWorkletPrivateAggregationDisabledTest, ReportWin) {
+  RunReportWinWithFunctionBodyExpectingResult(
+      R"(
+          privateAggregation.sendHistogramReport({bucket: 123, value: 45});
+        )",
+      /*expected_report_url =*/absl::nullopt,
+      /*expected_ad_beacon_map=*/{}, /*expected_pa_requests=*/{},
+      /*expected_errors=*/
+      {"https://url.test/:11 Uncaught ReferenceError: privateAggregation is "
+       "not defined."});
 }
 
 }  // namespace

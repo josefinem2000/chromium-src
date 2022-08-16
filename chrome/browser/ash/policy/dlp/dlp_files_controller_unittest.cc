@@ -414,25 +414,26 @@ TEST_F(DlpFilesControllerTest, GetDlpRestrictionDetails_Mixed) {
   auto result = files_controller_.GetDlpRestrictionDetails(kExample1);
 
   ASSERT_EQ(result.size(), 3);
-  // Warn:
   std::vector<std::string> expected_urls;
   std::vector<DlpRulesManager::Component> expected_components;
-  expected_components.push_back(DlpRulesManager::Component::kDrive);
-  EXPECT_EQ(result[0].level, DlpRulesManager::Level::kWarn);
-  EXPECT_EQ(result[0].urls, expected_urls);
-  EXPECT_EQ(result[0].components, expected_components);
   // Block:
   expected_urls.push_back(kExample2);
-  expected_components.clear();
   expected_components.push_back(DlpRulesManager::Component::kUsb);
-  EXPECT_EQ(result[1].level, DlpRulesManager::Level::kBlock);
-  EXPECT_EQ(result[1].urls, expected_urls);
-  EXPECT_EQ(result[1].components, expected_components);
+  EXPECT_EQ(result[0].level, DlpRulesManager::Level::kBlock);
+  EXPECT_EQ(result[0].urls, expected_urls);
+  EXPECT_EQ(result[0].components, expected_components);
   // Allow:
   expected_urls.clear();
   expected_urls.push_back(kExample3);
   expected_components.clear();
-  EXPECT_EQ(result[2].level, DlpRulesManager::Level::kAllow);
+  EXPECT_EQ(result[1].level, DlpRulesManager::Level::kAllow);
+  EXPECT_EQ(result[1].urls, expected_urls);
+  EXPECT_EQ(result[1].components, expected_components);
+  // Warn:
+  expected_urls.clear();
+  expected_components.clear();
+  expected_components.push_back(DlpRulesManager::Component::kDrive);
+  EXPECT_EQ(result[2].level, DlpRulesManager::Level::kWarn);
   EXPECT_EQ(result[2].urls, expected_urls);
   EXPECT_EQ(result[2].components, expected_components);
 }

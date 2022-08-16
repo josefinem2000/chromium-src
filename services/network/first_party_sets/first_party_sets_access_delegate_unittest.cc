@@ -73,15 +73,15 @@ class NoopFirstPartySetsAccessDelegateTest : public ::testing::Test {
             &first_party_sets_manager_) {
     first_party_sets_manager_.SetCompleteSets({
         {kSet1Member1,
-         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated)},
+         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated, 0)},
         {kSet1Member2,
-         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated)},
-        {kSet1Owner,
-         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kPrimary)},
+         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated, 1)},
+        {kSet1Owner, net::FirstPartySetEntry(
+                         kSet1Owner, net::SiteType::kPrimary, absl::nullopt)},
         {kSet2Member1,
-         net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated)},
-        {kSet2Owner,
-         net::FirstPartySetEntry(kSet2Owner, net::SiteType::kPrimary)},
+         net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated, 0)},
+        {kSet2Owner, net::FirstPartySetEntry(
+                         kSet2Owner, net::SiteType::kPrimary, absl::nullopt)},
     });
   }
 
@@ -105,23 +105,14 @@ TEST_F(NoopFirstPartySetsAccessDelegateTest, ComputeMetadata) {
       net::SamePartyContext(Type::kSameParty));
 }
 
-TEST_F(NoopFirstPartySetsAccessDelegateTest, FindOwner) {
-  EXPECT_THAT(delegate().FindOwner(kSet1Owner, base::NullCallback()),
-              absl::make_optional(net::FirstPartySetEntry(
-                  kSet1Owner, net::SiteType::kPrimary)));
-  EXPECT_THAT(delegate().FindOwner(kSet2Member1, base::NullCallback()),
-              absl::make_optional(net::FirstPartySetEntry(
-                  kSet2Owner, net::SiteType::kAssociated)));
-}
-
 TEST_F(NoopFirstPartySetsAccessDelegateTest, FindOwners) {
   EXPECT_THAT(
       delegate().FindOwners({kSet1Member1, kSet2Member1}, base::NullCallback()),
       FirstPartySetsAccessDelegate::OwnersResult({
           {kSet1Member1,
-           net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated)},
+           net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated, 0)},
           {kSet2Member1,
-           net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated)},
+           net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated, 0)},
       }));
 }
 
@@ -134,15 +125,15 @@ class FirstPartySetsAccessDelegateTest : public ::testing::Test {
                   &first_party_sets_manager_) {
     first_party_sets_manager_.SetCompleteSets({
         {kSet1Member1,
-         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated)},
+         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated, 0)},
         {kSet1Member2,
-         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated)},
-        {kSet1Owner,
-         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kPrimary)},
+         net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated, 1)},
+        {kSet1Owner, net::FirstPartySetEntry(
+                         kSet1Owner, net::SiteType::kPrimary, absl::nullopt)},
         {kSet2Member1,
-         net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated)},
-        {kSet2Owner,
-         net::FirstPartySetEntry(kSet2Owner, net::SiteType::kPrimary)},
+         net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated, 0)},
+        {kSet2Owner, net::FirstPartySetEntry(
+                         kSet2Owner, net::SiteType::kPrimary, absl::nullopt)},
     });
   }
 
@@ -155,14 +146,6 @@ class FirstPartySetsAccessDelegateTest : public ::testing::Test {
         delegate_.ComputeMetadata(site, top_frame_site, party_context,
                                   future.GetCallback());
     return result.has_value() ? std::move(result).value() : future.Take();
-  }
-
-  FirstPartySetsAccessDelegate::OwnerResult FindOwnerAndWait(
-      const net::SchemefulSite& site) {
-    base::test::TestFuture<FirstPartySetsAccessDelegate::OwnerResult> future;
-    absl::optional<FirstPartySetsAccessDelegate::OwnerResult> result =
-        delegate_.FindOwner(site, future.GetCallback());
-    return result.has_value() ? result.value() : future.Get();
   }
 
   FirstPartySetsAccessDelegate::OwnersResult FindOwnersAndWait(
@@ -198,27 +181,13 @@ class FirstPartySetsAccessDelegateDisabledTest
 TEST_F(FirstPartySetsAccessDelegateDisabledTest, ComputeMetadata) {
   // Same as the default ctor, but just to be explicit:
   net::FirstPartySetMetadata expected_metadata(net::SamePartyContext(),
-                                               /*frame_owner=*/nullptr,
-                                               /*top_frame_owner=*/nullptr);
+                                               /*frame_entry=*/nullptr,
+                                               /*top_frame_entry=*/nullptr);
 
   EXPECT_THAT(delegate().ComputeMetadata(
                   kSet1Member1, &kSet1Member1, {kSet1Member1, kSet1Owner},
                   base::BindOnce([](net::FirstPartySetMetadata) { FAIL(); })),
               Optional(std::ref(expected_metadata)));
-}
-
-TEST_F(FirstPartySetsAccessDelegateDisabledTest, FindOwner) {
-  EXPECT_THAT(
-      delegate().FindOwner(
-          kSet1Owner,
-          base::BindOnce([](FirstPartySetsManager::OwnerResult) { FAIL(); })),
-      Optional(absl::nullopt));
-
-  EXPECT_THAT(
-      delegate().FindOwner(
-          kSet1Member1,
-          base::BindOnce([](FirstPartySetsManager::OwnerResult) { FAIL(); })),
-      Optional(absl::nullopt));
 }
 
 TEST_F(FirstPartySetsAccessDelegateDisabledTest, FindOwners) {
@@ -250,20 +219,10 @@ TEST_F(AsyncFirstPartySetsAccessDelegateTest,
 
   delegate_remote()->NotifyReady(mojom::FirstPartySetsReadyEvent::New());
 
-  net::FirstPartySetEntry entry(kSet1Owner, net::SiteType::kAssociated);
+  net::FirstPartySetEntry entry(kSet1Owner, net::SiteType::kAssociated, 0);
   EXPECT_EQ(future.Get(),
             net::FirstPartySetMetadata(net::SamePartyContext(Type::kSameParty),
                                        &entry, &entry));
-}
-
-TEST_F(AsyncFirstPartySetsAccessDelegateTest, QueryBeforeReady_FindOwner) {
-  base::test::TestFuture<FirstPartySetsAccessDelegate::OwnerResult> future;
-  EXPECT_FALSE(delegate().FindOwner(kSet1Member1, future.GetCallback()));
-
-  delegate_remote()->NotifyReady(mojom::FirstPartySetsReadyEvent::New());
-
-  EXPECT_THAT(future.Get(), absl::make_optional(net::FirstPartySetEntry(
-                                kSet1Owner, net::SiteType::kAssociated)));
 }
 
 TEST_F(AsyncFirstPartySetsAccessDelegateTest, QueryBeforeReady_FindOwners) {
@@ -273,44 +232,39 @@ TEST_F(AsyncFirstPartySetsAccessDelegateTest, QueryBeforeReady_FindOwners) {
 
   delegate_remote()->NotifyReady(mojom::FirstPartySetsReadyEvent::New());
 
-  EXPECT_THAT(future.Get(),
-              FirstPartySetsAccessDelegate::OwnersResult({
-                  {kSet1Member1, net::FirstPartySetEntry(
-                                     kSet1Owner, net::SiteType::kAssociated)},
-                  {kSet2Member1, net::FirstPartySetEntry(
-                                     kSet2Owner, net::SiteType::kAssociated)},
-              }));
+  EXPECT_THAT(
+      future.Get(),
+      FirstPartySetsAccessDelegate::OwnersResult({
+          {kSet1Member1,
+           net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated, 0)},
+          {kSet2Member1,
+           net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated, 0)},
+      }));
 }
 
 TEST_F(AsyncFirstPartySetsAccessDelegateTest, OverrideSets_ComputeMetadata) {
   delegate_remote()->NotifyReady(CreateFirstPartySetsReadyEvent({
       {kSet1Member1,
-       {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kAssociated)}},
+       {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kAssociated, 0)}},
       {kSet3Owner,
-       {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kPrimary)}},
+       {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kPrimary,
+                                absl::nullopt)}},
   }));
 
-  net::FirstPartySetEntry primary_entry(kSet3Owner, net::SiteType::kPrimary);
+  net::FirstPartySetEntry primary_entry(kSet3Owner, net::SiteType::kPrimary,
+                                        absl::nullopt);
   net::FirstPartySetEntry associated_entry(kSet3Owner,
-                                           net::SiteType::kAssociated);
+                                           net::SiteType::kAssociated, 0);
   EXPECT_EQ(ComputeMetadataAndWait(kSet3Owner, &kSet1Member1, {kSet1Member1}),
             net::FirstPartySetMetadata(net::SamePartyContext(Type::kSameParty),
                                        &primary_entry, &associated_entry));
 }
 
-TEST_F(AsyncFirstPartySetsAccessDelegateTest, OverrideSets_FindOwner) {
-  delegate_remote()->NotifyReady(CreateFirstPartySetsReadyEvent({
-      {kSet3Owner,
-       {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kPrimary)}},
-  }));
-
-  EXPECT_THAT(FindOwnerAndWait(kSet3Owner), Optional(_));
-}
-
 TEST_F(AsyncFirstPartySetsAccessDelegateTest, OverrideSets_FindOwners) {
   delegate_remote()->NotifyReady(CreateFirstPartySetsReadyEvent({
       {kSet3Owner,
-       {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kPrimary)}},
+       {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kPrimary,
+                                absl::nullopt)}},
   }));
 
   EXPECT_THAT(FindOwnersAndWait({kSet3Owner}),
@@ -323,24 +277,19 @@ class SyncFirstPartySetsAccessDelegateTest
   SyncFirstPartySetsAccessDelegateTest() {
     delegate_remote()->NotifyReady(CreateFirstPartySetsReadyEvent({
         {kSet3Member1,
-         {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kAssociated)}},
+         {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kAssociated, 0)}},
         {kSet3Owner,
-         {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kPrimary)}},
+         {net::FirstPartySetEntry(kSet3Owner, net::SiteType::kPrimary,
+                                  absl::nullopt)}},
     }));
   }
 };
 
 TEST_F(SyncFirstPartySetsAccessDelegateTest, ComputeMetadata) {
-  net::FirstPartySetEntry entry(kSet1Owner, net::SiteType::kAssociated);
+  net::FirstPartySetEntry entry(kSet1Owner, net::SiteType::kAssociated, 0);
   EXPECT_EQ(ComputeMetadataAndWait(kSet1Member1, &kSet1Member1, {kSet1Member1}),
             net::FirstPartySetMetadata(net::SamePartyContext(Type::kSameParty),
                                        &entry, &entry));
-}
-
-TEST_F(SyncFirstPartySetsAccessDelegateTest, FindOwner) {
-  EXPECT_THAT(FindOwnerAndWait(kSet1Member1),
-              absl::make_optional(net::FirstPartySetEntry(
-                  kSet1Owner, net::SiteType::kAssociated)));
 }
 
 TEST_F(SyncFirstPartySetsAccessDelegateTest, FindOwners) {
@@ -348,11 +297,11 @@ TEST_F(SyncFirstPartySetsAccessDelegateTest, FindOwners) {
       FindOwnersAndWait({kSet1Member1, kSet2Member1, kSet3Member1}),
       FirstPartySetsAccessDelegate::OwnersResult({
           {kSet1Member1,
-           net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated)},
+           net::FirstPartySetEntry(kSet1Owner, net::SiteType::kAssociated, 0)},
           {kSet2Member1,
-           net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated)},
+           net::FirstPartySetEntry(kSet2Owner, net::SiteType::kAssociated, 0)},
           {kSet3Member1,
-           net::FirstPartySetEntry(kSet3Owner, net::SiteType::kAssociated)},
+           net::FirstPartySetEntry(kSet3Owner, net::SiteType::kAssociated, 0)},
       }));
 }
 

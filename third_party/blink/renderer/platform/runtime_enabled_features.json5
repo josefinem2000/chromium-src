@@ -702,14 +702,12 @@
       name: "CSSScrollbars",
       status: "test",
     },
-    // Support for declarative parts of scroll-animations-1, i.e.
-    // the animation-timeline property and the @scroll-timeline rule.
+    // Support for declarative parts of scroll-animations-1.
     //
-    // https://drafts.csswg.org/scroll-animations-1/#animation-timeline
-    // https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-at-rule
+    // https://drafts.csswg.org/scroll-animations-1/
     {
       name: "CSSScrollTimeline",
-      status: "experimental",
+      status: "test",
     },
     {
       name: "CSSSelectorFragmentAnchor",
@@ -1004,6 +1002,10 @@
       status: "test",
     },
     {
+      name: "FedCmMultipleIdentityProviders",
+      status: "test",
+    },
+    {
       name: "FencedFrames",
       // This helps enable and expose the <fencedframe> element, but note that
       // blink::features::kFencedFrames must be enabled as well, similar to
@@ -1256,7 +1258,7 @@
     },
     {
       name: "LayoutNGBlockFragmentation",
-      implied_by: ["LayoutNGPrinting", "LayoutNGTableFragmentation"],
+      implied_by: ["LayoutNGPrinting"],
       status: "stable",
     },
     {
@@ -1275,7 +1277,7 @@
       // crbug.com/989916
       name: "LayoutNGForeignObject",
       depends_on: ["LayoutNG"],
-      status: "stable",
+      status: "test",
     },
     {
       // crbug.com/1346221
@@ -1301,8 +1303,8 @@
       // Block fragmentation support in the table layout algorithm.
       // https://drafts.csswg.org/css-tables-3/#fragmentation
       name: "LayoutNGTableFragmentation",
-      depends_on: ["LayoutNG"],
-      status: "test",
+      depends_on: ["LayoutNG","LayoutNGBlockFragmentation"],
+      status: "stable",
     },
     {
       name: "LayoutNGView",
@@ -1372,10 +1374,6 @@
     {
       name: "MediaCapabilitiesEncodingInfo",
       status: "experimental",
-    },
-    {
-      name: "MediaCapabilitiesEncryptedMedia",
-      status: "stable",
     },
     {
       name: "MediaCapabilitiesSpatialAudio",
@@ -1724,6 +1722,7 @@
       name: "PendingBeaconAPI",
       origin_trial_feature_name: "PendingBeaconAPI",
       origin_trial_allows_third_party: true,
+      status: "experimental",
     },
     {
       name: "PercentBasedScrolling",
@@ -2605,6 +2604,12 @@
       // It is only enabled in extension environment for now.
       name: "WebHIDOnServiceWorkers",
       depends_on: ["WebHID"],
+    },
+    // Legacy ::-webkit-scrollbar* pseudo element styling. Enabled for stable
+    // but configurable via WebPreferences.
+    {
+      name: "WebKitScrollbarStyling",
+      status: "stable",
     },
     {
       name: "WebNFC",

@@ -220,6 +220,8 @@ public abstract class ChromeFeatureList {
             "AutofillEnableUpdateVirtualCardEnrollment";
     public static final String AUTOFILL_RANKING_FORMULA_USAGE_HALF_LIFE =
             "AutofillRankingFormulaUsageHalfLife";
+    public static final String AUTOFILL_ENABLE_VIRTUAL_CARD_METADATA =
+            "AutofillEnableVirtualCardMetadata";
     public static final String ANDROID_SEARCH_ENGINE_CHOICE_NOTIFICATION =
             "AndroidSearchEngineChoiceNotification";
     public static final String ANONYMOUS_UPDATE_CHECKS = "AnonymousUpdateChecks";
@@ -430,7 +432,10 @@ public abstract class ChromeFeatureList {
     public static final String OMNIBOX_ANDROID_AUXILIARY_SEARCH =
             "AndroidAuxiliarySearch";
     public static final String OMNIBOX_ASSISTANT_VOICE_SEARCH = "OmniboxAssistantVoiceSearch";
+    public static final String OMNIBOX_HEADER_PADDING_UPDATE = "OmniboxHeaderPaddingUpdate";
     public static final String OMNIBOX_MODERNIZE_VISUAL_UPDATE = "OmniboxModernizeVisualUpdate";
+    public static final String OMNIBOX_MOST_VISITED_TILES_FADING_ON_TABLET =
+            "OmniboxMostVisitedTilesFadingOnTablet";
     public static final String OMNIBOX_MOST_VISITED_TILES_DYNAMIC_SPACING =
             "OmniboxMostVisitedTilesDynamicSpacing";
     public static final String OMNIBOX_MOST_VISITED_TILES_TITLE_WRAP_AROUND =
@@ -546,6 +551,7 @@ public abstract class ChromeFeatureList {
     public static final String TAB_GROUPS_FOR_TABLETS = "TabGroupsForTablets";
     public static final String TAB_GRID_LAYOUT_ANDROID = "TabGridLayoutAndroid";
     public static final String TAB_REPARENTING = "TabReparenting";
+    public static final String TAB_SELECTION_EDITOR_V2 = "TabSelectionEditorV2";
     public static final String TAB_SWITCHER_ON_RETURN = "TabSwitcherOnReturn";
     public static final String TAB_TO_GTS_ANIMATION = "TabToGTSAnimation";
     public static final String TAB_STRIP_IMPROVEMENTS = "TabStripImprovements";

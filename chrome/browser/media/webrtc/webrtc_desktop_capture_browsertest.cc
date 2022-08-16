@@ -304,13 +304,13 @@ class WebRtcDesktopCaptureBrowserTest : public WebRtcTestBase {
 
 IN_PROC_BROWSER_TEST_F(WebRtcDesktopCaptureBrowserTest,
                        TabCaptureProvidesMinFps) {
-  constexpr int kFps = 25;
-  constexpr const char* const kFpsString = "25";
+  constexpr int kFps = 30;
+  constexpr const char* const kFpsString = "30";
   constexpr int kTestTimeSeconds = 2;
   // We wait with measuring frame rate until a few frames has passed. This is
   // because the frame rate frame dropper in VideoTrackAdapter is pretty
   // aggressive dropping frames when the stream starts.
-  constexpr int kNumFramesBeforeStabilization = 10;
+  constexpr int kNumFramesBeforeStabilization = kFps;
 
   InitializeTabSharingForFirstTab(
       base::BindOnce(GetDesktopMediaIDForTab, base::Unretained(browser()), 1),
@@ -342,8 +342,37 @@ IN_PROC_BROWSER_TEST_F(WebRtcDesktopCaptureBrowserTest,
       first_tab, base::Milliseconds(50)));
   int average_fps = (final_frame_counter - initial_frame_counter) * 1000 /
                     (final_timestamp - initial_timestamp).InMilliseconds();
-  // Expect at least 50% of the expected frames to aggressively combat flakes.
-  ASSERT_GE(average_fps, kFps / 2);
+  // MediaStreamVideoTrack upholds the min fps by way of an idle timer getting
+  // reset for every received frame from the source. Sources being slow to
+  // provide frames or plumbed main thread will ensure that the FPS provided is
+  // actually always strictly lower than the requested minimum.
+  // Expect at least 1/3 of the expected frames have appeared to aggressively
+  // combat flakes.
+  ASSERT_GE(average_fps, kFps / 3);
+}
+
+IN_PROC_BROWSER_TEST_F(
+    WebRtcDesktopCaptureBrowserTest,
+    TabCaptureProvides0HzWith0MinFpsConstraintAndStaticContent) {
+  constexpr base::TimeDelta kTestTime = base::Seconds(2);
+  InitializeTabSharingForFirstTab(
+      base::BindOnce(GetDesktopMediaIDForTab, base::Unretained(browser()), 1),
+      nullptr, base::StrCat({"minFrameRate: 0, maxFrameRate: 30"}));
+  content::WebContents* first_tab =
+      browser()->tab_strip_model()->GetWebContentsAt(1);
+  EnableVideoFrameCallbacks(first_tab, "local-view");
+
+  // Sample received frame counts during the test time.
+  int frame_counter = 0;
+  base::TimeTicks initial_timestamp = base::TimeTicks::Now();
+  ASSERT_TRUE(test::PollingWaitUntilClosureEvaluatesTrue(
+      base::BindLambdaForTesting([&]() -> bool {
+        frame_counter = GetNumVideoFrameCallbacks(first_tab);
+        return base::TimeTicks::Now() - initial_timestamp >= kTestTime;
+      }),
+      first_tab, base::Milliseconds(50)));
+  // Expect only a few initial frames.
+  ASSERT_LE(frame_counter, 3);
 }
 
 // TODO(crbug.com/796889): Enable on Mac when thread check crash is fixed.

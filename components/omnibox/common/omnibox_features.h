@@ -47,6 +47,7 @@ extern const base::Feature kOmniboxLocalZeroSuggestAgeThreshold;
 extern const base::Feature kZeroSuggestOnNTPForSignedOutUsers;
 extern const base::Feature kZeroSuggestPrefetching;
 extern const base::Feature kZeroSuggestPrefetchingOnSRP;
+extern const base::Feature kZeroSuggestPrefetchingOnWeb;
 // Related, kMaxZeroSuggestMatches.
 
 // On Device Head Suggest.
@@ -83,8 +84,10 @@ extern const base::Feature kNtpRealboxPedals;
 extern const base::Feature kNtpRealboxSuggestionAnswers;
 extern const base::Feature kNtpRealboxTailSuggest;
 extern const base::Feature kOmniboxFuzzyUrlSuggestions;
+extern const base::Feature kOmniboxHeaderPaddingUpdate;
 extern const base::Feature kOmniboxRemoveSuggestionHeaderCapitalization;
 extern const base::Feature kOmniboxRemoveSuggestionHeaderChevron;
+extern const base::Feature kOmniboxMostVisitedTilesFadingOnTablet;
 extern const base::Feature kOmniboxMostVisitedTilesOnSrp;
 extern const base::Feature kStrippedGurlOptimization;
 

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "build/build_config.h"
 #include "chrome/browser/ash/app_restore/full_restore_app_launch_handler.h"
 
 #include <cstdint>
@@ -36,6 +35,7 @@
 #include "chrome/browser/ash/app_restore/full_restore_service.h"
 #include "chrome/browser/ash/arc/arc_util.h"
 #include "chrome/browser/ash/crosapi/browser_util.h"
+#include "chrome/browser/ash/system_web_apps/system_web_app_manager.h"
 #include "chrome/browser/ash/system_web_apps/test_support/system_web_app_integration_test.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/notifications/notification_display_service_tester.h"
@@ -249,8 +249,6 @@ void ClickSaveDeskAsTemplateButton() {
 
 void ClickTemplateItem(int index) {
   ClickButton(ash::GetTemplateItemButton(/*index=*/0));
-  // We need to wait for the template to be fetched from the model.
-  ash::WaitForDesksTemplatesUI();
 }
 
 }  // namespace
@@ -373,14 +371,8 @@ class FullRestoreAppLaunchHandlerBrowserTest
   base::test::ScopedFeatureList scoped_feature_list_;
 };
 
-// TODO(crbug.com/1351532): disabled due to flakiness.
-#if BUILDFLAG(IS_CHROMEOS)
-#define MAYBE_NoBrowserOnLaunch DISABLED_NoBrowserOnLaunch
-#else
-#define MAYBE_NoBrowserOnLaunch NoBrowserOnLaunch
-#endif
 IN_PROC_BROWSER_TEST_F(FullRestoreAppLaunchHandlerBrowserTest,
-                       MAYBE_NoBrowserOnLaunch) {
+                       NoBrowserOnLaunch) {
   EXPECT_TRUE(BrowserList::GetInstance()->empty());
 }
 

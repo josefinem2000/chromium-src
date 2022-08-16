@@ -9,6 +9,7 @@
 #include <string>
 #include <utility>
 
+#include "base/barrier_callback.h"
 #include "base/barrier_closure.h"
 #include "base/bind.h"
 #include "base/check.h"
@@ -183,32 +184,50 @@ void SavedPasswordsPresenter::UndoLastRemoval() {
   undo_helper_->Undo();
 }
 
-bool SavedPasswordsPresenter::CanBeAdded(const CredentialUIEntry& credential) {
+SavedPasswordsPresenter::AddResult
+SavedPasswordsPresenter::GetExpectedAddResult(
+    const CredentialUIEntry& credential) const {
   if (!password_manager_util::IsValidPasswordURL(credential.url))
-    return false;
+    return AddResult::kInvalid;
   if (credential.password.empty())
-    return false;
+    return AddResult::kInvalid;
 
   auto have_equal_username_and_realm =
       [&credential](const PasswordForm& entry) {
         return credential.signon_realm == entry.signon_realm &&
                credential.username == entry.username_value;
       };
-  if (base::ranges::any_of(passwords_, have_equal_username_and_realm))
-    return false;
+  auto have_equal_username_and_realm_in_profile_store =
+      [&have_equal_username_and_realm](const PasswordForm& entry) {
+        return have_equal_username_and_realm(entry) &&
+               entry.IsUsingProfileStore();
+      };
+  auto have_equal_username_and_realm_in_account_store =
+      [&have_equal_username_and_realm](const PasswordForm& entry) {
+        return have_equal_username_and_realm(entry) &&
+               entry.IsUsingAccountStore();
+      };
 
-  return true;
+  bool existing_password_profile = base::ranges::any_of(
+      passwords_, have_equal_username_and_realm_in_profile_store);
+  bool existing_password_account = base::ranges::any_of(
+      passwords_, have_equal_username_and_realm_in_account_store);
+
+  if (!existing_password_profile && !existing_password_account)
+    return AddResult::kSuccess;
+  if (existing_password_profile && !existing_password_account)
+    return AddResult::kExistsInProfileStore;
+  if (existing_password_account && !existing_password_profile)
+    return AddResult::kExistsInAccountStore;
+
+  return AddResult::kExistsInProfileAndAccountStore;
 }
 
 void SavedPasswordsPresenter::AddCredentialAsync(
     const CredentialUIEntry& credential,
     password_manager::PasswordForm::Type type,
     base::OnceClosure completion) {
-  if (!CanBeAdded(credential)) {
-    base::SequencedTaskRunnerHandle::Get()->PostTask(FROM_HERE,
-                                                     std::move(completion));
-    return;
-  }
+  DCHECK_EQ(GetExpectedAddResult(credential), AddResult::kSuccess);
 
   UnblocklistBothStores(credential);
   PasswordForm form = GenerateFormFromCredential(credential, type);
@@ -220,9 +239,8 @@ void SavedPasswordsPresenter::AddCredentialAsync(
 bool SavedPasswordsPresenter::AddCredential(
     const CredentialUIEntry& credential,
     password_manager::PasswordForm::Type type) {
-  if (!CanBeAdded(credential)) {
+  if (GetExpectedAddResult(credential) != AddResult::kSuccess)
     return false;
-  }
 
   UnblocklistBothStores(credential);
   PasswordForm form = GenerateFormFromCredential(credential, type);
@@ -247,14 +265,33 @@ void SavedPasswordsPresenter::UnblocklistBothStores(
 void SavedPasswordsPresenter::AddCredentials(
     const std::vector<CredentialUIEntry>& credentials,
     password_manager::PasswordForm::Type type,
-    base::OnceClosure completion) {
-  if (credentials.empty()) {
-    base::SequencedTaskRunnerHandle::Get()->PostTask(FROM_HERE,
-                                                     std::move(completion));
+    AddCredentialsCallback completion) {
+  std::vector<AddResult> results;
+  results.reserve(credentials.size());
+
+  // Invalid credentials are filtered out since AddCredentialAsync() won't
+  // perform any checks on the credential and expects a valid credential.
+  std::vector<const CredentialUIEntry*> valid_credentials;
+  valid_credentials.reserve(credentials.size());
+
+  base::ranges::transform(credentials, std::back_inserter(results),
+                          [&](const CredentialUIEntry& credential) {
+                            AddResult result = GetExpectedAddResult(credential);
+                            if (result == AddResult::kSuccess)
+                              valid_credentials.emplace_back(&credential);
+                            return result;
+                          });
+
+  if (valid_credentials.empty()) {
+    base::SequencedTaskRunnerHandle::Get()->PostTask(
+        FROM_HERE, base::BindOnce(std::move(completion), std::move(results)));
     return;
   }
-  if (credentials.size() == 1) {
-    AddCredentialAsync(credentials[0], type, std::move(completion));
+
+  if (valid_credentials.size() == 1) {
+    AddCredentialAsync(
+        *valid_credentials[0], type,
+        base::BindOnce(std::move(completion), std::move(results)));
     return;
   }
 
@@ -265,16 +302,16 @@ void SavedPasswordsPresenter::AddCredentials(
   // The observers will have an effect only on the Add after enabling them. Thus
   // we need to reenable them already on the n-1 transaction.
   base::RepeatingClosure barrier_closure = base::BarrierClosure(
-      credentials.size() - 1,
+      valid_credentials.size() - 1,
       base::BindOnce(&SavedPasswordsPresenter::AddObservers,
                      weak_ptr_factory_.GetWeakPtr())
-          .Then(base::BindOnce(&SavedPasswordsPresenter::AddCredentialAsync,
-                               weak_ptr_factory_.GetWeakPtr(),
-                               credentials.back(), type,
-                               std::move(completion))));
+          .Then(base::BindOnce(
+              &SavedPasswordsPresenter::AddCredentialAsync,
+              weak_ptr_factory_.GetWeakPtr(), *valid_credentials.back(), type,
+              base::BindOnce(std::move(completion), std::move(results)))));
 
-  for (size_t i = 0; i < credentials.size() - 1; i++)
-    AddCredentialAsync(credentials[i], type, barrier_closure);
+  for (size_t i = 0; i < valid_credentials.size() - 1; i++)
+    AddCredentialAsync(*valid_credentials[i], type, barrier_closure);
 }
 
 SavedPasswordsPresenter::EditResult

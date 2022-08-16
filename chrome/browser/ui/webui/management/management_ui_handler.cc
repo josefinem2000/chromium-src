@@ -15,9 +15,10 @@
 #include "base/bind.h"
 #include "base/callback.h"
 #include "base/callback_helpers.h"
+#include "base/feature_list.h"
 #include "base/metrics/histogram_functions.h"
 #include "base/metrics/user_metrics.h"
-#include "base/strings/strcat.h"
+#include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "chrome/browser/browser_process.h"
@@ -30,6 +31,7 @@
 #include "chrome/browser/policy/profile_policy_connector.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/managed_ui.h"
+#include "chrome/browser/ui/ui_features.h"
 #include "chrome/common/pref_names.h"
 #include "components/safe_browsing/core/common/safe_browsing_prefs.h"
 #include "components/strings/grit/components_strings.h"
@@ -495,7 +497,14 @@ void AddThreatProtectionPermission(const char* title,
 }
 
 std::string GetAccountManager(Profile* profile) {
-  return chrome::GetAccountManagerIdentity(profile).value_or(std::string());
+  absl::optional<std::string> manager =
+      chrome::GetAccountManagerIdentity(profile);
+  if (!manager &&
+      base::FeatureList::IsEnabled(features::kFlexOrgManagementDisclosure)) {
+    manager = chrome::GetDeviceManagerIdentity();
+  }
+
+  return manager.value_or(std::string());
 }
 
 }  // namespace
@@ -725,7 +734,7 @@ void ManagementUIHandler::AddProxyServerPrivacyDisclosure(
     base::Value::Dict* response) const {
   bool showProxyDisclosure = false;
   ash::NetworkHandler* network_handler = ash::NetworkHandler::Get();
-  base::Value proxy_settings(base::Value::Type::DICTIONARY);
+  base::Value::Dict proxy_settings;
   // |ui_proxy_config_service| may be missing in tests. If the device is offline
   // (no network connected) the |DefaultNetwork| is null.
   if (ash::NetworkHandler::HasUiProxyConfigService() &&
@@ -736,15 +745,16 @@ void ManagementUIHandler::AddProxyServerPrivacyDisclosure(
         network_handler->network_state_handler()->DefaultNetwork()->guid(),
         &proxy_settings);
   }
-  if (!proxy_settings.DictEmpty()) {
+  if (!proxy_settings.empty()) {
     // Proxies can be specified by web server url, via a PAC script or via the
     // web proxy auto-discovery protocol. Chrome also supports the "direct"
     // mode, in which no proxy is used.
-    base::Value* proxy_specification_mode = proxy_settings.FindPath(
-        {::onc::network_config::kType, ::onc::kAugmentationActiveSetting});
-    showProxyDisclosure =
-        proxy_specification_mode &&
-        proxy_specification_mode->GetString() != ::onc::proxy::kDirect;
+    std::string* proxy_specification_mode =
+        proxy_settings.FindStringByDottedPath(base::JoinString(
+            {::onc::network_config::kType, ::onc::kAugmentationActiveSetting},
+            "."));
+    showProxyDisclosure = proxy_specification_mode &&
+                          *proxy_specification_mode != ::onc::proxy::kDirect;
   }
   response->Set("showProxyServerPrivacyDisclosure", showProxyDisclosure);
 }

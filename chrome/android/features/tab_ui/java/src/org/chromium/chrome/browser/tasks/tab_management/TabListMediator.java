@@ -481,15 +481,20 @@ class TabListMediator {
 
     private final TabObserver mTabObserver = new EmptyTabObserver() {
         @Override
-        public void onDidStartNavigation(Tab tab, NavigationHandle navigationHandle) {
-            if (UrlUtilities.isNTPUrl(tab.getUrl())) return;
-            if (navigationHandle.isSameDocument() || !navigationHandle.isInPrimaryMainFrame()) {
+        public void onDidStartNavigationInPrimaryMainFrame(
+                Tab tab, NavigationHandle navigationHandle) {
+            if (navigationHandle.isSameDocument() || UrlUtilities.isNTPUrl(tab.getUrl())) {
                 return;
             }
             if (mModel.indexFromId(tab.getId()) == TabModel.INVALID_TAB_INDEX) return;
             mModel.get(mModel.indexFromId(tab.getId()))
                     .model.set(TabProperties.FAVICON,
                             mTabListFaviconProvider.getDefaultFavicon(tab.isIncognito()));
+        }
+
+        @Override
+        public void onDidStartNavigationNoop(Tab tab, NavigationHandle navigationHandle) {
+            if (!navigationHandle.isInPrimaryMainFrame()) return;
         }
 
         @Override
@@ -710,7 +715,7 @@ class TabListMediator {
             }
 
             @Override
-            public void willCloseTab(Tab tab, boolean animate) {
+            public void willCloseTab(Tab tab, boolean animate, boolean didCloseAlone) {
                 if (mModel.indexFromId(tab.getId()) == TabModel.INVALID_TAB_INDEX) return;
                 tab.removeObserver(mTabObserver);
                 mModel.removeAt(mModel.indexFromId(tab.getId()));
@@ -1219,7 +1224,7 @@ class TabListMediator {
             if (tabsList == null) return true;
             for (int i = 0; i < tabsList.size(); i++) {
                 PseudoTab tab = tabsList.get(i);
-                boolean isSelected = mTabModelSelector.getCurrentTabId() == tab.getId();
+                boolean isSelected = isSelectedTab(tab, mTabModelSelector.getCurrentTabId());
                 updateTab(mModel.indexOfNthTabCard(i), tab, isSelected, false, quickMode);
             }
             return true;

@@ -1273,8 +1273,9 @@ void FormStructure::ParseFieldTypesFromAutocompleteAttributes() {
     }
 
     // Compute a section name based on the specified hints and apply the result.
-    if (field->section.SetPrefixFromAutocomplete(parsing_result->section,
-                                                 parsing_result->mode)) {
+    if (field->section.SetPrefixFromAutocomplete(
+            {.section = parsing_result->section,
+             .mode = parsing_result->mode})) {
       has_author_specified_sections_ = true;
     }
     field->SetHtmlType(parsing_result->field_type, parsing_result->mode);
@@ -1286,13 +1287,12 @@ void FormStructure::ParseFieldTypesWithPatterns(PatternSource pattern_source,
                                                 LogManager* log_manager) {
   FieldCandidatesMap field_type_map;
   if (ShouldRunHeuristics()) {
-    field_type_map =
-        FormField::ParseFormFields(fields_, current_page_language_,
-                                   is_form_tag_, pattern_source, log_manager);
+    FormField::ParseFormFields(fields_, current_page_language_, is_form_tag_,
+                               pattern_source, field_type_map, log_manager);
   } else if (ShouldRunHeuristicsForSingleFieldForms()) {
     FormField::ParseSingleFieldForms(fields_, current_page_language_,
                                      is_form_tag_, pattern_source,
-                                     &field_type_map, log_manager);
+                                     field_type_map, log_manager);
   }
   if (field_type_map.empty())
     return;
@@ -2558,8 +2558,14 @@ LogBuffer& operator<<(LogBuffer& buffer, const FormStructure& form) {
     buffer << Tr{} << "Section:" << field->section;
 
     constexpr size_t kMaxLabelSize = 100;
+    // TODO(crbug/1165780): Remove once shared labels are launched.
+    const std::u16string& label =
+        base::FeatureList::IsEnabled(
+            features::kAutofillEnableSupportForParsingWithSharedLabels)
+            ? field->parseable_label()
+            : field->label;
     const std::u16string truncated_label =
-        field->label.substr(0, std::min(field->label.length(), kMaxLabelSize));
+        label.substr(0, std::min(label.length(), kMaxLabelSize));
     buffer << Tr{} << "Label:" << truncated_label;
 
     buffer << Tr{} << "Is empty:" << (field->IsEmpty() ? "Yes" : "No");
