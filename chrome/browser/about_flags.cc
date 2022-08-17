@@ -481,6 +481,20 @@ const FeatureEntry::Choice kForceUpdateMenuTypeChoices[] = {
     {flag_descriptions::kUpdateMenuTypeUnsupportedOSVersion,
      switches::kForceUpdateMenuType, "unsupported_os_version"},
 };
+
+const FeatureEntry::FeatureParam kOmahaMinSdkVersionAndroidMinSdk1[] = {
+    {"min_sdk_version", "1"}};
+const FeatureEntry::FeatureParam kOmahaMinSdkVersionAndroidMinSdk1000[] = {
+    {"min_sdk_version", "1000"}};
+const FeatureEntry::FeatureVariation kOmahaMinSdkVersionAndroidVariations[] = {
+    {flag_descriptions::kOmahaMinSdkVersionAndroidMinSdk1Description,
+     kOmahaMinSdkVersionAndroidMinSdk1,
+     std::size(kOmahaMinSdkVersionAndroidMinSdk1), nullptr},
+    {flag_descriptions::kOmahaMinSdkVersionAndroidMinSdk1000Description,
+     kOmahaMinSdkVersionAndroidMinSdk1000,
+     std::size(kOmahaMinSdkVersionAndroidMinSdk1000), nullptr},
+};
+
 #else   // BUILDFLAG(IS_ANDROID)
 const FeatureEntry::FeatureParam kReaderModeOfferInSettings[] = {
     {switches::kReaderModeDiscoverabilityParamName,
@@ -783,17 +797,6 @@ const FeatureEntry::FeatureVariation kQueryTilesVariations[] = {
      std::size(kShowSingleRowMVTiles), nullptr},
     {"(show two rows of MV tiles)", kShowTwoRowsMVTiles,
      std::size(kShowTwoRowsMVTiles), nullptr}};
-
-const FeatureEntry::FeatureParam kTangibleSyncGroupA[] = {{"group_id", "1"}};
-const FeatureEntry::FeatureParam kTangibleSyncGroupB[] = {{"group_id", "2"}};
-const FeatureEntry::FeatureParam kTangibleSyncGroupC[] = {{"group_id", "3"}};
-const FeatureEntry::FeatureVariation kTangibleSyncVariations[] = {
-    {"(turn on sync and back up)", kTangibleSyncGroupA,
-     std::size(kTangibleSyncGroupA), nullptr},
-    {"(sync and back up)", kTangibleSyncGroupB, std::size(kTangibleSyncGroupB),
-     nullptr},
-    {"(turn on sync and sync data)", kTangibleSyncGroupC,
-     std::size(kTangibleSyncGroupC), nullptr}};
 #endif  // BUILDFLAG(IS_ANDROID)
 
 const FeatureEntry::Choice kEnableGpuRasterizationChoices[] = {
@@ -3276,6 +3279,20 @@ const FeatureEntry::FeatureVariation
 };
 #endif  // !BUILDFLAG(IS_ANDROID)
 
+const FeatureEntry::FeatureParam
+    kServiceWorkerSkipIgnorableFetchHandler_NotSkip[] = {
+        {"SkipEmptyFetchHandler", "false"}};
+const FeatureEntry::FeatureParam
+    kServiceWorkerSkipIgnorableFetchHandler_SkipEmpty[] = {
+        {"SkipEmptyFetchHandler", "true"}};
+const FeatureEntry::FeatureVariation
+    kServiceWorkerSkipIgnorableFetchHandlerVariations[] = {
+        {"Not Skip", kServiceWorkerSkipIgnorableFetchHandler_NotSkip,
+         std::size(kServiceWorkerSkipIgnorableFetchHandler_NotSkip), nullptr},
+        {"Skip Empty", kServiceWorkerSkipIgnorableFetchHandler_SkipEmpty,
+         std::size(kServiceWorkerSkipIgnorableFetchHandler_SkipEmpty), nullptr},
+};
+
 // RECORDING USER METRICS FOR FLAGS:
 // -----------------------------------------------------------------------------
 // The first line of the entry is the internal name.
@@ -4690,6 +4707,12 @@ const FeatureEntry kFeatureEntries[] = {
      SINGLE_VALUE_TYPE_AND_VALUE(switches::kMarketUrlForTesting,
                                  "https://play.google.com/store/apps/"
                                  "details?id=com.android.chrome")},
+    {"omaha-min-sdk-version-android",
+     flag_descriptions::kOmahaMinSdkVersionAndroidName,
+     flag_descriptions::kOmahaMinSdkVersionAndroidDescription, kOsAndroid,
+     FEATURE_WITH_PARAMS_VALUE_TYPE(chrome::android::kOmahaMinSdkVersionAndroid,
+                                    kOmahaMinSdkVersionAndroidVariations,
+                                    "OmahaMinSdkVersionAndroidStudy")},
 #endif  // BUILDFLAG(IS_ANDROID)
     {"enable-tls13-early-data", flag_descriptions::kEnableTLS13EarlyDataName,
      flag_descriptions::kEnableTLS13EarlyDataDescription, kOsAll,
@@ -5526,6 +5549,9 @@ const FeatureEntry kFeatureEntries[] = {
      kOsCrOS,
      FEATURE_VALUE_TYPE(
          chromeos::features::kHandwritingLegacyRecognitionAllLang)},
+    {"handwriting-library-dlc", flag_descriptions::kHandwritingLibraryDlcName,
+     flag_descriptions::kHandwritingLibraryDlcDescription, kOsCrOS,
+     FEATURE_VALUE_TYPE(chromeos::features::kHandwritingLibraryDlc)},
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
 
     {"block-insecure-private-network-requests",
@@ -6426,9 +6452,7 @@ const FeatureEntry kFeatureEntries[] = {
 
     {"tangible-sync", flag_descriptions::kTangibleSyncName,
      flag_descriptions::kTangibleSyncDescription, kOsAndroid,
-     FEATURE_WITH_PARAMS_VALUE_TYPE(switches::kTangibleSync,
-                                    kTangibleSyncVariations,
-                                    "TangibleSyncVariations")},
+     FEATURE_VALUE_TYPE(switches::kTangibleSync)},
 
     {"enable-cbd-sign-out", flag_descriptions::kEnableCbdSignOutName,
      flag_descriptions::kEnableCbdSignOutDescription, kOsAndroid,
@@ -9115,6 +9139,13 @@ const FeatureEntry kFeatureEntries[] = {
      FEATURE_VALUE_TYPE(
          password_manager::features::kBiometricAuthenticationForFilling)},
 #endif
+    {"skip-service-worker-fetch-handler",
+     flag_descriptions::kSkipServiceWorkerFetchHandlerName,
+     flag_descriptions::kSkipServiceWorkerFetchHandlerDescription, kOsAll,
+     FEATURE_WITH_PARAMS_VALUE_TYPE(
+         features::kServiceWorkerSkipIgnorableFetchHandler,
+         kServiceWorkerSkipIgnorableFetchHandlerVariations,
+         "ServiceWorkerSkipIgnorableFetchHandler")},
 
 #if BUILDFLAG(IS_ANDROID)
     {"reduce-gpu-priority-on-background",
@@ -9131,6 +9162,12 @@ const FeatureEntry kFeatureEntries[] = {
      FEATURE_VALUE_TYPE(::features::kBindingManagerUseNotPerceptibleBinding)},
 #endif
 
+#if !BUILDFLAG(IS_ANDROID)
+    {"password-manager-redesign",
+     flag_descriptions::kPasswordManagerRedesignName,
+     flag_descriptions::kPasswordManagerRedesignDescription, kOsDesktop,
+     FEATURE_VALUE_TYPE(password_manager::features::kPasswordManagerRedesign)},
+#endif
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
     // Histograms" in tools/metrics/histograms/README.md (run the

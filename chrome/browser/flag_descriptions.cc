@@ -1558,6 +1558,12 @@ const char kHandwritingLegacyRecognitionAllLangDescription[] =
     "Enables new on-device recognition for handwriting legacy paths in all "
     "supported languages.";
 
+const char kHandwritingLibraryDlcName[] =
+    "Handwriting recognition with library from DLC";
+const char kHandwritingLibraryDlcDescription[] =
+    "Enables new on-device recognition with the handwriting library installed "
+    "from DLC";
+
 const char kHardwareMediaKeyHandling[] = "Hardware Media Key Handling";
 const char kHardwareMediaKeyHandlingDescription[] =
     "Enables using media keys to control the active media session. This "
@@ -3186,6 +3192,12 @@ const char kReduceUserAgentPlatformOsCpuDescription[] =
     "The platform and oscpu in the User-Agent string will be reported as "
     "<unifiedPlatform>";
 
+const char kSkipServiceWorkerFetchHandlerName[] =
+    "Skip Service Worker Fetch Handler if skippable";
+const char kSkipServiceWorkerFetchHandlerDescription[] =
+    "Skips starting the service worker and run the fetch handler if the fetch "
+    "handler is recognized as skippable.";
+
 const char kWebSQLAccessName[] = "Allows access to WebSQL APIs";
 const char kWebSQLAccessDescription[] =
     "The WebSQL API is enabled by default, but can be disabled here.";
@@ -3924,6 +3936,16 @@ const char kUpdateMenuTypeNone[] = "None";
 const char kUpdateMenuTypeUpdateAvailable[] = "Update Available";
 const char kUpdateMenuTypeUnsupportedOSVersion[] = "Unsupported OS Version";
 
+const char kOmahaMinSdkVersionAndroidName[] =
+    "Forces the minumum Android SDK version to a particular value.";
+const char kOmahaMinSdkVersionAndroidDescription[] =
+    "When set, the minimum Android minimum SDK version is set to a particular "
+    "value which impact the app menu badge, menu items, and settings about "
+    "screen regarding whether Chrome can be updated.";
+const char kOmahaMinSdkVersionAndroidMinSdk1Description[] = "Minimum SDK = 1";
+const char kOmahaMinSdkVersionAndroidMinSdk1000Description[] =
+    "Minimum SDK = 1000";
+
 const char kUseRealColorSpaceForAndroidVideoName[] =
     "Use color space from MediaCodec";
 const char kUseRealColorSpaceForAndroidVideoDescription[] =
@@ -4174,6 +4196,10 @@ const char kOmniboxExperimentalKeywordModeName[] =
 const char kOmniboxExperimentalKeywordModeDescription[] =
     "Enables various experimental features related to keyword mode, its "
     "suggestions and layout.";
+
+const char kPasswordManagerRedesignName[] = "Password Manager new UI";
+const char kPasswordManagerRedesignDescription[] =
+    "Enables new Password Manager UI on Desktop";
 
 const char kScreenAIName[] = "Screen AI";
 const char kScreenAIDescription[] =

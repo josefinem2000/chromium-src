@@ -336,9 +336,11 @@ ParseSheetResult CSSParserImpl::ParseStyleSheet(
   return result;
 }
 
+// static
 CSSSelectorList CSSParserImpl::ParsePageSelector(
     CSSParserTokenRange range,
-    StyleSheetContents* style_sheet) {
+    StyleSheetContents* style_sheet,
+    const CSSParserContext& context) {
   // We only support a small subset of the css-page spec.
   range.ConsumeWhitespace();
   AtomicString type_selector;
@@ -365,7 +367,7 @@ CSSSelectorList CSSParserImpl::ParsePageSelector(
     selector = std::make_unique<CSSParserSelector>();
     if (!pseudo.IsNull()) {
       selector->SetMatch(CSSSelector::kPagePseudoClass);
-      selector->UpdatePseudoPage(pseudo.LowerASCII());
+      selector->UpdatePseudoPage(pseudo.LowerASCII(), context.GetDocument());
       if (selector->GetPseudoType() == CSSSelector::kPseudoUnknown)
         return CSSSelectorList();
     }
@@ -993,7 +995,8 @@ StyleRulePage* CSSParserImpl::ConsumePageRule(CSSParserTokenStream& stream) {
     return nullptr;
   CSSParserTokenStream::BlockGuard guard(stream);
 
-  CSSSelectorList selector_list = ParsePageSelector(prelude, style_sheet_);
+  CSSSelectorList selector_list =
+      ParsePageSelector(prelude, style_sheet_, *context_);
   if (!selector_list.IsValid())
     return nullptr;  // Parse error, invalid @page selector
 
@@ -1571,13 +1574,14 @@ bool CSSParserImpl::RemoveImportantAnnotationIfPresent(
       tokenized_value.range = tokenized_value.range.MakeSubRange(first, last);
 
       // Truncate the text to remove the delimiter and everything after it.
-      DCHECK_NE(tokenized_value.text.ToString().find('!'), kNotFound);
-      unsigned truncated_length = tokenized_value.text.length() - 1;
-      while (tokenized_value.text[truncated_length] != '!')
-        --truncated_length;
-      tokenized_value.text =
-          StringView(tokenized_value.text, 0, truncated_length);
-
+      if (!tokenized_value.text.IsEmpty()) {
+        DCHECK_NE(tokenized_value.text.ToString().find('!'), kNotFound);
+        unsigned truncated_length = tokenized_value.text.length() - 1;
+        while (tokenized_value.text[truncated_length] != '!')
+          --truncated_length;
+        tokenized_value.text =
+            StringView(tokenized_value.text, 0, truncated_length);
+      }
       return true;
     }
   }

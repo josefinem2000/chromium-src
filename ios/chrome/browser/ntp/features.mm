@@ -71,7 +71,7 @@ void SetFeedLastBackgroundRefreshTimestamp(NSDate* timestamp) {
   NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
   dateFormatter.dateStyle = NSDateFormatterShortStyle;
   dateFormatter.timeStyle = NSDateFormatterShortStyle;
-  dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+  dateFormatter.locale = [NSLocale autoupdatingCurrentLocale];
   [[NSUserDefaults standardUserDefaults]
       setObject:[dateFormatter stringFromDate:timestamp]
          forKey:@"FeedLastBackgroundRefreshTimestamp"];
@@ -125,7 +125,7 @@ double GetFeedMaxCacheAgeInSeconds() {
   }
   return base::GetFieldTrialParamByFeatureAsDouble(kEnableFeedBackgroundRefresh,
                                                    kMaxCacheAgeInSeconds,
-                                                   /*default=*/60 * 60);
+                                                   /*default=*/8 * 60 * 60);
 }
 
 double GetBackgroundRefreshIntervalInSeconds() {

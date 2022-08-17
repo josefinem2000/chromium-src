@@ -255,6 +255,7 @@
 #if BUILDFLAG(IS_CHROMEOS_ASH)
 #include "ash/constants/ash_features.h"
 #include "ash/public/cpp/clipboard_history_controller.h"
+#include "ash/public/cpp/new_window_delegate.h"
 #include "chrome/browser/ash/arc/arc_util.h"
 #include "chrome/browser/ash/arc/intent_helper/arc_intent_helper_mojo_ash.h"
 #include "chrome/browser/ash/system_web_apps/types/system_web_app_delegate.h"
@@ -722,7 +723,8 @@ RenderViewContextMenu::RenderViewContextMenu(
               GetProfile()->GetOriginalProfile()),
           this,
           &menu_model_,
-          GetBrowser()) {
+          GetBrowser(),
+          GetRenderFrameHost()) {
   if (!g_custom_id_ranges_initialized) {
     g_custom_id_ranges_initialized = true;
     SetContentCustomCommandIdRange(IDC_CONTENT_CONTEXT_CUSTOM_FIRST,
@@ -2574,12 +2576,8 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
 
   if (autofill::AutofillContextMenuManager::IsAutofillCustomCommandId(
           autofill::AutofillContextMenuManager::CommandId(id))) {
-    RenderFrameHost* render_frame_host = GetRenderFrameHost();
-    if (render_frame_host) {
-      autofill_context_menu_manager_.ExecuteCommand(
-          autofill::AutofillContextMenuManager::CommandId(id),
-          render_frame_host, params_);
-    }
+    autofill_context_menu_manager_.ExecuteCommand(
+        autofill::AutofillContextMenuManager::CommandId(id), params_);
     return;
   }
 
@@ -2844,12 +2842,29 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
       break;
 
     case IDC_CONTENT_CONTEXT_SEARCHWEBFOR:
-    case IDC_CONTENT_CONTEXT_GOTOURL:
-      OpenURL(selection_navigation_url_, GURL(),
-              ui::DispositionFromEventFlags(
-                  event_flags, WindowOpenDisposition::NEW_FOREGROUND_TAB),
+    case IDC_CONTENT_CONTEXT_GOTOURL: {
+      auto disposition = ui::DispositionFromEventFlags(
+          event_flags, WindowOpenDisposition::NEW_FOREGROUND_TAB);
+#if BUILDFLAG(IS_CHROMEOS_ASH)
+      if (!crosapi::browser_util::IsAshWebBrowserEnabled()) {
+        // TODO(neis): Support the other possible dispositions in crosapi and
+        // then preserve them here.
+        auto nwd_disposition =
+            ash::NewWindowDelegate::Disposition::kNewForegroundTab;
+        if (disposition == WindowOpenDisposition::NEW_WINDOW) {
+          nwd_disposition = ash::NewWindowDelegate::Disposition::kNewWindow;
+        }
+        ash::NewWindowDelegate::GetPrimary()->OpenUrl(
+            selection_navigation_url_,
+            ash::NewWindowDelegate::OpenUrlFrom::kUserInteraction,
+            nwd_disposition);
+        break;
+      }
+#endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+      OpenURL(selection_navigation_url_, GURL(), disposition,
               ui::PAGE_TRANSITION_LINK);
       break;
+    }
 
     case IDC_CONTENT_CONTEXT_LANGUAGE_SETTINGS:
       ExecLanguageSettings(event_flags);

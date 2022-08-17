@@ -500,6 +500,27 @@
             ]
         }
     ],
+    "ArcEnableTTSCacheSetup": [
+        {
+            "platforms": [
+                "chromeos"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "ArcEnableTTSCacheSetup"
+                    ]
+                },
+                {
+                    "name": "Disabled",
+                    "disable_features": [
+                        "ArcEnableTTSCacheSetup"
+                    ]
+                }
+            ]
+        }
+    ],
     "ArcEnableTTSCaching": [
         {
             "platforms": [
@@ -2609,6 +2630,29 @@
             ]
         }
     ],
+    "ChromeOSARCVMReclaimThrottle": [
+        {
+            "platforms": [
+                "chromeos"
+            ],
+            "experiments": [
+                {
+                    "name": "EnabledGroupMedium_20220808",
+                    "params": {
+                        "ArcVmInactivityTimeMs": "600s",
+                        "ArcVmTrimBackoffTimeMs": "900s",
+                        "MaxPageLimit": "250000",
+                        "OnlyDropCachesOnFirstMemoryPressureAfterArcVmBoot": "true",
+                        "PagesPerMinute": "15000",
+                        "TrimArcVmOnFirstMemoryPressureAfterArcVmBoot": "true"
+                    },
+                    "enable_features": [
+                        "TrimArcVmOnMemoryPressure"
+                    ]
+                }
+            ]
+        }
+    ],
     "ChromeOSMemoryPressureSignalStudy": [
         {
             "platforms": [
@@ -3635,6 +3679,23 @@
             ]
         }
     ],
+    "DesktopSharePreview": [
+        {
+            "platforms": [
+                "linux",
+                "mac",
+                "windows"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "DesktopSharePreview"
+                    ]
+                }
+            ]
+        }
+    ],
     "DesktopTabGroupsInProductHelp": [
         {
             "platforms": [
@@ -4011,21 +4072,31 @@
     "DownloadUXRedesign": [
         {
             "platforms": [
-                "windows"
+                "windows",
+                "mac",
+                "chromeos_lacros",
+                "linux"
             ],
             "experiments": [
                 {
-                    "name": "Enabled_20220616",
+                    "name": "Enabled_New_20220816",
                     "enable_features": [
                         "DownloadBubble"
                     ]
                 },
                 {
-                    "name": "Enabled_20220727",
+                    "name": "Enabled_20220816",
                     "enable_features": [
                         "DownloadBubble"
                     ],
                     "disable_features": [
+                        "DownloadBubbleV2"
+                    ]
+                },
+                {
+                    "name": "Enabled_V2_20220816",
+                    "enable_features": [
+                        "DownloadBubble",
                         "DownloadBubbleV2"
                     ]
                 }
@@ -4791,6 +4862,26 @@
                     "name": "Disabled_20220615",
                     "disable_features": [
                         "HTMLParamElementUrlSupport"
+                    ]
+                }
+            ]
+        }
+    ],
+    "HTMLPopupAttribute": [
+        {
+            "platforms": [
+                "android",
+                "chromeos",
+                "chromeos_lacros",
+                "linux",
+                "mac",
+                "windows"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "HTMLPopupAttribute"
                     ]
                 }
             ]
@@ -6205,6 +6296,21 @@
                     "name": "Enabled_20210111",
                     "enable_features": [
                         "MigrateDefaultChromeAppToWebAppsNonGSuite"
+                    ]
+                }
+            ]
+        }
+    ],
+    "MojoAvoidRandomPipeId": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "MojoAvoidRandomPipeId"
                     ]
                 }
             ]

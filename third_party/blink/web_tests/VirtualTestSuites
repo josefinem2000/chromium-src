@@ -232,7 +232,7 @@
   },
   {
     "prefix": "compute-pressure",
-    "platforms": ["Linux", "Mac", "Win"],
+    "platforms": ["Linux", "Mac"],
     "bases": ["external/wpt/compute-pressure"],
     "args": ["--enable-features=ComputePressure"]
   },
@@ -1038,15 +1038,8 @@
     "prefix": "popup-disabled",
     "platforms": ["Linux", "Mac", "Win"],
     "bases": [],
-    "args": ["--stable-release-mode"]
-  },
-  {
-    "prefix": "dialogfocus-old-behavior",
-    "platforms": ["Linux", "Mac", "Win"],
-    "bases": [
-      "external/wpt/html/semantics/interactive-elements/the-dialog-element"
-    ],
-    "args": ["--disable-features=DialogFocusNewSpecBehavior"]
+    "args": ["--stable-release-mode",
+             "--disable-features=HTMLPopupAttribute"]
   },
   {
     "prefix": "object-param-url",

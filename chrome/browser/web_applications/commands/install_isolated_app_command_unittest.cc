@@ -18,6 +18,7 @@
 #include "base/test/gmock_callback_support.h"
 #include "base/test/metrics/histogram_tester.h"
 #include "base/test/test_future.h"
+#include "chrome/browser/web_applications/locks/lock.h"
 #include "chrome/browser/web_applications/test/fake_install_finalizer.h"
 #include "chrome/browser/web_applications/test/fake_web_app_provider.h"
 #include "chrome/browser/web_applications/test/mock_data_retriever.h"
@@ -26,6 +27,7 @@
 #include "chrome/browser/web_applications/web_app_command_manager.h"
 #include "chrome/browser/web_applications/web_app_constants.h"
 #include "chrome/browser/web_applications/web_app_data_retriever.h"
+#include "chrome/browser/web_applications/web_app_helpers.h"
 #include "chrome/browser/web_applications/web_app_install_finalizer.h"
 #include "chrome/browser/web_applications/web_app_install_info.h"
 #include "chrome/browser/web_applications/web_app_install_utils.h"
@@ -58,11 +60,12 @@ using ::testing::Not;
 using ::testing::Optional;
 using ::testing::Pair;
 using ::testing::Pointee;
+using ::testing::Property;
 using ::testing::UnorderedElementsAre;
 
 blink::mojom::ManifestPtr CreateDefaultManifest() {
   auto manifest = blink::mojom::Manifest::New();
-  manifest->id = u"some default test manifest id";
+  manifest->id = u"/";
   manifest->start_url = GURL{"http://default-test.com/"},
   manifest->scope = GURL{"/scope"},
   manifest->display = DisplayMode::kStandalone;
@@ -235,7 +238,10 @@ TEST_F(InstallIsolatedAppCommandTest,
               IsInstallationOk());
 }
 
-TEST_F(InstallIsolatedAppCommandTest, ReportsErrorWhenURLIsInvalid) {
+// It is impossible to pass invalid url to |GenerateAppId| since it DCHECKs.
+// TODO(kuragin): Replace constructor with factory function to make the
+// validation testable.
+TEST_F(InstallIsolatedAppCommandTest, DISABLED_ReportsErrorWhenURLIsInvalid) {
   SetPrepareForLoadResultLoaded();
 
   EXPECT_THAT(ExecuteCommand("some definetely invalid url"),
@@ -296,6 +302,17 @@ TEST_F(InstallIsolatedAppCommandTest,
               Not(IsInstallationOk()));
 }
 
+TEST_F(InstallIsolatedAppCommandTest, CommandLocksOnAppIdAndWebContents) {
+  base::test::TestFuture<InstallIsolatedAppCommandResult> test_future;
+  auto command =
+      CreateCommand("http://test-app-id.com/", test_future.GetCallback());
+  EXPECT_THAT(command->lock(),
+              AllOf(Property(&Lock::type, Eq(Lock::Type::kAppAndWebContents)),
+                    Property(&Lock::app_ids,
+                             UnorderedElementsAre(GenerateAppIdFromUnhashed(
+                                 "http://test-app-id.com//")))));
+}
+
 TEST_F(InstallIsolatedAppCommandTest,
        InstallationFailsWhenAppIsInstallableButManifestIsNull) {
   SetPrepareForLoadResultLoaded();
@@ -341,15 +358,25 @@ TEST_F(InstallIsolatedAppCommandManifestTest,
               Not(IsInstallationOk()));
 }
 
-TEST_F(InstallIsolatedAppCommandManifestTest, PassesManifestIdToFinalizer) {
+TEST_F(InstallIsolatedAppCommandManifestTest,
+       PassesManifestIdToFinalizerWhenManifestIdIsSlash) {
   blink::mojom::ManifestPtr manifest = CreateDefaultManifest();
-  manifest->id = u"test manifest id";
+  manifest->id = u"/";
 
   EXPECT_THAT(ExecuteCommandWithManifest(manifest.Clone()), IsInstallationOk());
 
   EXPECT_THAT(install_finalizer().web_app_info(),
               Pointee(Field(&WebAppInstallInfo::manifest_id,
-                            Optional(std::string{"test manifest id"}))));
+                            Optional(std::string{"/"}))));
+}
+
+TEST_F(InstallIsolatedAppCommandManifestTest, FailsWhenManifestIdIsNotSlash) {
+  blink::mojom::ManifestPtr manifest = CreateDefaultManifest();
+  manifest->id = u"test-manifest-id";
+
+  EXPECT_THAT(ExecuteCommandWithManifest(manifest.Clone()),
+              Not(IsInstallationOk()));
+  EXPECT_THAT(install_finalizer().web_app_info(), IsNull());
 }
 
 TEST_F(InstallIsolatedAppCommandManifestTest, PassesManifestNameAsTitle) {
@@ -417,7 +444,11 @@ TEST_F(InstallIsolatedAppCommandMetricsTest,
               BucketsAre(base::Bucket(true, 1)));
 }
 
-TEST_F(InstallIsolatedAppCommandMetricsTest, ReportFailureWhenURLIsInvalid) {
+// It is impossible to pass invalid url to |GenerateAppId| since it DCHECKs.
+// TODO(kuragin): Replace constructor with factory function to make the
+// validation testable.
+TEST_F(InstallIsolatedAppCommandMetricsTest,
+       DISABLED_ReportFailureWhenURLIsInvalid) {
   SetPrepareForLoadResultLoaded();
 
   base::HistogramTester histogram_tester;
@@ -493,6 +524,19 @@ TEST_F(InstallIsolatedAppCommandMetricsTest, ReportFailureWhenManifestIsNull) {
                              std::move(fake_data_retriever)),
               Not(IsInstallationOk()));
 
+  EXPECT_THAT(histogram_tester.GetAllSamples("WebApp.Install.Result"),
+              BucketsAre(base::Bucket(false, 1)));
+}
+
+TEST_F(InstallIsolatedAppCommandMetricsTest,
+       ReportFailureWhenManifestIdIsNotSlash) {
+  blink::mojom::ManifestPtr manifest = CreateDefaultManifest();
+  manifest->id = u"test manifest id";
+
+  base::HistogramTester histogram_tester;
+
+  EXPECT_THAT(ExecuteCommandWithManifest(manifest.Clone()),
+              Not(IsInstallationOk()));
   EXPECT_THAT(histogram_tester.GetAllSamples("WebApp.Install.Result"),
               BucketsAre(base::Bucket(false, 1)));
 }

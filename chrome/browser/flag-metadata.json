@@ -35,8 +35,8 @@
   },
   {
     "name": "accessible-pdf-form",
-    "owners": [ "asku@microsoft.com", "mohitb@microsoft.com" ],
-    "expiry_milestone": 105
+    "owners": [ "bravi@microsoft.com", "mohitb@microsoft.com" ],
+    "expiry_milestone": 110
   },
   {
     "name": "account-id-migration",
@@ -1801,7 +1801,7 @@
   {
     "name": "enable-cros-autocorrect-params-tuning",
     "owners": [ "tranbaoduy", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 106
+    "expiry_milestone": 111
   },
   {
     "name": "enable-cros-avatars-cloud-migration",
@@ -1811,16 +1811,11 @@
   {
     "name": "enable-cros-diacritics-on-physical-keyboard-longpress",
     "owners": ["jhtin", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 106
-  },
-  {
-    "name": "enable-cros-ime-assist-autocorrect",
-    "owners": [ "jopalmer", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 110
+    "expiry_milestone": 111
   },
   {
     "name": "enable-cros-ime-assist-emoji-enhanced",
-    "owners": [ "myy", "curtismcmullan", "essential-inputs-team@google.com" ],
+    "owners": [ "curtismcmullan", "essential-inputs-team@google.com" ],
     "expiry_milestone": 110
   },
   {
@@ -1832,11 +1827,6 @@
     "name": "enable-cros-ime-assist-multi-word-expanded",
     "owners": [ "curtismcmullan", "essential-inputs-team@google.com" ],
     "expiry_milestone": 110
-  },
-  {
-    "name": "enable-cros-ime-assist-multi-word-lacros",
-    "owners": [ "curtismcmullan", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 120
   },
   {
     "name": "enable-cros-ime-assist-personal-info",
@@ -1854,29 +1844,19 @@
     "expiry_milestone" : 110
   },
   {
-    "name": "enable-cros-ime-system-emoji-picker",
-    "owners": [ "jopalmer", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 100
-  },
-  {
     "name": "enable-cros-ime-system-emoji-picker-clipboard",
     "owners": [ "jopalmer", "essential-inputs-team@google.com" ],
     "expiry_milestone": 110
   },
   {
     "name": "enable-cros-ime-system-emoji-picker-extension",
-    "owners": [ "hdchuong", "curtismcmullan", "myy", "essential-inputs-team@google.com" ],
+    "owners": [ "curtismcmullan", "essential-inputs-team@google.com" ],
     "expiry_milestone": 110
   },
   {
     "name": "enable-cros-ime-system-emoji-picker-search-extension",
-    "owners": [ "hdchuong", "curtismcmullan", "myy", "essential-inputs-team@google.com" ],
+    "owners": [ "curtismcmullan", "essential-inputs-team@google.com" ],
     "expiry_milestone": 110
-  },
-  {
-    "name": "enable-cros-language-settings-ime-options-in-settings",
-    "owners": [ "jopalmer", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 97
   },
   {
     "name": "enable-cros-language-settings-update-japanese",
@@ -1886,7 +1866,7 @@
   {
     "name": "enable-cros-multilingual-typing",
     "owners": [ "tranbaoduy", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 105
+    "expiry_milestone": 111
   },
   {
     "name": "enable-cros-on-device-grammar-check",
@@ -1901,22 +1881,17 @@
   {
     "name": "enable-cros-system-chinese-physical-typing",
     "owners": [ "shend", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 105
+    "expiry_milestone": 111
   },
   {
     "name": "enable-cros-system-japanese-physical-typing",
     "owners": [ "keithlee", "essential-inputs-team@google.com" ],
     "expiry_milestone": 108
   },
-  {
-    "name": "enable-cros-system-korean-physical-typing",
-    "owners": [ "shend", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 97
-  },
-  {
+   {
     "name": "enable-cros-system-transliteration-physical-typing",
     "owners": [ "shend", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 102
+    "expiry_milestone": 111
   },
   {
     "name": "enable-cros-virtual-keyboard-api",
@@ -3352,7 +3327,7 @@
   {
     "name": "fast-pair",
     "owners": [ "//ash/quick_pair/OWNERS", "jonmann@chromium.org" ],
-    "expiry_milestone": 105
+    "expiry_milestone": 109
   },
   {
     "name": "fast-pair-low-power",
@@ -3360,17 +3335,17 @@
       "//ash/quick_pair/OWNERS",
       "jonmann@chromium.org"
     ],
-    "expiry_milestone": 105
+    "expiry_milestone": 109
   },
   {
     "name": "fast-pair-saved-devices",
     "owners": [ "//ash/quick_pair/OWNERS", "julietlevesque@google.com" ],
-    "expiry_milestone": 108
+    "expiry_milestone": 109
   },
   {
     "name": "fast-pair-software-scanning",
     "owners": [ "//ash/quick_pair/OWNERS", "jonmann@chromium.org" ],
-    "expiry_milestone": 105
+    "expiry_milestone": 109
   },
   {
     "name": "fast-pair-subsequent-pairing-ux",
@@ -3691,20 +3666,25 @@
     "owners": [ "sidereal@google.com", "davidmunro@google.com", "clumptini@google.com" ],
     "expiry_milestone": 115
   },
-  {
+  { 
     "name": "handwriting-gesture-editing",
     "owners": [ "curtismcmullan", "essential-inputs-team@google.com" ],
-    "expiry_milestone": 95
+    "expiry_milestone": 111
   },
   {
     "name": "handwriting-legacy-recognition",
-    "owners": [ "essential-inputs-team@google.com" ],
-    "expiry_milestone": 105
+    "owners": [ "curtismcmullan", "essential-inputs-team@google.com" ],
+    "expiry_milestone": 111
   },
   {
     "name": "handwriting-legacy-recognition-all-lang",
-    "owners": [ "essential-inputs-team@google.com" ],
-    "expiry_milestone": 105
+    "owners": [ "curtismcmullan", "essential-inputs-team@google.com" ],
+    "expiry_milestone": 111
+  },
+  {
+    "name": "handwriting-library-dlc",
+    "owners": [ "shend@google.com", "essential-inputs-team@google.com" ],
+    "expiry_milestone": 110
   },
   {
     "name": "happiness-tracking-surveys-for-desktop-demo",
@@ -4659,6 +4639,13 @@
     "expiry_milestone": 86
   },
   {
+    "name": "omaha-min-sdk-version-android",
+    "owners": [ "nyquist", "waffles" ],
+    // Provides a way for changing how Chrome behaves on old and new Android SDK
+    // versions. Exists in about:flags so QA can more easily test behavior.
+    "expiry_milestone": -1
+  },
+  {
     "name": "omit-cors-client-cert",
     "owners": [ "toyoshim", "loading-dev" ],
     "expiry_milestone": 110
@@ -5136,6 +5123,11 @@
     // The feature is already extensively used externally.
     // However, it's not polished enough yet to launch.
     "expiry_milestone": -1
+  },
+  {
+    "name": "password-manager-redesign",
+    "owners": ["vsemeniuk@google.com", "vasilii", "chrome-password-manager-team@google.com"],
+    "expiry_milestone": 111
   },
   {
     "name": "password-notes",
@@ -5929,6 +5921,11 @@
     "name": "site-isolation-trial-opt-out",
     "owners": [ "site-isolation-dev", "alexmos", "creis", "lukasza" ],
     "expiry_milestone": 110
+  },
+  {
+    "name": "skip-service-worker-fetch-handler",
+    "owners": [ "yyanagisawa@google.com", "chrome-worker@google.com" ],
+    "expiry_milestone": 116
   },
   {
     "name": "skip-undecryptable-passwords",

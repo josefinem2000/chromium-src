@@ -70,6 +70,9 @@ chromium-metrics-reviews@google.com.
       summary="Chrome Home shown after a pull-to-refresh"/>
   <variant name="IPH_ContextualPageActions_PriceTracking"
       summary="contextual page price tracking action in the top toolbar"/>
+  <variant name="IPH_ContextualPageActions_PriceTrackingActionChip"
+      summary="action chip variant of contextual page price tracking action
+               in the top toolbar"/>
   <variant name="IPH_ContextualSearchInPanelHelp"
       summary="promoting longpress from within the panel"/>
   <variant name="IPH_ContextualSearchOptIn"
@@ -159,6 +162,8 @@ chromium-metrics-reviews@google.com.
   <variant name="IPH_NewTab" summary="new tab"/>
   <variant name="IPH_NewTabPageHomeButton" summary="new tab page button"/>
   <variant name="IPH_NewTabTip" summary="new tab tip"/>
+  <variant name="IPH_OverflowMenuTip"
+      summary="the Overflow Menu help tip on iOS"/>
   <variant name="IPH_PageInfo" summary="opening PageInfo"/>
   <variant name="IPH_PageInfoStoreInfo" summary="PageInfoStoreInfo feature"/>
   <variant name="IPH_PasswordsAccountStorage"

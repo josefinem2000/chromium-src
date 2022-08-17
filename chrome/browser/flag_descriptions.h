@@ -873,6 +873,9 @@ extern const char kHandwritingLegacyRecognitionDescription[];
 extern const char kHandwritingLegacyRecognitionAllLangName[];
 extern const char kHandwritingLegacyRecognitionAllLangDescription[];
 
+extern const char kHandwritingLibraryDlcName[];
+extern const char kHandwritingLibraryDlcDescription[];
+
 extern const char kHardwareMediaKeyHandling[];
 extern const char kHardwareMediaKeyHandlingDescription[];
 
@@ -1795,6 +1798,9 @@ extern const char kReduceUserAgentMinorVersionDescription[];
 extern const char kReduceUserAgentPlatformOsCpuName[];
 extern const char kReduceUserAgentPlatformOsCpuDescription[];
 
+extern const char kSkipServiceWorkerFetchHandlerName[];
+extern const char kSkipServiceWorkerFetchHandlerDescription[];
+
 extern const char kWebSQLAccessName[];
 extern const char kWebSQLAccessDescription[];
 
@@ -2230,6 +2236,11 @@ extern const char kUpdateMenuTypeNone[];
 extern const char kUpdateMenuTypeUpdateAvailable[];
 extern const char kUpdateMenuTypeUnsupportedOSVersion[];
 
+extern const char kOmahaMinSdkVersionAndroidName[];
+extern const char kOmahaMinSdkVersionAndroidDescription[];
+extern const char kOmahaMinSdkVersionAndroidMinSdk1Description[];
+extern const char kOmahaMinSdkVersionAndroidMinSdk1000Description[];
+
 extern const char kUseRealColorSpaceForAndroidVideoName[];
 extern const char kUseRealColorSpaceForAndroidVideoDescription[];
 
@@ -2387,6 +2398,9 @@ extern const char kOmniboxDriveSuggestionsDescriptions[];
 
 extern const char kOmniboxExperimentalKeywordModeName[];
 extern const char kOmniboxExperimentalKeywordModeDescription[];
+
+extern const char kPasswordManagerRedesignName[];
+extern const char kPasswordManagerRedesignDescription[];
 
 extern const char kScreenAIName[];
 extern const char kScreenAIDescription[];

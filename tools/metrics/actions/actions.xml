@@ -33960,6 +33960,9 @@ should be able to be added at any place in this file.
       label="For ChromeHomePullToRefresh feature."/>
   <suffix name="ContextualPageActions_PriceTracking"
       label="For Contextual page actions price tracking feature."/>
+  <suffix name="ContextualPageActions_PriceTrackingActionChip"
+      label="For action chip variant of Contextual page actions price
+             tracking feature."/>
   <suffix name="ContextualSearch" label="For ContextualSearch feature."/>
   <suffix name="ContextualSearchInPanelHelp"
       label="For ContextualSearchInPanelHelp feature."/>
@@ -34047,6 +34050,8 @@ should be able to be added at any place in this file.
   <suffix name="NewTabPageHomeButton"
       label="For NewTabPageHomeButton feature."/>
   <suffix name="NewTabTip" label="For NewTabTip feature."/>
+  <suffix name="OverflowMenuTip"
+      label="For the overflow menu help tip on iOS."/>
   <suffix name="PageInfo" label="In product help for opening PageInfo."/>
   <suffix name="PageInfoStoreInfo" label="For PageInfoStoreInfo feature."/>
   <suffix name="PasswordsAccountStorage"

@@ -791,6 +791,10 @@ const base::Feature kFuseBox{"FuseBox", base::FEATURE_ENABLED_BY_DEFAULT};
 const base::Feature kFuseBoxDebug{"FuseBoxDebug",
                                   base::FEATURE_DISABLED_BY_DEFAULT};
 
+// Enable glanceables on login.
+const base::Feature kGlanceables{"Glanceables",
+                                 base::FEATURE_DISABLED_BY_DEFAULT};
+
 // Enable GuestOS integration with the files app.
 const base::Feature kGuestOsFiles{"GuestOsFiles",
                                   base::FEATURE_DISABLED_BY_DEFAULT};
@@ -819,6 +823,10 @@ const base::Feature kHandwritingLegacyRecognition{
 // supported languages.
 const base::Feature kHandwritingLegacyRecognitionAllLang{
     "HandwritingLegacyRecognitionAllLang", base::FEATURE_DISABLED_BY_DEFAULT};
+
+// Enables downloading the handwriting libraries via DLC.
+const base::Feature kHandwritingLibraryDlc{"HandwritingLibraryDlc",
+                                           base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Enables the Background Page in the help app.
 const base::Feature kHelpAppBackgroundPage{"HelpAppBackgroundPage",
@@ -2010,6 +2018,10 @@ bool IsFullscreenAlertBubbleEnabled() {
 
 bool IsGaiaReauthEndpointEnabled() {
   return base::FeatureList::IsEnabled(kGaiaReauthEndpoint);
+}
+
+bool AreGlanceablesEnabled() {
+  return base::FeatureList::IsEnabled(kGlanceables);
 }
 
 bool IsGuestOsFilesEnabled() {

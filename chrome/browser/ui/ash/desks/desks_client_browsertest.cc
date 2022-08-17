@@ -299,7 +299,6 @@ void ClickZeroStateTemplatesButton() {
       ash::GetZeroStateDesksTemplatesButton();
   ASSERT_TRUE(zero_state_templates_button);
   ClickButton(zero_state_templates_button);
-  ash::WaitForDesksTemplatesUI();
 }
 
 void ClickExpandedStateTemplatesButton() {
@@ -317,16 +316,9 @@ void ClickFirstTemplateItem() {
 
 const std::vector<const ash::DeskTemplate*> GetAllEntries() {
   std::vector<const ash::DeskTemplate*> templates;
-  base::RunLoop loop;
-  DesksClient::Get()->GetDeskModel()->GetAllEntries(base::BindLambdaForTesting(
-      [&](desks_storage::DeskModel::GetAllEntriesStatus status,
-          const std::vector<const ash::DeskTemplate*>& entries) {
-        DCHECK_EQ(desks_storage::DeskModel::GetAllEntriesStatus::kOk, status);
-        templates = entries;
-        loop.Quit();
-      }));
-  loop.Run();
-  return templates;
+  auto result = DesksClient::Get()->GetDeskModel()->GetAllEntries();
+  DCHECK_EQ(desks_storage::DeskModel::GetAllEntriesStatus::kOk, result.status);
+  return result.entries;
 }
 
 // Creates a vector of tab groups based on the vector of GURLs passed into it.
@@ -776,9 +768,8 @@ IN_PROC_BROWSER_TEST_F(DesksTemplatesClientTest, LaunchMultipleDeskTemplates) {
   // non empty desks are launched when this test is updated to use the real
   // workflow.
   auto desk_template = std::make_unique<ash::DeskTemplate>(
-      kDeskUuid.AsLowercaseString(), ash::DeskTemplateSource::kUser,
-      base::UTF16ToUTF8(kDeskName), base::Time::Now(),
-      ash::DeskTemplateType::kTemplate);
+      kDeskUuid, ash::DeskTemplateSource::kUser, base::UTF16ToUTF8(kDeskName),
+      base::Time::Now(), ash::DeskTemplateType::kTemplate);
   SetTemplate(std::move(desk_template));
 
   auto check_launch_template_desk_name =
@@ -2177,7 +2168,6 @@ IN_PROC_BROWSER_TEST_F(DesksTemplatesClientTest,
   // Reenter overview and launch the template we saved.
   ash::ToggleOverview();
   ash::WaitForOverviewEnterAnimation();
-  ash::WaitForDesksTemplatesUI();
   ClickZeroStateTemplatesButton();
   ClickFirstTemplateItem();
   content::RunAllTasksUntilIdle();

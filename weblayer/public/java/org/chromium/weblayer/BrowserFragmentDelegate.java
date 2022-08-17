@@ -117,7 +117,11 @@ class BrowserFragmentDelegate extends IBrowserFragmentDelegate.Stub {
 
     @Override
     public void onDetach() {
-        mHandler.post(() -> mFragment.onDetach());
+        mHandler.post(() -> {
+            mFragment.onDetach();
+            mSurfaceControlViewHost.release();
+            mSurfaceControlViewHost = null;
+        });
     }
 
     @Override
@@ -147,11 +151,6 @@ class BrowserFragmentDelegate extends IBrowserFragmentDelegate.Stub {
     }
 
     @Override
-    public void onCleared() {
-        mHandler.post(() -> mSurfaceControlViewHost.release());
-    }
-
-    @Override
     public void setTabObserverDelegate(ITabObserverDelegate tabObserverDelegate) {
         mTabDelegate.setObserver(tabObserverDelegate);
     }
@@ -165,6 +164,17 @@ class BrowserFragmentDelegate extends IBrowserFragmentDelegate.Stub {
                 } catch (RemoteException e) {
                 }
             });
+        });
+    }
+
+    @Override
+    public void createTab(ITabCallback callback) {
+        mHandler.post(() -> {
+            Tab newTab = mFragment.getBrowser().createTab();
+            try {
+                callback.onResult(TabParams.buildParcelable(newTab));
+            } catch (RemoteException e) {
+            }
         });
     }
 }

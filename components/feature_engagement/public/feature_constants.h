@@ -70,6 +70,8 @@ extern const base::Feature kIPHAutoDarkOptOutFeature;
 extern const base::Feature kIPHAutoDarkUserEducationMessageFeature;
 extern const base::Feature kIPHAutoDarkUserEducationMessageOptInFeature;
 extern const base::Feature kIPHContextualPageActionsPriceTrackingFeature;
+extern const base::Feature
+    kIPHContextualPageActionsPriceTrackingActionChipFeature;
 extern const base::Feature kIPHCrowFeature;
 extern const base::Feature kIPHDataSaverDetailFeature;
 extern const base::Feature kIPHDataSaverMilestonePromoFeature;
@@ -171,6 +173,7 @@ extern const base::Feature kIPHDiscoverFeedHeaderFeature;
 extern const base::Feature kIPHDefaultSiteViewFeature;
 extern const base::Feature kIPHPasswordSuggestionsFeature;
 extern const base::Feature kIPHFollowWhileBrowsingFeature;
+extern const base::Feature kIPHOverflowMenuTipFeature;
 #endif  // BUILDFLAG(IS_IOS)
 
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_LINUX) || \

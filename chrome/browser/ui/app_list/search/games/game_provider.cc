@@ -39,8 +39,6 @@ using ::ash::string_matching::TokenizedString;
 
 // Parameters for FuzzyTokenizedStringMatch.
 constexpr bool kUseWeightedRatio = false;
-constexpr bool kUseEditDistance = false;
-constexpr double kPartialMatchPenaltyRate = 0.9;
 
 constexpr double kRelevanceThreshold = 0.65;
 constexpr size_t kMaxResults = 3u;
@@ -83,8 +81,9 @@ bool EnabledByPolicy(Profile* profile) {
 // text in a separate post-processing step.
 std::u16string GetStrippedText(const std::u16string& text) {
   std::u16string stripped_text;
-  // In order, these are: apostrophe, left quote, right quote, TM, circled R.
-  base::RemoveChars(text, u"\'\u2018\u2019\u2122\u24C7", &stripped_text);
+  // In order, these are: apostrophe, left quote, right quote, TM, registered
+  // sign.
+  base::RemoveChars(text, u"\'\u2018\u2019\u2122\u00AE", &stripped_text);
   return stripped_text;
 }
 
@@ -100,8 +99,7 @@ double CalculateTitleRelevance(const TokenizedString& tokenized_query,
   }
 
   FuzzyTokenizedStringMatch match;
-  return match.Relevance(tokenized_query, tokenized_title, kUseWeightedRatio,
-                         kUseEditDistance, kPartialMatchPenaltyRate);
+  return match.Relevance(tokenized_query, tokenized_title, kUseWeightedRatio);
 }
 
 std::vector<std::pair<const apps::Result*, double>> SearchGames(

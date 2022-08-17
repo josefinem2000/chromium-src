@@ -30,6 +30,13 @@ BLINK_COMMON_EXPORT extern const base::FeatureParam<int>
     kSkipFrameCountForLazyEmbeds;
 BLINK_COMMON_EXPORT extern const base::Feature
     kAutomaticLazyFrameLoadingToEmbedUrls;
+enum class AutomaticLazyFrameLoadingToEmbedLoadingStrategy {
+  kAllowList,
+  kNonAds,
+};
+BLINK_COMMON_EXPORT extern const base::FeatureParam<
+    AutomaticLazyFrameLoadingToEmbedLoadingStrategy>
+    kAutomaticLazyFrameLoadingToEmbedLoadingStrategyParam;
 BLINK_COMMON_EXPORT extern const base::Feature kBackForwardCacheDedicatedWorker;
 BLINK_COMMON_EXPORT extern const base::Feature kBatchFetchRequests;
 BLINK_COMMON_EXPORT extern const base::Feature
@@ -501,12 +508,6 @@ BLINK_COMMON_EXPORT extern const base::FeatureParam<int>
 BLINK_COMMON_EXPORT extern const base::Feature
     kBrowsingTopicsBypassIPIsPubliclyRoutableCheck;
 
-// When <dialog>s are closed, this focuses the "previously focused" element
-// which had focus when the <dialog> was first opened.
-// TODO(crbug.com/649162): Remove DialogFocusNewSpecBehavior after
-// the feature is in stable with no issues.
-BLINK_COMMON_EXPORT extern const base::Feature kDialogFocusNewSpecBehavior;
-
 // Makes autofill look across shadow boundaries when collecting form controls to
 // fill.
 BLINK_COMMON_EXPORT extern const base::Feature kAutofillShadowDOM;
@@ -560,6 +561,9 @@ extern const base::FeatureParam<int> kMaxNumOfThrottleableRequestsInTightMode;
 // <param> urls within <object> elements. This feature is controlled by
 // blink::features::kHTMLParamElementUrlSupport.
 BLINK_COMMON_EXPORT extern const base::Feature kHTMLParamElementUrlSupport;
+
+// TODO(crbug.com/1307772): Enables the Pop-up API.
+BLINK_COMMON_EXPORT extern const base::Feature kHTMLPopupAttribute;
 
 // The HTTP RTT threshold: decide whether the
 // `kDelayLowPriorityRequestsAccordingToNetworkState` feature can take effect
@@ -750,6 +754,14 @@ BLINK_COMMON_EXPORT extern const base::FeatureParam<DelayAsyncScriptDelayType>
     kDelayAsyncScriptExecutionDelayParam;
 BLINK_COMMON_EXPORT extern const base::FeatureParam<bool>
     kDelayAsyncScriptExecutionCrossSiteOnlyParam;
+
+// If enabled, async scripts will be run on a lower priority task queue.
+// See https://crbug.com/1348467.
+BLINK_COMMON_EXPORT extern const base::Feature kLowPriorityAsyncScriptExecution;
+// The timeout value for kLowPriorityAsyncScriptExecution. Async scripts run on
+// lower priority queue until this timeout elapsed.
+BLINK_COMMON_EXPORT extern const base::FeatureParam<base::TimeDelta>
+    kTimeoutForLowPriorityAsyncScriptExecution;
 
 // If enabled, parser-blocking scripts are force-deferred.
 // https://crbug.com/1339112

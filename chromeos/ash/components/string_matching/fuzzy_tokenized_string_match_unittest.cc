@@ -26,8 +26,6 @@ constexpr double kCompleteMismatchScore = 0.0;
 
 // Default parameters.
 constexpr bool kUseWeightedRatio = false;
-constexpr bool kUseEditDistance = false;
-constexpr double kPartialMatchPenaltyRate = 0.9;
 
 void ExpectAllNearlyEqualTo(const std::vector<double>& scores,
                             double target_score,
@@ -85,8 +83,7 @@ double CalculateRelevance(const std::u16string& query,
                           const std::u16string& text) {
   FuzzyTokenizedStringMatch match;
   return match.Relevance(TokenizedString(query), TokenizedString(text),
-                         kUseWeightedRatio, kUseEditDistance,
-                         kPartialMatchPenaltyRate);
+                         kUseWeightedRatio);
 }
 
 // Return a string formatted for displaying query-text relevance score details.
@@ -859,8 +856,7 @@ TEST_F(FuzzyTokenizedStringMatchTest,
   std::u16string text = u"xyzabc abcdef";
   std::u16string query = u"abc";
   const double relevance = match.Relevance(
-      TokenizedString(query), TokenizedString(text), kUseWeightedRatio,
-      kUseEditDistance, kPartialMatchPenaltyRate);
+      TokenizedString(query), TokenizedString(text), kUseWeightedRatio);
 
   VLOG(1) << FormatRelevanceResult(query, text, relevance,
                                    /*query_first*/ false);
@@ -905,8 +901,7 @@ TEST_F(FuzzyTokenizedStringMatchTest,
   std::u16string query = u"ab";
 
   const double relevance = match.Relevance(
-      TokenizedString(query), TokenizedString(text), kUseWeightedRatio,
-      kUseEditDistance, kPartialMatchPenaltyRate);
+      TokenizedString(query), TokenizedString(text), kUseWeightedRatio);
   VLOG(1) << FormatRelevanceResult(query, text, relevance,
                                    /*query_first*/ false);
 
@@ -924,8 +919,7 @@ TEST_F(FuzzyTokenizedStringMatchTest,
   std::u16string query = u"abcde";
 
   const double relevance = match.Relevance(
-      TokenizedString(query), TokenizedString(text), kUseWeightedRatio,
-      kUseEditDistance, kPartialMatchPenaltyRate);
+      TokenizedString(query), TokenizedString(text), kUseWeightedRatio);
   VLOG(1) << FormatRelevanceResult(query, text, relevance,
                                    /*query_first*/ false);
 
@@ -1236,16 +1230,10 @@ TEST_F(FuzzyTokenizedStringMatchTest, BenchmarkSettingsPreferences) {
 // TODO(crbug.com/1336160): update the tests once params are consolidated.
 TEST_F(FuzzyTokenizedStringMatchTest, PartialRatioTest) {
   FuzzyTokenizedStringMatch match;
-  EXPECT_NEAR(match.PartialRatio(u"abcde", u"ababcXXXbcdeY",
-                                 kPartialMatchPenaltyRate, false, 0.0),
-              0.6, 0.01);
-  EXPECT_NEAR(match.PartialRatio(u"big string", u"strength",
-                                 kPartialMatchPenaltyRate, false, 0.0),
-              0.71, 0.01);
-  EXPECT_EQ(
-      match.PartialRatio(u"abc", u"", kPartialMatchPenaltyRate, false, 0.0), 0);
-  EXPECT_NEAR(match.PartialRatio(u"different in order", u"order text",
-                                 kPartialMatchPenaltyRate, false, 0.0),
+  EXPECT_NEAR(match.PartialRatio(u"abcde", u"ababcXXXbcdeY", 0.0), 0.6, 0.01);
+  EXPECT_NEAR(match.PartialRatio(u"big string", u"strength", 0.0), 0.71, 0.01);
+  EXPECT_EQ(match.PartialRatio(u"abc", u"", 0.0), 0);
+  EXPECT_NEAR(match.PartialRatio(u"different in order", u"order text", 0.0),
               0.67, 0.01);
 }
 
@@ -1255,46 +1243,41 @@ TEST_F(FuzzyTokenizedStringMatchTest, TokenSetRatioTest) {
     std::u16string query(u"order different in");
     std::u16string text(u"text order");
     EXPECT_EQ(match.TokenSetRatio(TokenizedString(query), TokenizedString(text),
-                                  true, kPartialMatchPenaltyRate, false, 0.0),
+                                  true, 0.0),
               1);
-    EXPECT_NEAR(
-        match.TokenSetRatio(TokenizedString(query), TokenizedString(text),
-                            false, kPartialMatchPenaltyRate, false, 0.0),
-        0.67, 0.01);
+    EXPECT_NEAR(match.TokenSetRatio(TokenizedString(query),
+                                    TokenizedString(text), false, 0.0),
+                0.67, 0.01);
   }
   {
     std::u16string query(u"short text");
     std::u16string text(u"this text is really really really long");
     EXPECT_EQ(match.TokenSetRatio(TokenizedString(query), TokenizedString(text),
-                                  true, kPartialMatchPenaltyRate, false, 0.0),
+                                  true, 0.0),
               1);
-    EXPECT_NEAR(
-        match.TokenSetRatio(TokenizedString(query), TokenizedString(text),
-                            false, kPartialMatchPenaltyRate, false, 0.0),
-        0.57, 0.01);
+    EXPECT_NEAR(match.TokenSetRatio(TokenizedString(query),
+                                    TokenizedString(text), false, 0.0),
+                0.57, 0.01);
   }
   {
     std::u16string query(u"common string");
     std::u16string text(u"nothing is shared");
-    EXPECT_NEAR(
-        match.TokenSetRatio(TokenizedString(query), TokenizedString(text), true,
-                            kPartialMatchPenaltyRate, false, 0.0),
-        0.38, 0.01);
-    EXPECT_NEAR(
-        match.TokenSetRatio(TokenizedString(query), TokenizedString(text),
-                            false, kPartialMatchPenaltyRate, false, 0.0),
-        0.33, 0.01);
+    EXPECT_NEAR(match.TokenSetRatio(TokenizedString(query),
+                                    TokenizedString(text), true, 0.0),
+                0.38, 0.01);
+    EXPECT_NEAR(match.TokenSetRatio(TokenizedString(query),
+                                    TokenizedString(text), false, 0.0),
+                0.33, 0.01);
   }
   {
     std::u16string query(u"token shared token same shared same");
     std::u16string text(u"token shared token text text long");
     EXPECT_EQ(match.TokenSetRatio(TokenizedString(query), TokenizedString(text),
-                                  true, kPartialMatchPenaltyRate, false, 0.0),
+                                  true, 0.0),
               1);
-    EXPECT_NEAR(
-        match.TokenSetRatio(TokenizedString(query), TokenizedString(text),
-                            false, kPartialMatchPenaltyRate, false, 0.0),
-        0.83, 0.01);
+    EXPECT_NEAR(match.TokenSetRatio(TokenizedString(query),
+                                    TokenizedString(text), false, 0.0),
+                0.83, 0.01);
   }
 }
 
@@ -1303,38 +1286,32 @@ TEST_F(FuzzyTokenizedStringMatchTest, TokenSortRatioTest) {
   {
     std::u16string query(u"order different in");
     std::u16string text(u"text order");
-    EXPECT_NEAR(
-        match.TokenSortRatio(TokenizedString(query), TokenizedString(text),
-                             true, kPartialMatchPenaltyRate, false, 0.0),
-        0.67, 0.01);
-    EXPECT_NEAR(
-        match.TokenSortRatio(TokenizedString(query), TokenizedString(text),
-                             false, kPartialMatchPenaltyRate, false, 0.0),
-        0.36, 0.01);
+    EXPECT_NEAR(match.TokenSortRatio(TokenizedString(query),
+                                     TokenizedString(text), true, 0.0),
+                0.67, 0.01);
+    EXPECT_NEAR(match.TokenSortRatio(TokenizedString(query),
+                                     TokenizedString(text), false, 0.0),
+                0.36, 0.01);
   }
   {
     std::u16string query(u"short text");
     std::u16string text(u"this text is really really really long");
-    EXPECT_EQ(
-        match.TokenSortRatio(TokenizedString(query), TokenizedString(text),
-                             true, kPartialMatchPenaltyRate, false, 0.0),
-        0.5 * std::pow(0.9, 1));
-    EXPECT_NEAR(
-        match.TokenSortRatio(TokenizedString(query), TokenizedString(text),
-                             false, kPartialMatchPenaltyRate, false, 0.0),
-        0.33, 0.01);
+    EXPECT_EQ(match.TokenSortRatio(TokenizedString(query),
+                                   TokenizedString(text), true, 0.0),
+              0.5 * std::pow(0.9, 1));
+    EXPECT_NEAR(match.TokenSortRatio(TokenizedString(query),
+                                     TokenizedString(text), false, 0.0),
+                0.33, 0.01);
   }
   {
     std::u16string query(u"common string");
     std::u16string text(u"nothing is shared");
-    EXPECT_NEAR(
-        match.TokenSortRatio(TokenizedString(query), TokenizedString(text),
-                             true, kPartialMatchPenaltyRate, false, 0.0),
-        0.38, 0.01);
-    EXPECT_NEAR(
-        match.TokenSortRatio(TokenizedString(query), TokenizedString(text),
-                             false, kPartialMatchPenaltyRate, false, 0.0),
-        0.33, 0.01);
+    EXPECT_NEAR(match.TokenSortRatio(TokenizedString(query),
+                                     TokenizedString(text), true, 0.0),
+                0.38, 0.01);
+    EXPECT_NEAR(match.TokenSortRatio(TokenizedString(query),
+                                     TokenizedString(text), false, 0.0),
+                0.33, 0.01);
   }
 }
 
@@ -1344,24 +1321,21 @@ TEST_F(FuzzyTokenizedStringMatchTest, WeightedRatio) {
     std::u16string query(u"anonymous");
     std::u16string text(u"famous");
     EXPECT_NEAR(
-        match.WeightedRatio(TokenizedString(query), TokenizedString(text),
-                            kPartialMatchPenaltyRate, false, 0.0),
+        match.WeightedRatio(TokenizedString(query), TokenizedString(text), 0.0),
         0.67, 0.01);
   }
   {
     std::u16string query(u"Clash.of.clan");
     std::u16string text(u"ClashOfTitan");
     EXPECT_NEAR(
-        match.WeightedRatio(TokenizedString(query), TokenizedString(text),
-                            kPartialMatchPenaltyRate, false, 0.0),
+        match.WeightedRatio(TokenizedString(query), TokenizedString(text), 0.0),
         0.81, 0.01);
   }
   {
     std::u16string query(u"final fantasy");
     std::u16string text(u"finalfantasy");
     EXPECT_NEAR(
-        match.WeightedRatio(TokenizedString(query), TokenizedString(text),
-                            kPartialMatchPenaltyRate, false, 0.0),
+        match.WeightedRatio(TokenizedString(query), TokenizedString(text), 0.0),
         0.96, 0.01);
   }
   {
@@ -1370,8 +1344,7 @@ TEST_F(FuzzyTokenizedStringMatchTest, WeightedRatio) {
         u"this sentence is much much much much much longer "
         u"than the text before");
     EXPECT_NEAR(
-        match.WeightedRatio(TokenizedString(query), TokenizedString(text),
-                            kPartialMatchPenaltyRate, false, 0.0),
+        match.WeightedRatio(TokenizedString(query), TokenizedString(text), 0.0),
         0.49, 0.01);
   }
 }
@@ -1441,21 +1414,21 @@ TEST_F(FuzzyTokenizedStringMatchTest, ParamThresholdTest1) {
     std::u16string query(u"anonymous");
     std::u16string text(u"famous");
     EXPECT_LT(match.Relevance(TokenizedString(query), TokenizedString(text),
-                              true, false, kPartialMatchPenaltyRate, 0.0),
+                              true, 0.0),
               0.4);
   }
   {
     std::u16string query(u"CC");
     std::u16string text(u"Clash Of Clan");
     EXPECT_LT(match.Relevance(TokenizedString(query), TokenizedString(text),
-                              true, false, kPartialMatchPenaltyRate, 0.0),
+                              true, 0.0),
               0.25);
   }
   {
     std::u16string query(u"Clash.of.clan");
     std::u16string text(u"ClashOfTitan");
     EXPECT_GT(match.Relevance(TokenizedString(query), TokenizedString(text),
-                              true, false, kPartialMatchPenaltyRate, 0.0),
+                              true, 0.0),
               0.4);
   }
 }
@@ -1466,44 +1439,31 @@ TEST_F(FuzzyTokenizedStringMatchTest, ParamThresholdTest2) {
     std::u16string query(u"anonymous");
     std::u16string text(u"famous");
     EXPECT_LT(match.Relevance(TokenizedString(query), TokenizedString(text),
-                              true, false, kPartialMatchPenaltyRate, 0.0),
+                              true, 0.0),
               0.5);
   }
   {
     std::u16string query(u"CC");
     std::u16string text(u"Clash Of Clan");
-    EXPECT_LT(match.Relevance(TokenizedString(query), TokenizedString(text),
-                              true, false, kPartialMatchPenaltyRate),
-              0.25);
+    EXPECT_LT(
+        match.Relevance(TokenizedString(query), TokenizedString(text), true),
+        0.25);
   }
   {
     std::u16string query(u"Clash.of.clan");
     std::u16string text(u"ClashOfTitan");
     EXPECT_LT(match.Relevance(TokenizedString(query), TokenizedString(text),
-                              true, false, kPartialMatchPenaltyRate, 0.0),
+                              true, 0.0),
               0.5);
   }
-}
-
-TEST_F(FuzzyTokenizedStringMatchTest, OtherParamTest) {
-  FuzzyTokenizedStringMatch match;
-  std::u16string query(u"anonymous");
-  std::u16string text(u"famous");
-  const double relevance =
-      match.Relevance(TokenizedString(query), TokenizedString(text), false,
-                      true, kPartialMatchPenaltyRate, 0.0);
-
-  EXPECT_LT(relevance, 0.35);
-  EXPECT_NEAR(relevance, 0.33 / 2, 0.01);
 }
 
 TEST_F(FuzzyTokenizedStringMatchTest, ExactTextMatchTest) {
   FuzzyTokenizedStringMatch match;
   std::u16string query(u"yat");
   std::u16string text(u"YaT");
-  const double relevance =
-      match.Relevance(TokenizedString(query), TokenizedString(text), false,
-                      true, kPartialMatchPenaltyRate, 0.0);
+  const double relevance = match.Relevance(TokenizedString(query),
+                                           TokenizedString(text), false, 0.0);
   EXPECT_GT(relevance, 0.35);
   EXPECT_DOUBLE_EQ(relevance, 1.0);
   EXPECT_EQ(match.hits().size(), 1u);

@@ -411,36 +411,42 @@ bool AssistiveSuggester::OnKeyEvent(const ui::KeyEvent& event) {
         kDefaultLongpressEnabledKeys.contains(event.GetCharacter())) {
       return true;  // Do not propagate this event.
     }
-    HandleLongpressEnabledKeyEvent(event);
+    suggester_switch_->FetchEnabledSuggestionsThen(
+        base::BindOnce(&AssistiveSuggester::HandleLongpressEnabledKeyEvent,
+                       weak_ptr_factory_.GetWeakPtr(), event));
   }
   return false;
 }
 
 void AssistiveSuggester::HandleLongpressEnabledKeyEvent(
-    const ui::KeyEvent& event) {
-  if (const char c = event.GetCharacter();
-      kDefaultLongpressEnabledKeys.contains(c) &&
-      IsDiacriticsOnPhysicalKeyboardLongpressEnabled()) {
-    // Process longpress keydown event.
-    if (current_longpress_char_ == absl::nullopt &&
-        event.type() == ui::EventType::ET_KEY_PRESSED) {
-      current_longpress_char_ = c;
-      longpress_timer_.Start(
-          FROM_HERE, kLongpressActivationDelay,
-          base::BindOnce(&AssistiveSuggester::OnLongpressDetected,
-                         weak_ptr_factory_.GetWeakPtr()));
-      return;
-    }
+    const ui::KeyEvent& event,
+    const AssistiveSuggesterSwitch::EnabledSuggestions& enabled_suggestions) {
+  if (!IsDiacriticsOnPhysicalKeyboardLongpressEnabled() ||
+      !enabled_suggestions.diacritic_suggestions ||
+      !kDefaultLongpressEnabledKeys.contains(event.GetCharacter())) {
+    return;
+  }
 
-    // Process longpress interrupted event (key press up before timer callback
-    // fired)
-    if (current_longpress_char_.has_value() &&
-        event.type() == ui::EventType::ET_KEY_RELEASED &&
-        *current_longpress_char_ == c) {
-      current_longpress_char_ = absl::nullopt;
-      longpress_timer_.Stop();
-      return;
-    }
+  const char c = event.GetCharacter();
+  // Process longpress keydown event.
+  if (current_longpress_char_ == absl::nullopt &&
+      event.type() == ui::EventType::ET_KEY_PRESSED) {
+    current_longpress_char_ = c;
+    longpress_timer_.Start(
+        FROM_HERE, kLongpressActivationDelay,
+        base::BindOnce(&AssistiveSuggester::OnLongpressDetected,
+                       weak_ptr_factory_.GetWeakPtr()));
+    return;
+  }
+
+  // Process longpress interrupted event (key press up before timer callback
+  // fired)
+  if (current_longpress_char_.has_value() &&
+      event.type() == ui::EventType::ET_KEY_RELEASED &&
+      *current_longpress_char_ == c) {
+    current_longpress_char_ = absl::nullopt;
+    longpress_timer_.Stop();
+    return;
   }
 }
 

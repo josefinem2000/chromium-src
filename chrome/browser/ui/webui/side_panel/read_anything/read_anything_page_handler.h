@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "base/memory/raw_ptr.h"
-#include "base/memory/weak_ptr.h"
 #include "chrome/browser/ui/views/frame/browser_view.h"
 #include "chrome/browser/ui/views/side_panel/read_anything/read_anything_coordinator.h"
 #include "chrome/browser/ui/views/side_panel/read_anything/read_anything_model.h"
@@ -50,7 +49,7 @@ class ReadAnythingPageHandler : public read_anything::mojom::PageHandler,
   void OnAXTreeDistilled(
       const ui::AXTreeUpdate& snapshot,
       const std::vector<ui::AXNodeID>& content_node_ids) override;
-  void OnThemeChanged(
+  void OnReadAnythingThemeChanged(
       read_anything::mojom::ReadAnythingThemePtr new_theme) override;
 
   // ReadAnythingCoordinator::Observer:
@@ -58,14 +57,12 @@ class ReadAnythingPageHandler : public read_anything::mojom::PageHandler,
 
  private:
   raw_ptr<ReadAnythingCoordinator> coordinator_;
-  raw_ptr<ReadAnythingModel> model_;
   raw_ptr<ReadAnythingPageHandler::Delegate> delegate_;
 
   raw_ptr<Browser> browser_;
 
   mojo::Receiver<read_anything::mojom::PageHandler> receiver_;
   mojo::Remote<read_anything::mojom::Page> page_;
-  base::WeakPtrFactory<ReadAnythingPageHandler> weak_pointer_factory_{this};
 };
 
 #endif  // CHROME_BROWSER_UI_WEBUI_SIDE_PANEL_READ_ANYTHING_READ_ANYTHING_PAGE_HANDLER_H_
