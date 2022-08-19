@@ -820,7 +820,6 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     std::unique_ptr<CaptureScreenshotCallback> callback) {
   // Welcome to the neural net of capturing screenshot while emulating device
   // metrics!
-  // bool emulation_enabled = emulation_handler_->device_emulation_enabled();
   blink::DeviceEmulationParams original_params =
       emulation_handler_->GetDeviceEmulationParams();
   blink::DeviceEmulationParams modified_params = original_params;
@@ -851,51 +850,18 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     gfx::Rect css_full_page_size =
         main_frame->GetPage()->GetChromeClient().ViewportToScreen(
             gfx::Rect(full_page_size), main_frame->View());
-    clip->SetX(0);
-    clip->SetY(0);
     clip->SetWidth(css_full_page_size.width());
     clip->SetHeight(css_full_page_size.height());
-    clip->SetScale(1);
   }
 
-  // Capture original view size if we know we are going to destroy it. We use
-  // it in ScreenshotCaptured to restore.
-  gfx::Size original_view_size = widget_host->GetView()->GetViewBounds().size();
-  // gfx::Size emulated_view_size = modified_params.view_size;
-
-  double dpfactor = 1;
   float widget_host_device_scale_factor = widget_host->GetDeviceScaleFactor();
   modified_params.scale = 1;
-  // if (emulation_enabled) {
-  //   // When emulating, emulate again and scale to make resulting image match
-  //   // physical DP resolution. If view_size is not overriden, use actual view
-  //   // size.
-  //   float original_scale =
-  //       original_params.scale > 0 ? original_params.scale : 1;
-  //   if (!emulated_view_size.width()) {
-  //     emulated_view_size.set_width(
-  //         ceil(original_view_size.width() / original_scale));
-  //   }
-  //   if (!emulated_view_size.height()) {
-  //     emulated_view_size.set_height(
-  //         ceil(original_view_size.height() / original_scale));
-  //   }
-
-  //   dpfactor = modified_params.device_scale_factor
-  //                  ? modified_params.device_scale_factor /
-  //                        widget_host_device_scale_factor
-  //                  : 1;
-  //   modified_params.view_size = emulated_view_size;
-  // } else {
-    // When not emulating, still need to emulate the page size.
-    modified_params.view_size = original_view_size;
-    modified_params.screen_size = gfx::Size();
-    modified_params.device_scale_factor = 0;
-  // }
+  modified_params.screen_size = gfx::Size();
+  modified_params.device_scale_factor = 0;
 
   // Set up viewport in renderer.
   modified_params.viewport_offset.SetPoint(clip->GetX(), clip->GetY());
-  modified_params.viewport_scale = clip->GetScale() * dpfactor;
+  modified_params.viewport_scale = clip->GetScale();
   modified_params.viewport_offset.Scale(widget_host_device_scale_factor);
 
   // set web preferences for beyond viewport
@@ -924,7 +890,7 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   emulation_handler_->SetDeviceEmulationParams(modified_params);
 
   // Set view size for the screenshot right after emulating.
-  double view_size_scale = dpfactor * clip->GetScale();
+  double view_size_scale = clip->GetScale();
   widget_host->GetView()->SetSize(
       gfx::Size(base::ClampRound(clip->GetWidth() * view_size_scale),
                 base::ClampRound(clip->GetHeight() * view_size_scale)));
@@ -932,10 +898,14 @@ void PageHandler::CaptureScreenshotBeyondViewport(
   gfx::Size requested_image_size =
       gfx::Size(clip->GetWidth(), clip->GetHeight());
 
-  double image_scale = widget_host_device_scale_factor * dpfactor;
+  double image_scale = widget_host_device_scale_factor;
   image_scale *= clip->GetScale();
   requested_image_size =
       gfx::ScaleToRoundedSize(requested_image_size, image_scale);
+
+  // Capture original view size if we know we are going to destroy it. We use
+  // it in ScreenshotCaptured to restore.
+  gfx::Size original_view_size = widget_host->GetView()->GetViewBounds().size();
 
   widget_host->GetSnapshotFromBrowser(
       base::BindOnce(&PageHandler::ScreenshotCaptured,
