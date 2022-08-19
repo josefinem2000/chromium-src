@@ -3767,9 +3767,10 @@ bool Document::CheckCompletedInternal() {
     }
     Loader()->SetSentDidFinishLoad();
     GetFrame()->Client()->DispatchDidFinishLoad();
-    GetFrame()->GetLocalFrameHostRemote().DidFinishLoad(Loader()->Url());
+    // RenderFrameObservers may execute script, which could detach this frame.
     if (!GetFrame())
       return false;
+    GetFrame()->GetLocalFrameHostRemote().DidFinishLoad(Loader()->Url());
 
     GetFrame()->GetFrameScheduler()->RegisterStickyFeature(
         SchedulingPolicy::Feature::kDocumentLoaded,
@@ -5101,10 +5102,10 @@ void Document::SendFocusNotification(Element* new_focused_element,
 
     if (new_focused_element->IsSVGElement()) {
       // Convert to window coordinate system (this will be in DIPs).
-      bounds_in_viewport = new_focused_element->BoundsInViewport();
+      bounds_in_viewport = new_focused_element->BoundsInWidget();
     } else {
       Vector<gfx::Rect> outline_rects =
-          new_focused_element->OutlineRectsInVisualViewport(
+          new_focused_element->OutlineRectsInWidget(
               DocumentUpdateReason::kFocus);
       for (auto& outline_rect : outline_rects)
         bounds_in_viewport.Union(outline_rect);
@@ -8026,7 +8027,7 @@ scoped_refptr<base::SingleThreadTaskRunner> Document::GetTaskRunner(
     return GetExecutionContext()->GetTaskRunner(type);
   // GetExecutionContext() can be nullptr in unit tests and after Shutdown().
   // Fallback to the default task runner for this thread if all else fails.
-  return Thread::Current()->GetTaskRunner();
+  return Thread::Current()->GetDeprecatedTaskRunner();
 }
 
 DOMFeaturePolicy* Document::featurePolicy() {

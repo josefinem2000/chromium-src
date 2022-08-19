@@ -12,6 +12,7 @@
 #include "base/timer/elapsed_timer.h"
 #include "content/browser/first_party_sets/first_party_set_parser.h"
 #include "content/common/content_export.h"
+#include "services/network/public/mojom/first_party_sets.mojom-forward.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace content {
@@ -24,7 +25,7 @@ namespace content {
 class CONTENT_EXPORT FirstPartySetsLoader {
  public:
   using LoadCompleteOnceCallback =
-      base::OnceCallback<void(FirstPartySetParser::SetsMap)>;
+      base::OnceCallback<void(network::mojom::PublicFirstPartySetsPtr)>;
   using FlattenedSets = FirstPartySetParser::SetsMap;
   using SingleSet = FirstPartySetParser::SingleSet;
 
@@ -76,6 +77,9 @@ class CONTENT_EXPORT FirstPartySetsLoader {
   // It holds partial data until all of the sources (component updater +
   // manually specified) have been merged, and then holds the merged data.
   FlattenedSets sets_ GUARDED_BY_CONTEXT(sequence_checker_);
+
+  // Aliases that were defined by the public set declarations.
+  FirstPartySetParser::Aliases aliases_ GUARDED_BY_CONTEXT(sequence_checker_);
 
   // Holds the set that was provided on the command line (if any). There are two
   // layers of absl::optional here because the value is initially unset (outer

@@ -524,6 +524,12 @@ extern const char kColorProviderRedirectionForThemeProviderDescription[];
 extern const char kDesktopPWAsAdditionalWindowingControlsName[];
 extern const char kDesktopPWAsAdditionalWindowingControlsDescription[];
 
+#if !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+extern const char kDesktopPWAsAppHomePageFlagId[];
+extern const char kDesktopPWAsAppHomePageName[];
+extern const char kDesktopPWAsAppHomePageDescription[];
+#endif  // !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+
 extern const char kDesktopPWAsPrefixAppNameInWindowTitleName[];
 extern const char kDesktopPWAsPrefixAppNameInWindowTitleDescription[];
 
@@ -1174,9 +1180,6 @@ extern const char kOsSettingsAppNotificationsPageDescription[];
 
 extern const char kOverviewButtonName[];
 extern const char kOverviewButtonDescription[];
-
-extern const char kEnableDeJellyName[];
-extern const char kEnableDeJellyDescription[];
 
 extern const char kOverlayScrollbarsName[];
 extern const char kOverlayScrollbarsDescription[];
@@ -1936,6 +1939,9 @@ extern const char kEnableCommandLineOnNoRootedDescription[];
 extern const char kEnableFamilyInfoFeedbackName[];
 extern const char kEnableFamilyInfoFeedbackDescription[];
 
+extern const char kEnableOskResizesVisualViewportName[];
+extern const char kEnableOskResizesVisualViewportDescription[];
+
 extern const char kExploreSitesName[];
 extern const char kExploreSitesDescription[];
 
@@ -2158,6 +2164,10 @@ extern const char kRequestDesktopSiteExceptionsDescription[];
 extern const char kRequestDesktopSiteForTabletsName[];
 extern const char kRequestDesktopSiteForTabletsDescription[];
 
+extern const char kRevokeNotificationsPermissionIfDisabledOnAppLevelName[];
+extern const char
+    kRevokeNotificationsPermissionIfDisabledOnAppLevelDescription[];
+
 extern const char kSafeModeForCachedFlagsName[];
 extern const char kSafeModeForCachedFlagsDescription[];
 
@@ -2284,6 +2294,9 @@ extern const char kPasswordEditDialogWithDetailsDescription[];
 
 extern const char kEnableAndroidGamepadVibrationName[];
 extern const char kEnableAndroidGamepadVibrationDescription[];
+
+extern const char kCormorantName[];
+extern const char kCormorantDescription[];
 
 // Non-Android ----------------------------------------------------------------
 
@@ -2772,6 +2785,9 @@ extern const char kGuestOSGenericInstallerDescription[];
 
 extern const char kBruschettaName[];
 extern const char kBruschettaDescription[];
+
+extern const char kBruschettaAlphaMigrateName[];
+extern const char kBruschettaAlphaMigrateDescription[];
 
 extern const char kCameraAppDocScanDlcName[];
 extern const char kCameraAppDocScanDlcDescription[];
@@ -3673,6 +3689,12 @@ extern const char kUIDebugToolsDescription[];
 
 extern const char kDesktopDetailedLanguageSettingsName[];
 extern const char kDesktopDetailedLanguageSettingsDescription[];
+
+extern const char kSyncPromoAfterSigninInterceptName[];
+extern const char kSyncPromoAfterSigninInterceptDescription[];
+
+extern const char kSigninInterceptBubbleV2Name[];
+extern const char kSigninInterceptBubbleV2Description[];
 #endif
 
 #if defined(WEBRTC_USE_PIPEWIRE)

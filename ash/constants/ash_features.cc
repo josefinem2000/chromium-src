@@ -298,7 +298,7 @@ const base::Feature kCalendarModelDebugMode{"CalendarModelDebugMode",
 
 // Enables to allow using document scanning feature via DLC in the camera app.
 const base::Feature kCameraAppDocScanDlc{"CameraAppDocScanDlc",
-                                         base::FEATURE_DISABLED_BY_DEFAULT};
+                                         base::FEATURE_ENABLED_BY_DEFAULT};
 
 // Controls whether the camera privacy switch toasts and notification should be
 // displayed.
@@ -355,7 +355,7 @@ const base::Feature kClipboardHistoryReorder{"ClipboardHistoryReorder",
 // If enabled and account falls under the new deal, will be allowed to toggle
 // auto updates.
 const base::Feature kConsumerAutoUpdateToggleAllowed{
-    "ConsumerAutoUpdateToggleAllowed", base::FEATURE_DISABLED_BY_DEFAULT};
+    "ConsumerAutoUpdateToggleAllowed", base::FEATURE_ENABLED_BY_DEFAULT};
 
 // Enable or disable the changes of WMP features for CrosNext project.
 const base::Feature kCrosNextWMP{"CrosNextWMP",
@@ -428,6 +428,10 @@ const base::Feature kGuestOSGenericInstaller{"GuestOSGenericInstaller",
 // Enables or disables support for third party VMs.
 const base::Feature kBruschetta{"Bruschetta",
                                 base::FEATURE_DISABLED_BY_DEFAULT};
+
+// Enables or disables migration for third party VMs installed during alpha.
+const base::Feature kBruschettaAlphaMigrate{"BruschettaAlphaMigrate",
+                                            base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Enables or disables always using device-activity-status data to filter
 // eligible host phones.
@@ -1323,6 +1327,12 @@ const base::Feature kProjectorUseOAuthForGetVideoInfo(
 const base::Feature kProjectorLocalPlayback("ProjectorLocalPlayback",
                                             base::FEATURE_DISABLED_BY_DEFAULT);
 
+// Controls whether to enable features that are not ready to enable by
+// default but ready for internal testing.
+const base::Feature kProjectorBleedingEdgeExperience(
+    "ProjectorBleedingEdgeExperience",
+    base::FEATURE_DISABLED_BY_DEFAULT);
+
 // Enable or disable quick settings revamped view.
 const base::Feature kQsRevamp{"QsRevamp", base::FEATURE_DISABLED_BY_DEFAULT};
 
@@ -1480,10 +1490,6 @@ const base::Feature kSimLockPolicy{"SimLockPolicy",
 const base::Feature kSmartDimExperimentalComponent{
     "SmartDimExperimentalComponent", base::FEATURE_DISABLED_BY_DEFAULT};
 
-// Backs off connection attempt before retrying after a timeout occurs.
-const base::Feature kSmartLockBluetoothScanningBackoff{
-    "SmartLockBluetoothScanningBackoff", base::FEATURE_DISABLED_BY_DEFAULT};
-
 // Disconnects bluetooth connection when screen turns off.
 const base::Feature kSmartLockBluetoothScreenOffFix{
     "SmartLockBluetoothScreenOffFix", base::FEATURE_DISABLED_BY_DEFAULT};
@@ -1532,6 +1538,10 @@ const base::Feature kSystemJapanesePhysicalTyping{
 // transliteration input methods.
 const base::Feature kSystemTransliterationPhysicalTyping{
     "SystemTransliterationPhysicalTyping", base::FEATURE_ENABLED_BY_DEFAULT};
+
+// Enables or disables the shadows of system tray bubbles.
+const base::Feature kSystemTrayShadow{"SystemTrayShadow",
+                                      base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Enables the ChromeOS system-proxy daemon, only for system services. This
 // means that system services like tlsdate, update engine etc. can opt to be
@@ -1627,7 +1637,7 @@ const base::Feature kVirtualKeyboardBorderedKey{
 
 // Enable or disable multitouch for virtual keyboard on ChromeOS.
 const base::Feature kVirtualKeyboardMultitouch{
-    "VirtualKeyboardMultitouch", base::FEATURE_DISABLED_BY_DEFAULT};
+    "VirtualKeyboardMultitouch", base::FEATURE_ENABLED_BY_DEFAULT};
 
 // Enable or disable round corners for virtual keyboard on ChromeOS.
 const base::Feature kVirtualKeyboardRoundCorners{
@@ -2368,7 +2378,8 @@ bool IsProjectorUseOAuthForGetVideoInfoEnabled() {
 }
 
 bool IsProjectorLocalPlaybackEnabled() {
-  return base::FeatureList::IsEnabled(kProjectorLocalPlayback);
+  return base::FeatureList::IsEnabled(kProjectorLocalPlayback) ||
+         base::FeatureList::IsEnabled(kProjectorBleedingEdgeExperience);
 }
 
 bool IsQsRevampEnabled() {
@@ -2461,6 +2472,10 @@ bool IsSimLockPolicyEnabled() {
 
 bool IsSyncSettingsCategorizationEnabled() {
   return base::FeatureList::IsEnabled(kSyncSettingsCategorization);
+}
+
+bool IsSystemTrayShadowEnabled() {
+  return base::FeatureList::IsEnabled(kSystemTrayShadow);
 }
 
 bool IsStylusBatteryStatusEnabled() {

@@ -4,7 +4,6 @@
 
 #include "chrome/browser/ash/login/session/user_session_initializer.h"
 
-#include "ash/components/audio/cras_audio_handler.h"
 #include "ash/components/peripheral_notification/peripheral_notification_manager.h"
 #include "ash/constants/ash_features.h"
 #include "ash/constants/ash_pref_names.h"
@@ -17,7 +16,6 @@
 #include "base/task/thread_pool.h"
 #include "base/threading/sequenced_task_runner_handle.h"
 #include "chrome/browser/ash/arc/session/arc_service_launcher.h"
-#include "chrome/browser/ash/bruschetta/bruschetta_service.h"
 #include "chrome/browser/ash/camera_mic/vm_camera_mic_manager.h"
 #include "chrome/browser/ash/child_accounts/child_status_reporting_service_factory.h"
 #include "chrome/browser/ash/child_accounts/child_user_service_factory.h"
@@ -46,6 +44,7 @@
 #include "chrome/browser/ui/ash/media_client_impl.h"
 #include "chrome/browser/ui/webui/settings/chromeos/peripheral_data_access_handler.h"
 #include "chrome/common/pref_names.h"
+#include "chromeos/ash/components/audio/cras_audio_handler.h"
 #include "chromeos/ash/components/dbus/pciguard/pciguard_client.h"
 #include "chromeos/ash/components/install_attributes/install_attributes.h"
 #include "chromeos/ash/components/network/network_cert_loader.h"
@@ -232,10 +231,6 @@ void UserSessionInitializer::InitializePrimaryProfileServices(
       crostini::CrostiniManager::GetForProfile(profile);
   if (crostini_manager)
     crostini_manager->MaybeUpdateCrostini();
-  if (base::FeatureList::IsEnabled(features::kBruschetta)) {
-    // Ensure the Bruschetta Service is running.
-    bruschetta::BruschettaService::GetForProfile(profile);
-  }
 
   clipboard_image_model_factory_impl_ =
       std::make_unique<ClipboardImageModelFactoryImpl>(profile);

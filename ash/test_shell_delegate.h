@@ -37,6 +37,8 @@ class TestShellDelegate : public ShellDelegate {
   bool CanShowWindowForUser(const aura::Window* window) const override;
   std::unique_ptr<CaptureModeDelegate> CreateCaptureModeDelegate()
       const override;
+  std::unique_ptr<GlanceablesDelegate> CreateGlanceablesDelegate()
+      const override;
   AccessibilityDelegate* CreateAccessibilityDelegate() override;
   std::unique_ptr<BackGestureContextualNudgeDelegate>
   CreateBackGestureContextualNudgeDelegate(
@@ -56,6 +58,9 @@ class TestShellDelegate : public ShellDelegate {
   void BindMultiDeviceSetup(
       mojo::PendingReceiver<multidevice_setup::mojom::MultiDeviceSetup>
           receiver) override;
+  void BindMultiCaptureService(
+      mojo::PendingReceiver<video_capture::mojom::MultiCaptureService> receiver)
+      override;
   bool IsSessionRestoreInProgress() const override;
   void SetUpEnvironmentForLockedFullscreen(bool locked) override {}
   const GURL& GetLastCommittedURLForWindowIfAny(aura::Window* window) override;

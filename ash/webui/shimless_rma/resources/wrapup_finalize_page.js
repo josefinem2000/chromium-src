@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'chrome://resources/cr_elements/cr_button/cr_button.m.js';
+import 'chrome://resources/cr_elements/cr_button/cr_button.js';
 import './shimless_rma_shared_css.js';
 import './base_page.js';
 
@@ -63,7 +63,7 @@ export class WrapupFinalizePage extends WrapupFinalizePageBase {
     /** @private {ShimlessRmaServiceInterface} */
     this.shimlessRmaService_ = getShimlessRmaService();
     /**
-     * Receiver responsible for observing hardware write protection state.
+     * Receiver responsible for observing finalization progress and state.
      * @private {?FinalizationObserverReceiver}
      */
     this.finalizationObserverReceiver_ = new FinalizationObserverReceiver(

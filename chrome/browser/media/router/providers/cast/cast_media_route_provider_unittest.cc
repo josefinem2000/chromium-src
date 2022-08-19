@@ -42,8 +42,8 @@ static constexpr char kOrigin[] = "https://www.youtube.com";
 static constexpr int kFrameTreeNodeId = 1;
 static constexpr base::TimeDelta kRouteTimeout = base::Seconds(30);
 
-base::Value MakeReceiverStatus() {
-  return base::test::ParseJson(R"({
+base::Value::Dict MakeReceiverStatus() {
+  return base::test::ParseJsonDict(R"({
         "applications": [{
           "appId": "ABCDEFGH",
           "displayName": "theDisplayName",
@@ -269,7 +269,8 @@ TEST_F(CastMediaRouteProviderTest, TerminateRoute) {
 TEST_F(CastMediaRouteProviderTest, GetState) {
   MediaSinkInternal sink = CreateCastSink(1);
   media_sink_service_.AddOrUpdateSink(sink);
-  session_tracker_->HandleReceiverStatusMessage(sink, base::test::ParseJson(R"({
+  session_tracker_->HandleReceiverStatusMessage(sink,
+                                                base::test::ParseJsonDict(R"({
     "status": {
       "applications": [{
         "appId": "ABCDEFGH",

@@ -58,20 +58,24 @@
 
 namespace blink {
 
-#if BUILDFLAG(IS_MAC)
-
 namespace {
 
-base::Feature kCanvas2DHibernation{
-    "Canvas2DHibernation", base::FeatureState::FEATURE_DISABLED_BY_DEFAULT};
+const base::Feature kCanvas2DHibernation {
+  "Canvas2DHibernation",
+#if BUILDFLAG(IS_MAC)
+      // Canvas hibernation is not always enabled on MacOS X due to a bug that
+      // causes content loss. TODO: Find a better fix for crbug.com/588434
+      base::FeatureState::FEATURE_DISABLED_BY_DEFAULT
+#else
+      base::FeatureState::FEATURE_ENABLED_BY_DEFAULT
+#endif
+};
 }
 
 // static
 bool Canvas2DLayerBridge::IsHibernationEnabled() {
   return base::FeatureList::IsEnabled(kCanvas2DHibernation);
 }
-
-#endif  // BUILDFLAG(IS_MAC)
 
 Canvas2DLayerBridge::Canvas2DLayerBridge(const gfx::Size& size,
                                          RasterMode raster_mode,
@@ -388,7 +392,7 @@ void Canvas2DLayerBridge::SetIsInHiddenPage(bool hidden) {
           ::features::kCanvasContextLostInBackground)) {
     lose_context_in_background_scheduled_ = true;
     if (dont_use_idle_scheduling_for_testing_) {
-      Thread::Current()->GetTaskRunner()->PostTask(
+      Thread::Current()->GetDeprecatedTaskRunner()->PostTask(
           FROM_HERE, WTF::Bind(&LoseContextInBackgroundForTestingWrapper,
                                weak_ptr_factory_.GetWeakPtr()));
     } else {
@@ -405,7 +409,7 @@ void Canvas2DLayerBridge::SetIsInHiddenPage(bool hidden) {
     logger_->ReportHibernationEvent(kHibernationScheduled);
     hibernation_scheduled_ = true;
     if (dont_use_idle_scheduling_for_testing_) {
-      Thread::Current()->GetTaskRunner()->PostTask(
+      Thread::Current()->GetDeprecatedTaskRunner()->PostTask(
           FROM_HERE, WTF::Bind(&HibernateWrapperForTesting,
                                weak_ptr_factory_.GetWeakPtr()));
     } else {

@@ -124,6 +124,9 @@ class AppPublisher {
                          bool clear_site_data,
                          bool report_abuse);
 
+  void PauseApp(const std::string& app_id);
+  void UnpauseApp(const std::string& app_id);
+
   virtual void StopApp(const std::string& app_id);
 
   virtual void ExecuteContextMenuCommand(const std::string& app_id,
@@ -151,6 +154,8 @@ class AppPublisher {
   // called instead of OnPreferredAppSet for supported links changes.
   virtual void OnSupportedLinksPreferenceChanged(const std::string& app_id,
                                                  bool open_in_app) {}
+
+  virtual void SetResizeLocked(const std::string& app_id, bool locked);
 
  protected:
 #if !BUILDFLAG(IS_CHROMEOS_LACROS)

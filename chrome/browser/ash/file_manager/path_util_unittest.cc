@@ -937,10 +937,9 @@ TEST_F(FileManagerPathUtilConvertUrlTest, ConvertToContentUrls_Downloads) {
              const std::vector<base::FilePath>& paths_to_share) {
             run_loop->Quit();
             ASSERT_EQ(1U, urls.size());
-            EXPECT_EQ(
-                GURL("content://org.chromium.arc.file_system.fileprovider/"
-                     "download/a/b/c"),
-                urls[0]);
+            EXPECT_EQ(GURL("content://org.chromium.arc.volumeprovider/"
+                           "download/a/b/c"),
+                      urls[0]);
           },
           &run_loop));
   run_loop.Run();
@@ -1055,10 +1054,9 @@ TEST_F(FileManagerPathUtilConvertUrlTest, ConvertToContentUrls_AndroidFiles) {
              const std::vector<base::FilePath>& paths_to_share) {
             run_loop->Quit();
             ASSERT_EQ(1U, urls.size());
-            EXPECT_EQ(
-                GURL("content://org.chromium.arc.file_system.fileprovider/"
-                     "external_files/Pictures/a/b.jpg"),
-                urls[0]);
+            EXPECT_EQ(GURL("content://org.chromium.arc.volumeprovider/"
+                           "external_files/Pictures/a/b.jpg"),
+                      urls[0]);
           },
           &run_loop));
 }
@@ -1105,10 +1103,9 @@ TEST_F(FileManagerPathUtilConvertUrlTest, ConvertToContentUrls_MultipleUrls) {
                            "externalfile%3Adrivefs-b1f44746e7144c3caafeacaa8bb5"
                            "c569%2Fa%2Fb%2Fc"),
                       urls[2]);
-            EXPECT_EQ(
-                GURL("content://org.chromium.arc.file_system.fileprovider/"
-                     "external_files/a/b/c"),
-                urls[3]);
+            EXPECT_EQ(GURL("content://org.chromium.arc.volumeprovider/"
+                           "external_files/a/b/c"),
+                      urls[3]);
           },
           &run_loop));
   run_loop.Run();
@@ -1135,14 +1132,14 @@ TEST_F(FileManagerPathUtilTest, GetDisplayablePathTest) {
       ash::disks::Disk::Builder().SetDeviceLabel("removable_label").Build();
   volume_manager->AddVolumeForTesting(Volume::CreateForRemovable(
       {"/source_path/removable", "/mount_path/removable",
-       ash::MountType::kDevice, ash::disks::MOUNT_CONDITION_NONE},
+       ash::MountType::kDevice, ash::disks::MountCondition::kNone},
       removable_disk.get()));
 
   // The source path for archives need to be inside an already mounted volume,
   // so add it under the My Files volume.
   volume_manager->AddVolumeForTesting(Volume::CreateForRemovable(
       {"/mount_path/my_files/archive", "/mount_path/archive.zip",
-       ash::MountType::kArchive, ash::disks::MOUNT_CONDITION_NONE},
+       ash::MountType::kArchive, ash::disks::MountCondition::kNone},
       nullptr));
 
   volume_manager->AddVolumeForTesting(Volume::CreateForProvidedFileSystem(

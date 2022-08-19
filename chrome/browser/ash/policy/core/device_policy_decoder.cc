@@ -21,8 +21,8 @@
 #include "chrome/browser/ash/policy/off_hours/off_hours_proto_parser.h"
 #include "chrome/browser/ash/tpm_firmware_update.h"
 #include "chrome/browser/policy/chrome_browser_policy_connector.h"
+#include "chromeos/ash/components/dbus/dbus_thread_manager.h"
 #include "chromeos/ash/components/dbus/update_engine/update_engine_client.h"
-#include "chromeos/dbus/dbus_thread_manager.h"
 #include "components/policy/core/common/chrome_schema.h"
 #include "components/policy/core/common/external_data_fetcher.h"
 #include "components/policy/core/common/external_data_manager.h"
@@ -547,14 +547,32 @@ void DecodeLoginPolicies(const em::ChromeDeviceSettingsProto& policy,
     if (GetPolicyLevel(container.has_policy_options(),
                        container.policy_options(), &level)) {
       base::Value urls(base::Value::Type::LIST);
-      for (const std::string& entry : container.value().entries()) {
-        urls.Append(entry);
+
+      if (container.has_value()) {
+        for (const std::string& entry : container.value().entries()) {
+          urls.Append(entry);
+        }
       }
 
       policies->Set(key::kDeviceWebBasedAttestationAllowedUrls, level,
                     POLICY_SCOPE_MACHINE, POLICY_SOURCE_CLOUD, std::move(urls),
                     nullptr);
     }
+  }
+
+  if (policy.has_device_login_screen_context_aware_access_signals_allowlist()) {
+    const em::StringListPolicyProto& container(
+        policy.device_login_screen_context_aware_access_signals_allowlist());
+    base::Value allowlist(base::Value::Type::LIST);
+    if (container.has_value()) {
+      for (const std::string& entry : container.value().entries()) {
+        allowlist.Append(entry);
+      }
+    }
+
+    policies->Set(key::kDeviceLoginScreenContextAwareAccessSignalsAllowlist,
+                  POLICY_LEVEL_MANDATORY, POLICY_SCOPE_MACHINE,
+                  POLICY_SOURCE_CLOUD, std::move(allowlist), nullptr);
   }
 
   if (policy.has_required_client_certificate_for_device()) {

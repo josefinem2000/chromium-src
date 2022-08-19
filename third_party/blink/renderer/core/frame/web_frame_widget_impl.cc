@@ -132,6 +132,7 @@
 #include "third_party/blink/renderer/platform/graphics/paint_worklet_paint_dispatcher.h"
 #include "third_party/blink/renderer/platform/instrumentation/use_counter.h"
 #include "third_party/blink/renderer/platform/keyboard_codes.h"
+#include "third_party/blink/renderer/platform/scheduler/public/non_main_thread.h"
 #include "third_party/blink/renderer/platform/scheduler/public/post_cross_thread_task.h"
 #include "third_party/blink/renderer/platform/widget/input/main_thread_event_queue.h"
 #include "third_party/blink/renderer/platform/widget/input/widget_input_handler_manager.h"
@@ -543,7 +544,7 @@ void WebFrameWidgetImpl::OnStartStylusWriting(
   // the focused element is editable to continue writing.
   if (IsElementNotNullAndEditable(focused_element)) {
     std::move(callback).Run(
-        focused_element->BoundsInViewport(),
+        focused_element->BoundsInWidget(),
         frame->View()->FrameToViewport(GetAbsoluteCaretBounds()));
     return;
   }

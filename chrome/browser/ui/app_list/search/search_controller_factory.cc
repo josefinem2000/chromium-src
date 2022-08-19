@@ -16,6 +16,7 @@
 #include "base/time/default_clock.h"
 #include "build/build_config.h"
 #include "chrome/browser/ash/arc/arc_util.h"
+#include "chrome/browser/ash/crosapi/browser_util.h"
 #include "chrome/browser/ash/crosapi/crosapi_manager.h"
 #include "chrome/browser/ash/drive/drive_integration_service.h"
 #include "chrome/browser/profiles/profile.h"
@@ -73,10 +74,7 @@ constexpr size_t kMaxDriveSearchResults = 6;
 // duplicates of these results for the suggestion chips.
 constexpr size_t kMaxZeroStateFileResults = 20;
 constexpr size_t kMaxZeroStateDriveResults = 10;
-
-// TODO(warx): Need UX spec.
 constexpr size_t kMaxAppShortcutResults = 4;
-
 constexpr size_t kMaxPlayStoreResults = 12;
 constexpr size_t kMaxAssistantTextResults = 1;
 
@@ -114,7 +112,7 @@ std::unique_ptr<SearchController> CreateSearchController(
                          profile, list_controller,
                          base::DefaultClock::GetInstance(), model_updater));
 
-  if (app_list_features::IsLauncherLacrosIntegrationEnabled()) {
+  if (crosapi::browser_util::IsLacrosEnabled()) {
     controller->AddProvider(
         omnibox_group_id,
         std::make_unique<OmniboxLacrosProvider>(
@@ -157,7 +155,7 @@ std::unique_ptr<SearchController> CreateSearchController(
 
   if (ash::features::IsProductivityLauncherEnabled() &&
       base::GetFieldTrialParamByFeatureAsBool(
-          ash::features::kProductivityLauncher, "enable_continue", true)) {
+          ash::features::kProductivityLauncher, "enable_continue", false)) {
     size_t zero_state_files_group_id =
         controller->AddGroup(kMaxZeroStateFileResults);
     controller->AddProvider(zero_state_files_group_id,

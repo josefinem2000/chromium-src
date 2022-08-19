@@ -12477,6 +12477,16 @@
         'dynamic_refresh': True,
         'per_profile': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable Android reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable Android reporting',
+        },
+      ],
       'example_value': True,
       'id': 349,
       'caption': '''Report information about status of Android''',
@@ -12496,6 +12506,16 @@
         'dynamic_refresh': True,
         'per_profile': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable Linux apps usage reporting',
+        },
+        {
+          'value': False,
+          'caption': 'Disable Linux apps usage reporting',
+        },
+      ],
       'example_value': False,
       'id': 484,
       'caption': '''Report information about usage of Linux apps''',
@@ -12515,6 +12535,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device health monitoring',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device health monitoring',
+        },
+      ],
       'example_value': False,
       'id': 293,
       'caption': '''Send network packets to the management server to monitor online status''',
@@ -12555,6 +12585,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable device system log upload',
+        },
+        {
+          'value': False,
+          'caption': 'Disable device system log upload',
+        },
+      ],
       'example_value': False,
       'id': 306,
       'caption': '''Send system logs to the management server''',
@@ -12626,6 +12666,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Allow any user to sign in',
+        },
+        {
+          'value': False,
+          'caption': 'Restrict sign-in to a list of users',
+        },
+      ],
       'example_value': True,
       'id': 123,
       'caption': '''Allow creation of new user accounts''',
@@ -12647,6 +12697,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Enable guest mode',
+        },
+        {
+          'value': False,
+          'caption': 'Disable guest mode',
+        },
+      ],
       'example_value': True,
       'id': 124,
       'caption': '''Enable guest mode''',
@@ -12665,6 +12725,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Always show user names and photos',
+        },
+        {
+          'value': False,
+          'caption': 'Never show user names and photos',
+        },
+      ],
       'example_value': True,
       'id': 125,
       'caption': '''Show usernames on login screen''',
@@ -12685,6 +12755,16 @@
       'features': {
         'dynamic_refresh': True,
       },
+      'items': [
+        {
+          'value': True,
+          'caption': 'Allow mobile data roaming',
+        },
+        {
+          'value': False,
+          'caption': 'Do not allow mobile data roaming',
+        },
+      ],
       'example_value': True,
       'id': 126,
       'caption': '''Enable data roaming''',
@@ -18000,7 +18080,7 @@
         {
           'name': 'SAML_INTERSTITIAL',
           'value': 1,
-          'caption': '''Redirect to SAML IdP by default (prior to <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph> 99 user confirmation is needed)''',
+          'caption': '''Redirect to SAML IdP after user confirmation''',
         },
       ],
       'supported_on': ['chrome_os:51-'],
@@ -18017,9 +18097,7 @@
 
       If set to GAIA, login will be done via the normal GAIA authentication flow.
 
-      If set to SAML_INTERSTITIAL, login will automatically redirect to SAML IdP by default. The user is still allowed to go back to the normal GAIA login flow.
-
-      Note: the additional user confirmation screen, which was shown on <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph> until version 99, isn't displayed anymore. If SAML IdP isn't configured and this policy is set to SAML_INTERSTITIAL, redirect will fail with the 400 error.'''
+      If set to SAML_INTERSTITIAL, login will show an interstitial screen offering the user to go forward with authentication via the SAML IdP of the device's enrollment domain, or go back to the normal GAIA login flow.'''
     },
     {
       'name': 'UsbDetachableWhitelist',
@@ -22461,6 +22539,7 @@
         'dynamic_refresh': True,
         'per_profile': True,
       },
+      'deprecated': True,
       'default': True,
       'example_value': True,
       'id': 727,
@@ -24883,7 +24962,7 @@
     },
     {
       'name': 'ContextAwareAccessSignalsAllowlist',
-      'owners': ['rodmartin@google.com', 'rogerta@chromium.org', 'mad@chromium.org', 'seblalancette@chromium.org'],
+      'owners': ['rodmartin@google.com', 'rogerta@chromium.org', 'mad@chromium.org', 'seblalancette@chromium.org', 'cbe-device-trust-eng@google.com'],
       'supported_on': ['chrome.*:95-', 'chrome_os:95-'],
       'future_on': ['fuchsia'],
       'type': 'list',
@@ -24912,7 +24991,39 @@
 
       For ChromeOS, this policy is related to remote attestation where a certificate is automatically generated and uploaded to the Device Management Server.
 
-      For detailed information on valid <ph name="URL_LABEL">URL</ph> patterns, please see https://cloud.google.com/docs/chrome-enterprise/policies/url-patterns.''',
+      For detailed information on valid <ph name="URL_LABEL">URL</ph> patterns, please see https: //cloud.google.com/docs/chrome-enterprise/policies/url-patterns.''',
+    },
+    {
+      'name': 'DeviceLoginScreenContextAwareAccessSignalsAllowlist',
+      'owners': ['lmasopust@google.com', 'rodmartin@google.com', 'cbe-device-trust-eng@google.com'],
+      'future_on': ['chrome_os'],
+      'device_only': True,
+      'type': 'list',
+      'schema': {
+        'type': 'array',
+        'items': { 'type': 'string' },
+      },
+      'example_value': ['https://example1.com', 'https://[*.]example2.com', 'https://foo.example3.com/path'],
+      'features': {
+        'dynamic_refresh': True,
+        'cloud_only': True,
+      },
+      'id': 1003,
+      'caption': '''Enable attestation flow for a list of URLs on the login and lock screen''',
+      'tags': [],
+      'desc': '''Enable <ph name="CHROME_ENTERPRISE_PLATFORM_IDENTITY_CONNECTOR">Chrome Enterprise Platform Identity Connector</ph> for a list of URLs on the login and lock screen.
+
+      Setting this policy specifies which URLs should be allowed to be part of the attestation flow to get the set of signals from the machine.
+
+      Leaving this policy unset or empty means that no endpoint will be able to start the attestation flow nor get signals from the machine.
+
+      URLs must have HTTPS scheme, e.g. "https://example.com".
+
+      Note: Wildcards, <ph name="WILDCARD_VALUE">*</ph>, are allowed.
+
+      This policy will only impact the attestation flow on the login and lock screen. To change the in-session attestation flow, please use the <ph name="CONTEXT_AWARE_ACCESS_SIGNALS_ALLOWLIST_POLICY_NAME">ContextAwareAccessSignalsAllowlist</ph> policy.
+
+      For detailed information on valid <ph name="URL_LABEL">URL</ph> patterns, please see https: //cloud.google.com/docs/chrome-enterprise/policies/url-patterns.''',
     },
     {
       'name': 'DeviceQuickFixBuildToken',
@@ -32439,6 +32550,7 @@ This is the same behavior as <ph name="POLICY_VALUE_PRIMARY_ACCOUNT_KEEP_EXISTIN
       'type': 'main',
       'schema': { 'type': 'boolean' },
       'supported_on': ['chrome_os:104-106', 'chrome.*:104-106', 'android:104-106'],
+      'deprecated': True,
       'future_on': ['fuchsia'],
       'features': {
         'per_profile': True,
@@ -32602,6 +32714,38 @@ This policy has no effect if the option to keep existing browsing data is not av
       If this policy is unset or disabled, webkitRequestFileSystem with persistent type will operate with temporary quota.
       ''',
     },
+    {
+      'name': 'PrefixedStorageInfoEnabled',
+      'owners': ['ayui@chromium.org', 'chrome-owp-storage@google.com'],
+      'caption': 'Re-enable the deprecated window.webkitStorageInfo API',
+      'type': 'main',
+      'schema': { 'type': 'boolean' },
+      'supported_on': ['chrome.*:106-107', 'chrome_os:106-107', 'android:106-107'],
+      'future_on': ['fuchsia'],
+      'features': {
+        'dynamic_refresh': True,
+        'per_profile': True,
+      },
+      'items': [
+        {
+          'value': True,
+          'caption': 'window.webkitStorageInfo will be available.',
+        },
+        {
+          'value': False,
+          'caption': 'window.webkitStorageInfo will be unavailable.',
+        },
+      ],
+      'default': False,
+      'example_value': False,
+      'id': 1004,
+      'tags': [],
+      'desc': '''Starting in M106, the non-standard API window.webkitStorageInfo will be removed.
+      This policy re-enables the API until M107.
+      If this policy is set to Enabled, the window.webkitStorageInfo API will be available.
+      If this policy is set to Disabled or not set, the window.webkitStorageInfo API will be unavailable.
+      ''',
+    }
   ],
   'messages': {
     # Messages that are not associated to any policies.
@@ -33075,7 +33219,8 @@ The recommended way to configure policy on Windows is via GPO, although provisio
     'DeviceKeylockerForStorageEncryptionEnabled': 'keylocker_for_storage_encryption_enabled.enabled',
     'DeviceRunAutomaticCleanupOnLogin': 'device_run_automatic_cleanup_on_login.value',
     'DeviceEncryptedReportingPipelineEnabled': 'device_reporting.encrypted_reporting_pipeline_enabled',
-    'DeviceAutofillSAMLUsername': 'saml_username.url_parameter_to_autofill_saml_username'
+    'DeviceAutofillSAMLUsername': 'saml_username.url_parameter_to_autofill_saml_username',
+    'DeviceLoginScreenContextAwareAccessSignalsAllowlist': 'device_login_screen_context_aware_access_signals_allowlist.value'
   },
   'policy_atomic_group_definitions': [
     {
@@ -33607,6 +33752,6 @@ The recommended way to configure policy on Windows is via GPO, although provisio
   'placeholders': [],
   'deleted_policy_ids': [114, 115, 204, 205, 206, 341, 412, 438, 476, 544, 546, 562, 569, 578, 583, 585, 586, 587, 588, 589, 590, 591, 600, 668, 669, 872],
   'deleted_atomic_policy_group_ids': [19],
-  'highest_id_currently_used': 1002,
+  'highest_id_currently_used': 1004,
   'highest_atomic_group_id_currently_used': 43
 }

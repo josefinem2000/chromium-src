@@ -418,7 +418,7 @@
             ],
             "experiments": [
                 {
-                    "name": "RationaleShownAtFirstRequest",
+                    "name": "RationaleShownAtFirstRequest_20220406",
                     "params": {
                         "always_show_rationale_before_requesting_permission": "true",
                         "notification_permission_dialog_text_variant_2": "false",
@@ -429,7 +429,7 @@
                     ]
                 },
                 {
-                    "name": "TextVariant2",
+                    "name": "TextVariant2_20220406",
                     "params": {
                         "always_show_rationale_before_requesting_permission": "true",
                         "notification_permission_dialog_text_variant_2": "true",
@@ -2712,29 +2712,6 @@
             ],
             "experiments": [
                 {
-                    "name": "CandidateB_FeedsShowLast7Days_8H",
-                    "params": {
-                        "behavioural_targeting": "feeds",
-                        "hide_switch_when_no_incognito_tabs": "true",
-                        "num_days_keep_show_start_at_startup": "4",
-                        "num_days_user_click_below_threshold": "1",
-                        "open_ntp_instead_of_start": "true",
-                        "show_last_active_tab_only": "true",
-                        "signin_promo_NTP_count_limit": "5",
-                        "signin_promo_NTP_reset_after_hours": "672",
-                        "signin_promo_NTP_since_first_time_shown_limit_hours": "336",
-                        "start_surface_variation": "single",
-                        "support_accessibility": "true",
-                        "tab_count_button_on_start_surface": "true",
-                        "tab_switcher_on_return_time_ms": "28800000",
-                        "user_clicks_threshold": "1"
-                    },
-                    "enable_features": [
-                        "StartSurfaceAndroid",
-                        "TabSwitcherOnReturn"
-                    ]
-                },
-                {
                     "name": "CandidateB",
                     "params": {
                         "hide_switch_when_no_incognito_tabs": "true",
@@ -3162,6 +3139,21 @@
             ]
         }
     ],
+    "ContextualSearchSuppressShortView": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "ContextualSearchSuppressShortView"
+                    ]
+                }
+            ]
+        }
+    ],
     "ContextualTriggers": [
         {
             "platforms": [
@@ -3377,6 +3369,21 @@
                     "name": "Enabled",
                     "enable_features": [
                         "CursiveStylusPreinstall"
+                    ]
+                }
+            ]
+        }
+    ],
+    "CustomTabBrandTransparency": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "CCTBrandTransparency"
                     ]
                 }
             ]
@@ -4700,6 +4707,28 @@
             ]
         }
     ],
+    "GoogleLensTabletIntegration": [
+        {
+            "platforms": [
+                "android"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled_081722",
+                    "params": {
+                        "enableCameraAssistedSearchOnTablet": "true",
+                        "enableCameraAssistedSearchOnTabletWidget": "true",
+                        "enableContextMenuSearchOnTablet": "true"
+                    },
+                    "enable_features": [
+                        "ContextMenuSearchWithGoogleLens",
+                        "LensCameraAssistedSearch",
+                        "LensOnQuickActionSearchWidget"
+                    ]
+                }
+            ]
+        }
+    ],
     "GoogleOnContent": [
         {
             "platforms": [
@@ -5480,6 +5509,21 @@
             ]
         }
     ],
+    "IOSThirdPartyIntentsInIncognito": [
+        {
+            "platforms": [
+                "ios"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "IOS3pIntentsInIncognito"
+                    ]
+                }
+            ]
+        }
+    ],
     "IOSThumbstrip": [
         {
             "platforms": [
@@ -5826,6 +5870,26 @@
                     },
                     "enable_features": [
                         "HistoryClustersOnDeviceClustering"
+                    ]
+                }
+            ]
+        }
+    ],
+    "JourneysSuggestionRow": [
+        {
+            "platforms": [
+                "chromeos",
+                "chromeos_lacros",
+                "linux",
+                "mac",
+                "windows"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "params": {},
+                    "enable_features": [
+                        "JourneysOmniboxHistoryClusterProvider"
                     ]
                 }
             ]
@@ -6607,6 +6671,21 @@
                         "OmniboxLocalZeroSuggestAgeThreshold",
                         "OmniboxMaxZeroSuggestMatches",
                         "ZeroSuggestPrefetching"
+                    ]
+                }
+            ]
+        }
+    ],
+    "OmniboxImplementationChangeIOS": [
+        {
+            "platforms": [
+                "ios"
+            ],
+            "experiments": [
+                {
+                    "name": "Enabled",
+                    "enable_features": [
+                        "kIOSNewOmniboxImplementation"
                     ]
                 }
             ]
@@ -7933,6 +8012,10 @@
             "experiments": [
                 {
                     "name": "DrDc",
+                    "params": {
+                        "BlockListByDevice": "amber|chopin|secret|a03|SO-51B",
+                        "BlockListByModel": "21081111RG|21061110AG|M2101K7BG|SM-A035F|SO-51B"
+                    },
                     "enable_features": [
                         "EnableDrDc",
                         "EnableDrDcVulkan"
@@ -8041,9 +8124,29 @@
             ],
             "experiments": [
                 {
-                    "name": "Enabled",
+                    "name": "All",
                     "params": {
                         "all_except_legacy_windows_platform": "true",
+                        "legacy_windows_platform": "true"
+                    },
+                    "enable_features": [
+                        "ReduceUserAgentPlatformOsCpu"
+                    ]
+                },
+                {
+                    "name": "AllExceptLegacyWindows",
+                    "params": {
+                        "all_except_legacy_windows_platform": "true",
+                        "legacy_windows_platform": "false"
+                    },
+                    "enable_features": [
+                        "ReduceUserAgentPlatformOsCpu"
+                    ]
+                },
+                {
+                    "name": "LegacyWindows",
+                    "params": {
+                        "all_except_legacy_windows_platform": "false",
                         "legacy_windows_platform": "true"
                     },
                     "enable_features": [
@@ -8935,21 +9038,6 @@
                     "name": "Enabled",
                     "enable_features": [
                         "SmallerFontCache"
-                    ]
-                }
-            ]
-        }
-    ],
-    "SmartLockBluetoothScanningBackoff": [
-        {
-            "platforms": [
-                "chromeos"
-            ],
-            "experiments": [
-                {
-                    "name": "Enabled",
-                    "enable_features": [
-                        "SmartLockBluetoothScanningBackoff"
                     ]
                 }
             ]

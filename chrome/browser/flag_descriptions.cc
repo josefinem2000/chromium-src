@@ -914,6 +914,16 @@ const char kDesktopPWAsAdditionalWindowingControlsDescription[] =
     "Enable PWAs to manually recreate the minimize, maximize and restore "
     "window functionalities with respective APIs.";
 
+#if !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+
+const char kDesktopPWAsAppHomePageFlagId[] =
+    "enable-desktop-pwas-app-home-page";
+const char kDesktopPWAsAppHomePageName[] = "desktop PWAs app home page";
+const char kDesktopPWAsAppHomePageDescription[] =
+    "Use new chrome://apps page which has different UX on desktop";
+
+#endif  // !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+
 const char kDesktopPWAsPrefixAppNameInWindowTitleName[] =
     "Desktop PWAs prefix window title with app name.";
 const char kDesktopPWAsPrefixAppNameInWindowTitleDescription[] =
@@ -2074,13 +2084,6 @@ const char kOptimizationGuidePushNotificationName[] =
     "Enable optimization guide push notifications";
 const char kOptimizationGuidePushNotificationDescription[] =
     "Enables the optimization guide to receive push notifications.";
-
-const char kEnableDeJellyName[] = "Experimental de-jelly effect";
-const char kEnableDeJellyDescription[] =
-    "Enables an experimental effect which attempts to mitigate "
-    "\"jelly-scrolling\". This is an experimental implementation with known "
-    "bugs, visual artifacts, and performance cost. This implementation may be "
-    "removed at any time.";
 
 const char kOrganicRepeatableQueriesName[] =
     "Organic repeatable queries in Most Visited tiles";
@@ -3440,6 +3443,13 @@ const char kEnableFamilyInfoFeedbackName[] =
 const char kEnableFamilyInfoFeedbackDescription[] =
     "Enable FamilyLink feedback source in Chrome Settings feedback";
 
+const char kEnableOskResizesVisualViewportName[] =
+    "Enable OSK resizes visual viewport";
+const char kEnableOskResizesVisualViewportDescription[] =
+    "With this flag on, the Android On-Screen-Keyboard (OSK) will avoid "
+    "changing the page height,"
+    "resizing only the visual viewport.";
+
 const char kExploreSitesName[] = "Explore websites";
 const char kExploreSitesDescription[] =
     "Enables portal from new tab page to explore websites.";
@@ -3796,6 +3806,12 @@ const char kRequestDesktopSiteForTabletsDescription[] =
     " On tablets with small screens a mobile site will be requested by "
     "default.";
 
+const char kRevokeNotificationsPermissionIfDisabledOnAppLevelName[] =
+    "Revoke site-level notification permission on Android";
+const char kRevokeNotificationsPermissionIfDisabledOnAppLevelDescription[] =
+    "Allow revoking site-level notification permission if Chrome has no "
+    "app-level notification permission on Android.";
+
 const char kSafeModeForCachedFlagsName[] = "Safe Mode for Cached Flags";
 const char kSafeModeForCachedFlagsDescription[] =
     "Attempts recovery from startup crash loops caused by a bad field trial "
@@ -4012,6 +4028,9 @@ const char kPasswordEditDialogWithDetailsDescription[] =
 const char kEnableAndroidGamepadVibrationName[] = "Gamepad vibration";
 const char kEnableAndroidGamepadVibrationDescription[] =
     "Enables the ability to play vibration effects on supported gamepads.";
+
+const char kCormorantName[] = "Cormorant";
+const char kCormorantDescription[] = "Enables the experimental Cormorant UI.";
 
 // Non-Android -----------------------------------------------------------------
 
@@ -4841,6 +4860,11 @@ const char kGuestOSGenericInstallerDescription[] =
 const char kBruschettaName[] = "Enable the third party VMs feature";
 const char kBruschettaDescription[] =
     "Enables UI support for third party/generic VMs";
+
+const char kBruschettaAlphaMigrateName[] = "Migration for Bruschetta Alpha";
+const char kBruschettaAlphaMigrateDescription[] =
+    "Enable this flag to migrate a Bruschetta installed during the alpha. "
+    "Requires the bruschetta flag to be enabled.";
 
 const char kCameraAppDocScanDlcName[] = "Camera App Doc Scan DLC";
 const char kCameraAppDocScanDlcDescription[] =
@@ -6359,6 +6383,18 @@ const char kDesktopDetailedLanguageSettingsName[] =
     "Detailed Language Settings (Desktop)";
 const char kDesktopDetailedLanguageSettingsDescription[] =
     "Enable the new detailed language settings page";
+
+const char kSyncPromoAfterSigninInterceptName[] =
+    "Sync Promo After Sign-in Intercept";
+const char kSyncPromoAfterSigninInterceptDescription[] =
+    "Enable updates in the first run experience for a new profile in the "
+    "Sign-in Intercept, such as a Sync Promo step and an updated Profile "
+    "Customization UI, which is also used for local profile creation.";
+
+const char kSigninInterceptBubbleV2Name[] = "Sign-in Intercept Bubble V2";
+const char kSigninInterceptBubbleV2Description[] =
+    "Enable visual updates to the sign-in intercept bubble, such as updated "
+    "illustration, strings and an enterprise disclaimer.";
 #endif
 
 #if defined(WEBRTC_USE_PIPEWIRE)

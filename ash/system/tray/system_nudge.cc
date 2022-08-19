@@ -140,6 +140,7 @@ class SystemNudge::SystemNudgeView : public views::View {
 
 SystemNudge::SystemNudge(
     const std::string& name,
+    NudgeCatalogName catalog_name,
     int icon_size,
     int icon_label_spacing,
     int nudge_padding,
@@ -147,6 +148,7 @@ SystemNudge::SystemNudge(
     AshColorProvider::ContentLayerType icon_color_layer_type)
     : root_window_(Shell::GetRootWindowForNewWindows()) {
   params_.name = name;
+  params_.catalog_name = catalog_name;
   params_.icon_size = icon_size;
   params_.icon_label_spacing = icon_label_spacing;
   params_.nudge_padding = nudge_padding;
@@ -198,6 +200,9 @@ void SystemNudge::Show() {
   const std::u16string accessibility_text = GetAccessibilityText();
   if (!accessibility_text.empty())
     nudge_view_->GetViewAccessibility().AnnounceText(accessibility_text);
+
+  base::UmaHistogramEnumeration("Ash.NotifierFramework.Nudge.ShownCount",
+                                params_.catalog_name);
 }
 
 void SystemNudge::Close() {

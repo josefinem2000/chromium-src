@@ -73,6 +73,8 @@ class ContainerQueryEvaluator;
 class CSSPropertyName;
 class CSSPropertyValueSet;
 class CSSStyleDeclaration;
+class CSSToggle;
+class CSSToggleMap;
 class CustomElementDefinition;
 class DOMRect;
 class DOMRectList;
@@ -112,8 +114,6 @@ class StylePropertyMap;
 class StylePropertyMapReadOnly;
 class StyleRecalcContext;
 class StyleRequest;
-class Toggle;
-class ToggleData;
 class ToggleRoot;
 class ToggleRootList;
 class ToggleTrigger;
@@ -397,14 +397,23 @@ class CORE_EXPORT Element : public ContainerNode, public Animatable {
   void scrollTo(const ScrollToOptions*);
   LayoutBox* GetLayoutBoxForScrolling() const override;
 
-  gfx::Rect BoundsInViewport() const;
+  // Returns the bounds of this Element, unclipped, in the coordinate space of
+  // the local root's widget. That is, in the outermost main frame, this will
+  // scale and transform the bounds by the visual viewport transform (i.e.
+  // pinch-zoom). In a local root that isn't main (i.e. a remote frame), the
+  // returned bounds are unscaled by the visual viewport and are relative to
+  // the local root frame.
+  gfx::Rect BoundsInWidget() const;
+
+  // Same as above but for outline rects.
+  Vector<gfx::Rect> OutlineRectsInWidget(
+      DocumentUpdateReason reason = DocumentUpdateReason::kUnknown) const;
+
   // Returns an intersection rectangle of the bounds rectangle and the visual
   // viewport's rectangle in the visual viewport's coordinate space.
   // Applies ancestors' frames' clipping, but does not (yet) apply (overflow)
   // element clipping (crbug.com/889840).
   gfx::Rect VisibleBoundsInVisualViewport() const;
-  Vector<gfx::Rect> OutlineRectsInVisualViewport(
-      DocumentUpdateReason reason = DocumentUpdateReason::kUnknown) const;
 
   DOMRectList* getClientRects();
   gfx::RectF GetBoundingClientRectNoLifecycleUpdate() const;
@@ -1209,8 +1218,10 @@ class CORE_EXPORT Element : public ContainerNode, public Animatable {
 
   bool IsReplacedElementRespectingCSSOverflow() const;
 
-  ToggleData* GetToggleData();
-  ToggleData& EnsureToggleData();
+  CSSToggleMap* toggles() { return &EnsureToggleMap(); }
+
+  CSSToggleMap* GetToggleMap();
+  CSSToggleMap& EnsureToggleMap();
 
   // Create any toggles specified by 'toggle-root' that don't already exist on
   // the element.
@@ -1221,7 +1232,7 @@ class CORE_EXPORT Element : public ContainerNode, public Animatable {
   // The element may be this.
   //
   // See https://tabatkins.github.io/css-toggle/#toggle-in-scope .
-  std::pair<Toggle*, Element*> FindToggleInScope(const AtomicString& name);
+  std::pair<CSSToggle*, Element*> FindToggleInScope(const AtomicString& name);
 
   // Implement https://tabatkins.github.io/css-toggle/#fire-a-toggle-activation
   void FireToggleActivation(const ToggleTrigger& activation);
@@ -1630,10 +1641,10 @@ class CORE_EXPORT Element : public ContainerNode, public Animatable {
   bool CanSkipRecalcForHighlightPseudos(const ComputedStyle& new_style) const;
 
   static void ChangeToggle(Element* toggle_element,
-                           Toggle* toggle,
+                           CSSToggle* toggle,
                            const ToggleTrigger& action,
                            const ToggleRoot* override_spec);
-  void FireToggleChangeEvent(Toggle* toggle);
+  void FireToggleChangeEvent(CSSToggle* toggle);
 
   Member<ElementData> element_data_;
 };

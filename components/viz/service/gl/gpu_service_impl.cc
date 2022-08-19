@@ -565,7 +565,8 @@ void GpuServiceImpl::InitializeWithHost(
     // When using real buffers for testing overlay configurations, we need
     // access to SharedImageManager on the viz thread to obtain the buffer
     // corresponding to a mailbox.
-    const bool display_context_on_another_thread = features::IsDrDcEnabled();
+    const bool display_context_on_another_thread =
+        features::IsDrDcEnabled() && !gpu_driver_bug_workarounds_.disable_drdc;
     bool thread_safe_manager = display_context_on_another_thread;
     // Raw draw needs to access shared image backing on the compositor thread.
     thread_safe_manager |= features::IsUsingRawDraw();
@@ -1063,6 +1064,17 @@ void GpuServiceImpl::SetChannelDiskCacheHandle(
     return;
   }
   gpu_channel_manager_->SetChannelDiskCacheHandle(client_id, handle);
+}
+
+void GpuServiceImpl::OnDiskCacheHandleDestoyed(
+    const gpu::GpuDiskCacheHandle& handle) {
+  if (!main_runner_->BelongsToCurrentThread()) {
+    main_runner_->PostTask(
+        FROM_HERE, base::BindOnce(&GpuServiceImpl::OnDiskCacheHandleDestoyed,
+                                  weak_ptr_, handle));
+    return;
+  }
+  gpu_channel_manager_->OnDiskCacheHandleDestoyed(handle);
 }
 
 void GpuServiceImpl::CloseChannel(int32_t client_id) {

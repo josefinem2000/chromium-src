@@ -15,12 +15,13 @@ class Widget;
 
 namespace ash {
 
+class GlanceablesDelegate;
 class GlanceablesView;
 
 // Controls the "welcome back" glanceables screen shown on login.
 class ASH_EXPORT GlanceablesController {
  public:
-  GlanceablesController();
+  explicit GlanceablesController(std::unique_ptr<GlanceablesDelegate> delegate);
   GlanceablesController(const GlanceablesController&) = delete;
   GlanceablesController& operator=(const GlanceablesController&) = delete;
   ~GlanceablesController();
@@ -31,10 +32,20 @@ class ASH_EXPORT GlanceablesController {
   // Destroys the glanceables widget and view.
   void DestroyUi();
 
+  // Triggers a fetch of data from the server. This method is separate from
+  // CreateUi() so we can avoid triggering server fetches in tests.
+  void FetchData();
+
+  // Triggers a session restore.
+  void RestoreSession();
+
   views::Widget* widget_for_test() { return widget_.get(); }
   GlanceablesView* view_for_test() { return view_; }
 
  private:
+  friend class GlanceablesTest;
+
+  std::unique_ptr<GlanceablesDelegate> delegate_;
   std::unique_ptr<views::Widget> widget_;
   GlanceablesView* view_ = nullptr;
 };

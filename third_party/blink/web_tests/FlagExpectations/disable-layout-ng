@@ -11,6 +11,7 @@
 # Tests that fail in legacy but pass in NG
 
 # ====== New tests from wpt-importer added here ======
+crbug.com/626703 external/wpt/html/browsers/windows/clear-window-name.https.html [ Timeout ]
 crbug.com/626703 external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-construct-xml-parser.xhtml [ Crash ]
 crbug.com/626703 external/wpt/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml [ Crash ]
 crbug.com/626703 external/wpt/css/css-pseudo/highlight-currentcolor-root-explicit-default-002.html [ Failure ]
@@ -325,6 +326,7 @@ crbug.com/1078927 external/wpt/css/css-break/table/break-avoidance-003.html [ Fa
 crbug.com/1078927 external/wpt/css/css-break/table/break-avoidance-004.html [ Failure ]
 crbug.com/1078927 external/wpt/css/css-break/table/break-avoidance-005.html [ Failure ]
 crbug.com/1078927 external/wpt/css/css-break/table/break-avoidance-006.html [ Failure ]
+crbug.com/1078927 external/wpt/css/css-break/table/break-avoidance-007.html [ Failure ]
 crbug.com/1078927 external/wpt/css/css-break/table/break-avoidance-in-table-in-grid.html [ Failure ]
 crbug.com/1078927 external/wpt/css/css-break/table/break-before-expansion-001.html [ Failure ]
 crbug.com/1078927 external/wpt/css/css-break/table/break-before-expansion-002.html [ Failure ]
@@ -485,6 +487,7 @@ crbug.com/1045599 external/wpt/css/css-grid/alignment/grid-alignment-implies-siz
 crbug.com/1045599 external/wpt/css/css-grid/alignment/grid-alignment-style-changes-003.html [ Failure ]
 crbug.com/1045599 external/wpt/css/css-grid/alignment/grid-alignment-style-changes-004.html [ Failure ]
 crbug.com/1045599 external/wpt/css/css-grid/alignment/grid-baseline-004.html [ Failure ]
+crbug.com/1045599 external/wpt/css/css-grid/alignment/grid-container-baseline-001.html [ Failure ]
 crbug.com/1045599 external/wpt/css/css-grid/alignment/grid-content-alignment-overflow-002.html [ Failure ]
 crbug.com/1045599 external/wpt/css/css-grid/alignment/grid-content-alignment-with-abspos-001.html [ Failure ]
 crbug.com/1045599 external/wpt/css/css-grid/alignment/grid-item-aspect-ratio-stretch-1.html [ Failure ]
@@ -1325,7 +1328,6 @@ crbug.com/591099 paint/invalidation/compositing/stacked-float-under-composited-i
 
 # No H.264 decoder support in bot - just skip all webrtc tests.
 crbug.com/840659 external/wpt/webrtc/* [ Skip ]
-crbug.com/840659 virtual/webrtc-wpt-plan-b/external/wpt/webrtc/* [ Skip ]
 
 # MathML depends on LayoutNG.
 crbug.com/6606 external/wpt/mathml/* [ Skip ]
@@ -1462,6 +1464,8 @@ crbug.com/958381 external/wpt/css/CSS2/tables/table-backgrounds-bs-column-001.xh
 crbug.com/958381 external/wpt/css/CSS2/tables/table-backgrounds-bs-rowgroup-001.xht [ Failure ]
 
 ### external/wpt/css/css-align/baseline-rules/
+crbug.com/591099 external/wpt/css/css-align/baseline-rules/grid-item-input-type-number.html [ Failure ]
+crbug.com/591099 external/wpt/css/css-align/baseline-rules/grid-item-input-type-text.html [ Failure ]
 crbug.com/799016 external/wpt/css/css-align/baseline-rules/synthesized-baseline-table-cell-001.html [ Failure ]
 
 ### external/wpt/css/css-flexbox/

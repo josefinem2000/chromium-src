@@ -6,7 +6,7 @@ import 'chrome://personalization/strings.m.js';
 import 'chrome://webui-test/mojo_webui_test_support.js';
 
 import {AlbumsSubpage, AmbientActionName, AmbientModeAlbum, AmbientObserver, AmbientSubpage, AnimationTheme, AnimationThemeItem, emptyState, Paths, PersonalizationRouter, SetAlbumsAction, SetAmbientModeEnabledAction, SetAnimationThemeAction, SetTemperatureUnitAction, SetTopicSourceAction, TemperatureUnit, TopicSource, TopicSourceItem, WallpaperGridItem} from 'chrome://personalization/js/personalization_app.js';
-import {CrRadioButtonElement} from 'chrome://resources/cr_elements/cr_radio_button/cr_radio_button.m.js';
+import {CrRadioButtonElement} from 'chrome://resources/cr_elements/cr_radio_button/cr_radio_button.js';
 import {loadTimeData} from 'chrome://resources/js/load_time_data.m.js';
 import {Url} from 'chrome://resources/mojo/url/mojom/url.mojom-webui.js';
 import {assertDeepEquals, assertEquals, assertFalse, assertNotEquals, assertTrue} from 'chrome://webui-test/chai_assert.js';
@@ -595,9 +595,9 @@ suite('AmbientSubpageTest', function() {
     assertTrue(!!albums[0]);
     assertTrue(!!albums[1]);
     assertTrue(!!albums[2]);
-    assertFalse(albums[0].selected);
-    assertFalse(albums[1].selected);
-    assertTrue(albums[2].selected);
+    assertFalse(albums[0].selected!);
+    assertFalse(albums[1].selected!);
+    assertTrue(albums[2].selected!);
     let selectedAlbums = getSelectedAlbums(
         personalizationStore.data.ambient.albums,
         personalizationStore.data.ambient.topicSource);
@@ -606,7 +606,7 @@ suite('AmbientSubpageTest', function() {
 
     personalizationStore.expectAction(AmbientActionName.SET_ALBUM_SELECTED);
     albums[1].click();
-    assertTrue(albums[1].selected);
+    assertTrue(albums[1].selected!);
     await personalizationStore.waitForAction(
         AmbientActionName.SET_ALBUM_SELECTED);
     selectedAlbums = getSelectedAlbums(
@@ -653,9 +653,9 @@ suite('AmbientSubpageTest', function() {
     assertTrue(!!albums[0]);
     assertTrue(!!albums[1]);
     assertTrue(!!albums[2]);
-    assertFalse(albums[0].selected);
-    assertFalse(albums[1].selected);
-    assertTrue(albums[2].selected);
+    assertFalse(albums[0].selected!);
+    assertFalse(albums[1].selected!);
+    assertTrue(albums[2].selected!);
 
     // Click the last art album item image will not toggle the check and will
     // show a dialog.

@@ -567,10 +567,6 @@ void WebRuntimeFeatures::EnableGetDisplayMedia(bool enable) {
   RuntimeEnabledFeatures::SetGetDisplayMediaEnabled(enable);
 }
 
-void WebRuntimeFeatures::EnableSignedExchangeSubresourcePrefetch(bool enable) {
-  RuntimeEnabledFeatures::SetSignedExchangeSubresourcePrefetchEnabled(enable);
-}
-
 void WebRuntimeFeatures::EnableSubresourceWebBundles(bool enable) {
   RuntimeEnabledFeatures::SetSubresourceWebBundlesEnabled(enable);
 }
@@ -697,6 +693,10 @@ void WebRuntimeFeatures::EnableGetDisplayMediaSetAutoSelectAllScreens(
     bool enable) {
   RuntimeEnabledFeatures::SetGetDisplayMediaSetAutoSelectAllScreensEnabled(
       enable);
+}
+
+void WebRuntimeFeatures::EnablePrefixedStorageInfo(bool enable) {
+  RuntimeEnabledFeatures::SetPrefixedStorageInfoEnabled(enable);
 }
 
 }  // namespace blink

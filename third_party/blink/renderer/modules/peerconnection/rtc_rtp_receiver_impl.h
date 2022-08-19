@@ -114,8 +114,7 @@ class MODULES_EXPORT RTCRtpReceiverImpl : public RTCRtpReceiverPlatform {
   RTCRtpReceiverImpl(
       scoped_refptr<webrtc::PeerConnectionInterface> native_peer_connection,
       RtpReceiverState state,
-      bool force_encoded_audio_insertable_streams,
-      bool force_encoded_video_insertable_streams);
+      bool encoded_insertable_streams);
   RTCRtpReceiverImpl(const RTCRtpReceiverImpl& other);
   ~RTCRtpReceiverImpl() override;
 
@@ -147,33 +146,6 @@ class MODULES_EXPORT RTCRtpReceiverImpl : public RTCRtpReceiverPlatform {
   struct RTCRtpReceiverInternalTraits;
 
   scoped_refptr<RTCRtpReceiverInternal> internal_;
-};
-
-class MODULES_EXPORT RTCRtpReceiverOnlyTransceiver
-    : public RTCRtpPlanBTransceiverPlatform {
- public:
-  RTCRtpReceiverOnlyTransceiver(
-      std::unique_ptr<RTCRtpReceiverPlatform> receiver);
-  ~RTCRtpReceiverOnlyTransceiver() override;
-
-  RTCRtpTransceiverPlatformImplementationType ImplementationType()
-      const override;
-  uintptr_t Id() const override;
-  String Mid() const override;
-  std::unique_ptr<blink::RTCRtpSenderPlatform> Sender() const override;
-  std::unique_ptr<RTCRtpReceiverPlatform> Receiver() const override;
-  webrtc::RtpTransceiverDirection Direction() const override;
-  webrtc::RTCError SetDirection(
-      webrtc::RtpTransceiverDirection direction) override;
-  absl::optional<webrtc::RtpTransceiverDirection> CurrentDirection()
-      const override;
-  absl::optional<webrtc::RtpTransceiverDirection> FiredDirection()
-      const override;
-  webrtc::RTCError SetCodecPreferences(
-      Vector<webrtc::RtpCodecCapability>) override;
-
- private:
-  std::unique_ptr<RTCRtpReceiverPlatform> receiver_;
 };
 
 }  // namespace blink

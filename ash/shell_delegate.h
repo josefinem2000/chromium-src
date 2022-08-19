@@ -18,6 +18,7 @@
 #include "services/device/public/mojom/fingerprint.mojom-forward.h"
 #include "services/media_session/public/cpp/media_session_service.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
+#include "services/video_capture/public/mojom/multi_capture_service.mojom-forward.h"
 #include "ui/gfx/native_widget_types.h"
 #include "url/gurl.h"
 
@@ -36,6 +37,7 @@ class BackGestureContextualNudgeController;
 class BackGestureContextualNudgeDelegate;
 class CaptureModeDelegate;
 class DesksTemplatesDelegate;
+class GlanceablesDelegate;
 class NearbyShareController;
 class NearbyShareDelegate;
 
@@ -51,6 +53,10 @@ class ASH_EXPORT ShellDelegate {
 
   // Creates and returns the delegate of the Capture Mode feature.
   virtual std::unique_ptr<CaptureModeDelegate> CreateCaptureModeDelegate()
+      const = 0;
+
+  // Creates the delegate for the Glanceables feature.
+  virtual std::unique_ptr<GlanceablesDelegate> CreateGlanceablesDelegate()
       const = 0;
 
   // Creates a accessibility delegate. Shell takes ownership of the delegate.
@@ -106,6 +112,12 @@ class ASH_EXPORT ShellDelegate {
   // Binds a MultiDeviceSetup receiver for the primary profile.
   virtual void BindMultiDeviceSetup(
       mojo::PendingReceiver<multidevice_setup::mojom::MultiDeviceSetup>
+          receiver) = 0;
+
+  // Binds a MultiCaptureService receiver to start observing
+  // MultiCaptureStarted() and MultiCaptureStopped() events.
+  virtual void BindMultiCaptureService(
+      mojo::PendingReceiver<video_capture::mojom::MultiCaptureService>
           receiver) = 0;
 
   // Returns an interface to the Media Session service, or null if not

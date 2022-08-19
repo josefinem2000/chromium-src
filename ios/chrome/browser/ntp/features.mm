@@ -7,8 +7,10 @@
 #import <Foundation/Foundation.h>
 
 #import "base/metrics/field_trial_params.h"
+#import "components/version_info/channel.h"
 #import "ios/chrome/app/background_mode_buildflags.h"
 #import "ios/chrome/browser/system_flags.h"
+#import "ios/chrome/common/channel_info.h"
 
 #if !defined(__has_feature) || !__has_feature(objc_arc)
 #error "This file requires ARC support."
@@ -67,22 +69,18 @@ void SaveFeedBackgroundRefreshEnabledForNextColdStart() {
        forKey:kEnableFeedBackgroundRefreshForNextColdStart];
 }
 
-void SetFeedLastBackgroundRefreshTimestamp(NSDate* timestamp) {
-  NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-  dateFormatter.dateStyle = NSDateFormatterShortStyle;
-  dateFormatter.timeStyle = NSDateFormatterShortStyle;
-  dateFormatter.locale = [NSLocale autoupdatingCurrentLocale];
-  [[NSUserDefaults standardUserDefaults]
-      setObject:[dateFormatter stringFromDate:timestamp]
-         forKey:@"FeedLastBackgroundRefreshTimestamp"];
-}
-
 bool IsFeedOverrideDefaultsEnabled() {
+  if (GetChannel() == version_info::Channel::STABLE) {
+    return false;
+  }
   return [[NSUserDefaults standardUserDefaults]
       boolForKey:@"FeedOverrideDefaultsEnabled"];
 }
 
 bool IsFeedBackgroundRefreshCompletedNotificationEnabled() {
+  if (GetChannel() == version_info::Channel::STABLE) {
+    return false;
+  }
   return IsFeedBackgroundRefreshEnabled() &&
          [[NSUserDefaults standardUserDefaults]
              boolForKey:@"FeedBackgroundRefreshNotificationEnabled"];
@@ -95,7 +93,7 @@ bool IsFollowingFeedBackgroundRefreshEnabled() {
   }
   return base::GetFieldTrialParamByFeatureAsBool(
       kEnableFeedBackgroundRefresh, kEnableFollowingFeedBackgroundRefresh,
-      /*default=*/true);
+      /*default=*/false);
 }
 
 bool IsServerDrivenBackgroundRefreshScheduleEnabled() {

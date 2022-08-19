@@ -135,6 +135,7 @@
 #include "content/browser/speech/speech_synthesis_impl.h"
 #include "content/browser/storage_partition_impl.h"
 #include "content/browser/url_loader_factory_params_helper.h"
+#include "content/browser/usb/web_usb_service_impl.h"
 #include "content/browser/web_exposed_isolation_info.h"
 #include "content/browser/web_package/prefetched_signed_exchange_cache.h"
 #include "content/browser/web_package/subresource_web_bundle_navigation_info.h"
@@ -275,7 +276,7 @@
 #include "content/browser/renderer_host/popup_menu_helper_mac.h"
 #endif
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
 #include "content/browser/plugin_service_impl.h"
 #include "content/browser/renderer_host/pepper/pepper_renderer_connection.h"
 #endif
@@ -1399,7 +1400,7 @@ class RenderFrameHostImpl::SubresourceLoaderFactoriesConfig {
   ukm::SourceIdObj ukm_source_id_;
 };
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
 class PepperPluginInstanceHost : public mojom::PepperPluginInstanceHost {
  public:
   PepperPluginInstanceHost(
@@ -1441,7 +1442,7 @@ class PepperPluginInstanceHost : public mojom::PepperPluginInstanceHost {
   mojo::AssociatedReceiver<mojom::PepperPluginInstanceHost> receiver_;
   mojo::AssociatedRemote<mojom::PepperPluginInstance> remote_;
 };
-#endif  // BUILDFLAG(ENABLE_PLUGINS)
+#endif  // BUILDFLAG(ENABLE_PPAPI)
 
 struct PendingNavigation {
   blink::mojom::CommonNavigationParamsPtr common_params;
@@ -9369,7 +9370,7 @@ void RenderFrameHostImpl::SetUpMojoConnection() {
       GetProcess()->GetStoragePartition()->GetFileSystemContext(),
       ChromeBlobStorageContext::GetFor(GetProcess()->GetBrowserContext())));
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
   associated_registry_->AddInterface<mojom::PepperHost>(base::BindRepeating(
       [](RenderFrameHostImpl* impl,
          mojo::PendingAssociatedReceiver<mojom::PepperHost> receiver) {
@@ -9471,11 +9472,11 @@ void RenderFrameHostImpl::TearDownMojoConnection() {
 
   dom_automation_controller_receiver_.reset();
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
   pepper_host_receiver_.reset();
   pepper_instance_map_.clear();
   pepper_hung_detectors_.Clear();
-#endif  // BUILDFLAG(ENABLE_PLUGINS)
+#endif  // BUILDFLAG(ENABLE_PPAPI)
 
   // Audio stream factories are tied to a live RenderFrame: see
   // //content/browser/media/forwarding_audio_stream_factory.h.
@@ -10337,10 +10338,18 @@ void RenderFrameHostImpl::CreateWebBluetoothService(
 
 void RenderFrameHostImpl::CreateWebUsbService(
     mojo::PendingReceiver<blink::mojom::WebUsbService> receiver) {
+  if (!base::FeatureList::IsEnabled(features::kWebUsb)) {
+    return;
+  }
+  if (!IsFeatureEnabled(blink::mojom::PermissionsPolicyFeature::kUsb)) {
+    mojo::ReportBadMessage("Permissions policy blocks access to USB.");
+    return;
+  }
   BackForwardCache::DisableForRenderFrameHost(
       this, BackForwardCacheDisable::DisabledReason(
                 BackForwardCacheDisable::DisabledReasonId::kWebUSB));
-  GetContentClient()->browser()->CreateWebUsbService(this, std::move(receiver));
+  WebUsbServiceImpl::GetOrCreateForCurrentDocument(this)->BindReceiver(
+      std::move(receiver));
 }
 
 void RenderFrameHostImpl::ResetPermissionsPolicy() {
@@ -13924,7 +13933,7 @@ void RenderFrameHostImpl::Clone(
   cookie_observers_.Add(this, std::move(observer));
 }
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
 void RenderFrameHostImpl::InstanceCreated(
     int32_t instance_id,
     mojo::PendingAssociatedRemote<mojom::PepperPluginInstance> instance,
@@ -14025,7 +14034,7 @@ void RenderFrameHostImpl::PepperSetVolume(int32_t instance_id, double volume) {
   plugin_instance_host->second->SetVolume(volume);
 }
 
-#endif  // BUILDFLAG(ENABLE_PLUGINS)
+#endif  // BUILDFLAG(ENABLE_PPAPI)
 
 void RenderFrameHostImpl::OnCookiesAccessed(
     network::mojom::CookieAccessDetailsPtr details) {

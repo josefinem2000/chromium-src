@@ -89,7 +89,7 @@ bool ConstraintSetHasImageCapture(
          constraint_set->hasSaturation() || constraint_set->hasSharpness() ||
          constraint_set->hasFocusDistance() || constraint_set->hasPan() ||
          constraint_set->hasTilt() || constraint_set->hasZoom() ||
-         constraint_set->hasTorch();
+         constraint_set->hasTorch() || constraint_set->hasBackgroundBlur();
 }
 
 bool ConstraintSetHasNonImageCapture(
@@ -456,10 +456,6 @@ MediaStreamTrack* MediaStreamTrackImpl::clone(
   return cloned_track;
 }
 
-void MediaStreamTrackImpl::SetConstraints(const MediaConstraints& constraints) {
-  component_->SetConstraints(constraints);
-}
-
 MediaTrackCapabilities* MediaStreamTrackImpl::getCapabilities() const {
   MediaTrackCapabilities* capabilities = MediaTrackCapabilities::Create();
   if (image_capture_)
@@ -565,7 +561,7 @@ MediaTrackCapabilities* MediaStreamTrackImpl::getCapabilities() const {
 
 MediaTrackConstraints* MediaStreamTrackImpl::getConstraints() const {
   MediaTrackConstraints* constraints =
-      media_constraints_impl::ConvertConstraints(component_->Constraints());
+      media_constraints_impl::ConvertConstraints(constraints_);
   if (!image_capture_)
     return constraints;
 
@@ -762,8 +758,8 @@ void MediaStreamTrackImpl::applyConstraints(
   }
 
   user_media_client->ApplyConstraints(
-      MakeGarbageCollected<ApplyConstraintsRequest>(Component(),
-                                                    web_constraints, resolver));
+      MakeGarbageCollected<ApplyConstraintsRequest>(this, web_constraints,
+                                                    resolver));
   return;
 }
 
@@ -865,6 +861,35 @@ MediaStreamTrackImpl::serializable_session_id() const {
       .serializable_session_id();
 }
 
+void MediaStreamTrackImpl::BeingTransferred(
+    const base::UnguessableToken& transfer_id) {
+  // Creates a clone track to keep a reference in the renderer while
+  // KeepDeviceAliveForTransfer is being called.
+  MediaStreamTrack* cloned_track = clone(GetExecutionContext());
+  WebPlatformMediaStreamSource* platform_source =
+      cloned_track->Component()->Source()->GetPlatformSource();
+  if (platform_source) {
+    platform_source->KeepDeviceAliveForTransfer(
+        serializable_session_id().value(), transfer_id,
+        WTF::Bind(
+            [](MediaStreamTrack* cloned_track,
+               ExecutionContext* execution_context, bool device_found) {
+              if (!device_found) {
+                DLOG(ERROR) << "MediaStreamDevice corresponding to transferred "
+                               "track not found.";
+              }
+              cloned_track->stopTrack(execution_context);
+            },
+            WrapPersistent(cloned_track),
+            WrapWeakPersistent(GetExecutionContext())));
+  } else {
+    cloned_track->stopTrack(GetExecutionContext());
+  }
+
+  stopTrack(GetExecutionContext());
+  return;
+}
+
 #if !BUILDFLAG(IS_ANDROID)
 void MediaStreamTrackImpl::CloseFocusWindowOfOpportunity() {}
 #endif
@@ -913,6 +938,8 @@ void MediaStreamTrackImpl::CloneInternal(MediaStreamTrackImpl* cloned_track) {
   DCHECK(cloned_track);
 
   DidCloneMediaStreamTrack(cloned_track->Component());
+
+  cloned_track->SetConstraints(constraints_);
 
   if (image_capture_) {
     cloned_track->image_capture_ = image_capture_->Clone();

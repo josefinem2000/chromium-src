@@ -198,7 +198,7 @@
 #include "ui/base/device_form_factor.h"
 #endif  // BUILDFLAG(IS_ANDROID)
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
 #include "content/browser/media/session/pepper_playback_observer.h"
 #endif
 
@@ -941,7 +941,7 @@ WebContentsImpl::WebContentsImpl(BrowserContext* browser_context)
           power_scheduler::PowerModeArbiter::GetInstance()->NewVoter(
               "PowerModeVoter.Audible")) {
   TRACE_EVENT0("content", "WebContentsImpl::WebContentsImpl");
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
   pepper_playback_observer_ = std::make_unique<PepperPlaybackObserver>(this);
 #endif
 
@@ -1065,7 +1065,7 @@ WebContentsImpl::~WebContentsImpl() {
   // prerendering. Shutdown them by destructing PrerenderHostRegistry.
   prerender_host_registry_.reset();
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
   // Call this before WebContentsDestroyed() is broadcasted since
   // AudioFocusManager will be destroyed after that.
   pepper_playback_observer_.reset();
@@ -2120,6 +2120,10 @@ bool WebContentsImpl::IsConnectedToSerialPort() {
 
 bool WebContentsImpl::IsConnectedToHidDevice() {
   return hid_active_frame_count_ > 0;
+}
+
+bool WebContentsImpl::IsConnectedToUsbDevice() {
+  return usb_active_frame_count_ > 0;
 }
 
 bool WebContentsImpl::HasFileSystemAccessHandles() {
@@ -6447,7 +6451,7 @@ void WebContentsImpl::OpenColorChooser(
 }
 #endif  // BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_MAC)
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
 void WebContentsImpl::OnPepperInstanceCreated(RenderFrameHostImpl* source,
                                               int32_t pp_instance) {
   OPTIONAL_TRACE_EVENT1("content", "WebContentsImpl::OnPepperInstanceCreated",
@@ -6501,7 +6505,7 @@ void WebContentsImpl::OnPepperPluginCrashed(RenderFrameHostImpl* source,
                              plugin_pid);
 }
 
-#endif  // BUILDFLAG(ENABLE_PLUGINS)
+#endif  // BUILDFLAG(ENABLE_PPAPI)
 
 void WebContentsImpl::UpdateFaviconURL(
     RenderFrameHostImpl* source,
@@ -6852,7 +6856,7 @@ void WebContentsImpl::RenderFrameDeleted(
     observers_.NotifyObservers(&WebContentsObserver::RenderFrameDeleted,
                                render_frame_host);
   }
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
   pepper_playback_observer_->RenderFrameDeleted(render_frame_host);
 #endif
 
@@ -8672,6 +8676,47 @@ void WebContentsImpl::DecrementHidActiveFrameCount() {
     NotifyNavigationStateChanged(INVALIDATE_TYPE_TAB);
 }
 
+void WebContentsImpl::OnIsConnectedToUsbDeviceChanged(
+    bool is_connected_to_usb_device) {
+  OPTIONAL_TRACE_EVENT0("content",
+                        "WebContentsImpl::OnIsConnectedToUsbDeviceChanged");
+  NotifyNavigationStateChanged(INVALIDATE_TYPE_TAB);
+  observers_.NotifyObservers(
+      &WebContentsObserver::OnIsConnectedToUsbDeviceChanged,
+      is_connected_to_usb_device);
+}
+
+void WebContentsImpl::IncrementUsbActiveFrameCount() {
+  OPTIONAL_TRACE_EVENT0("content",
+                        "WebContentsImpl::IncrementUsbActiveFrameCount");
+  // Trying to invalidate the tab state while being destroyed could result in a
+  // use after free.
+  if (IsBeingDestroyed())
+    return;
+
+  // Notify for UI updates if the active frame count transitions from zero to
+  // non-zero.
+  usb_active_frame_count_++;
+  if (usb_active_frame_count_ == 1)
+    OnIsConnectedToUsbDeviceChanged(true);
+}
+
+void WebContentsImpl::DecrementUsbActiveFrameCount() {
+  OPTIONAL_TRACE_EVENT0("content",
+                        "WebContentsImpl::DecrementUsbActiveFrameCount");
+  // Trying to invalidate the tab state while being destroyed could result in a
+  // use after free.
+  if (IsBeingDestroyed())
+    return;
+
+  // Notify for UI updates if the active frame count transitions from non-zero
+  // to zero.
+  DCHECK_NE(0u, usb_active_frame_count_);
+  usb_active_frame_count_--;
+  if (usb_active_frame_count_ == 0)
+    OnIsConnectedToUsbDeviceChanged(false);
+}
+
 void WebContentsImpl::IncrementFileSystemAccessHandleCount() {
   OPTIONAL_TRACE_EVENT0(
       "content", "WebContentsImpl::IncrementFileSystemAccessHandleCount");
@@ -9470,6 +9515,18 @@ std::unique_ptr<PrerenderHandle> WebContentsImpl::StartPrerendering(
         prerendering_url);
   }
   return nullptr;
+}
+
+void WebContentsImpl::DisablePrerender2() {
+  prerender2_disabled_ = true;
+}
+
+void WebContentsImpl::ResetPrerender2Disabled() {
+  prerender2_disabled_ = false;
+}
+
+bool WebContentsImpl::IsPrerender2Disabled() {
+  return prerender2_disabled_ || !GetDelegate()->IsPrerender2Supported(*this);
 }
 
 bool WebContentsImpl::CancelPrerendering(

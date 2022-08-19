@@ -255,8 +255,8 @@
 #include "chrome/browser/nearby_sharing/common/nearby_share_prefs.h"
 #include "chrome/browser/new_tab_page/modules/drive/drive_service.h"
 #include "chrome/browser/new_tab_page/modules/photos/photos_service.h"
+#include "chrome/browser/new_tab_page/modules/recipes/recipes_service.h"
 #include "chrome/browser/new_tab_page/modules/safe_browsing/safe_browsing_handler.h"
-#include "chrome/browser/new_tab_page/modules/task_module/task_module_service.h"
 #include "chrome/browser/new_tab_page/promos/promo_service.h"
 #include "chrome/browser/policy/developer_tools_policy_handler.h"
 #include "chrome/browser/search/background/ntp_custom_background_service.h"
@@ -293,8 +293,6 @@
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
 #include "ash/components/arc/arc_prefs.h"
-#include "ash/components/audio/audio_devices_pref_handler_impl.h"
-#include "ash/components/device_activity/device_activity_controller.h"
 #include "ash/components/timezone/timezone_resolver.h"
 #include "ash/constants/ash_pref_names.h"
 #include "ash/public/cpp/ash_prefs.h"
@@ -394,6 +392,8 @@
 #include "chrome/browser/ui/webui/chromeos/login/signin_screen_handler.h"
 #include "chrome/browser/ui/webui/settings/chromeos/os_settings_ui.h"
 #include "chrome/browser/upgrade_detector/upgrade_detector_chromeos.h"
+#include "chromeos/ash/components/audio/audio_devices_pref_handler_impl.h"
+#include "chromeos/ash/components/device_activity/device_activity_controller.h"
 #include "chromeos/ash/components/local_search_service/search_metrics_reporter.h"
 #include "chromeos/ash/components/network/cellular_esim_profile_handler_impl.h"
 #include "chromeos/ash/components/network/cellular_metrics_logger.h"
@@ -1420,7 +1420,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
   signin::RegisterProfilePrefs(registry);
   StartupBrowserCreator::RegisterProfilePrefs(registry);
   tab_search_prefs::RegisterProfilePrefs(registry);
-  TaskModuleService::RegisterProfilePrefs(registry);
+  RecipesService::RegisterProfilePrefs(registry);
   UnifiedAutoplayConfig::RegisterProfilePrefs(registry);
   CartService::RegisterProfilePrefs(registry);
 #endif  // BUILDFLAG(IS_ANDROID)

@@ -126,7 +126,13 @@ const base::Feature kTailoredSecurityDesktopNotice{
     "TailoredSecurityDesktopNotice", base::FEATURE_DISABLED_BY_DEFAULT};
 
 const base::Feature kTailoredSecurityIntegration{
-    "TailoredSecurityIntegration", base::FEATURE_ENABLED_BY_DEFAULT};
+  "TailoredSecurityIntegration",
+#if BUILDFLAG(IS_IOS)
+      base::FEATURE_DISABLED_BY_DEFAULT
+#else
+      base::FEATURE_ENABLED_BY_DEFAULT
+#endif
+};
 
 const base::Feature kOmitNonUserGesturesFromReferrerChain{
     "SafeBrowsingOmitNonUserGesturesFromReferrerChain",
@@ -166,7 +172,7 @@ const base::Feature kVisualFeaturesSizes{"VisualFeaturesSizes",
                                          base::FEATURE_DISABLED_BY_DEFAULT};
 
 const base::Feature kVisualFeaturesInCsppPings{
-    "VisualFeaturesInCsppPings", base::FEATURE_DISABLED_BY_DEFAULT};
+    "VisualFeaturesInCsppPings", base::FEATURE_ENABLED_BY_DEFAULT};
 
 namespace {
 // List of Safe Browsing features. Boolean value for each list member should

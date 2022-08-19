@@ -55,28 +55,29 @@ class SnapshotManager;
 class VolumeManagerObserver;
 
 // Identifiers for volume types managed by Chrome OS file manager.
+// The enum values must be kept in sync with FileManagerVolumeType defined in
+// tools/metrics/histograms/enums.xml.
 enum VolumeType {
   VOLUME_TYPE_TESTING = -1,  // Used only in tests.
   VOLUME_TYPE_GOOGLE_DRIVE = 0,
-  VOLUME_TYPE_DOWNLOADS_DIRECTORY,
-  VOLUME_TYPE_REMOVABLE_DISK_PARTITION,
-  VOLUME_TYPE_MOUNTED_ARCHIVE_FILE,
-  VOLUME_TYPE_PROVIDED,  // File system provided by the FileSystemProvider API.
-  VOLUME_TYPE_MTP,
-  VOLUME_TYPE_MEDIA_VIEW,
-  VOLUME_TYPE_CROSTINI,
-  VOLUME_TYPE_ANDROID_FILES,
-  VOLUME_TYPE_DOCUMENTS_PROVIDER,
-  VOLUME_TYPE_SMB,
-  VOLUME_TYPE_SYSTEM_INTERNAL,  // Internal volume which is never exposed to
-                                // users.
-  VOLUME_TYPE_GUEST_OS,         // Guest OS volumes (Crostini, Bruschetta, etc)
-  // The enum values must be kept in sync with FileManagerVolumeType in
-  // tools/metrics/histograms/enums.xml. Since enums for histograms are
-  // append-only (for keeping the number consistent across versions), new values
-  // for this enum also has to be always appended at the end (i.e., here).
+  VOLUME_TYPE_DOWNLOADS_DIRECTORY = 1,
+  VOLUME_TYPE_REMOVABLE_DISK_PARTITION = 2,
+  VOLUME_TYPE_MOUNTED_ARCHIVE_FILE = 3,
+  VOLUME_TYPE_PROVIDED = 4,  // File system provided by FileSystemProvider API.
+  VOLUME_TYPE_MTP = 5,
+  VOLUME_TYPE_MEDIA_VIEW = 6,
+  VOLUME_TYPE_CROSTINI = 7,
+  VOLUME_TYPE_ANDROID_FILES = 8,
+  VOLUME_TYPE_DOCUMENTS_PROVIDER = 9,
+  VOLUME_TYPE_SMB = 10,
+  VOLUME_TYPE_SYSTEM_INTERNAL = 11,  // Internal volume never exposed to users.
+  VOLUME_TYPE_GUEST_OS = 12,  // Guest OS volumes (Crostini, Bruschetta, etc)
+  // Append new values here.
   NUM_VOLUME_TYPE,
 };
+
+// Output operator for logging.
+std::ostream& operator<<(std::ostream& out, VolumeType type);
 
 // Says how was the mount performed, whether due to user interaction, or
 // automatic. User interaction includes both hardware (pluggins a USB stick)
@@ -101,42 +102,52 @@ class Volume : public base::SupportsWeakPtr<Volume> {
   ~Volume();
 
   // Factory static methods for different volume types.
-  static std::unique_ptr<Volume> CreateForDrive(
-      const base::FilePath& drive_path);
+  static std::unique_ptr<Volume> CreateForDrive(base::FilePath drive_path);
+
   static std::unique_ptr<Volume> CreateForDownloads(
-      const base::FilePath& downloads_path);
+      base::FilePath downloads_path);
+
   static std::unique_ptr<Volume> CreateForRemovable(
       const ash::disks::DiskMountManager::MountPoint& mount_point,
       const ash::disks::Disk* disk);
+
   static std::unique_ptr<Volume> CreateForProvidedFileSystem(
       const ash::file_system_provider::ProvidedFileSystemInfo& file_system_info,
       MountContext mount_context);
+
   static std::unique_ptr<Volume> CreateForFuseBoxProvidedFileSystem(
-      const base::FilePath& mount_path,
+      base::FilePath mount_path,
       const ash::file_system_provider::ProvidedFileSystemInfo& file_system_info,
       MountContext mount_context);
-  static std::unique_ptr<Volume> CreateForMTP(const base::FilePath& mount_path,
-                                              const std::string& label,
+
+  static std::unique_ptr<Volume> CreateForMTP(base::FilePath mount_path,
+                                              std::string label,
                                               bool read_only);
-  static std::unique_ptr<Volume> CreateForFuseBoxMTP(
-      const base::FilePath& mount_path,
-      const std::string& label,
-      bool read_only);
+
+  static std::unique_ptr<Volume> CreateForFuseBoxMTP(base::FilePath mount_path,
+                                                     std::string label,
+                                                     bool read_only);
+
   static std::unique_ptr<Volume> CreateForMediaView(
       const std::string& root_document_id);
+
   static std::unique_ptr<Volume> CreateMediaViewForTesting(
       base::FilePath mount_path,
       const std::string& root_document_id);
+
   static std::unique_ptr<Volume> CreateForSshfsCrostini(
-      const base::FilePath& crostini_path,
-      const base::FilePath& remote_mount_path);
+      base::FilePath crostini_path,
+      base::FilePath remote_mount_path);
+
   static std::unique_ptr<Volume> CreateForSftpGuestOs(
-      const std::string display_name,
-      const base::FilePath& sftp_mount_path,
-      const base::FilePath& remote_mount_path,
+      std::string display_name,
+      base::FilePath sftp_mount_path,
+      base::FilePath remote_mount_path,
       const guest_os::VmType vm_type);
+
   static std::unique_ptr<Volume> CreateForAndroidFiles(
-      const base::FilePath& mount_path);
+      base::FilePath mount_path);
+
   static std::unique_ptr<Volume> CreateForDocumentsProvider(
       const std::string& authority,
       const std::string& root_id,
@@ -145,32 +156,36 @@ class Volume : public base::SupportsWeakPtr<Volume> {
       const std::string& summary,
       const GURL& icon_url,
       bool read_only);
-  static std::unique_ptr<Volume> CreateForSmb(const base::FilePath& mount_point,
-                                              const std::string display_name);
-  static std::unique_ptr<Volume> CreateForShareCache(
-      const base::FilePath& mount_path);
+
+  static std::unique_ptr<Volume> CreateForSmb(base::FilePath mount_point,
+                                              std::string display_name);
+
+  static std::unique_ptr<Volume> CreateForShareCache(base::FilePath mount_path);
+
   static std::unique_ptr<Volume> CreateForTesting(
-      const base::FilePath& path,
+      base::FilePath path,
       VolumeType volume_type,
       ash::DeviceType device_type,
       bool read_only,
-      const base::FilePath& device_path,
-      const std::string& drive_label,
-      const std::string& file_system_type = "",
-      bool hidden = false);
-  static std::unique_ptr<Volume> CreateForTesting(
-      const base::FilePath& device_path,
-      const base::FilePath& mount_path);
+      base::FilePath device_path,
+      std::string drive_label,
+      std::string file_system_type = {},
+      bool hidden = false,
+      bool watchable = false);
+
+  static std::unique_ptr<Volume> CreateForTesting(base::FilePath device_path,
+                                                  base::FilePath mount_path);
+
   // Create a volume at `path` with the specified `volume_type`.
   // For `volume_type`==VOLUME_TYPE_GUEST_OS, `vm_type` should also be
   // specified. For `volume_type`==VOLUME_TYPE_MOUNTED_ARCHIVE_FILE,
   // `source_path` has to be specified and point to the (not necessarily
   // existing) path of the archive file.
   static std::unique_ptr<Volume> CreateForTesting(
-      const base::FilePath& path,
+      base::FilePath path,
       VolumeType volume_type,
       absl::optional<guest_os::VmType> vm_type,
-      absl::optional<base::FilePath> source_path = absl::nullopt);
+      base::FilePath source_path = {});
 
   // Getters for all members. See below for details.
   const std::string& volume_id() const { return volume_id_; }
@@ -231,10 +246,10 @@ class Volume : public base::SupportsWeakPtr<Volume> {
   ash::file_system_provider::ProviderId provider_id_;
 
   // The source of the volume's data.
-  Source source_;
+  Source source_ = SOURCE_FILE;
 
   // The type of mounted volume.
-  VolumeType type_;
+  VolumeType type_ = VOLUME_TYPE_GOOGLE_DRIVE;
 
   // The type of device. (e.g. USB, SD card, DVD etc.)
   ash::DeviceType device_type_ = ash::DeviceType::kUnknown;
@@ -256,39 +271,21 @@ class Volume : public base::SupportsWeakPtr<Volume> {
   base::FilePath remote_mount_path_;
 
   // The mounting condition. See the enum for the details.
-  ash::disks::MountCondition mount_condition_;
+  ash::disks::MountCondition mount_condition_ =
+      ash::disks::MountCondition::kNone;
 
   // The context of the mount. Whether mounting was performed due to a user
   // interaction or not.
-  MountContext mount_context_;
+  MountContext mount_context_ = MOUNT_CONTEXT_UNKNOWN;
 
   // Path of the storage device this device's block is a part of.
   // (e.g. /sys/devices/pci0000:00/.../8:0:0:0/)
   base::FilePath storage_device_path_;
 
-  // Label for the volume if the volume is either removable or a provided
-  // file system. In case of removables, if disk is a parent, then its label,
-  // else parents label (e.g. "TransMemory").
+  // Label for the volume if the volume is either removable or a provided file
+  // system. In case of removables, if disk is a parent, then its label, else
+  // parents label (e.g. "TransMemory").
   std::string volume_label_;
-
-  // Is the device is a parent device (i.e. sdb rather than sdb1).
-  bool is_parent_;
-
-  // True if the volume is not writable by applications.
-  bool is_read_only_;
-
-  // True if the volume is made read_only due to its hardware.
-  // This implies is_read_only_.
-  bool is_read_only_removable_device_;
-
-  // True if the volume contains media.
-  bool has_media_;
-
-  // True if the volume is configurable.
-  bool configurable_;
-
-  // True if the volume notifies about changes via file/directory watchers.
-  bool watchable_;
 
   // Identifier for the file system type
   std::string file_system_type_;
@@ -296,13 +293,36 @@ class Volume : public base::SupportsWeakPtr<Volume> {
   // Volume icon set.
   ash::file_system_provider::IconSet icon_set_;
 
-  // Device label of a physical removable device. Removable partitions
-  // belonging to the same device share the same device label.
+  // Device label of a physical removable device. Removable partitions belonging
+  // to the same device share the same device label.
   std::string drive_label_;
+
+  // Is the device is a parent device (i.e. sdb rather than sdb1).
+  bool is_parent_ = false;
+
+  // True if the volume is not writable by applications.
+  bool is_read_only_ = false;
+
+  // True if the volume is made read_only due to its hardware.
+  // This implies is_read_only_.
+  bool is_read_only_removable_device_ = false;
+
+  // True if the volume contains media.
+  bool has_media_ = false;
+
+  // True if the volume is configurable.
+  bool configurable_ = false;
+
+  // True if the volume notifies about changes via file/directory watchers.
+  //
+  // Requests to add file watchers for paths on the volume will fail when
+  // set to false and Files app will add a "Refresh" icon to the toolbar
+  // so that the directory contents can be manually refreshed.
+  bool watchable_ = false;
 
   // True if the volume is hidden and never shown to the user through File
   // Manager.
-  bool hidden_;
+  bool hidden_ = false;
 
   // Only set for VOLUME_TYPE_GUEST_OS, identifies the type of Guest OS VM.
   absl::optional<guest_os::VmType> vm_type_;
@@ -428,14 +448,15 @@ class VolumeManager : public KeyedService,
 
   // For testing purposes, adds a volume info pointing to |path|, with TESTING
   // type. Assumes that the mount point is already registered.
-  void AddVolumeForTesting(const base::FilePath& path,
+  void AddVolumeForTesting(base::FilePath path,
                            VolumeType volume_type,
                            ash::DeviceType device_type,
                            bool read_only,
-                           const base::FilePath& device_path = base::FilePath(),
-                           const std::string& drive_label = "",
-                           const std::string& file_system_type = "",
-                           bool hidden = false);
+                           base::FilePath device_path = {},
+                           std::string drive_label = {},
+                           std::string file_system_type = {},
+                           bool hidden = false,
+                           bool watchable = false);
 
   // For testing purposes, adds the volume info to the volume manager.
   void AddVolumeForTesting(std::unique_ptr<Volume> volume);

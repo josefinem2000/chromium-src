@@ -142,7 +142,7 @@
 #include "chrome/browser/new_tab_page/modules/drive/drive.mojom.h"
 #include "chrome/browser/new_tab_page/modules/feed/feed.mojom.h"
 #include "chrome/browser/new_tab_page/modules/photos/photos.mojom.h"
-#include "chrome/browser/new_tab_page/modules/task_module/task_module.mojom.h"
+#include "chrome/browser/new_tab_page/modules/recipes/recipes.mojom.h"
 #include "chrome/browser/new_tab_page/new_tab_page_util.h"
 #include "chrome/browser/payments/payment_request_factory.h"
 #include "chrome/browser/ui/webui/access_code_cast/access_code_cast.mojom.h"
@@ -194,6 +194,11 @@
 #include "chrome/browser/ui/webui/discards/site_data.mojom.h"
 #endif
 
+#if !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+#include "chrome/browser/ui/webui/app_home/app_home.mojom.h"
+#include "chrome/browser/ui/webui/app_home/app_home_ui.h"
+#endif  // !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+
 #if !BUILDFLAG(IS_CHROMEOS_ASH) && !BUILDFLAG(IS_ANDROID)
 #include "chrome/browser/ui/webui/signin/profile_customization_ui.h"
 #include "chrome/browser/ui/webui/signin/profile_picker_ui.h"
@@ -201,7 +206,6 @@
 #endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
 
 #if BUILDFLAG(IS_CHROMEOS_ASH)
-#include "ash/components/audio/public/mojom/cros_audio_config.mojom.h"
 #include "ash/services/cellular_setup/public/mojom/cellular_setup.mojom.h"
 #include "ash/services/cellular_setup/public/mojom/esim_manager.mojom.h"
 #include "ash/services/multidevice_setup/multidevice_setup_service.h"
@@ -279,6 +283,7 @@
 #include "chrome/browser/ui/webui/settings/ash/search/search.mojom.h"
 #include "chrome/browser/ui/webui/settings/ash/search/user_action_recorder.mojom.h"
 #include "chrome/browser/ui/webui/settings/chromeos/os_settings_ui.h"
+#include "chromeos/ash/components/audio/public/mojom/cros_audio_config.mojom.h"
 #include "chromeos/ash/components/local_search_service/public/mojom/index.mojom.h"
 #include "chromeos/ash/services/auth_factor_config/public/mojom/auth_factor_config.mojom.h"
 #include "chromeos/services/bluetooth_config/public/mojom/cros_bluetooth_config.mojom.h"
@@ -924,8 +929,8 @@ void PopulateChromeWebUIFrameBinders(
   }
 
   if (IsRecipeTasksModuleEnabled()) {
-    RegisterWebUIControllerInterfaceBinder<
-        task_module::mojom::TaskModuleHandler, NewTabPageUI>(map);
+    RegisterWebUIControllerInterfaceBinder<recipes::mojom::RecipesHandler,
+                                           NewTabPageUI>(map);
   }
 
   if (base::FeatureList::IsEnabled(ntp_features::kNtpFeedModule)) {
@@ -1275,6 +1280,13 @@ void PopulateChromeWebUIFrameBinders(
         map);
   }
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+
+#if !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+  if (base::FeatureList::IsEnabled(features::kDesktopPWAsAppHomePage)) {
+    RegisterWebUIControllerInterfaceBinder<
+        ::app_home::mojom::PageHandlerFactory, webapps::AppHomeUI>(map);
+  }
+#endif
 }
 
 void PopulateChromeWebUIFrameInterfaceBrokers(

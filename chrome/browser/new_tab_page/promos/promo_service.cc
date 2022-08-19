@@ -14,8 +14,10 @@
 #include "base/metrics/histogram_macros.h"
 #include "base/observer_list.h"
 #include "base/strings/strcat.h"
+#include "base/strings/stringprintf.h"
 #include "base/time/time.h"
 #include "base/values.h"
+#include "chrome/browser/browser_features.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/common/pref_names.h"
 #include "chrome/common/webui_url_constants.h"
@@ -32,6 +34,7 @@
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/cpp/simple_url_loader.h"
 #include "ui/base/l10n/l10n_util.h"
+#include "ui/webui/resources/js/browser_command/browser_command.mojom.h"
 
 namespace {
 
@@ -41,6 +44,35 @@ const int kDaysThatBlocklistExpiresIn = 28;
 const char kNewTabPromosApiPath[] = "/async/newtab_promos";
 
 const char kXSSIResponsePreamble[] = ")]}'";
+
+constexpr char kWarningSymbol[] =
+    "data:image/"
+    "svg+xml;base64,"
+    "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii01IC"
+    "01IDU4IDU4IiBmaWxsPSIjZmRkNjMzIj48cGF0aCBkPSJNMiA0Mmg0NEwyNCA0IDIgNDJ6"
+    "bTI0LTZoLTR2LTRoNHY0em0wLThoLTR2LThoNHY4eiIvPjwvc3ZnPg==";
+constexpr char kFakePromo[] = R"({
+  "update": {
+    "promos": {
+      "middle": "test",
+      "middle_announce_payload": {
+        "hidden": false,
+        "part": [{
+          "image": {
+            "image_url": "%s",
+            "target": "command:%s"
+          }
+        },{
+          "link": {
+            "url": "command:%s",
+            "text": "Test command: %s"
+          }
+        }]
+      },
+      "id": "test%s"
+    }
+  }
+})";
 
 bool CanBlockPromos() {
   return base::FeatureList::IsEnabled(
@@ -60,7 +92,8 @@ GURL GetApiUrl() {
 }
 
 // Parses an update proto from |value|. Will return false if |value| is not of
-// the form: {"update":{"promos":{"middle": ""}}}, and true otherwise.
+// the form: {"update":{"promos":{"middle_announce_payload": ""}}}, and true
+// otherwise.
 // Additionally, there can be a "log_url" or "id" field in the promo. Those are
 // populated if found. They're not set for emergency promos. |data| will never
 // be absl::nullopt if top level dictionary keys of "update" and "promos" are
@@ -91,18 +124,14 @@ bool JsonToPromoData(const base::Value& value,
   PromoData result;
   *data = result;
 
-  const std::string* middle = promos->FindString("middle");
-  if (!middle) {
-    DVLOG(1) << "No middle promo";
-    return false;
-  }
-
   const base::Value::Dict* middle_announce_payload =
       promos->FindDict("middle_announce_payload");
-  if (middle_announce_payload) {
-    JSONStringValueSerializer serializer(&result.middle_slot_json);
-    serializer.Serialize(*middle_announce_payload);
+  if (!middle_announce_payload) {
+    DVLOG(1) << "No middle announce payload";
+    return false;
   }
+  JSONStringValueSerializer serializer(&result.middle_slot_json);
+  serializer.Serialize(*middle_announce_payload);
 
   const std::string* maybe_log_url = promos->FindString("log_url");
   // Emergency promos don't have these, so it's OK if this key is missing.
@@ -124,7 +153,6 @@ bool JsonToPromoData(const base::Value& value,
   // Emergency promos may not have IDs, which is OK. They also can't be
   // dismissed (because of this).
 
-  result.promo_html = *middle;
   result.promo_log_url = promo_log_url;
   result.promo_id = promo_id;
 
@@ -143,6 +171,30 @@ PromoService::PromoService(
 PromoService::~PromoService() = default;
 
 void PromoService::Refresh() {
+  std::string command_id;
+  // Replace the promo URL with "command:<id>" if such a command ID is set
+  // via the feature params.
+  // If fake data is being used, we set the command_id to 7, which corresponds
+  // to kNoOpCommand in
+  // ui/webui/resources/js/browser_command/browser_command.mojom
+  if (base::GetFieldTrialParamValueByFeature(
+          ntp_features::kNtpMiddleSlotPromoDismissal,
+          ntp_features::kNtpMiddleSlotPromoDismissalParam) == "fake") {
+    command_id = base::NumberToString(
+        static_cast<int>(browser_command::mojom::Command::kNoOpCommand));
+  } else {
+    command_id = base::GetFieldTrialParamValueByFeature(
+        features::kPromoBrowserCommands, features::kBrowserCommandIdParam);
+  }
+
+  if (!command_id.empty()) {
+    auto fake_promo_json = std::make_unique<std::string>(base::StringPrintf(
+        kFakePromo, kWarningSymbol, command_id.c_str(), command_id.c_str(),
+        command_id.c_str(), command_id.c_str()));
+    OnLoadDone(std::move(fake_promo_json));
+    return;
+  }
+
   net::NetworkTrafficAnnotationTag traffic_annotation =
       net::DefineNetworkTrafficAnnotation("promo_service", R"(
         semantics {

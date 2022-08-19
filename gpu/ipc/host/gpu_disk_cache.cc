@@ -5,42 +5,19 @@
 #include "gpu/ipc/host/gpu_disk_cache.h"
 
 #include "base/bind.h"
-#include "base/command_line.h"
+#include "base/callback_helpers.h"
 #include "base/memory/raw_ptr.h"
 #include "base/memory/ref_counted.h"
-#include "base/strings/string_number_conversions.h"
-#include "base/system/sys_info.h"
 #include "base/threading/thread_checker.h"
 #include "base/time/time.h"
 #include "build/build_config.h"
 #include "gpu/command_buffer/common/constants.h"
 #include "gpu/config/gpu_preferences.h"
-#include "gpu/config/gpu_switches.h"
 #include "net/base/cache_type.h"
 #include "net/base/io_buffer.h"
 #include "net/base/net_errors.h"
 
 namespace gpu {
-
-namespace {
-
-#if !BUILDFLAG(IS_ANDROID)
-size_t GetCustomCacheSizeBytesIfExists(base::StringPiece switch_string) {
-  const base::CommandLine& process_command_line =
-      *base::CommandLine::ForCurrentProcess();
-  size_t cache_size;
-  if (process_command_line.HasSwitch(switch_string)) {
-    if (base::StringToSizeT(
-            process_command_line.GetSwitchValueASCII(switch_string),
-            &cache_size)) {
-      return cache_size * 1024;  // Bytes
-    }
-  }
-  return 0;
-}
-#endif
-
-}  // namespace
 
 // GpuDiskCacheEntry handles the work of caching/updating the cached
 // blobs.
@@ -438,6 +415,7 @@ GpuDiskCacheHandle GpuDiskCacheFactory::GetCacheHandle(
   auto it = path_to_handle_map_.find(path);
   if (it != path_to_handle_map_.end()) {
     DCHECK(GetHandleType(it->second) == type);
+    handle_ref_counts_[it->second]++;
     return it->second;
   }
 
@@ -464,8 +442,32 @@ GpuDiskCacheHandle GpuDiskCacheFactory::GetCacheHandle(
   }
   handle_to_path_map_[handle] = path;
   path_to_handle_map_[path] = handle;
+  handle_ref_counts_[handle]++;
 
   return handle;
+}
+
+void GpuDiskCacheFactory::ReleaseCacheHandle(GpuDiskCache* cache) {
+  // Get the handle related to the cache via the path.
+  auto it = path_to_handle_map_.find(cache->cache_path_);
+  DCHECK(it != path_to_handle_map_.end());
+  const base::FilePath& path = it->first;
+  const GpuDiskCacheHandle& handle = it->second;
+
+  // Special case where we don't need to do anything if the handle is a reserved
+  // handle.
+  if (gpu::IsReservedGpuDiskCacheHandle(handle)) {
+    return;
+  }
+
+  // We should never be decrementing the ref-count past 0.
+  DCHECK_GT(handle_ref_counts_[handle], 0u);
+  if (--handle_ref_counts_[handle] > 0u) {
+    return;
+  }
+  handle_to_path_map_.erase(handle);
+  handle_ref_counts_.erase(handle);
+  path_to_handle_map_.erase(path);
 }
 
 scoped_refptr<GpuDiskCache> GpuDiskCacheFactory::Get(
@@ -482,7 +484,8 @@ scoped_refptr<GpuDiskCache> GpuDiskCacheFactory::Get(
 
 scoped_refptr<GpuDiskCache> GpuDiskCacheFactory::Create(
     const GpuDiskCacheHandle& handle,
-    const BlobLoadedForCacheCallback& blob_loaded_cb) {
+    const BlobLoadedForCacheCallback& blob_loaded_cb,
+    CacheDestroyedCallback cache_destroyed_cb) {
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(Get(handle) == nullptr);
 
@@ -490,20 +493,22 @@ scoped_refptr<GpuDiskCache> GpuDiskCacheFactory::Create(
   if (it == handle_to_path_map_.end()) {
     return nullptr;
   }
-  return GetOrCreateByPath(it->second,
-                           base::BindRepeating(blob_loaded_cb, handle));
+  return GetOrCreateByPath(
+      it->second, base::BindRepeating(blob_loaded_cb, handle),
+      base::BindOnce(std::move(cache_destroyed_cb), handle));
 }
 
 scoped_refptr<GpuDiskCache> GpuDiskCacheFactory::GetOrCreateByPath(
     const base::FilePath& path,
-    const GpuDiskCache::BlobLoadedCallback& blob_loaded_cb) {
+    const GpuDiskCache::BlobLoadedCallback& blob_loaded_cb,
+    base::OnceClosure cache_destroyed_cb) {
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   auto iter = gpu_cache_map_.find(path);
   if (iter != gpu_cache_map_.end())
     return iter->second;
 
-  auto cache =
-      base::WrapRefCounted(new GpuDiskCache(this, path, blob_loaded_cb));
+  auto cache = base::WrapRefCounted(new GpuDiskCache(
+      this, path, blob_loaded_cb, std::move(cache_destroyed_cb)));
   cache->Init();
   return cache;
 }
@@ -592,15 +597,18 @@ void GpuDiskCacheFactory::CacheCleared(GpuDiskCache* cache) {
 
 GpuDiskCache::GpuDiskCache(GpuDiskCacheFactory* factory,
                            const base::FilePath& cache_path,
-                           const BlobLoadedCallback& blob_loaded_cb)
+                           const BlobLoadedCallback& blob_loaded_cb,
+                           base::OnceClosure cache_destroyed_cb)
     : factory_(factory),
       cache_path_(cache_path),
-      blob_loaded_cb_(blob_loaded_cb) {
+      blob_loaded_cb_(blob_loaded_cb),
+      cache_destroyed_cb_(std::move(cache_destroyed_cb)) {
   factory_->AddToCache(cache_path_, this);
 }
 
 GpuDiskCache::~GpuDiskCache() {
   factory_->RemoveFromCache(cache_path_);
+  std::move(cache_destroyed_cb_).Run();
 }
 
 void GpuDiskCache::Init() {
@@ -612,7 +620,7 @@ void GpuDiskCache::Init() {
 
   disk_cache::BackendResult rv = disk_cache::CreateCacheBackend(
       net::SHADER_CACHE, net::CACHE_BACKEND_DEFAULT,
-      /*file_operations=*/nullptr, cache_path_, CacheSizeBytes(),
+      /*file_operations=*/nullptr, cache_path_, GetDefaultGpuDiskCacheSize(),
       disk_cache::ResetHandling::kResetOnError,
       /*net_log=*/nullptr,
       base::BindOnce(&GpuDiskCache::CacheCreatedCallback, this));
@@ -694,22 +702,6 @@ int GpuDiskCache::SetCacheCompleteCallback(
   }
   cache_complete_callback_ = std::move(callback);
   return net::ERR_IO_PENDING;
-}
-
-// static
-size_t GpuDiskCache::CacheSizeBytes() {
-#if !BUILDFLAG(IS_ANDROID)
-  size_t custom_cache_size =
-      GetCustomCacheSizeBytesIfExists(switches::kGpuDiskCacheSizeKB);
-  if (custom_cache_size)
-    return custom_cache_size;
-  return kDefaultMaxProgramCacheMemoryBytes;
-#else   // !BUILDFLAG(IS_ANDROID)
-  if (!base::SysInfo::IsLowEndDevice())
-    return kDefaultMaxProgramCacheMemoryBytes;
-  else
-    return kLowEndMaxProgramCacheMemoryBytes;
-#endif  // !BUILDFLAG(IS_ANDROID)
 }
 
 }  // namespace gpu

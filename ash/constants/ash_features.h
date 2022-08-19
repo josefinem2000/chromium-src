@@ -181,6 +181,8 @@ COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kGuestOSGenericInstaller;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kBruschetta;
 COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kBruschettaAlphaMigrate;
+COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kCryptAuthV2AlwaysUseActiveEligibleHosts;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kCryptAuthV2DeviceActivityStatus;
@@ -534,6 +536,8 @@ extern const base::Feature kProjectorUseOAuthForGetVideoInfo;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kProjectorLocalPlayback;
 COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kProjectorBleedingEdgeExperience;
+COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kQsRevamp;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kQuickDim;
@@ -598,8 +602,6 @@ COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kSimLockPolicy;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kSmartDimExperimentalComponent;
 COMPONENT_EXPORT(ASH_CONSTANTS)
-extern const base::Feature kSmartLockBluetoothScanningBackoff;
-COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kSmartLockBluetoothScreenOffFix;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kSmartLockSignInRemoved;
@@ -620,6 +622,8 @@ COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kSystemJapanesePhysicalTyping;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kSystemTransliterationPhysicalTyping;
+COMPONENT_EXPORT(ASH_CONSTANTS)
+extern const base::Feature kSystemTrayShadow;
 COMPONENT_EXPORT(ASH_CONSTANTS)
 extern const base::Feature kSystemProxyForSystemServices;
 COMPONENT_EXPORT(ASH_CONSTANTS) extern const base::Feature kTabClusterUI;
@@ -885,6 +889,7 @@ COMPONENT_EXPORT(ASH_CONSTANTS) bool IsSnoopingProtectionEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS)
 bool IsStartAssistantAudioDecoderOnDemandEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsSyncSettingsCategorizationEnabled();
+COMPONENT_EXPORT(ASH_CONSTANTS) bool IsSystemTrayShadowEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsStylusBatteryStatusEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsTabClusterUIEnabled();
 COMPONENT_EXPORT(ASH_CONSTANTS) bool IsTouchpadInDiagnosticsAppEnabled();

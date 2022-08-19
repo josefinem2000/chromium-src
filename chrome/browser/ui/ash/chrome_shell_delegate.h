@@ -25,6 +25,8 @@ class ChromeShellDelegate : public ash::ShellDelegate {
   bool CanShowWindowForUser(const aura::Window* window) const override;
   std::unique_ptr<ash::CaptureModeDelegate> CreateCaptureModeDelegate()
       const override;
+  std::unique_ptr<ash::GlanceablesDelegate> CreateGlanceablesDelegate()
+      const override;
   ash::AccessibilityDelegate* CreateAccessibilityDelegate() override;
   std::unique_ptr<ash::BackGestureContextualNudgeDelegate>
   CreateBackGestureContextualNudgeDelegate(
@@ -50,6 +52,9 @@ class ChromeShellDelegate : public ash::ShellDelegate {
   void BindMultiDeviceSetup(
       mojo::PendingReceiver<ash::multidevice_setup::mojom::MultiDeviceSetup>
           receiver) override;
+  void BindMultiCaptureService(
+      mojo::PendingReceiver<video_capture::mojom::MultiCaptureService> receiver)
+      override;
   media_session::MediaSessionService* GetMediaSessionService() override;
   bool IsSessionRestoreInProgress() const override;
   void SetUpEnvironmentForLockedFullscreen(bool locked) override;

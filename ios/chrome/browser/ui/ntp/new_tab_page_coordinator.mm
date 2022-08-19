@@ -29,6 +29,7 @@
 #import "ios/chrome/browser/follow/followed_web_site.h"
 #import "ios/chrome/browser/main/browser.h"
 #import "ios/chrome/browser/ntp/features.h"
+#import "ios/chrome/browser/ntp/new_tab_page_tab_helper.h"
 #import "ios/chrome/browser/pref_names.h"
 #import "ios/chrome/browser/reading_list/reading_list_model_factory.h"
 #import "ios/chrome/browser/search_engines/template_url_service_factory.h"
@@ -455,8 +456,10 @@ namespace {
         initWithDelegate:self
       feedViewController:self.feedViewController];
 
-  self.ntpViewController.feedTopSectionViewController =
-      self.feedTopSectionCoordinator.viewController;
+  if ([self isFeedTopSectionVisible]) {
+    self.ntpViewController.feedTopSectionViewController =
+        self.feedTopSectionCoordinator.viewController;
+  }
 
   self.headerSynchronizer = [[ContentSuggestionsHeaderSynchronizer alloc]
       initWithCollectionController:self.ntpViewController
@@ -595,7 +598,7 @@ namespace {
 }
 
 - (void)selectFeedType:(FeedType)feedType {
-  if (!self.started) {
+  if (!self.ntpViewController.viewDidAppear) {
     self.selectedFeed = feedType;
     return;
   }
@@ -611,8 +614,7 @@ namespace {
         self.shouldScrollIntoFeed = NO;
         // Reassign the sort type in case it changed in another tab.
         self.feedHeaderViewController.followingFeedSortType =
-            (FollowingFeedSortType)self.prefService->GetInteger(
-                prefs::kNTPFollowingFeedSortType);
+            self.followingFeedSortType;
         // Update the header so that it's synced with the currently selected
         // feed, which could have been changed when a new web state was
         // inserted.
@@ -636,6 +638,14 @@ namespace {
 }
 
 #pragma mark - FeedControlDelegate
+
+- (FollowingFeedSortType)followingFeedSortType {
+  // TODO(crbug.com/1352935): Add a DCHECK to make sure the coordinator isn't
+  // stopped when we check this. That would require us to use the NTPHelper to
+  // get this information.
+  return (FollowingFeedSortType)self.prefService->GetInteger(
+      prefs::kNTPFollowingFeedSortType);
+}
 
 - (void)handleFeedSelected:(FeedType)feedType {
   DCHECK([self isFollowingFeedAvailable]);
@@ -669,6 +679,7 @@ namespace {
     return;
   }
 
+  [self.feedMetricsRecorder recordFollowingFeedSortTypeSelected:sortType];
   [self.ntpViewController setContentOffsetToTop];
   self.prefService->SetInteger(prefs::kNTPFollowingFeedSortType, sortType);
   self.discoverFeedService->SetFollowingFeedSortType(sortType);
@@ -823,6 +834,11 @@ namespace {
       defaultURL->GetEngineType(self.templateURLService->search_terms_data()) ==
           SEARCH_ENGINE_GOOGLE;
   return isGoogleDefaultSearchProvider;
+}
+
+- (BOOL)isStartSurface {
+  return NewTabPageTabHelper::FromWebState(self.webState)
+      ->ShouldShowStartSurface();
 }
 
 #pragma mark - AppStateObserver
@@ -990,7 +1006,7 @@ namespace {
 }
 
 - (BOOL)isContentHeaderSticky {
-  return [self isFollowingFeedAvailable];
+  return [self isFollowingFeedAvailable] && [self isFeedHeaderVisible];
 }
 
 #pragma mark - PrefObserverDelegate
@@ -1045,6 +1061,7 @@ namespace {
   }
 
   self.ntpViewController.feedWrapperViewController = nil;
+  self.ntpViewController.feedTopSectionViewController = nil;
   self.feedWrapperViewController = nil;
   self.feedViewController = nil;
 
@@ -1055,6 +1072,11 @@ namespace {
   } else {
     self.ntpViewController.feedHeaderViewController = nil;
     self.feedHeaderViewController = nil;
+  }
+
+  if ([self isFeedTopSectionVisible]) {
+    self.ntpViewController.feedTopSectionViewController =
+        self.feedTopSectionCoordinator.viewController;
   }
 
   self.ntpViewController.feedVisible = [self isFeedVisible];
@@ -1106,6 +1128,15 @@ namespace {
   return [self shouldFeedBeVisible] && self.feedViewController;
 }
 
+// Whether the feed top section, which contains all content between the feed
+// header and the feed, is currently visible.
+// TODO(crbug.com/1331010): The feed top section should still work with the
+// sticky header, but for now we only show the content without it.
+- (BOOL)isFeedTopSectionVisible {
+  return IsDiscoverFeedTopSyncPromoEnabled() && [self shouldFeedBeVisible] &&
+         ![self isContentHeaderSticky];
+}
+
 // Creates, configures and returns a Discover feed view controller.
 - (UIViewController*)discoverFeed {
   if (tests_hook::DisableDiscoverFeed()) {
@@ -1129,9 +1160,7 @@ namespace {
   }
 
   FeedModelConfiguration* followingFeedConfiguration = [FeedModelConfiguration
-      followingModelConfigurationWithSortType:
-          (FollowingFeedSortType)self.prefService->GetInteger(
-              prefs::kNTPFollowingFeedSortType)];
+      followingModelConfigurationWithSortType:self.followingFeedSortType];
   self.discoverFeedService->CreateFeedModel(followingFeedConfiguration);
 
   UIViewController* followingFeed =
@@ -1247,9 +1276,7 @@ namespace {
         self.discoverFeedService->GetFollowingFeedHasUnseenContent() &&
         self.selectedFeed != FeedTypeFollowing;
     _feedHeaderViewController = [[FeedHeaderViewController alloc]
-        initWithFollowingFeedSortType:(FollowingFeedSortType)
-                                          self.prefService->GetInteger(
-                                              prefs::kNTPFollowingFeedSortType)
+        initWithFollowingFeedSortType:self.followingFeedSortType
            followingSegmentDotVisible:followingSegmentDotVisible];
     _feedHeaderViewController.feedControlDelegate = self;
     _feedHeaderViewController.ntpDelegate = self;

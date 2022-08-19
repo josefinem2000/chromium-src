@@ -29,7 +29,9 @@
 #include "ash/wm/overview/overview_controller.h"
 #include "ash/wm/overview/overview_grid.h"
 #include "ash/wm/overview/overview_highlight_controller.h"
+#include "ash/wm/overview/overview_highlightable_view.h"
 #include "ash/wm/overview/overview_session.h"
+#include "ash/wm/overview/overview_utils.h"
 #include "base/i18n/time_formatting.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/time/time.h"
@@ -325,6 +327,12 @@ void SavedDeskItemView::MaybeRemoveNameNumber(
 
 void SavedDeskItemView::MaybeShowReplaceDialog(DeskTemplateType type,
                                                const base::GUID& uuid) {
+  // If the user has somehow exited the overview session don't attempt to
+  // show the dialogue in order to avoid the DCHECK crash.
+  // TODO(avynn): Find a more permanent fix for this.
+  if (!Shell::Get()->overview_controller()->InOverviewSession())
+    return;
+
   // Show replace template dialog. If accepted, replace old template and commit
   // name change.
   aura::Window* root_window = GetWidget()->GetNativeWindow()->GetRootWindow();
@@ -455,8 +463,12 @@ void SavedDeskItemView::OnViewFocused(views::View* observed_view) {
                                    ->overview_controller()
                                    ->overview_session()
                                    ->highlight_controller();
-  if (highlight_controller->IsFocusHighlightVisible())
+  if (highlight_controller->IsFocusHighlightVisible()) {
     highlight_controller->MoveHighlightToView(name_view_);
+
+    // Update a11y focus window.
+    highlight_controller->UpdateA11yFocusWindow(name_view_);
+  }
 
   if (!defer_select_all_)
     name_view_->SelectAll(false);
@@ -537,17 +549,7 @@ void SavedDeskItemView::OnViewBlurred(views::View* observed_view) {
 }
 
 void SavedDeskItemView::OnFocus() {
-  auto* highlight_controller = Shell::Get()
-                                   ->overview_controller()
-                                   ->overview_session()
-                                   ->highlight_controller();
-  DCHECK(highlight_controller);
-  AccessibilityControllerImpl* accessibility_controller =
-      Shell::Get()->accessibility_controller();
-  if (highlight_controller->IsFocusHighlightVisible() ||
-      accessibility_controller->spoken_feedback().enabled()) {
-    highlight_controller->MoveHighlightToView(this);
-  }
+  UpdateOverviewHighlightForFocusAndSpokenFeedback(this);
   OnViewHighlighted();
   View::OnFocus();
 }

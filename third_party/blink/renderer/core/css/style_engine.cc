@@ -820,7 +820,7 @@ CSSStyleSheet* StyleEngine::ParseSheet(
   style_sheet = CSSStyleSheet::CreateInline(element, NullURL(), start_position,
                                             GetDocument().Encoding());
   style_sheet->Contents()->SetRenderBlocking(render_blocking_behavior);
-  std::unique_ptr<CSSTokenizerBase> tokenizer;
+  std::unique_ptr<CachedCSSTokenizer> tokenizer;
   if (auto* parser = GetDocument().GetScriptableDocumentParser())
     tokenizer = parser->TakeCSSTokenizer(text);
   style_sheet->Contents()->ParseString(text, true, std::move(tokenizer));
@@ -2764,8 +2764,19 @@ void StyleEngine::UpdateStyleAndLayoutTreeForContainer(
         return;
       break;
     case ContainerQueryEvaluator::Change::kNearestContainer:
-      change = change.ForceRecalcContainer();
-      break;
+      if (!IsShadowHost(container)) {
+        change = change.ForceRecalcContainer();
+        break;
+      }
+      // Since the nearest container is found in shadow-including ancestors and
+      // not in flat tree ancestors, and style recalc traversal happens in flat
+      // tree order, we need to invalidate inside flat tree descendant
+      // containers if such containers are inside shadow trees.
+      //
+      // See also StyleRecalcChange::FlagsForChildren where we turn
+      // kRecalcContainer into kRecalcDescendantContainers when traversing past
+      // a shadow host.
+      [[fallthrough]];
     case ContainerQueryEvaluator::Change::kDescendantContainers:
       change = change.ForceRecalcDescendantContainers();
       break;

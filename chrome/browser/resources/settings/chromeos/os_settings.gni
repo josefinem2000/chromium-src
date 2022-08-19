@@ -14,12 +14,12 @@ web_component_files = [
   "chromeos/os_about_page/edit_hostname_dialog.ts",
   "chromeos/os_about_page/os_about_page.ts",
   "chromeos/os_about_page/update_warning_dialog.ts",
-  "chromeos/os_settings_main/os_settings_main.js",
-  "chromeos/os_settings_menu/os_settings_menu.js",
+  "chromeos/os_settings_main/os_settings_main.ts",
+  "chromeos/os_settings_menu/os_settings_menu.ts",
   "chromeos/os_settings_page/os_settings_page.js",
   "chromeos/os_settings_page/settings_idle_load.js",
-  "chromeos/os_settings_ui/os_settings_ui.js",
-  "chromeos/os_toolbar/os_toolbar.js",
+  "chromeos/os_settings_ui/os_settings_ui.ts",
+  "chromeos/os_toolbar/os_toolbar.ts",
 ]
 
 # Files that are passed as input to html_to_wrapper().
@@ -119,7 +119,6 @@ non_web_component_files = [
   "chromeos/parental_controls_page/parental_controls_browser_proxy.js",
   "chromeos/personalization_page/change_picture_browser_proxy.js",
   "chromeos/personalization_page/personalization_hub_browser_proxy.js",
-  "chromeos/personalization_page/wallpaper_browser_proxy.js",
   "chromeos/personalization_search_handler.js",
   "chromeos/pref_to_setting_metric_converter.js",
   "chromeos/prefs_behavior.js",
@@ -130,6 +129,8 @@ non_web_component_files = [
   # Files below are from Browser Settings and shared with ChromeOS Settings
   "i18n_setup.ts",
   "lifetime_browser_proxy.ts",
+  "prefs/prefs.ts",
+  "prefs/prefs_types.ts",
   "router.js",
 ]
 
@@ -375,9 +376,9 @@ mojom_webui_closure_flags = [
           root_build_dir),
   "browser_resolver_prefix_replacements=\"../../mojom-webui/personalization/=../../\"",
   "browser_resolver_prefix_replacements=\"../mojom-webui/personalization/=../\"",
-  "js_module_root=" +
-      rebase_path("$root_gen_dir/mojom-webui/ash/components/audio/public/mojom",
-                  root_build_dir),
+  "js_module_root=" + rebase_path(
+          "$root_gen_dir/mojom-webui/chromeos/ash/components/audio/public/mojom",
+          root_build_dir),
   "browser_resolver_prefix_replacements=\"../../mojom-webui/audio/=../../\"",
   "browser_resolver_prefix_replacements=\"../mojom-webui/audio/=../\"",
 ]

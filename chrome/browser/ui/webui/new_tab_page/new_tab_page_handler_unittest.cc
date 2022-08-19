@@ -76,6 +76,7 @@ class MockPage : public new_tab_page::mojom::Page {
   MOCK_METHOD1(SetTheme, void(new_tab_page::mojom::ThemePtr));
   MOCK_METHOD2(SetDisabledModules, void(bool, const std::vector<std::string>&));
   MOCK_METHOD1(SetModulesFreVisibility, void(bool));
+  MOCK_METHOD1(CustomizeChromeSidePanelVisibilityChanged, void(bool));
 
   mojo::Receiver<new_tab_page::mojom::Page> receiver_{this};
 };
@@ -550,7 +551,6 @@ TEST_F(NewTabPageHandlerTest, GetInteractiveDoodle) {
 
 TEST_F(NewTabPageHandlerTest, GetPromo) {
   PromoData promo_data;
-  promo_data.promo_html = "<html/>";
   promo_data.middle_slot_json = R"({
     "part": [{
       "image": {

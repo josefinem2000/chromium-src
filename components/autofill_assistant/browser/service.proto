@@ -268,6 +268,52 @@ message GetCapabilitiesByHashPrefixResponseProto {
   repeated MatchInfoProto match_info = 1;
 }
 
+message GetNoRoundtripScriptsByHashPrefixRequestProto {
+  // The number of leading bits to consider from hash_prefix. The remaining
+  // trailing bits from hash_prefix should be ignored.
+  optional uint32 hash_prefix_length = 1;
+
+  // The CityHash64 of the URL of interest. Only the first hash_prefix_length
+  // bits are meaningful.
+  optional uint64 hash_prefix = 2;
+
+  // The client context.
+  optional ClientContextProto client_context = 3;
+
+  // Optional script parameters. Note that only a subset of parameters are
+  // allowed to be sent from the client.
+  repeated ScriptParameterProto script_parameters = 4;
+}
+
+message GetNoRoundtripScriptsByHashPrefixResponseProto {
+  // CUP-signed version of this proto. When set, the rest of the fields in
+  // ScriptActionRequestProto should be ignored.
+  optional CUPResponseData cup_data = 1;
+
+  message MatchInfo {
+    message RoutineScript {
+      optional SupportedScriptProto routine = 1;
+      // The set of actions to execute. If the last executed action is not a
+      // stop action or a stop action inside a JS flow action the script will
+      // fail.
+      optional ActionsResponseProto autobot_response = 2;
+    }
+
+    // The domain for the script
+    optional string domain = 1;
+
+    // The response of the supports site request for this domain.
+    optional SupportsScriptResponseProto supports_site_response = 2;
+
+    // The scripts for the domain. Can contain one main script and several
+    // interrupt scripts.
+    repeated RoutineScript routine_scripts = 3;
+  }
+  // List of potential scripts matches for the request URL hash prefix. Callers
+  // should inspect each element of the list to find the exact match, if any.
+  repeated MatchInfo match_infos = 2;
+}
+
 // Request to get user data.
 message GetUserDataRequestProto {
   message PaymentMethodRequest {
@@ -791,7 +837,7 @@ message ActionsResponseProto {
 
   // Opaque data for reporting progress. Only included in the initial response
   // from GetActions.
-  optional string report_token = 14;
+  optional bytes report_token = 14;
 
   reserved 1, 6 to 10;
 }
@@ -1099,6 +1145,7 @@ message ActionProto {
     SetNativeCheckedProto set_native_checked = 97;
     PromptQrCodeScanProto prompt_qr_code_scan = 98;
     ReportProgressProto report_progress = 99;
+    ParseSingleTagXmlProto parse_single_tag_xml = 100;
   }
 
   // Set to true to make the client remove any contextual information if the
@@ -1923,6 +1970,34 @@ message PromptQrCodeScanProto {
   // UI strings shown during image picker. This is a mandatory field when QR
   // Code Scanning via Image Picker is to be triggered.
   optional ImagePickerUiStrings image_picker_ui_strings = 4;
+}
+
+// Reads a single tag XML from client memory, extracts select fields based on
+// XML config specified and writes them back in the client memory.
+message ParseSingleTagXmlProto {
+  // Key to read the input single tag XML from client memory, |UserModel|. This
+  // is a mandatory field.
+  optional string input_client_memory_key = 1;
+
+  message Field {
+    // XML key for the field.
+    optional string key = 1;
+
+    // Key to store the extracted value in |UserModel| on the client.
+    optional string output_client_memory_key = 2;
+  }
+
+  // Spec for a field that needs to be extracted from the XML.
+  repeated Field fields = 2;
+
+  // Cases where the XML input does not match the specified XML Spec, we return
+  // a failure to the server in the form of Action Status. If this boolean
+  // is set to true, we further check if the failure was because the XML was
+  // signed(*) and show a different error message accordingly.
+  // *Note: We currently check for a XML being signed by simply checking
+  // if it only contains a plain numerical string. This may lead to
+  // misclassification when the input data is a random numeric string.
+  optional bool custom_failure_for_signed_input_data = 3 [default = true];
 }
 
 // Contain a localized text message from the server.

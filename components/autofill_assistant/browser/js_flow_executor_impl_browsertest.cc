@@ -35,6 +35,7 @@
 #include "components/autofill_assistant/browser/service/mock_service.h"
 #include "components/autofill_assistant/browser/trigger_context.h"
 #include "components/autofill_assistant/browser/web/mock_web_controller.h"
+#include "components/version_info/version_info.h"
 #include "content/public/test/browser_test.h"
 #include "content/shell/browser/shell.h"
 #include "net/http/http_status_code.h"
@@ -293,9 +294,6 @@ IN_PROC_BROWSER_TEST_F(JsFlowExecutorImplBrowserTest, ReturnInteger) {
 }
 
 IN_PROC_BROWSER_TEST_F(JsFlowExecutorImplBrowserTest, ReturningStringFails) {
-  // Return value checking is more comprehensively tested in
-  // js_flow_util::ContainsOnlyAllowedValues. This test is just to ensure that
-  // that util is actually used for JS flow return values.
   std::unique_ptr<base::Value> result;
   ClientStatus status = RunTest("return 'Strings are not allowed!';", result);
   EXPECT_EQ(status.proto_status(), INVALID_ACTION);
@@ -313,7 +311,8 @@ IN_PROC_BROWSER_TEST_F(JsFlowExecutorImplBrowserTest, ReturnDictionary) {
               "keyD": 123.45,
               "keyE": null
             },
-            "keyF": [false, false, true]
+            "keyF": [false, false, true],
+            "keyG": "string"
           };
         )",
       result);
@@ -326,7 +325,8 @@ IN_PROC_BROWSER_TEST_F(JsFlowExecutorImplBrowserTest, ReturnDictionary) {
             "keyD": 123.45,
             "keyE": null
           },
-        "keyF": [false, false, true]
+        "keyF": [false, false, true],
+        "keyG": "string"
       }
     )"));
 }
@@ -403,6 +403,20 @@ IN_PROC_BROWSER_TEST_F(JsFlowExecutorImplBrowserTest,
   ASSERT_THAT(js_return_value, NotNull());
   // line number is 1-based in getLineNumber so this is the first line
   EXPECT_THAT(js_return_value->GetIfInt(), Optional(1));
+}
+
+IN_PROC_BROWSER_TEST_F(JsFlowExecutorImplBrowserTest,
+                       VersionNumberIsSetCorrectly) {
+  const std::string js_flow = "return {versionNumber: CHROME_VERSION_NUMBER};";
+
+  std::unique_ptr<base::Value> js_return_value;
+  ASSERT_THAT(RunTest(js_flow, js_return_value),
+              Property(&ClientStatus::proto_status, ACTION_APPLIED));
+
+  ASSERT_THAT(js_return_value, NotNull());
+  EXPECT_TRUE(js_return_value->is_dict());
+  EXPECT_THAT(js_return_value->GetIfDict()->FindString("versionNumber"),
+              Pointee(version_info::GetVersionNumber()));
 }
 
 IN_PROC_BROWSER_TEST_F(JsFlowExecutorImplBrowserTest,

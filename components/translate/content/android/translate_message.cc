@@ -17,6 +17,7 @@
 #include "base/android/jni_string.h"
 #include "base/logging.h"
 #include "base/metrics/field_trial_params.h"
+#include "base/metrics/histogram_macros.h"
 #include "base/strings/utf_string_conversions.h"
 #include "components/messages/android/message_enums.h"
 #include "components/strings/grit/components_strings.h"
@@ -61,10 +62,11 @@ class BridgeImpl : public TranslateMessage::Bridge {
       JNIEnv* env,
       base::android::ScopedJavaLocalRef<jstring> title,
       base::android::ScopedJavaLocalRef<jstring> description,
-      base::android::ScopedJavaLocalRef<jstring> primary_button_text) override {
-    Java_TranslateMessage_showMessage(env, java_translate_message_,
-                                      std::move(title), std::move(description),
-                                      std::move(primary_button_text));
+      base::android::ScopedJavaLocalRef<jstring> primary_button_text,
+      jboolean has_overflow_menu) override {
+    Java_TranslateMessage_showMessage(
+        env, java_translate_message_, std::move(title), std::move(description),
+        std::move(primary_button_text), has_overflow_menu);
   }
 
   base::android::ScopedJavaLocalRef<jobjectArray> ConstructMenuItemArray(
@@ -112,6 +114,10 @@ base::android::ScopedJavaLocalRef<jstring> GetDefaultMessageDescription(
                                       target_language_display_name));
 }
 
+void RecordCompactInfobarEvent(InfobarEvent event) {
+  UMA_HISTOGRAM_ENUMERATION("Translate.CompactInfobar.Event", event);
+}
+
 }  // namespace
 
 const base::Feature kTranslateMessageUI("TranslateMessageUI",
@@ -145,11 +151,11 @@ TranslateMessage::~TranslateMessage() {
   // destruction. This prevents a possible use-after-free if the callback points
   // to a method on the owner of |this|.
   on_dismiss_callback_.Reset();
-  if (bridge_) {
-    JNIEnv* env = base::android::AttachCurrentThread();
+
+  JNIEnv* env = base::android::AttachCurrentThread();
+  if (state_ != State::kDismissed)
     bridge_->Dismiss(env);
-    bridge_->ClearNativePointer(env);
-  }
+  bridge_->ClearNativePointer(env);
 }
 
 void TranslateMessage::ShowTranslateStep(TranslateStep step,
@@ -169,6 +175,9 @@ void TranslateMessage::ShowTranslateStep(TranslateStep step,
     ui_delegate_ = std::make_unique<TranslateUIDelegate>(
         translate_manager_, source_language, target_language);
   }
+
+  if (state_ == State::kDismissed)
+    RecordCompactInfobarEvent(InfobarEvent::INFOBAR_IMPRESSION);
 
   if (ui_delegate_->GetSourceLanguageCode() != source_language)
     ui_delegate_->UpdateSourceLanguage(source_language);
@@ -224,9 +233,22 @@ void TranslateMessage::ShowTranslateStep(TranslateStep step,
       break;
 
     case TRANSLATE_STEP_TRANSLATING:
-      title = base::android::ConvertUTF16ToJavaString(
-          env, l10n_util::GetStringUTF16(
-                   IDS_TRANSLATE_MESSAGE_BEFORE_TRANSLATE_TITLE));
+      if (state_ == State::kDismissed) {
+        // If the UI is currently not shown and being opened directly into the
+        // translation-in-progress state (e.g. if the page was loaded and
+        // "Always translate pages in <language>" triggered, or if the
+        // "Translate" menu item was clicked in the browser 3-dots menu), show a
+        // separate title string indicating that the translation is in progress
+        // instead of the default "Translate page?" title used in the
+        // before-translate state.
+        title = base::android::ConvertUTF16ToJavaString(
+            env, l10n_util::GetStringUTF16(
+                     IDS_TRANSLATE_MESSAGE_TRANSLATING_COLD_OPEN_TITLE));
+      } else {
+        title = base::android::ConvertUTF16ToJavaString(
+            env, l10n_util::GetStringUTF16(
+                     IDS_TRANSLATE_MESSAGE_BEFORE_TRANSLATE_TITLE));
+      }
       description = GetDefaultMessageDescription(
           env, source_language_display_name, target_language_display_name);
       primary_button_text = nullptr;
@@ -243,6 +265,8 @@ void TranslateMessage::ShowTranslateStep(TranslateStep step,
 
       if (is_translation_eligible_for_auto_always_translate_ &&
           ui_delegate_->ShouldAutoAlwaysTranslate()) {
+        RecordCompactInfobarEvent(
+            InfobarEvent::INFOBAR_SNACKBAR_AUTO_ALWAYS_IMPRESSION);
         ui_delegate_->SetAlwaysTranslate(true);
 
         description = base::android::ConvertUTF16ToJavaString(
@@ -267,7 +291,8 @@ void TranslateMessage::ShowTranslateStep(TranslateStep step,
   }
 
   bridge_->ShowMessage(env, std::move(title), std::move(description),
-                       std::move(primary_button_text));
+                       std::move(primary_button_text),
+                       /*has_overflow_menu=*/true);
 }
 
 void TranslateMessage::HandlePrimaryAction(JNIEnv* env) {
@@ -276,6 +301,7 @@ void TranslateMessage::HandlePrimaryAction(JNIEnv* env) {
 
   switch (state_) {
     case State::kBeforeTranslate:
+      RecordCompactInfobarEvent(InfobarEvent::INFOBAR_TARGET_TAB_TRANSLATE);
       is_translation_eligible_for_auto_always_translate_ = true;
       ui_delegate_->ReportUIInteraction(UIInteraction::kTranslate);
       ui_delegate_->Translate();
@@ -285,11 +311,25 @@ void TranslateMessage::HandlePrimaryAction(JNIEnv* env) {
       // The user clicked "Undo" on a translated page when the
       // auto-always-translate confirmation message was showing, so turn off
       // "always translate language" before reverting the translation.
+      RecordCompactInfobarEvent(
+          InfobarEvent::INFOBAR_SNACKBAR_CANCEL_AUTO_ALWAYS);
       ui_delegate_->SetAlwaysTranslate(false);
       [[fallthrough]];
     case State::kAfterTranslate:
+      RecordCompactInfobarEvent(InfobarEvent::INFOBAR_REVERT);
       ui_delegate_->ReportUIInteraction(UIInteraction::kRevert);
       RevertTranslationAndUpdateMessage();
+      break;
+
+    case State::kAutoNeverTranslateConfirmation:
+      // The user clicked "Undo" on the message confirming that pages in this
+      // language will not be translated, so unblock that language. Also, since
+      // this confirmation message is only shown after the user has already
+      // tried to dismiss the translate UI, dismiss this popup as well.
+      RecordCompactInfobarEvent(
+          InfobarEvent::INFOBAR_SNACKBAR_CANCEL_AUTO_NEVER);
+      ui_delegate_->SetLanguageBlocked(false);
+      bridge_->Dismiss(env);
       break;
 
     default:
@@ -329,9 +369,45 @@ void TranslateMessage::HandleDismiss(JNIEnv* env, jint dismiss_reason) {
   }
 
   if (!has_been_interacted_with_ && state_ == State::kBeforeTranslate) {
+    RecordCompactInfobarEvent(InfobarEvent::INFOBAR_DECLINE);
+
+    // In order to have the same off-by-one counting as the infobar UI,
+    // ShouldAutoNeverTranslate() must be called before TranslationDeclined().
+    const bool should_auto_never_translate =
+        static_cast<messages::DismissReason>(dismiss_reason) ==
+            messages::DismissReason::GESTURE &&
+        ui_delegate_->ShouldAutoNeverTranslate();
+
     ui_delegate_->TranslationDeclined(
         static_cast<messages::DismissReason>(dismiss_reason) ==
         messages::DismissReason::GESTURE);
+
+    if (should_auto_never_translate) {
+      RecordCompactInfobarEvent(
+          InfobarEvent::INFOBAR_SNACKBAR_AUTO_NEVER_IMPRESSION);
+
+      ui_delegate_->SetLanguageBlocked(true);
+      state_ = State::kAutoNeverTranslateConfirmation;
+
+      bridge_->ShowMessage(
+          env, /*title=*/
+          base::android::ConvertUTF16ToJavaString(
+              env,
+              l10n_util::GetStringFUTF16(
+                  IDS_TRANSLATE_MESSAGE_AUTO_NEVER_TRANSLATE_LANGUAGE_TITLE,
+                  ui_delegate_->GetLanguageNameAt(
+                      ui_delegate_->GetSourceLanguageIndex()))),
+          /*description=*/nullptr,
+          /*primary_button_text=*/
+          base::android::ConvertUTF16ToJavaString(
+              env, l10n_util::GetStringUTF16(IDS_TRANSLATE_NOTIFICATION_UNDO)),
+          /*has_overflow_menu=*/false);
+
+      // Return early here without calling the dismiss callback, since the
+      // dismiss callback could try to do things like show an IPH tooltip, which
+      // would be obscured by the auto-never-translate confirmation message.
+      return;
+    }
   }
 
   state_ = State::kDismissed;
@@ -347,6 +423,8 @@ void TranslateMessage::HandleDismiss(JNIEnv* env, jint dismiss_reason) {
 
 base::android::ScopedJavaLocalRef<jobjectArray>
 TranslateMessage::BuildOverflowMenu(JNIEnv* env) {
+  RecordCompactInfobarEvent(InfobarEvent::INFOBAR_OPTIONS);
+
   has_been_interacted_with_ = true;
 
   // If the overflow menu is open when auto-always-translate triggers, then the
@@ -466,6 +544,8 @@ TranslateMessage::HandleSecondaryMenuItemClicked(
         break;
 
       case OverflowMenuItemId::kChangeTargetLanguage:
+        RecordCompactInfobarEvent(
+            InfobarEvent::INFOBAR_MORE_LANGUAGES_TRANSLATE);
         ui_delegate_->ReportUIInteraction(UIInteraction::kChangeTargetLanguage);
         ui_delegate_->UpdateTargetLanguage(language_code_utf8);
         ui_delegate_->Translate();
@@ -482,6 +562,7 @@ TranslateMessage::HandleSecondaryMenuItemClicked(
 
   switch (static_cast<OverflowMenuItemId>(overflow_menu_item_id)) {
     case OverflowMenuItemId::kChangeSourceLanguage: {
+      RecordCompactInfobarEvent(InfobarEvent::INFOBAR_PAGE_NOT_IN);
       const std::string skip_language_codes[] = {
           ui_delegate_->GetSourceLanguageCode()};
       return ConstructLanguagePickerMenu(
@@ -491,6 +572,7 @@ TranslateMessage::HandleSecondaryMenuItemClicked(
     }
 
     case OverflowMenuItemId::kChangeTargetLanguage: {
+      RecordCompactInfobarEvent(InfobarEvent::INFOBAR_MORE_LANGUAGES);
       const std::string skip_language_codes[] = {
           ui_delegate_->GetTargetLanguageCode(), kUnknownLanguageCode};
       std::vector<std::string> content_language_codes;
@@ -503,8 +585,12 @@ TranslateMessage::HandleSecondaryMenuItemClicked(
     case OverflowMenuItemId::kToggleAlwaysTranslateLanguage:
       ui_delegate_->ReportUIInteraction(
           UIInteraction::kAlwaysTranslateLanguage);
-      if (ui_delegate_->ShouldAlwaysTranslate() != desired_toggle_value)
+      if (ui_delegate_->ShouldAlwaysTranslate() != desired_toggle_value) {
+        RecordCompactInfobarEvent(
+            desired_toggle_value ? InfobarEvent::INFOBAR_ALWAYS_TRANSLATE
+                                 : InfobarEvent::INFOBAR_ALWAYS_TRANSLATE_UNDO);
         ui_delegate_->SetAlwaysTranslate(desired_toggle_value);
+      }
 
       if (desired_toggle_value && state_ == State::kBeforeTranslate)
         ui_delegate_->Translate();
@@ -512,8 +598,12 @@ TranslateMessage::HandleSecondaryMenuItemClicked(
 
     case OverflowMenuItemId::kToggleNeverTranslateLanguage:
       ui_delegate_->ReportUIInteraction(UIInteraction::kNeverTranslateLanguage);
-      if (ui_delegate_->IsLanguageBlocked() != desired_toggle_value)
+      if (ui_delegate_->IsLanguageBlocked() != desired_toggle_value) {
+        RecordCompactInfobarEvent(
+            desired_toggle_value ? InfobarEvent::INFOBAR_NEVER_TRANSLATE
+                                 : InfobarEvent::INFOBAR_NEVER_TRANSLATE_UNDO);
         ui_delegate_->SetLanguageBlocked(desired_toggle_value);
+      }
 
       if (desired_toggle_value &&
           (state_ == State::kTranslating || state_ == State::kAfterTranslate ||
@@ -524,8 +614,13 @@ TranslateMessage::HandleSecondaryMenuItemClicked(
 
     case OverflowMenuItemId::kToggleNeverTranslateSite:
       ui_delegate_->ReportUIInteraction(UIInteraction::kNeverTranslateSite);
-      if (ui_delegate_->IsSiteOnNeverPromptList() != desired_toggle_value)
+      if (ui_delegate_->IsSiteOnNeverPromptList() != desired_toggle_value) {
+        RecordCompactInfobarEvent(
+            desired_toggle_value
+                ? InfobarEvent::INFOBAR_NEVER_TRANSLATE_SITE
+                : InfobarEvent::INFOBAR_NEVER_TRANSLATE_SITE_UNDO);
         ui_delegate_->SetNeverPromptSite(desired_toggle_value);
+      }
 
       if (desired_toggle_value &&
           (state_ == State::kTranslating || state_ == State::kAfterTranslate ||

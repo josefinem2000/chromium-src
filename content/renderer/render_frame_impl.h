@@ -114,7 +114,7 @@
 #include "url/origin.h"
 #include "v8/include/v8-forward.h"
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
 #include "content/common/pepper_plugin.mojom.h"
 #endif
 
@@ -311,7 +311,7 @@ class CONTENT_EXPORT RenderFrameImpl
   // gone, and clean up code that depends on it.
   bool in_frame_tree() { return in_frame_tree_; }
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
   mojom::PepperHost* GetPepperHost();
 
   // Notification that a PPAPI plugin has been created.
@@ -327,7 +327,7 @@ class CONTENT_EXPORT RenderFrameImpl
   // Informs the render view that a PPAPI plugin has changed selection.
   void PepperSelectionChanged(PepperPluginInstanceImpl* instance);
 
-#endif  // BUILDFLAG(ENABLE_PLUGINS)
+#endif  // BUILDFLAG(ENABLE_PPAPI)
 
   // IPC::Sender
   bool Send(IPC::Message* msg) override;
@@ -361,10 +361,6 @@ class CONTENT_EXPORT RenderFrameImpl
       mojo::ScopedMessagePipeHandle interface_pipe) override;
   blink::AssociatedInterfaceRegistry* GetAssociatedInterfaceRegistry() override;
   blink::AssociatedInterfaceProvider* GetRemoteAssociatedInterfaces() override;
-#if BUILDFLAG(ENABLE_PLUGINS)
-  void PluginDidStartLoading() override;
-  void PluginDidStopLoading() override;
-#endif
   void SetSelectedText(const std::u16string& selection_text,
                        size_t offset,
                        const gfx::Range& range) override;
@@ -706,7 +702,7 @@ class CONTENT_EXPORT RenderFrameImpl
 
   // Plugin-related functions --------------------------------------------------
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
   PepperPluginInstanceImpl* focused_pepper_plugin() {
     return focused_pepper_plugin_;
   }
@@ -726,7 +722,7 @@ class CONTENT_EXPORT RenderFrameImpl
   void PepperFocusChanged(PepperPluginInstanceImpl* instance, bool focused);
 
   void OnSetPepperVolume(int32_t pp_instance, double volume);
-#endif  // ENABLE_PLUGINS
+#endif  // BUILDFLAG(ENABLE_PPAPI)
 
   const blink::RendererPreferences& GetRendererPreferences() const;
 
@@ -1232,7 +1228,7 @@ class CONTENT_EXPORT RenderFrameImpl
       weak_wrapper_resource_load_info_notifier_;
 
   // Plugins -------------------------------------------------------------------
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PPAPI)
   typedef std::set<PepperPluginInstanceImpl*> PepperPluginSet;
   PepperPluginSet active_pepper_instances_;
 
@@ -1289,7 +1285,21 @@ class CONTENT_EXPORT RenderFrameImpl
   //
   // If a navigation will commit in the same RenderFrameImpl that owns the
   // request NavigationClient, the request NavigationClient will be reused as
-  // the commit NavigationClient.
+  // the commit NavigationClient. The way this works is:
+  //   1.) RenderFrameHostImpl::BeginNavigation() accepts an always-bound remote
+  //       to the RenderFrameImpl's `navigation_client_impl_`.
+  //   2.) In `NavigationRequest::ctor()`, the request consumes the
+  //       NavigationClient remote, and `NavigationRequest::SetNavigationClient()`
+  //       assigns `NavigationRequest::request_navigation_client_` to it.
+  //   3.) Eventually, `NavigationRequest` picks a `RenderFrameHostImpl` to commit
+  //       to. In `NavigationRequest::CommitNavigation()`, the request needs to
+  //       set its `commit_navigation_client_` to the `NavigationClient`
+  //       implementation in the target RenderFrameImpl. If we detect that the
+  //       navigation will commit to the same frame that
+  //       `NavigationRequest::request_navigation_client_` points to, then the
+  //       browser will reuse the request navigation client as the commit one.
+  //       Otherwise, it requests a *new* client from the renderer, to act as the
+  //       target RenderFrameImpl's `NavigationClient`.
   //
   // ## Navigation Cancellation ##
   // Cancellation is signalled by closing the NavigationClient message pipe.

@@ -2,7 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-(function() {
+import '//resources/polymer/v3_0/paper-styles/color.js';
+import '../hidden_style_css.m.js';
+import '../shared_style_css.m.js';
+import '../shared_vars_css.m.js';
+import './cr_input_style.css.js';
+
+import {html, PolymerElement} from '//resources/polymer/v3_0/polymer/polymer_bundled.min.js';
+
+import {assert} from '../../js/assert.m.js';
+
 
 /**
  * Input types supported by cr-input.
@@ -48,139 +57,150 @@ const SUPPORTED_INPUT_TYPES = new Set([
  *     <cr-button slot="suffix"></cr-button>
  *   </cr-input>
  */
-Polymer({
-  is: 'cr-input',
+export class CrInputElement extends PolymerElement {
+  static get is() {
+    return 'cr-input';
+  }
 
-  properties: {
-    /** @type {string|undefined} */
-    ariaDescription: {
-      type: String,
-    },
+  static get template() {
+    return html`{__html_template__}`;
+  }
 
-    ariaLabel: {
-      type: String,
-      value: '',
-    },
+  static get properties() {
+    return {
+      /** @type {string|undefined} */
+      ariaDescription: {
+        type: String,
+      },
 
-    autofocus: {
-      type: Boolean,
-      value: false,
-      reflectToAttribute: true,
-    },
+      ariaLabel: {
+        type: String,
+        value: '',
+      },
 
-    autoValidate: Boolean,
+      autofocus: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+      },
 
-    disabled: {
-      type: Boolean,
-      value: false,
-      reflectToAttribute: true,
-    },
+      autoValidate: Boolean,
 
-    errorMessage: {
-      type: String,
-      value: '',
-      observer: 'onInvalidOrErrorMessageChanged_',
-    },
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+      },
 
-    /** @private */
-    displayErrorMessage_: {
-      type: String,
-      value: '',
-    },
+      errorMessage: {
+        type: String,
+        value: '',
+        observer: 'onInvalidOrErrorMessageChanged_',
+      },
 
-    /**
-     * This is strictly used internally for styling, do not attempt to use
-     * this to set focus.
-     * @private
-     */
-    focused_: {
-      type: Boolean,
-      value: false,
-      reflectToAttribute: true,
-    },
+      /** @private */
+      displayErrorMessage_: {
+        type: String,
+        value: '',
+      },
 
-    invalid: {
-      type: Boolean,
-      value: false,
-      notify: true,
-      reflectToAttribute: true,
-      observer: 'onInvalidOrErrorMessageChanged_',
-    },
+      /**
+       * This is strictly used internally for styling, do not attempt to use
+       * this to set focus.
+       * @private
+       */
+      focused_: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+      },
 
-    max: {
-      type: Number,
-      reflectToAttribute: true,
-    },
+      invalid: {
+        type: Boolean,
+        value: false,
+        notify: true,
+        reflectToAttribute: true,
+        observer: 'onInvalidOrErrorMessageChanged_',
+      },
 
-    min: {
-      type: Number,
-      reflectToAttribute: true,
-    },
+      max: {
+        type: Number,
+        reflectToAttribute: true,
+      },
 
-    maxlength: {
-      type: Number,
-      reflectToAttribute: true,
-    },
+      min: {
+        type: Number,
+        reflectToAttribute: true,
+      },
 
-    minlength: {
-      type: Number,
-      reflectToAttribute: true,
-    },
+      maxlength: {
+        type: Number,
+        reflectToAttribute: true,
+      },
 
-    pattern: {
-      type: String,
-      reflectToAttribute: true,
-    },
+      minlength: {
+        type: Number,
+        reflectToAttribute: true,
+      },
 
-    inputmode: String,
+      pattern: {
+        type: String,
+        reflectToAttribute: true,
+      },
 
-    label: {
-      type: String,
-      value: '',
-    },
+      inputmode: String,
 
-    /** @type {?string} */
-    placeholder: {
-      type: String,
-      value: null,
-      observer: 'placeholderChanged_',
-    },
+      label: {
+        type: String,
+        value: '',
+      },
 
-    readonly: {
-      type: Boolean,
-      reflectToAttribute: true,
-    },
+      /** @type {?string} */
+      placeholder: {
+        type: String,
+        value: null,
+        observer: 'placeholderChanged_',
+      },
 
-    required: {
-      type: Boolean,
-      reflectToAttribute: true,
-    },
+      readonly: {
+        type: Boolean,
+        reflectToAttribute: true,
+      },
 
-    /** @type {?number} */
-    inputTabindex: {
-      type: Number,
-      value: 0,
-      observer: 'onInputTabindexChanged_',
-    },
+      required: {
+        type: Boolean,
+        reflectToAttribute: true,
+      },
 
-    type: {
-      type: String,
-      value: 'text',
-      observer: 'onTypeChanged_',
-    },
+      /** @type {?number} */
+      inputTabindex: {
+        type: Number,
+        value: 0,
+        observer: 'onInputTabindexChanged_',
+      },
 
-    value: {
-      type: String,
-      value: '',
-      notify: true,
-      observer: 'onValueChanged_',
-    },
-  },
+      type: {
+        type: String,
+        value: 'text',
+        observer: 'onTypeChanged_',
+      },
 
+      value: {
+        type: String,
+        value: '',
+        notify: true,
+        observer: 'onValueChanged_',
+      },
+    };
+  }
+
+  /** @override */
   ready() {
+    super.ready();
+
     // Use inputTabindex instead.
     assert(!this.hasAttribute('tabindex'));
-  },
+  }
 
   /** @private */
   onInputTabindexChanged_() {
@@ -188,18 +208,18 @@ Polymer({
     // having the input in tab order or not. Values greater than 0 will not work
     // as the shadow root encapsulates tabindices.
     assert(this.inputTabindex === 0 || this.inputTabindex === -1);
-  },
+  }
 
   /** @private */
   onTypeChanged_() {
     // Check that the 'type' is one of the supported types.
     assert(SUPPORTED_INPUT_TYPES.has(this.type));
-  },
+  }
 
   /** @return {!HTMLInputElement} */
   get inputElement() {
     return /** @type {!HTMLInputElement} */ (this.$.input);
-  },
+  }
 
   /**
    * Returns the aria label to be used with the input element.
@@ -208,7 +228,7 @@ Polymer({
    */
   getAriaLabel_(ariaLabel, label, placeholder) {
     return ariaLabel || label || placeholder;
-  },
+  }
 
   /**
    * Returns 'true' or 'false' as a string for the aria-invalid attribute.
@@ -217,7 +237,7 @@ Polymer({
    */
   getAriaInvalid_(invalid) {
     return invalid ? 'true' : 'false';
-  },
+  }
 
   /** @private */
   onInvalidOrErrorMessageChanged_() {
@@ -227,7 +247,7 @@ Polymer({
     // changes. Adding and removing the |role| attribute every time there
     // is an error, triggers VoiceOver to consistently announce.
     const ERROR_ID = 'error';
-    const errorElement = this.$$(`#${ERROR_ID}`);
+    const errorElement = this.shadowRoot.querySelector(`#${ERROR_ID}`);
     if (this.invalid) {
       errorElement.setAttribute('role', 'alert');
       this.inputElement.setAttribute('aria-errormessage', ERROR_ID);
@@ -235,7 +255,7 @@ Polymer({
       errorElement.removeAttribute('role');
       this.inputElement.removeAttribute('aria-errormessage');
     }
-  },
+  }
 
   /**
    * This is necessary instead of doing <input placeholder="[[placeholder]]">
@@ -249,11 +269,11 @@ Polymer({
     } else {
       this.inputElement.removeAttribute('placeholder');
     }
-  },
+  }
 
   focus() {
     this.focusInput();
-  },
+  }
 
   /**
    * Focuses the input element.
@@ -267,7 +287,7 @@ Polymer({
     }
     this.inputElement.focus();
     return true;
-  },
+  }
 
   /**
    * @param {string} newValue
@@ -281,7 +301,7 @@ Polymer({
     if (this.autoValidate) {
       this.validate();
     }
-  },
+  }
 
   /**
    * 'change' event fires when <input> value changes and user presses 'Enter'.
@@ -291,18 +311,19 @@ Polymer({
    * @private
    */
   onInputChange_(e) {
-    this.fire('change', {sourceEvent: e});
-  },
+    this.dispatchEvent(new CustomEvent(
+        'change', {bubbles: true, composed: true, detail: {sourceEvent: e}}));
+  }
 
   /** @private */
   onInputFocus_() {
     this.focused_ = true;
-  },
+  }
 
   /** @private */
   onInputBlur_() {
     this.focused_ = false;
-  },
+  }
 
   /**
    * Selects the text within the input. If no parameters are passed, it will
@@ -322,13 +343,13 @@ Polymer({
       assert(start === undefined && end === undefined);
       this.inputElement.select();
     }
-  },
+  }
 
   /** @return {boolean} */
   validate() {
     this.invalid = !this.inputElement.checkValidity();
     return !this.invalid;
-  },
-});
-/* #ignore */ console.warn('crbug/1173575, non-JS module files deprecated.');
-})();
+  }
+}
+
+customElements.define(CrInputElement.is, CrInputElement);

@@ -354,7 +354,8 @@ void LockManager::RequestImpl(ScriptPromiseResolver* resolver,
                               mojom::blink::LockMode mode) {
   ExecutionContext* context = resolver->GetExecutionContext();
 
-  if (!resolver->GetScriptState()->ContextIsValid()) {
+  if (!resolver->GetExecutionContext() ||
+      resolver->GetExecutionContext()->IsContextDestroyed()) {
     return;
   }
 
@@ -372,6 +373,11 @@ void LockManager::RequestImpl(ScriptPromiseResolver* resolver,
     context->GetBrowserInterfaceBroker().GetInterface(
         observer_.BindNewPipeAndPassReceiver(
             context->GetTaskRunner(TaskType::kMiscPlatformAPI)));
+
+    if (!observer_.is_bound()) {
+      resolver->Reject(
+          MakeGarbageCollected<DOMException>(DOMExceptionCode::kAbortError));
+    }
   }
 
   mojom::blink::LockManager::WaitMode wait =

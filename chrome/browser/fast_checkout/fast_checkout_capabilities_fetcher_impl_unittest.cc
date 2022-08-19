@@ -9,6 +9,7 @@
 #include "base/memory/raw_ptr.h"
 #include "base/test/gmock_callback_support.h"
 #include "base/test/gmock_move_support.h"
+#include "base/test/metrics/histogram_tester.h"
 #include "base/test/mock_callback.h"
 #include "components/autofill/core/common/signatures.h"
 #include "components/autofill_assistant/browser/public/autofill_assistant.h"
@@ -26,11 +27,18 @@ using BundleCapabilitiesInformation =
 using CapabilitiesInfo =
     autofill_assistant::AutofillAssistant::CapabilitiesInfo;
 using autofill_assistant::MockAutofillAssistant;
-using ::base::test::RunOnceCallback;
-using ::testing::_;
+using base::test::RunOnceCallback;
+using CacheStateForIsTriggerFormSupported =
+    FastCheckoutCapabilitiesFetcherImpl::CacheStateForIsTriggerFormSupported;
+using testing::_;
 
 constexpr uint32_t kHashPrefixSize = 15u;
 constexpr char kIntent[] = "CHROME_FAST_CHECKOUT";
+constexpr char kUmaKeyHttpCode[] =
+    "Autofill.FastCheckout.CapabilitiesFetcher.HttpResponseCode";
+constexpr char kUmaKeyCacheStateIsTriggerFormSupported[] =
+    "Autofill.FastCheckout.CapabilitiesFetcher."
+    "CacheStateForIsTriggerFormSupported";
 
 constexpr char kUrl1[] = "https://wwww.firstpage.com/";
 constexpr char kUrl2[] = "https://wwww.another-domain.co.uk/";
@@ -53,9 +61,11 @@ class FastCheckoutCapabilitiesFetcherImplTest : public ::testing::Test {
  protected:
   MockAutofillAssistant* autofill_assistant() { return autofill_assistant_; }
   FastCheckoutCapabilitiesFetcher* fetcher() { return fetcher_.get(); }
+  base::HistogramTester& histogram_tester() { return histogram_tester_; }
 
  private:
   // Test support.
+  base::HistogramTester histogram_tester_;
   raw_ptr<MockAutofillAssistant> autofill_assistant_;
 
   // The object to be tested.
@@ -72,8 +82,8 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest, GetCapabilitiesEmptyResponse) {
   EXPECT_CALL(*autofill_assistant(),
               GetCapabilitiesByHashPrefix(
                   kHashPrefixSize, std::vector<uint64_t>{hash1}, kIntent, _))
-      .WillOnce(
-          RunOnceCallback<3>(net::HTTP_OK, std::vector<CapabilitiesInfo>()));
+      .WillOnce(RunOnceCallback<3>(net::HttpStatusCode::HTTP_OK,
+                                   std::vector<CapabilitiesInfo>()));
 
   base::MockCallback<FastCheckoutCapabilitiesFetcher::Callback> callback;
   EXPECT_CALL(callback, Run(true));
@@ -81,6 +91,10 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest, GetCapabilitiesEmptyResponse) {
 
   // The form is still not supported.
   EXPECT_FALSE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature1));
+
+  // The network metric was recorded.
+  histogram_tester().ExpectUniqueSample(kUmaKeyHttpCode,
+                                        net::HttpStatusCode::HTTP_OK, 1u);
 }
 
 TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
@@ -99,7 +113,7 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
   EXPECT_CALL(*autofill_assistant(),
               GetCapabilitiesByHashPrefix(
                   kHashPrefixSize, std::vector<uint64_t>{hash1}, kIntent, _))
-      .WillOnce(RunOnceCallback<3>(net::HTTP_OK,
+      .WillOnce(RunOnceCallback<3>(net::HttpStatusCode::HTTP_OK,
                                    std::vector<CapabilitiesInfo>{info}));
 
   base::MockCallback<FastCheckoutCapabilitiesFetcher::Callback> callback;
@@ -139,10 +153,15 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest, GetCapabilitiesNetworkError) {
   capabilities.trigger_form_signatures.push_back(kFormSignature1);
   CapabilitiesInfo info{kUrl1, {}, capabilities};
   std::move(response_callback)
-      .Run(net::HTTP_NOT_FOUND, std::vector<CapabilitiesInfo>{info});
+      .Run(net::HttpStatusCode::HTTP_NOT_FOUND,
+           std::vector<CapabilitiesInfo>{info});
 
   // The cache is still empty - the content of the message was ignored.
   EXPECT_FALSE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature1));
+
+  // However, the network metric was recorded.
+  histogram_tester().ExpectUniqueSample(
+      kUmaKeyHttpCode, net::HttpStatusCode::HTTP_NOT_FOUND, 1u);
 }
 
 TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
@@ -157,7 +176,7 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
   EXPECT_CALL(*autofill_assistant(),
               GetCapabilitiesByHashPrefix(
                   kHashPrefixSize, std::vector<uint64_t>{hash1}, kIntent, _))
-      .WillOnce(RunOnceCallback<3>(net::HTTP_REQUEST_TIMEOUT,
+      .WillOnce(RunOnceCallback<3>(net::HttpStatusCode::HTTP_REQUEST_TIMEOUT,
                                    std::vector<CapabilitiesInfo>{}));
 
   base::MockCallback<FastCheckoutCapabilitiesFetcher::Callback> callback1;
@@ -173,7 +192,7 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
   EXPECT_CALL(*autofill_assistant(),
               GetCapabilitiesByHashPrefix(
                   kHashPrefixSize, std::vector<uint64_t>{hash1}, kIntent, _))
-      .WillOnce(RunOnceCallback<3>(net::HTTP_OK,
+      .WillOnce(RunOnceCallback<3>(net::HttpStatusCode::HTTP_OK,
                                    std::vector<CapabilitiesInfo>{info}));
 
   base::MockCallback<FastCheckoutCapabilitiesFetcher::Callback> callback2;
@@ -187,6 +206,13 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
   EXPECT_CALL(callback3, Run(true));
   fetcher()->FetchAvailability(origin1, callback3.Get());
   EXPECT_TRUE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature1));
+
+  // All network metrics were recorded.
+  histogram_tester().ExpectTotalCount(kUmaKeyHttpCode, 2u);
+  histogram_tester().ExpectBucketCount(
+      kUmaKeyHttpCode, net::HttpStatusCode::HTTP_REQUEST_TIMEOUT, 1u);
+  histogram_tester().ExpectBucketCount(kUmaKeyHttpCode,
+                                       net::HttpStatusCode::HTTP_OK, 1u);
 }
 
 TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
@@ -229,7 +255,7 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
   capabilities.trigger_form_signatures.push_back(kFormSignature2);
   CapabilitiesInfo info1{kUrl1, {}, capabilities};
   std::move(response_callback1)
-      .Run(net::HTTP_OK, std::vector<CapabilitiesInfo>{info1});
+      .Run(net::HttpStatusCode::HTTP_OK, std::vector<CapabilitiesInfo>{info1});
 
   // The cache contains information for the first domain.
   EXPECT_TRUE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature1));
@@ -244,7 +270,7 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
   capabilities.trigger_form_signatures.push_back(kFormSignature3);
   CapabilitiesInfo info2{kUrl2, {}, capabilities};
   std::move(response_callback2)
-      .Run(net::HTTP_OK, std::vector<CapabilitiesInfo>{info2});
+      .Run(net::HttpStatusCode::HTTP_OK, std::vector<CapabilitiesInfo>{info2});
 
   // The cache now contains all domain information.
   EXPECT_TRUE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature1));
@@ -253,6 +279,63 @@ TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
   EXPECT_FALSE(fetcher()->IsTriggerFormSupported(origin2, kFormSignature1));
   EXPECT_FALSE(fetcher()->IsTriggerFormSupported(origin2, kFormSignature2));
   EXPECT_TRUE(fetcher()->IsTriggerFormSupported(origin2, kFormSignature3));
+}
+
+TEST_F(FastCheckoutCapabilitiesFetcherImplTest,
+       IsTriggerFormSupportedRecordsUmaMetrics) {
+  url::Origin origin1 = url::Origin::Create(GURL(kUrl1));
+  uint64_t hash1 = AutofillAssistant::GetHashPrefix(kHashPrefixSize, origin1);
+
+  // The cache is empty.
+  EXPECT_FALSE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature1));
+  EXPECT_FALSE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature2));
+  histogram_tester().ExpectUniqueSample(
+      kUmaKeyCacheStateIsTriggerFormSupported,
+      CacheStateForIsTriggerFormSupported::kNeverFetched, 2u);
+
+  AutofillAssistant::GetCapabilitiesResponseCallback response_callback1;
+  EXPECT_CALL(*autofill_assistant(),
+              GetCapabilitiesByHashPrefix(
+                  kHashPrefixSize, std::vector<uint64_t>{hash1}, kIntent, _))
+      .Times(1)
+      .WillOnce(MoveArg<3>(&response_callback1));
+
+  base::MockCallback<FastCheckoutCapabilitiesFetcher::Callback> callback1;
+  fetcher()->FetchAvailability(origin1, callback1.Get());
+
+  // While the fetch is still ongoing, there is no availability yet.
+  EXPECT_FALSE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature1));
+  histogram_tester().ExpectTotalCount(kUmaKeyCacheStateIsTriggerFormSupported,
+                                      3u);
+  histogram_tester().ExpectBucketCount(
+      kUmaKeyCacheStateIsTriggerFormSupported,
+      CacheStateForIsTriggerFormSupported::kNeverFetched, 2u);
+  histogram_tester().ExpectBucketCount(
+      kUmaKeyCacheStateIsTriggerFormSupported,
+      CacheStateForIsTriggerFormSupported::kFetchOngoing, 1u);
+
+  EXPECT_CALL(callback1, Run(true));
+  BundleCapabilitiesInformation capabilities;
+  capabilities.trigger_form_signatures.push_back(kFormSignature1);
+  CapabilitiesInfo info1{kUrl1, {}, capabilities};
+  std::move(response_callback1)
+      .Run(net::HttpStatusCode::HTTP_OK, std::vector<CapabilitiesInfo>{info1});
+
+  // The cache contains information for the first domain.
+  EXPECT_TRUE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature1));
+  histogram_tester().ExpectTotalCount(kUmaKeyCacheStateIsTriggerFormSupported,
+                                      4u);
+  histogram_tester().ExpectBucketCount(
+      kUmaKeyCacheStateIsTriggerFormSupported,
+      CacheStateForIsTriggerFormSupported::kEntryAvailableAndFormSupported, 1u);
+
+  EXPECT_FALSE(fetcher()->IsTriggerFormSupported(origin1, kFormSignature2));
+  histogram_tester().ExpectTotalCount(kUmaKeyCacheStateIsTriggerFormSupported,
+                                      5u);
+  histogram_tester().ExpectBucketCount(
+      kUmaKeyCacheStateIsTriggerFormSupported,
+      CacheStateForIsTriggerFormSupported::kEntryAvailableAndFormNotSupported,
+      1u);
 }
 
 }  // namespace

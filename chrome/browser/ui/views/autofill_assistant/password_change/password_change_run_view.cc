@@ -11,6 +11,7 @@
 #include "base/bind.h"
 #include "base/callback_forward.h"
 #include "base/memory/ptr_util.h"
+#include "base/ranges/algorithm.h"
 #include "chrome/browser/ui/autofill_assistant/password_change/apc_utils.h"
 #include "chrome/browser/ui/autofill_assistant/password_change/password_change_run_controller.h"
 #include "chrome/browser/ui/autofill_assistant/password_change/password_change_run_display.h"
@@ -198,6 +199,7 @@ void PasswordChangeRunView::ShowBasePrompt(
 
   SetDescription(description);
   CreateBasePromptOptions(choices);
+  password_change_run_progress_->PauseIconAnimation();
 }
 
 void PasswordChangeRunView::ShowBasePrompt(
@@ -205,9 +207,17 @@ void PasswordChangeRunView::ShowBasePrompt(
   DCHECK(body_);
 
   body_->RemoveAllChildViews();
+  // Do not create the separator if all choices have empty text.
+  if (base::ranges::all_of(choices, [](const PromptChoice& choice) {
+        return choice.text.empty();
+      })) {
+    return;
+  }
+
   body_->AddChildView(std::make_unique<views::Separator>());
 
   CreateBasePromptOptions(choices);
+  password_change_run_progress_->PauseIconAnimation();
 }
 
 void PasswordChangeRunView::CreateBasePromptOptions(
@@ -240,6 +250,7 @@ void PasswordChangeRunView::ShowUseGeneratedPasswordPrompt(
           .Build());
 
   SetDescription(description);
+  password_change_run_progress_->PauseIconAnimation();
 
   DCHECK(body_);
   views::View* button_container = body_->AddChildView(CreateButtonContainer());
@@ -273,7 +284,7 @@ void PasswordChangeRunView::ShowStartingScreen(const GURL& url) {
 }
 
 void PasswordChangeRunView::ShowErrorScreen() {
-  password_change_run_progress_->StopAnimation();
+  password_change_run_progress_->PauseIconAnimation();
   SetTopIcon(
       autofill_assistant::password_change::TopIcon::TOP_ICON_ERROR_OCCURRED);
   SetTitle(l10n_util::GetStringUTF16(
@@ -330,6 +341,7 @@ void PasswordChangeRunView::OnShowCompletionScreen() {
 void PasswordChangeRunView::ClearPrompt() {
   DCHECK(body_);
   body_->RemoveAllChildViews();
+  password_change_run_progress_->ResumeIconAnimation();
 }
 
 void PasswordChangeRunView::OnControllerGone() {

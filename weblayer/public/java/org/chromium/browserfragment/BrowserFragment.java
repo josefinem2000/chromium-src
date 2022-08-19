@@ -40,6 +40,7 @@ public class BrowserFragment extends Fragment {
     private final TabObserverDelegate mTabObserverDelegate = new TabObserverDelegate();
     private ListenableFuture<TabManager> mFutureTabManager;
     private CallbackToFutureAdapter.Completer<TabManager> mTabManagerCompleter;
+    private Bundle mInstanceState = new Bundle();
 
     private final IBrowserFragmentDelegateClient mClient =
             new IBrowserFragmentDelegateClient.Stub() {
@@ -50,7 +51,8 @@ public class BrowserFragment extends Fragment {
                 }
 
                 @Override
-                public void onStarted() {
+                public void onStarted(Bundle instanceState) {
+                    mInstanceState = instanceState;
                     mTabManagerCompleter.set(new TabManager(mDelegate));
                 }
             };
@@ -139,10 +141,11 @@ public class BrowserFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try {
-            mDelegate.onDestroy();
-        } catch (RemoteException e) {
-        }
+
+        // We intentionally do not forward the onDestroy call here to avoid destroying/recreating
+        // the WebLayer implementations every time.
+        // onDestroy is called once the ViewModel is cleared because that guarantees that the
+        // Fragment will no longer be used.
     }
 
     @Override
@@ -192,8 +195,8 @@ public class BrowserFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        // TODO(rayankans): Synchronously retrieve instance state from delegate.
         super.onSaveInstanceState(outState);
+        outState.putAll(mInstanceState);
     }
 
     public Browser getBrowser() {
@@ -282,6 +285,16 @@ public class BrowserFragment extends Fragment {
 
         boolean hasSavedState() {
             return mBrowser != null;
+        }
+
+        @Override
+        public void onCleared() {
+            if (mDelegate != null) {
+                try {
+                    mDelegate.onDestroy();
+                } catch (RemoteException e) {
+                }
+            }
         }
     }
 }

@@ -187,7 +187,6 @@ BLINK_COMMON_EXPORT extern const base::Feature
 BLINK_COMMON_EXPORT extern const base::Feature
     kPurgeRendererMemoryWhenBackgrounded;
 BLINK_COMMON_EXPORT extern const base::Feature kWindowOpenNewPopupBehavior;
-BLINK_COMMON_EXPORT extern const base::Feature kRTCUnifiedPlanByDefault;
 BLINK_COMMON_EXPORT extern const base::Feature kRTCOfferExtmapAllowMixed;
 BLINK_COMMON_EXPORT extern const base::Feature kRTCGpuCodecSupportWaiter;
 BLINK_COMMON_EXPORT extern const base::FeatureParam<int>
@@ -535,6 +534,12 @@ BLINK_COMMON_EXPORT
 extern const base::Feature kPersistentQuotaIsTemporaryQuota;
 BLINK_COMMON_EXPORT bool IsPersistentQuotaIsTemporaryQuota();
 
+// Gates the non-standard legacy quota API `window.webkitStorageInfo`
+// which is disabled starting M106.
+// TODO(crbug.com/695586): Cleanup on or after M108.
+BLINK_COMMON_EXPORT
+extern const base::Feature kPrefixedStorageInfo;
+
 // If enabled, the ResourceLoadScheculer will take the current network state
 // into consideration, when it plans to delay a low-priority throttleable
 // requests in the tight mode. The factors include:
@@ -850,6 +855,14 @@ BLINK_COMMON_EXPORT extern const base::Feature kScrollUpdateOptimizations;
 // Allows reading/writing unsanitized content from/to the clipboard. Currently,
 // it is only applicable to HTML format. See crbug.com/1268679.
 BLINK_COMMON_EXPORT extern const base::Feature kClipboardUnsanitizedContent;
+
+// If set, HTMLTokenizer is run on a background thread.
+BLINK_COMMON_EXPORT extern const base::Feature kThreadedHtmlTokenizer;
+
+// The maximum number of tokens the background thread will generate before
+// NextParseResults() is called.
+BLINK_COMMON_EXPORT extern const base::FeatureParam<int>
+    kThreadedHtmlTokenizerTokenMaxCount;
 
 // If enabled, the WebRTC_* threads in peerconnection module will use
 // kResourceEfficient thread type.

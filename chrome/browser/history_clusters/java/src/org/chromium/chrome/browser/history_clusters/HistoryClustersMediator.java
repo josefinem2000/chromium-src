@@ -21,6 +21,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.chromium.base.Callback;
 import org.chromium.base.CallbackController;
 import org.chromium.base.ContextUtils;
 import org.chromium.base.Promise;
@@ -103,6 +104,7 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
     private final Map<String, PropertyModel> mLabelToModelMap = new LinkedHashMap<>();
     private final Map<ClusterVisit, VisitMetadata> mVisitMetadataMap = new HashMap<>();
     private final AccessibilityUtil mAccessibilityUtil;
+    private final Callback<String> mAnnounceForAccessibilityCallback;
     private final boolean mIsScrollToLoadDisabled;
 
     /**
@@ -122,13 +124,15 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
      *         items in the list we're displaying.
      * @param metricsLogger Object that records metrics about user interactions.
      * @param accessibilityUtil Utility object that tells us about the current accessibility state.
+     * @param announceForAccessibilityCallback Callback that announces the given string for a11y.
      */
     HistoryClustersMediator(@NonNull HistoryClustersBridge historyClustersBridge,
             LargeIconBridge largeIconBridge, @NonNull Context context, @NonNull Resources resources,
             @NonNull ModelList modelList, @NonNull PropertyModel toolbarModel,
             HistoryClustersDelegate historyClustersDelegate, Clock clock,
             TemplateUrlService templateUrlService, SelectionDelegate selectionDelegate,
-            HistoryClustersMetricsLogger metricsLogger, AccessibilityUtil accessibilityUtil) {
+            HistoryClustersMetricsLogger metricsLogger, AccessibilityUtil accessibilityUtil,
+            Callback<String> announceForAccessibilityCallback) {
         mHistoryClustersBridge = historyClustersBridge;
         mLargeIconBridge = largeIconBridge;
         mModelList = modelList;
@@ -144,6 +148,7 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
         mSelectionDelegate = selectionDelegate;
         mMetricsLogger = metricsLogger;
         mAccessibilityUtil = accessibilityUtil;
+        mAnnounceForAccessibilityCallback = announceForAccessibilityCallback;
 
         PropertyModel toggleModel = new PropertyModel(HistoryClustersItemProperties.ALL_KEYS);
         mToggleItem = new ListItem(ItemType.TOGGLE, toggleModel);
@@ -281,9 +286,13 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
                     isIncognito, true, inTabGroup, additionalUrls);
             ContextUtils.getApplicationContext().startActivity(intent);
         } else {
-            Tab parent = createNewTab(visits.get(0).getNormalizedUrl(), isIncognito, null);
+            Tab parent = createNewTab(visits.get(0).getNormalizedUrl(), isIncognito, null,
+                    TabLaunchType.FROM_CHROME_UI);
+            @TabLaunchType
+            int tabLaunchType = inTabGroup ? TabLaunchType.FROM_LONGPRESS_BACKGROUND_IN_GROUP
+                                           : TabLaunchType.FROM_CHROME_UI;
             for (int i = 1; i < visits.size(); i++) {
-                createNewTab(visits.get(i).getNormalizedUrl(), false, parent);
+                createNewTab(visits.get(i).getNormalizedUrl(), isIncognito, parent, tabLaunchType);
             }
         }
     }
@@ -311,6 +320,14 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
             removeVisit(visit);
         }
 
+        if (visits.size() == 1) {
+            announceForAccessibility(
+                    mResources.getString(R.string.delete_message, visits.get(0).getTitle()));
+        } else {
+            announceForAccessibility(
+                    mResources.getString(R.string.multiple_history_items_deleted, visits.size()));
+        }
+
         mDelegate.removeMarkedItems();
     }
 
@@ -336,11 +353,10 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
         mVisitMetadataMap.remove(visit);
     }
 
-    private Tab createNewTab(GURL gurl, boolean incognito, Tab parentTab) {
+    private Tab createNewTab(GURL gurl, boolean incognito, Tab parentTab, int tabLaunchType) {
         TabCreator tabCreator = mDelegate.getTabCreator(incognito);
         assert tabCreator != null;
-        return tabCreator.createNewTab(
-                new LoadUrlParams(gurl), TabLaunchType.FROM_CHROME_UI, parentTab);
+        return tabCreator.createNewTab(new LoadUrlParams(gurl), tabLaunchType, parentTab);
     }
 
     private void queryComplete(HistoryClustersResult result) {
@@ -360,6 +376,8 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
                     existingModel.set(
                             HistoryClustersItemProperties.ICON_DRAWABLE, journeysDrawable);
                     existingModel.set(HistoryClustersItemProperties.DIVIDER_VISIBLE, true);
+                    existingModel.set(HistoryClustersItemProperties.DIVIDER_HEIGHT_RES,
+                            R.dimen.divider_height);
                     existingModel.set(HistoryClustersItemProperties.TITLE,
                             getQuotedLabelFromRawLabel(rawLabel, result.getClusters()));
                     ListItem clusterItem = new ListItem(ItemType.CLUSTER, existingModel);
@@ -371,6 +389,8 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
                     existingModel.set(HistoryClustersItemProperties.END_BUTTON_DRAWABLE, null);
                     existingModel.set(HistoryClustersItemProperties.ACCESSIBILITY_STATE,
                             ClusterViewAccessibilityState.CLICKABLE);
+                    existingModel.set(
+                            HistoryClustersItemProperties.START_ICON_VISIBILITY, View.VISIBLE);
                 }
                 existingModel.set(HistoryClustersItemProperties.LABEL,
                         mResources.getQuantityString(R.plurals.history_clusters_n_matches,
@@ -393,9 +413,10 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
             Drawable journeysDrawable =
                     AppCompatResources.getDrawable(mContext, R.drawable.ic_journeys);
             clusterModel.set(HistoryClustersItemProperties.ICON_DRAWABLE, journeysDrawable);
-            clusterModel.set(HistoryClustersItemProperties.DIVIDER_VISIBLE, isQueryLess);
+            clusterModel.set(HistoryClustersItemProperties.DIVIDER_VISIBLE, false);
             clusterModel.set(HistoryClustersItemProperties.ACCESSIBILITY_STATE,
                     ClusterViewAccessibilityState.COLLAPSIBLE);
+            clusterModel.set(HistoryClustersItemProperties.START_ICON_VISIBILITY, View.GONE);
             ListItem clusterItem = new ListItem(ItemType.CLUSTER, clusterModel);
             mModelList.add(clusterItem);
 
@@ -432,6 +453,7 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
                                 .with(HistoryClustersItemProperties.VISIBILITY, View.VISIBLE)
                                 .with(HistoryClustersItemProperties.END_BUTTON_CLICK_HANDLER,
                                         (v) -> deleteVisits(Arrays.asList(visit)))
+                                .with(HistoryClustersItemProperties.DIVIDER_VISIBLE, false)
                                 .build();
                 if (mLargeIconBridge != null) {
                     mLargeIconBridge.getLargeIconForUrl(visit.getNormalizedUrl(), mMinFaviconSize,
@@ -454,6 +476,12 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
             if (relatedSearchesItem != null) {
                 visitsAndRelatedSearches.add(relatedSearchesItem);
             }
+
+            PropertyModel lastModelInList =
+                    visitsAndRelatedSearches.get(visitsAndRelatedSearches.size() - 1).model;
+            lastModelInList.set(HistoryClustersItemProperties.DIVIDER_VISIBLE, true);
+            lastModelInList.set(
+                    HistoryClustersItemProperties.DIVIDER_HEIGHT_RES, R.dimen.thick_divider_height);
 
             mModelList.addAll(visitsAndRelatedSearches);
             clusterModel.set(HistoryClustersItemProperties.CLICK_HANDLER,
@@ -532,6 +560,10 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
         }
     }
 
+    private void announceForAccessibility(String messsage) {
+        mAnnounceForAccessibilityCallback.onResult(messsage);
+    }
+
     @VisibleForTesting
     void onClusterVisitClicked(SelectableItemView view, ClusterVisit clusterVisit) {
         if (mSelectionDelegate.isSelectionEnabled()) {
@@ -549,11 +581,16 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
         PropertyModel clusterModel = clusterItem.model;
         clusterModel.set(HistoryClustersItemProperties.CLICK_HANDLER,
                 (v) -> showCluster(clusterItem, itemsToHide));
+        clusterModel.set(HistoryClustersItemProperties.DIVIDER_VISIBLE, true);
+        clusterModel.set(
+                HistoryClustersItemProperties.DIVIDER_HEIGHT_RES, R.dimen.thick_divider_height);
         Drawable chevron = UiUtils.getTintedDrawable(mContext, R.drawable.ic_expand_less_black_24dp,
                 R.color.default_icon_color_tint_list);
         clusterModel.set(HistoryClustersItemProperties.END_BUTTON_DRAWABLE, chevron);
         clusterModel.set(HistoryClustersItemProperties.ACCESSIBILITY_STATE,
                 ClusterViewAccessibilityState.EXPANDABLE);
+        itemsToHide.get(itemsToHide.size() - 1)
+                .model.set(HistoryClustersItemProperties.DIVIDER_VISIBLE, false);
 
         mModelList.removeRange(indexOfFirstVisit, itemsToHide.size());
         for (ListItem listItem : itemsToHide) {
@@ -570,11 +607,16 @@ class HistoryClustersMediator extends RecyclerView.OnScrollListener implements S
         PropertyModel clusterModel = clusterItem.model;
         clusterModel.set(HistoryClustersItemProperties.CLICK_HANDLER,
                 (v) -> hideCluster(clusterItem, itemsToShow));
+        clusterModel.set(HistoryClustersItemProperties.DIVIDER_VISIBLE, false);
         Drawable chevron = UiUtils.getTintedDrawable(mContext, R.drawable.ic_expand_more_black_24dp,
                 R.color.default_icon_color_tint_list);
         clusterModel.set(HistoryClustersItemProperties.END_BUTTON_DRAWABLE, chevron);
         clusterModel.set(HistoryClustersItemProperties.ACCESSIBILITY_STATE,
                 ClusterViewAccessibilityState.COLLAPSIBLE);
+        PropertyModel lastModelInList = itemsToShow.get(itemsToShow.size() - 1).model;
+        lastModelInList.set(HistoryClustersItemProperties.DIVIDER_VISIBLE, true);
+        clusterModel.set(
+                HistoryClustersItemProperties.DIVIDER_HEIGHT_RES, R.dimen.thick_divider_height);
         int insertionIndex = mModelList.indexOf(clusterItem) + 1;
         mModelList.addAll(itemsToShow, insertionIndex);
     }

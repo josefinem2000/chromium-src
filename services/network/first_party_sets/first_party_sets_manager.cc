@@ -24,6 +24,7 @@
 #include "net/cookies/first_party_set_entry.h"
 #include "net/cookies/first_party_set_metadata.h"
 #include "net/cookies/same_party_context.h"
+#include "services/network/public/mojom/first_party_sets.mojom.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace network {
@@ -43,7 +44,7 @@ FirstPartySetsManager::FirstPartySetsManager(bool enabled)
           enabled ? std::make_unique<base::circular_deque<base::OnceClosure>>()
                   : nullptr) {
   if (!enabled)
-    SetCompleteSets({});
+    SetCompleteSets(mojom::PublicFirstPartySets::New());
 }
 
 FirstPartySetsManager::~FirstPartySetsManager() {
@@ -54,7 +55,7 @@ bool FirstPartySetsManager::IsContextSamePartyWithSite(
     const net::SchemefulSite& site,
     const net::SchemefulSite* top_frame_site,
     const std::set<net::SchemefulSite>& party_context,
-    const FirstPartySetsContextConfig& fps_context_config) const {
+    const net::FirstPartySetsContextConfig& fps_context_config) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   const absl::optional<net::FirstPartySetEntry> site_entry =
       FindEntry(site, fps_context_config);
@@ -81,7 +82,7 @@ FirstPartySetsManager::ComputeMetadata(
     const net::SchemefulSite& site,
     const net::SchemefulSite* top_frame_site,
     const std::set<net::SchemefulSite>& party_context,
-    const FirstPartySetsContextConfig& fps_context_config,
+    const net::FirstPartySetsContextConfig& fps_context_config,
     base::OnceCallback<void(net::FirstPartySetMetadata)> callback) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
@@ -102,7 +103,7 @@ void FirstPartySetsManager::ComputeMetadataAndInvoke(
     const net::SchemefulSite& site,
     const absl::optional<net::SchemefulSite> top_frame_site,
     const std::set<net::SchemefulSite>& party_context,
-    const FirstPartySetsContextConfig& fps_context_config,
+    const net::FirstPartySetsContextConfig& fps_context_config,
     base::OnceCallback<void(net::FirstPartySetMetadata)> callback,
     base::ElapsedTimer timer) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
@@ -120,7 +121,7 @@ net::FirstPartySetMetadata FirstPartySetsManager::ComputeMetadataInternal(
     const net::SchemefulSite& site,
     const net::SchemefulSite* top_frame_site,
     const std::set<net::SchemefulSite>& party_context,
-    const FirstPartySetsContextConfig& fps_context_config) const {
+    const net::FirstPartySetsContextConfig& fps_context_config) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   DCHECK(sets_.has_value());
   DCHECK(fps_context_config.is_enabled());
@@ -148,7 +149,7 @@ net::FirstPartySetMetadata FirstPartySetsManager::ComputeMetadataInternal(
 
 absl::optional<net::FirstPartySetEntry> FirstPartySetsManager::FindEntry(
     const net::SchemefulSite& site,
-    const FirstPartySetsContextConfig& fps_context_config) const {
+    const net::FirstPartySetsContextConfig& fps_context_config) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   DCHECK(sets_.has_value());
   DCHECK(fps_context_config.is_enabled());
@@ -162,13 +163,19 @@ absl::optional<net::FirstPartySetEntry> FirstPartySetsManager::FindEntry(
   if (is_enabled()) {
     // Check if `normalized_site` can be found in the customizations first.
     // If not, fall back to look up in `sets_`.
-    if (const auto it =
+    if (const auto customizations_it =
             fps_context_config.customizations().find(normalized_site);
-        it != fps_context_config.customizations().end()) {
-      entry = it->second;
-    } else if (const auto it = sets_->find(normalized_site);
-               it != sets_->end()) {
-      entry = it->second;
+        customizations_it != fps_context_config.customizations().end()) {
+      entry = customizations_it->second;
+    } else {
+      const auto canonical_it = aliases_.find(normalized_site);
+      const net::SchemefulSite& canonical_site = canonical_it == aliases_.end()
+                                                     ? normalized_site
+                                                     : canonical_it->second;
+      if (const auto sets_it = sets_->find(canonical_site);
+          sets_it != sets_->end()) {
+        entry = sets_it->second;
+      }
     }
   }
 
@@ -181,7 +188,7 @@ absl::optional<net::FirstPartySetEntry> FirstPartySetsManager::FindEntry(
 absl::optional<FirstPartySetsManager::OwnersResult>
 FirstPartySetsManager::FindOwners(
     const base::flat_set<net::SchemefulSite>& sites,
-    const FirstPartySetsContextConfig& fps_context_config,
+    const net::FirstPartySetsContextConfig& fps_context_config,
     base::OnceCallback<void(FirstPartySetsManager::OwnersResult)> callback) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
@@ -197,7 +204,7 @@ FirstPartySetsManager::FindOwners(
 
 void FirstPartySetsManager::FindOwnersAndInvoke(
     const base::flat_set<net::SchemefulSite>& sites,
-    const FirstPartySetsContextConfig& fps_context_config,
+    const net::FirstPartySetsContextConfig& fps_context_config,
     base::OnceCallback<void(FirstPartySetsManager::OwnersResult)> callback,
     base::ElapsedTimer timer) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
@@ -211,7 +218,7 @@ void FirstPartySetsManager::FindOwnersAndInvoke(
 
 FirstPartySetsManager::OwnersResult FirstPartySetsManager::FindOwnersInternal(
     const base::flat_set<net::SchemefulSite>& sites,
-    const FirstPartySetsContextConfig& fps_context_config) const {
+    const net::FirstPartySetsContextConfig& fps_context_config) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   DCHECK(sets_.has_value());
   DCHECK(fps_context_config.is_enabled());
@@ -256,11 +263,12 @@ void FirstPartySetsManager::InvokePendingQueries() {
 }
 
 void FirstPartySetsManager::SetCompleteSets(
-    FirstPartySetsManager::FlattenedSets sets) {
+    mojom::PublicFirstPartySetsPtr public_sets) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   if (sets_.has_value())
     return;
-  sets_ = std::move(sets);
+  sets_ = std::move(public_sets->sets);
+  aliases_ = std::move(public_sets->aliases);
   InvokePendingQueries();
 }
 

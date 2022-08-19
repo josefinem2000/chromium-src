@@ -56,6 +56,7 @@
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-blink.h"
 #include "third_party/blink/public/mojom/frame/frame.mojom-blink.h"
 #include "third_party/blink/public/mojom/page/page.mojom-blink.h"
+#include "third_party/blink/public/mojom/service_worker/service_worker_fetch_handler_type.mojom-blink.h"
 #include "third_party/blink/public/platform/modules/service_worker/web_service_worker_network_provider.h"
 #include "third_party/blink/public/platform/platform.h"
 #include "third_party/blink/public/platform/web_content_security_policy_struct.h"
@@ -95,6 +96,7 @@
 #include "third_party/blink/renderer/core/loader/frame_loader.h"
 #include "third_party/blink/renderer/core/loader/idleness_detector.h"
 #include "third_party/blink/renderer/core/loader/interactive_detector.h"
+#include "third_party/blink/renderer/core/loader/old_document_info_for_commit.h"
 #include "third_party/blink/renderer/core/loader/prefetched_signed_exchange_manager.h"
 #include "third_party/blink/renderer/core/loader/preload_helper.h"
 #include "third_party/blink/renderer/core/loader/progress_tracker.h"
@@ -2392,8 +2394,14 @@ void DocumentLoader::CommitNavigation() {
   // The DocumentLoader was flagged as activated if it needs to notify the frame
   // that it was activated before navigation. Update the frame state based on
   // the new value.
-  if (frame_->HadStickyUserActivationBeforeNavigation() !=
-      had_sticky_activation_) {
+  OldDocumentInfoForCommit* old_document_info_for_commit =
+      ScopedOldDocumentInfoForCommitCapturer::CurrentInfo();
+  bool had_sticky_activation_before_navigation =
+      old_document_info_for_commit
+          ? old_document_info_for_commit
+                ->had_sticky_activation_before_navigation
+          : false;
+  if (had_sticky_activation_before_navigation != had_sticky_activation_) {
     frame_->SetHadStickyUserActivationBeforeNavigation(had_sticky_activation_);
     frame_->GetLocalFrameHostRemote()
         .HadStickyUserActivationBeforeNavigationChanged(had_sticky_activation_);
@@ -2546,9 +2554,19 @@ void DocumentLoader::CreateParserPostCommit() {
   // called for the metrics tracking logic to handle it properly.
   if (service_worker_network_provider_ &&
       service_worker_network_provider_->GetControllerServiceWorkerMode() ==
-          blink::mojom::ControllerServiceWorkerMode::kControlled) {
-    GetLocalFrameClient().DidObserveLoadingBehavior(
-        kLoadingBehaviorServiceWorkerControlled);
+          mojom::blink::ControllerServiceWorkerMode::kControlled) {
+    LoadingBehaviorFlag loading_behavior =
+        kLoadingBehaviorServiceWorkerControlled;
+    if (service_worker_network_provider_->GetFetchHandlerType() !=
+        mojom::blink::ServiceWorkerFetchHandlerType::kNotSkippable) {
+      DCHECK_NE(service_worker_network_provider_->GetFetchHandlerType(),
+                mojom::blink::ServiceWorkerFetchHandlerType::kNoHandler);
+      // LoadingBehaviorFlag is a bit stream, and `|` should work.
+      loading_behavior = static_cast<LoadingBehaviorFlag>(
+          loading_behavior |
+          kLoadingBehaviorServiceWorkerFetchHandlerSkippable);
+    }
+    GetLocalFrameClient().DidObserveLoadingBehavior(loading_behavior);
   }
 
   // Links with media values need more information (like viewport information).

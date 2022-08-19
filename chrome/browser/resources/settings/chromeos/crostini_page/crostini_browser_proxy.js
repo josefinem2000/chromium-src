@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'chrome://resources/cr_elements/cr_input/cr_input.m.js';
+import 'chrome://resources/cr_elements/cr_input/cr_input.js';
 
 import {sendWithPromise} from 'chrome://resources/js/cr.m.js';
 
@@ -267,10 +267,9 @@ export class CrostiniBrowserProxy {
    * Opens file selector dialog to allow user to select an Ansible playbook
    * to preconfigure their container.
    *
-   * @return {!Promise<string>} Returns a filepath to the selected Ansible
-   *      Playbook
+   * @return {!Promise<string>} Returns a filepath to the selected file.
    */
-  applyAnsiblePlaybook() {}
+  openContainerFileSelector() {}
 }
 
 /** @type {?CrostiniBrowserProxy} */
@@ -452,7 +451,7 @@ export class CrostiniBrowserProxyImpl {
   }
 
   /** @override */
-  applyAnsiblePlaybook() {
-    return sendWithPromise('applyAnsiblePlaybook');
+  openContainerFileSelector() {
+    return sendWithPromise('openContainerFileSelector');
   }
 }

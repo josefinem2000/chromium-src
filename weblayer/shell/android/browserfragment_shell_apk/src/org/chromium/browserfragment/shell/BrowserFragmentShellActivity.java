@@ -12,6 +12,8 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.FutureCallback;
@@ -21,9 +23,16 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.chromium.base.Log;
 import org.chromium.browserfragment.Browser;
 import org.chromium.browserfragment.BrowserFragment;
+import org.chromium.browserfragment.FragmentParams;
 import org.chromium.browserfragment.Tab;
 import org.chromium.browserfragment.TabManager;
 import org.chromium.browserfragment.TabObserver;
+import org.chromium.browserfragment.WebMessageCallback;
+import org.chromium.browserfragment.WebMessageReplyProxy;
+
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Activity for managing the Demo Shell.
  */
@@ -48,7 +57,7 @@ public class BrowserFragmentShellActivity extends AppCompatActivity {
         Futures.addCallback(browserFuture, new FutureCallback<Browser>() {
             @Override
             public void onSuccess(Browser browser) {
-                onBrowserReady(browser);
+                onBrowserReady(browser, savedInstanceState);
             }
 
             @Override
@@ -79,10 +88,10 @@ public class BrowserFragmentShellActivity extends AppCompatActivity {
         });
     }
 
-    private void onBrowserReady(Browser browser) {
+    private void onBrowserReady(Browser browser, Bundle savedInstanceState) {
         browser.setRemoteDebuggingEnabled(true);
 
-        BrowserFragment fragment = browser.createFragment();
+        BrowserFragment fragment = getOrCreateBrowserFragment(browser, savedInstanceState);
 
         fragment.registerTabObserver(new TabObserver() {
             @Override
@@ -116,17 +125,54 @@ public class BrowserFragmentShellActivity extends AppCompatActivity {
         Futures.addCallback(activeTabFuture, new FutureCallback<Tab>() {
             @Override
             public void onSuccess(Tab activeTab) {
-                activeTab.getNavigationController().navigate("https://google.com");
+                if (savedInstanceState == null) {
+                    // TODO(rayankans): Expose Tab URL to avoid relying on |savedInstanceState|.
+                    activeTab.getNavigationController().navigate("https://google.com");
+
+                    activeTab.registerWebMessageCallback(new WebMessageCallback() {
+                        @Override
+                        public void onWebMessageReceived(
+                                WebMessageReplyProxy replyProxy, String message) {
+                            Log.i(TAG, "received WebMessage: " + message);
+                            replyProxy.postMessage("Bouncing answer from browser: " + message);
+                        }
+
+                        @Override
+                        public void onWebMessageReplyProxyClosed(WebMessageReplyProxy replyProxy) {}
+
+                        @Override
+                        public void onWebMessageReplyProxyActiveStateChanged(
+                                WebMessageReplyProxy proxy) {}
+                    }, "x", Arrays.asList("*"));
+                }
             }
             @Override
             public void onFailure(Throwable thrown) {}
         }, mContext.getMainExecutor());
+    }
 
-        getSupportFragmentManager()
-                .beginTransaction()
+    private BrowserFragment getOrCreateBrowserFragment(Browser browser, Bundle savedInstanceState) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (savedInstanceState != null) {
+            List<Fragment> fragments = fragmentManager.getFragments();
+            if (fragments.size() > 1) {
+                throw new IllegalStateException("More than one fragment added, shouldn't happen");
+            }
+            if (fragments.size() == 1) {
+                return (BrowserFragment) fragments.get(0);
+            }
+        }
+
+        FragmentParams params =
+                (new FragmentParams.Builder()).setProfileName("DefaultProfile").build();
+        BrowserFragment fragment = browser.createFragment(params);
+
+        fragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
                 .add(R.id.fragment_container_view, fragment, BROWSER_FRAGMENT_TAG)
                 .commit();
+
+        return fragment;
     }
 
     @Override

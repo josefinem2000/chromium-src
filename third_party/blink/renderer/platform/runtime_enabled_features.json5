@@ -630,10 +630,6 @@
       status: "stable"
     },
     {
-      name: "CSSModules",
-      status: "stable",
-    },
-    {
       name: "CSSObjectViewBox",
       status: "stable",
     },
@@ -1379,6 +1375,10 @@
       name: "MediaCapture",
       status: {"Android": "stable"},
     },
+    {
+      name: "MediaCaptureBackgroundBlur",
+      status: "experimental",
+    },
     // Set to reflect the MediaCastOverlayButton feature.
     {
       name: "MediaCastOverlayButton",
@@ -1957,17 +1957,6 @@
       name: "RTCSvcScalabilityMode",
       status: "experimental",
     },
-    // Enables the use of |RTCConfiguration::sdpSemantics| to override the
-    // default SDP semantics at RTCPeerConnection construction.
-    {
-      name: "RTCUnifiedPlan",
-      status: "stable",
-    },
-    // Overrides the default SDP semantics to be Unified Plan at
-    // RTCPeerConnection construction (unless otherwise specified).
-    {
-      name: "RTCUnifiedPlanByDefault",
-    },
     {
       name: "SanitizerAPI",
       status: "experimental",
@@ -2100,11 +2089,6 @@
     {
       name: "SignatureBasedIntegrity",
       origin_trial_feature_name: "SignatureBasedIntegrity",
-      status: "experimental",
-    },
-    {
-      name: "SignedExchangeSubresourcePrefetch",
-      origin_trial_feature_name: "SignedExchangeSubresourcePrefetch",
       status: "experimental",
     },
     {
@@ -2399,10 +2383,6 @@
     {
       name: "ViewportSegments",
       status: "experimental",
-    },
-    {
-      name: "VirtualKeyboard",
-      status: "stable",
     },
     {
       name: "VisibilityCollapseColumn",

@@ -8,6 +8,7 @@
 
 #include "base/bind.h"
 #include "base/callback.h"
+#include "base/metrics/histogram_functions.h"
 #include "base/notreached.h"
 #include "base/ranges/algorithm.h"
 #include "components/autofill/core/common/signatures.h"
@@ -24,6 +25,11 @@ using CapabilitiesInfo =
 namespace {
 constexpr uint32_t kFastCheckoutHashPrefixSize = 15u;
 constexpr char kFastCheckoutIntent[] = "CHROME_FAST_CHECKOUT";
+constexpr char kUmaKeyHttpCode[] =
+    "Autofill.FastCheckout.CapabilitiesFetcher.HttpResponseCode";
+constexpr char kUmaKeyCacheStateIsTriggerFormSupported[] =
+    "Autofill.FastCheckout.CapabilitiesFetcher."
+    "CacheStateForIsTriggerFormSupported";
 }  // namespace
 
 FastCheckoutCapabilitiesFetcherImpl::FastCheckoutCapabilitiesFetcherImpl(
@@ -70,9 +76,26 @@ void FastCheckoutCapabilitiesFetcherImpl::FetchAvailability(
 bool FastCheckoutCapabilitiesFetcherImpl::IsTriggerFormSupported(
     const url::Origin& origin,
     autofill::FormSignature form_signature) {
-  // TODO(crbug.com/1350456): Check whether there is an ongoing request. If so,
-  // record a UMA to indicate that the request resolution was not fast enough.
-  return cache_.ContainsTriggerForm(origin, form_signature);
+  if (cache_.ContainsTriggerForm(origin, form_signature)) {
+    base::UmaHistogramEnumeration(
+        kUmaKeyCacheStateIsTriggerFormSupported,
+        CacheStateForIsTriggerFormSupported::kEntryAvailableAndFormSupported);
+    return true;
+  }
+
+  // Analyze why the result is `false` to record the correct metric.
+  if (cache_.ContainsOrigin(origin)) {
+    base::UmaHistogramEnumeration(kUmaKeyCacheStateIsTriggerFormSupported,
+                                  CacheStateForIsTriggerFormSupported::
+                                      kEntryAvailableAndFormNotSupported);
+  } else {
+    base::UmaHistogramEnumeration(
+        kUmaKeyCacheStateIsTriggerFormSupported,
+        ongoing_requests_.contains(origin)
+            ? CacheStateForIsTriggerFormSupported::kFetchOngoing
+            : CacheStateForIsTriggerFormSupported::kNeverFetched);
+  }
+  return false;
 }
 
 void FastCheckoutCapabilitiesFetcherImpl::OnGetCapabilitiesInformationReceived(
@@ -87,7 +110,7 @@ void FastCheckoutCapabilitiesFetcherImpl::OnGetCapabilitiesInformationReceived(
     return;
   }
 
-  // TODO(crbug.com/1350456): Record UMA for network status.
+  base::UmaHistogramSparse(kUmaKeyHttpCode, http_status);
 
   // Short-hand for executing all callbacks.
   auto inform_callers = [request](bool outcome) {

@@ -74,6 +74,14 @@ void AppPublisher::Uninstall(const std::string& app_id,
   LOG(ERROR) << "Uninstall failed, could not remove the app with id " << app_id;
 }
 
+void AppPublisher::PauseApp(const std::string& app_id) {
+  NOTIMPLEMENTED();
+}
+
+void AppPublisher::UnpauseApp(const std::string& app_id) {
+  NOTIMPLEMENTED();
+}
+
 void AppPublisher::StopApp(const std::string& app_id) {
   NOTIMPLEMENTED();
 }
@@ -86,6 +94,10 @@ void AppPublisher::ExecuteContextMenuCommand(const std::string& app_id,
 }
 
 void AppPublisher::OpenNativeSettings(const std::string& app_id) {
+  NOTIMPLEMENTED();
+}
+
+void AppPublisher::SetResizeLocked(const std::string& app_id, bool locked) {
   NOTIMPLEMENTED();
 }
 

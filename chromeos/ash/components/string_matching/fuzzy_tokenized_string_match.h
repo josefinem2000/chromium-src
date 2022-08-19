@@ -20,9 +20,6 @@ namespace ash::string_matching {
 // other. The higher the relevance score, the better the two strings are
 // matched. Matched portions of text are stored as index ranges.
 //
-// TODO(crbug.com/1018613): each of these functions have too many input params,
-// we should revise the structure and remove unnecessary ones.
-//
 // TODO(crbug.com/1336160): Terminology (for example: relevance vs. ratio) is
 // confusing and could be clarified.
 class FuzzyTokenizedStringMatch {
@@ -49,8 +46,7 @@ class FuzzyTokenizedStringMatch {
   // score is in range [0, 1].
   static double TokenSetRatio(const TokenizedString& query,
                               const TokenizedString& text,
-                              bool partial,
-                              double num_matching_blocks_penalty);
+                              bool partial);
 
   // TokenSortRatio takes two set of tokens, sorts them and find the similarity
   // between two sorted strings. This function assumes that TokenizedString is
@@ -58,22 +54,19 @@ class FuzzyTokenizedStringMatch {
   // [0, 1].
   static double TokenSortRatio(const TokenizedString& query,
                                const TokenizedString& text,
-                               bool partial,
-                               double num_matching_blocks_penalty);
+                               bool partial);
 
   // Finds the best ratio of shorter text with a part of longer text.
   // This function assumes that TokenizedString is already normalized (converted
   // to lower case). The return score is in range of [0, 1].
   static double PartialRatio(const std::u16string& query,
-                             const std::u16string& text,
-                             double num_matching_blocks_penalty);
+                             const std::u16string& text);
 
   // Combines scores from different ratio functions. This function assumes that
   // TokenizedString is already normalized (converted to lower cases).
   // The return score is in range of [0, 1].
   static double WeightedRatio(const TokenizedString& query,
-                              const TokenizedString& text,
-                              double num_matching_blocks_penalty);
+                              const TokenizedString& text);
   // TODO(crbug.com/1336160): Should prefix match always be favored over other
   // matches? Reconsider this principle.
   //
@@ -88,8 +81,7 @@ class FuzzyTokenizedStringMatch {
   // Calculates and returns the relevance score of |query| relative to |text|.
   double Relevance(const TokenizedString& query,
                    const TokenizedString& text,
-                   bool use_weighted_ratio,
-                   double num_matching_blocks_penalty = 0.0);
+                   bool use_weighted_ratio);
   const Hits& hits() const { return hits_; }
 
  private:

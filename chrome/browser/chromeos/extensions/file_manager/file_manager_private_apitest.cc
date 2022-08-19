@@ -198,6 +198,7 @@ class FileManagerPrivateApiTest : public extensions::ExtensionApiTest {
   void SetUpOnMainThread() override {
     extensions::ExtensionApiTest::SetUpOnMainThread();
     ASSERT_TRUE(temp_dir_.CreateUniqueTempDir());
+    ASSERT_TRUE(non_watchable_dir_.CreateUniqueTempDir());
 
     event_router_ = file_manager::EventRouterFactory::GetForProfile(profile());
   }
@@ -215,8 +216,9 @@ class FileManagerPrivateApiTest : public extensions::ExtensionApiTest {
     disk_mount_manager_mock_->SetupDefaultReplies();
 
     // override mock functions.
-    ON_CALL(*disk_mount_manager_mock_, FindDiskBySourcePath(_)).WillByDefault(
-        Invoke(this, &FileManagerPrivateApiTest::FindVolumeBySourcePath));
+    ON_CALL(*disk_mount_manager_mock_, FindDiskBySourcePath(_))
+        .WillByDefault(
+            Invoke(this, &FileManagerPrivateApiTest::FindVolumeBySourcePath));
     EXPECT_CALL(*disk_mount_manager_mock_, disks())
         .WillRepeatedly(ReturnRef(volumes_));
     EXPECT_CALL(*disk_mount_manager_mock_, mount_points())
@@ -234,41 +236,29 @@ class FileManagerPrivateApiTest : public extensions::ExtensionApiTest {
  private:
   void InitMountPoints() {
     const TestMountPoint kTestMountPoints[] = {
-      {
-        "device_path1",
-        ash::CrosDisksClient::GetRemovableDiskMountPoint().AppendASCII(
-            "mount_path1").AsUTF8Unsafe(),
-        ash::MountType::kDevice,
-        ash::disks::MOUNT_CONDITION_NONE,
-        0
-      },
-      {
-        "device_path2",
-        ash::CrosDisksClient::GetRemovableDiskMountPoint().AppendASCII(
-            "mount_path2").AsUTF8Unsafe(),
-        ash::MountType::kDevice,
-        ash::disks::MOUNT_CONDITION_NONE,
-        1
-      },
-      {
-        "device_path3",
-        ash::CrosDisksClient::GetRemovableDiskMountPoint().AppendASCII(
-            "mount_path3").AsUTF8Unsafe(),
-        ash::MountType::kDevice,
-        ash::disks::MOUNT_CONDITION_NONE,
-        2
-      },
-      {
-        // Set source path inside another mounted volume.
-        ash::CrosDisksClient::GetRemovableDiskMountPoint().AppendASCII(
-            "mount_path3/archive.zip").AsUTF8Unsafe(),
-        ash::CrosDisksClient::GetArchiveMountPoint().AppendASCII(
-            "archive_mount_path").AsUTF8Unsafe(),
-        ash::MountType::kArchive,
-        ash::disks::MOUNT_CONDITION_NONE,
-        -1
-      }
-    };
+        {"device_path1",
+         ash::CrosDisksClient::GetRemovableDiskMountPoint()
+             .AppendASCII("mount_path1")
+             .AsUTF8Unsafe(),
+         ash::MountType::kDevice, ash::disks::MountCondition::kNone, 0},
+        {"device_path2",
+         ash::CrosDisksClient::GetRemovableDiskMountPoint()
+             .AppendASCII("mount_path2")
+             .AsUTF8Unsafe(),
+         ash::MountType::kDevice, ash::disks::MountCondition::kNone, 1},
+        {"device_path3",
+         ash::CrosDisksClient::GetRemovableDiskMountPoint()
+             .AppendASCII("mount_path3")
+             .AsUTF8Unsafe(),
+         ash::MountType::kDevice, ash::disks::MountCondition::kNone, 2},
+        {// Set source path inside another mounted volume.
+         ash::CrosDisksClient::GetRemovableDiskMountPoint()
+             .AppendASCII("mount_path3/archive.zip")
+             .AsUTF8Unsafe(),
+         ash::CrosDisksClient::GetArchiveMountPoint()
+             .AppendASCII("archive_mount_path")
+             .AsUTF8Unsafe(),
+         ash::MountType::kArchive, ash::disks::MountCondition::kNone, -1}};
 
     for (const auto& mp : kTestMountPoints) {
       mount_points_.insert(
@@ -353,7 +343,8 @@ class FileManagerPrivateApiTest : public extensions::ExtensionApiTest {
   }
 
   base::ScopedTempDir temp_dir_;
-  ash::disks::MockDiskMountManager* disk_mount_manager_mock_;
+  base::ScopedTempDir non_watchable_dir_;
+  ash::disks::MockDiskMountManager* disk_mount_manager_mock_ = nullptr;
   DiskMountManager::Disks volumes_;
   DiskMountManager::MountPoints mount_points_;
   file_manager::EventRouter* event_router_ = nullptr;
@@ -482,6 +473,19 @@ IN_PROC_BROWSER_TEST_F(FileManagerPrivateApiTest, Permissions) {
   ASSERT_EQ(1u, extension->install_warnings().size());
   const extensions::InstallWarning& warning = extension->install_warnings()[0];
   EXPECT_EQ("fileManagerPrivate", warning.key);
+}
+
+IN_PROC_BROWSER_TEST_F(FileManagerPrivateApiTest, AddFileWatch) {
+  // Add a filesystem and Volume that is not watchable.
+  AddLocalFileSystem(browser()->profile(), non_watchable_dir_.GetPath());
+
+  // Add a filesystem and Volume that is watchable.
+  const base::FilePath downloads_dir = temp_dir_.GetPath();
+  ASSERT_TRUE(file_manager::VolumeManager::Get(browser()->profile())
+                  ->RegisterDownloadsDirectoryForTesting(downloads_dir));
+
+  ASSERT_TRUE(RunExtensionTest("file_browser/add_file_watch", {},
+                               {.load_as_component = true}));
 }
 
 IN_PROC_BROWSER_TEST_F(FileManagerPrivateApiTest, ContentChecksum) {
@@ -688,8 +692,7 @@ IN_PROC_BROWSER_TEST_F(FileManagerPrivateApiTest, OpenURL) {
   Browser* browser = browser_list->GetLastActive();
   content::WebContents* active_web_contents =
       browser->tab_strip_model()->GetActiveWebContents();
-  EXPECT_STREQ(target_url,
-               active_web_contents->GetVisibleURL().spec().c_str());
+  EXPECT_STREQ(target_url, active_web_contents->GetVisibleURL().spec().c_str());
 }
 
 class FileManagerPrivateApiDlpTest : public FileManagerPrivateApiTest {

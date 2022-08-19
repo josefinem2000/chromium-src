@@ -3897,6 +3897,11 @@ Connect your device to power.
 Here are some things you can try to get started.
       </message>
 
+      <!-- For ScreenCaptureTrayItemView -->
+      <message name="IDS_ASH_ADMIN_SCREEN_CAPTURE" desc="Tooltip message shown at the systray screen capture indicator when an administrator is capturing the screens.">
+        Your system administrator is monitoring your screens
+      </message>
+
       <!-- For CameraMicTrayItemView -->
       <message name="IDS_ASH_CAMERA_MIC_VM_USING_CAMERA" desc="Tooltip message shown at the systray camera indicator when a VM is using the camera">
         An application is using your camera
@@ -5154,6 +5159,17 @@ New install
       <!-- Multitask menu -->
       <message name="IDS_MULTITASK_MENU_NUDGE_TEXT" desc="Text that is shown when the multitask menu nudge is displayed.">
         Keep hovering for more layout options
+      </message>
+
+      <!-- Glanceables -->
+      <message name="IDS_GLANCEABLES_WELCOME_LABEL" desc="Personalized greeting / welcome message shown on glanceables surfaces (welcome screen and overview mode).">
+        Welcome back, <ph name="GIVEN_NAME">$1<ex>John</ex></ph>
+      </message>
+      <message name="IDS_GLANCEABLES_UP_NEXT" desc="Section header for upcoming calendar events. Used on the glanceables surface (welcome screen).">
+        Up next
+      </message>
+      <message name="IDS_GLANCEABLES_RESTORE_SESSION" desc="Section header for a button that restores the last user session windows. Used on the glanceables surface (welcome screen).">
+        Restore last session
       </message>
     </messages>
   </release>

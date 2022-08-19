@@ -146,6 +146,8 @@ const base::Feature* const kFeaturesExposedToJava[] = {
     &feed::kFeedImageMemoryCacheSizePercentage,
     &feed::kFeedInteractiveRefresh,
     &feed::kFeedLoadingPlaceholder,
+    &feed::kFeedNoViewCache,
+    &feed::kFeedReplaceAll,
     &feed::kInterestFeedContentSuggestions,
     &feed::kInterestFeedV1ClicksAndViewsConditionalUpload,
     &feed::kInterestFeedV2,
@@ -263,6 +265,7 @@ const base::Feature* const kFeaturesExposedToJava[] = {
     &kOmniboxModernizeVisualUpdate,
     &kOptimizeGeolocationHeaderGeneration,
     &kOptimizeLayoutsForPullRefresh,
+    &kOSKResizesVisualViewport,
     &kPostTaskFocusTab,
     &kProbabilisticCryptidRenderer,
     &kReachedCodeProfiler,
@@ -390,6 +393,7 @@ const base::Feature* const kFeaturesExposedToJava[] = {
     &segmentation_platform::features::kContextualPageActionPriceTracking,
     &send_tab_to_self::kSendTabToSelfSigninPromo,
     &send_tab_to_self::kSendTabToSelfV2,
+    &share::kCormorant,
     &share::kPersistShareHubOnAppSwitch,
     &share::kScreenshotsForAndroidV2,
     &share::kUpcomingSharingFeatures,
@@ -754,6 +758,9 @@ const base::Feature kOmniboxModernizeVisualUpdate{
 
 const base::Feature kOptimizeGeolocationHeaderGeneration{
     "OptimizeGeolocationHeaderGeneration", base::FEATURE_DISABLED_BY_DEFAULT};
+
+const base::Feature kOSKResizesVisualViewport{
+    "OSKResizesVisualViewport", base::FEATURE_DISABLED_BY_DEFAULT};
 
 const base::Feature kOptimizeLayoutsForPullRefresh{
     "OptimizeLayoutsForPullRefresh", base::FEATURE_DISABLED_BY_DEFAULT};

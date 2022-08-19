@@ -7,7 +7,7 @@
  * translate settings.
  */
 
-import 'chrome://resources/cr_elements/cr_button/cr_button.m.js';
+import 'chrome://resources/cr_elements/cr_button/cr_button.js';
 import 'chrome://resources/cr_elements/cr_icon_button/cr_icon_button.js';
 import 'chrome://resources/cr_elements/icons.m.js';
 import 'chrome://resources/cr_elements/shared_style_css.m.js';
@@ -83,6 +83,8 @@ export class SettingsTranslatePageElement extends
     this.languageHelper.setTranslateTargetLanguage(
         this.shadowRoot!.querySelector<HTMLSelectElement>('#targetLanguage')!
             .value);
+    this.languageSettingsMetricsProxy_.recordSettingsMetric(
+        LanguageSettingsActionType.CHANGE_TRANSLATE_TARGET);
   }
 
   /**
@@ -106,6 +108,14 @@ export class SettingsTranslatePageElement extends
   private translateLanguageEqual_(itemCode: string, translateTarget: string):
       boolean {
     return itemCode === translateTarget;
+  }
+
+  /**
+   * A function used for sorting languages alphabetically by display name.
+   */
+  private alphabeticalSort_(first: chrome.languageSettingsPrivate.Language,
+      second: chrome.languageSettingsPrivate.Language) {
+    return first.displayName.localeCompare(second.displayName);
   }
 
   /**

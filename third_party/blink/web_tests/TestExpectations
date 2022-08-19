@@ -114,8 +114,6 @@ crbug.com/1254944 svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offse
 crbug.com/1254944 svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html [ Failure Pass ]
 
 # Fails flakily or times out
-crbug.com/1255285 virtual/threaded/transitions/transition-currentcolor.html [ Failure Pass ]
-crbug.com/1255285 virtual/threaded/transitions/transition-ends-before-animation-frame.html [ Timeout ]
 crbug.com/1269536 [ Mac11 ] svg/animations/dynamic-modify-transform-without-baseval.html [ Failure Pass Timeout ]
 crbug.com/1269536 [ Mac12 ] svg/animations/dynamic-modify-transform-without-baseval.html [ Failure Pass Timeout ]
 
@@ -217,8 +215,6 @@ crbug.com/1124352 external/wpt/picture-in-picture/css-selector.html [ Crash Pass
 crbug.com/1124352 external/wpt/picture-in-picture/exit-picture-in-picture.html [ Crash Pass ]
 crbug.com/1124352 external/wpt/picture-in-picture/picture-in-picture-element.html [ Crash Pass ]
 crbug.com/1124352 external/wpt/picture-in-picture/shadow-dom.html [ Crash Pass ]
-
-crbug.com/1174965 [ Mac ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDtlsTransport-state.html [ Failure Pass ]
 
 # These tests require portals, and some require cross-origin portals.
 # Keep this in sync with VirtualTestSuites.
@@ -3132,9 +3128,6 @@ crbug.com/1223955 external/wpt/css/css-ruby/ruby-inlinize-blocks-005.html [ Fail
 
 crbug.com/1333451 external/wpt/css/css-ruby/intra-base-white-space-001.html [ Failure ]
 
-# WebRTC: Perfect Negotiation times out in Plan B. This is expected.
-crbug.com/980872 virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Skip Timeout ]
-
 # WebRTC: there's an open bug with some capture scenarios not working.
 crbug.com/1156408 external/wpt/webrtc/RTCPeerConnection-relay-canvas.https.html [ Failure Pass Timeout ]
 
@@ -3282,6 +3275,7 @@ crbug.com/626703 [ Win ] virtual/prerender/external/wpt/speculation-rules/preren
 crbug.com/626703 [ Win ] virtual/partitioned-cookies/http/tests/inspector-protocol/network/disabled-cache-navigation.js [ Failure ]
 
 # ====== New tests from wpt-importer added here ======
+crbug.com/626703 external/wpt/html/browsers/windows/clear-window-name.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.15 ] external/wpt/service-workers/cache-storage/cross-partition.https.tentative.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/fullscreen/api/document-fullscreen-enabled-cross-origin.sub.html [ Timeout ]
 crbug.com/626703 external/wpt/custom-elements/form-associated/ElementInternals-target-element-is-held-strongly.html [ Timeout ]
@@ -3419,7 +3413,6 @@ crbug.com/626703 external/wpt/wasm/webapi/esm-integration/worker.tentative.html 
 crbug.com/626703 [ Linux ] external/wpt/resource-timing/object-not-found-adds-entry.html [ Timeout ]
 crbug.com/626703 external/wpt/webrtc/RTCConfiguration-iceTransportPolicy.html [ Skip Timeout ]
 crbug.com/626703 [ Win10.20h2 ] external/wpt/webrtc/RTCDataChannel-bufferedAmount.html [ Crash ]
-crbug.com/626703 [ Win10.20h2 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-bufferedAmount.html [ Crash ]
 crbug.com/626703 [ Mac11 ] external/wpt/webaudio/the-audio-api/the-pannernode-interface/ctor-panner.html [ Crash ]
 crbug.com/626703 [ Mac11 ] external/wpt/mediacapture-record/MediaRecorder-mimetype.html [ Failure Timeout ]
 crbug.com/626703 [ Mac12 ] external/wpt/mediacapture-record/MediaRecorder-mimetype.html [ Failure Timeout ]
@@ -3435,7 +3428,6 @@ crbug.com/626703 [ Win10.20h2 ] virtual/feature-policy-permissions/external/wpt/
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCDataChannel-close.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCPeerConnection-capture-video.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11-arm64 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-send.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/navigation-timing/nav2_test_response_end_and_duration_before_during_and_after_load_event.html [ Skip Timeout ]
 crbug.com/626703 [ Mac12-arm64 ] external/wpt/navigation-timing/nav2_test_response_end_and_duration_before_during_and_after_load_event.html [ Skip Timeout ]
 crbug.com/1270841 [ Mac ] external/wpt/media-capabilities/encodingInfo.any.worker.html [ Crash ]
@@ -3443,8 +3435,6 @@ crbug.com/626703 [ Mac11 ] virtual/forced-high-contrast-colors/external/wpt/forc
 crbug.com/626703 [ Mac11 ] virtual/scroll-unification-unified-autoplay/external/wpt/feature-policy/feature-policy-header-policy-declined.https.sub.html [ Timeout ]
 crbug.com/626703 [ Win10.20h2 ] external/wpt/web-locks/bfcache/abort.tentative.https.html [ Failure Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCPeerConnection-getStats.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11-arm64 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-createDataChannel.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11-arm64 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/protocol/candidate-exchange.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/workers/modules/shared-worker-import-csp.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.15 ] external/wpt/WebCryptoAPI/generateKey/successes_AES-CTR.https.any.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.15 ] external/wpt/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.html?1-10 [ Skip Timeout ]
@@ -3454,7 +3444,6 @@ crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCIceConnectionState-candi
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCPeerConnection-ondatachannel.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCPeerConnection-track-stats.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/protocol/ice-state.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11-arm64 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-videoDetectorTest.html [ Skip Timeout ]
 crbug.com/626703 [ Linux ] external/wpt/media-capabilities/encodingInfo.any.worker.html [ Crash ]
 crbug.com/626703 [ Win10.20h2 ] external/wpt/media-capabilities/encodingInfo.any.worker.html [ Crash ]
 crbug.com/626703 [ Mac11-arm64 ] virtual/forced-high-contrast-colors/external/wpt/forced-colors-mode/backplate/forced-colors-mode-backplate-01.html [ Crash ]
@@ -3476,7 +3465,6 @@ crbug.com/626703 external/wpt/selection/contenteditable/initial-selection-on-foc
 crbug.com/626703 external/wpt/geolocation-API/non-fully-active.https.html [ Timeout ]
 crbug.com/626703 external/wpt/selection/textcontrols/selectionchange-bubble.html [ Timeout ]
 crbug.com/626703 external/wpt/density-size-correction/density-corrected-image-svg-aspect-ratio-cross-origin.sub.html [ Failure ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/protocol/candidate-exchange.https.html [ Skip Timeout ]
 crbug.com/626703 external/wpt/css/css-align/self-alignment/self-align-safe-unsafe-flex-002.html [ Failure ]
 crbug.com/626703 external/wpt/css/css-align/self-alignment/self-align-safe-unsafe-flex-001.html [ Failure ]
 crbug.com/626703 external/wpt/css/css-align/self-alignment/self-align-safe-unsafe-flex-003.html [ Failure ]
@@ -3507,9 +3495,6 @@ crbug.com/626703 [ Win ] external/wpt/websockets/opening-handshake/005.html [ Fa
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCSctpTransport-maxChannels.html [ Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc/RTCPeerConnection-ondatachannel.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCPeerConnection-ondatachannel.html [ Skip Timeout ]
-crbug.com/626703 [ Mac10.14 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-send.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-send.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/simplecall.https.html [ Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc/protocol/rtp-clockrate.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/protocol/rtp-clockrate.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/protocol/rtp-clockrate.html [ Skip Timeout ]
@@ -3518,8 +3503,6 @@ crbug.com/626703 [ Mac11 ] external/wpt/webrtc-extensions/RTCRtpSynchronizationS
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Skip Timeout ]
-crbug.com/626703 [ Mac10.14 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-track-stats.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-track-stats.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc/RTCDataChannel-send.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCDataChannel-send.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc/RTCDataChannel-iceRestart.html [ Skip Timeout ]
@@ -3535,39 +3518,18 @@ crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc/RTCPeerConnection-track-stats.
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCPeerConnection-track-stats.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc/protocol/ice-state.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/protocol/ice-state.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac10.14 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-videoDetectorTest.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-videoDetectorTest.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc/RTCDataChannel-bufferedAmount.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCDataChannel-bufferedAmount.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCDataChannel-bufferedAmount.html [ Skip Timeout ]
-crbug.com/626703 [ Mac10.14 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-iceConnectionState-disconnected.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-iceConnectionState-disconnected.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac10.14 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-iceRestart.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-iceRestart.html [ Skip Timeout ]
 crbug.com/626703 [ Mac10.14 ] external/wpt/webrtc/RTCDtlsTransport-state.html [ Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCDtlsTransport-state.html [ Timeout ]
-crbug.com/626703 [ Mac10.14 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/protocol/ice-state.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/protocol/ice-state.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac10.14 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDTMFSender-ontonechange.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDTMFSender-ontonechange.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac10.14 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/protocol/rtp-clockrate.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/protocol/rtp-clockrate.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11-arm64 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/protocol/rtp-clockrate.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/simplecall.https.html [ Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCDataChannel-close.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/protocol/candidate-exchange.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/protocol/bundle.https.html [ Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCPeerConnection-getStats.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-bufferedAmount.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-ondatachannel.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11-arm64 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-ondatachannel.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-close.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11-arm64 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDataChannel-close.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-createDataChannel.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11-arm64 ] external/wpt/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-getStats.https.html [ Skip Timeout ]
-crbug.com/626703 [ Mac11-arm64 ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-getStats.https.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/video-rvfc/request-video-frame-callback-webrtc.https.html [ Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/protocol/rtp-demuxing.html [ Skip Timeout ]
 crbug.com/626703 [ Mac11 ] external/wpt/webrtc/RTCIceConnectionState-candidate-pair.https.html [ Skip Timeout ]
@@ -3661,8 +3623,6 @@ crbug.com/626703 external/wpt/service-workers/service-worker/ready.https.window.
 crbug.com/626703 external/wpt/fetch/corb/script-resource-with-nonsniffable-types.tentative.sub.html [ Timeout ]
 crbug.com/626703 [ Win ] external/wpt/webvtt/rendering/cues-with-video/processing-model/embedded_style_media_queries.html [ Failure ]
 crbug.com/626703 [ Win ] external/wpt/webvtt/rendering/cues-with-video/processing-model/embedded_style_media_queries_resized.html [ Failure ]
-crbug.com/626703 external/wpt/css/css-align/baseline-rules/grid-item-input-type-number.html [ Failure ]
-crbug.com/626703 external/wpt/css/css-align/baseline-rules/grid-item-input-type-text.html [ Failure ]
 crbug.com/626703 [ Win ] external/wpt/web-animations/timing-model/animation-effects/phases-and-states.html [ Crash ]
 crbug.com/626703 external/wpt/webvtt/rendering/cues-with-video/processing-model/snap-to-line.html [ Failure ]
 crbug.com/626703 external/wpt/webrtc/RTCPeerConnection-setRemoteDescription-offer.html [ Timeout ]
@@ -3687,7 +3647,6 @@ crbug.com/626703 external/wpt/css/css-will-change/will-change-abspos-cb-001.html
 crbug.com/626703 [ Linux ] external/wpt/url/a-element.html [ Failure ]
 crbug.com/626703 [ Win ] external/wpt/websockets/Create-url-with-space.any.html [ Failure ]
 crbug.com/626703 [ Mac ] external/wpt/webrtc/RTCDTMFSender-ontonechange-long.https.html [ Failure Pass ]
-crbug.com/626703 [ Mac ] virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCDTMFSender-ontonechange-long.https.html [ Failure Pass ]
 
 ### virtual/prerender/external/wpt/speculation-rules/prerender
 crbug.com/1126305 [ Mac10.15 ] virtual/prerender/external/wpt/speculation-rules/prerender/local-storage.html [ Skip Timeout ]
@@ -3697,9 +3656,6 @@ crbug.com/1126305 virtual/prerender/external/wpt/speculation-rules/prerender/res
 ### See crbug.com/891427 comment near the top of this file:
 crbug.com/367760 external/wpt/svg/pservers/reftests/meshgradient-basic-004.svg [ Failure ]
 crbug.com/367760 external/wpt/svg/pservers/reftests/meshgradient-basic-001.svg [ Failure ]
-
-# Tests pass under virtual/webrtc-wpt-plan-b
-virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-operations.https.html [ Pass ]
 
 crbug.com/1131471 external/wpt/web-locks/clientids.tentative.https.html [ Failure ]
 
@@ -4558,9 +4514,6 @@ crbug.com/719023 media_capabilities/encodingInfo-avc1.html [ Failure Pass ]
 # Sheriff 2019-01-07
 crbug.com/919587 [ Linux ] virtual/threaded/fast/idle-callback/idle_periods.html [ Failure Pass ]
 
-# WebRTC Plan B
-crbug.com/920979 virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCTrackEvent-fire.html [ Timeout ]
-
 # Mac doesn't support lowLatency/desynchronized Canvas Contexts.
 crbug.com/922218 [ Mac ] fast/canvas-api/canvas-lowlatency-getContext.html [ Failure ]
 
@@ -4588,13 +4541,6 @@ crbug.com/922951 virtual/threaded/http/tests/devtools/tracing/timeline-layout/ti
 # Flaky devtools test for recalculating styles.
 crbug.com/1018177 http/tests/devtools/tracing/timeline-style/timeline-recalculate-styles.js [ Failure Pass ]
 
-# Race: The RTCIceConnectionState can become "connected" before getStats()
-# returns candidate-pair whose state is "succeeded", this sounds like a
-# contradiction.
-
-# This test is not intended to pass on Plan B.
-crbug.com/740501 virtual/webrtc-wpt-plan-b/external/wpt/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Failure Pass Timeout ]
-
 crbug.com/910979 http/tests/html/validation-bubble-oopif-clip.html [ Failure Pass ]
 
 # Sheriff 2019-02-01, 2019-02-19
@@ -4621,9 +4567,6 @@ crbug.com/934818 http/tests/devtools/tracing/decode-resize.js [ Failure Pass ]
 
 # Sheriff 2019-02-28
 crbug.com/936827 external/wpt/fullscreen/api/element-request-fullscreen-and-remove-manual.html [ Failure Pass ]
-
-# Paint Timing failures
-crbug.com/1062984 external/wpt/paint-timing/fcp-only/fcp-gradient.html [ Failure ]
 
 # Contentful First Paint failures
 crbug.com/1322629 external/wpt/paint-timing/fcp-only/fcp-invisible-3d-rotate.html [ Failure ]
@@ -5176,10 +5119,6 @@ crbug.com/1279648 virtual/threaded/external/wpt/scroll-animations/css/at-scroll-
 crbug.com/1279648 virtual/threaded/external/wpt/scroll-animations/css/at-scroll-timeline-frame-size-changed.html [ Failure ]
 crbug.com/1279648 virtual/threaded/external/wpt/scroll-animations/css/at-scroll-timeline-inline-orientation.html [ Failure ]
 
-crbug.com/1343365 fast/animation/scroll-animations/scroll-animation-lifetime.html [ Failure ]
-crbug.com/1343365 fast/animation/scroll-animations/scroll-timeline-snapshotting.html [ Failure ]
-crbug.com/1343365 fast/animation/scroll-animations/scrolltimeline-root-scroller-quirks-mode.html [ Failure ]
-
 crbug.com/971031 [ Mac ] fast/dom/timer-throttling-hidden-page.html [ Failure Pass ]
 
 crbug.com/1071189 [ Debug ] editing/selection/programmatic-selection-on-mac-is-directionless.html [ Pass Timeout ]
@@ -5263,9 +5202,6 @@ crbug.com/1107572 [ Mac ] http/tests/devtools/tracing/timeline-layout/timeline-l
 crbug.com/1107572 [ Mac ] http/tests/devtools/tracing/timeline-style/timeline-style-recalc-with-invalidations.js [ Failure Pass ]
 crbug.com/1107572 [ Mac ] http/tests/devtools/tracing/timeline-style/timeline-style-recalc-with-invalidator-invalidations.js [ Failure Pass ]
 
-# Temporarily disable to land DevTools changes.
-crbug.com/1309310 http/tests/devtools/copy-network-request.js [ Failure Pass ]
-
 # Sheriff 2020-07-22
 crbug.com/1107722 [ Mac ] virtual/threaded/http/tests/devtools/tracing/timeline-misc/timeline-event-causes.js [ Failure Pass ]
 crbug.com/1107722 [ Mac ] http/tests/devtools/tracing/timeline-js/timeline-script-id.js [ Failure Pass ]
@@ -5340,9 +5276,6 @@ crbug.com/1042877 http/tests/security/img-crossorigin-redirect-credentials.https
 
 # Sheriff 2020-10-09
 crbug.com/1136687 external/wpt/pointerevents/pointerlock/pointerevent_pointerlock_supercedes_capture.html [ Failure Pass ]
-
-# WebRTC: Payload demuxing times out in Plan B. This is expected.
-crbug.com/1139052 virtual/webrtc-wpt-plan-b/external/wpt/webrtc/protocol/rtp-demuxing.html [ Skip Timeout ]
 
 crbug.com/1137228 [ Mac ] external/wpt/infrastructure/testdriver/click_iframe_crossorigin.sub.html [ Failure Pass ]
 
@@ -6069,13 +6002,9 @@ crbug.com/1249176 [ Mac12-arm64 ] virtual/exotic-color-space/images/yuv-decode-e
 crbug.com/1249176 [ Mac12 ] external/wpt/html/browsers/browsing-the-web/back-forward-cache/service-worker-controlled-after-restore.https.html [ Failure Pass ]
 crbug.com/1249176 [ Mac12 ] fast/dom/Element/scrollTop-scrollLeft-body.html [ Failure Pass ]
 crbug.com/1249176 [ Mac12-arm64 ] external/wpt/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ Failure Pass ]
-crbug.com/1249176 [ Mac12-arm64 ] fast/js/instanceof-test.html [ Failure Pass ]
 
 # Sheriff 2022-07-04
 crbug.com/1341689 [ Linux ] media/controls/overflow-menu-focus.html [ Failure Pass ]
-
-# crbug.com/1344983
-crbug.com/1344983 [ Mac11 ] fast/js/instanceof-test.html [ Failure Pass ]
 
 # Following tests timeout on mac11-arm64
 crbug.com/1249176 [ Mac11-arm64 ] http/tests/devtools/tracing/timeline-paint/paint-profiler-update.js [ Failure Timeout ]
@@ -6725,6 +6654,7 @@ crbug.com/1288839 external/wpt/mediacapture-streams/MediaStreamTrack-iframe-tran
 crbug.com/1288839 virtual/feature-policy-permissions/external/wpt/mediacapture-streams/MediaStreamTrack-iframe-transfer.https.html [ Skip ]
 crbug.com/1288839 external/wpt/mediacapture-streams/MediaStreamTrack-transfer-video.https.html [ Skip ]
 crbug.com/1288839 virtual/feature-policy-permissions/external/wpt/mediacapture-streams/MediaStreamTrack-transfer-video.https.html [ Skip ]
+crbug.com/1288839 external/wpt/mediacapture-streams/MediaStreamTrack-transfer.https.html [ Skip ]
 # Explicit PASS expectation for the virtual suite, to stop it inheriting "Skip".
 crbug.com/1288839 virtual/mediastreamtrack-transfer/external/wpt/mediacapture-streams/MediaStreamTrack-iframe-transfer.https.html [ Pass ]
 
@@ -6877,8 +6807,6 @@ crbug.com/1339538 [ Linux ] fast/frames/002.html [ Failure Pass ]
 crbug.com/1339538 [ Win10.20h2 ] fast/frames/002.html [ Failure Pass ]
 crbug.com/1097040 media/controls/overflow-menu-always-visible.html [ Failure Pass ]
 crbug.com/1342526 external/wpt/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-body.html [ Failure Pass ]
-crbug.com/1342518 [ Mac ] external/wpt/webmessaging/event.data.sub.htm [ Failure Pass ]
-crbug.com/1342518 [ Win ] external/wpt/webmessaging/event.data.sub.htm [ Failure Pass ]
 
 # Sheriff 2022-07-08
 crbug.com/1180274 virtual/plz-dedicated-worker/http/tests/inspector-protocol/network/navigate-iframe-out2in.js [ Skip ]
@@ -6889,8 +6817,6 @@ crbug.com/1180274 virtual/partitioned-cookies/http/tests/inspector-protocol/netw
 # Sheriff 2022-07-12
 crbug.com/1343674 [ Linux ] editing/deleting/460938.html [ Failure Pass ]
 crbug.com/1343664 external/wpt/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-document.html [ Failure Pass ]
-crbug.com/1343698 [ Mac Release ] external/wpt/webmessaging/postMessage_asterisk_xorigin.sub.htm [ Failure Pass ]
-crbug.com/1343698 [ Release Win10.20h2 ] external/wpt/webmessaging/postMessage_asterisk_xorigin.sub.htm [ Failure Pass ]
 
 # Disable test to land a MSE change. Spec change (MSE PR#306) is still pending,
 # and once landed, this line can be removed.
@@ -6917,9 +6843,6 @@ crbug.com/1344771 virtual/force-defer-script/external/wpt/html/semantics/scripti
 crbug.com/1345192 accessibility/aria-combo-box-with-delay-add.html [ Skip ]
 crbug.com/1345235 external/wpt/content-security-policy/style-src/stylehash-basic-blocked.sub.html [ Skip ]
 crbug.com/1334674 [ Mac11 ] http/tests/devtools/oopif/oopif-presentation-console-messages.js [ Failure Pass ]
-
-# Sheriff 2022-07-19
-crbug.com/1345745 virtual/async-script-scheduling-first-paint-or-finished-parsing/wpt_internal/async-script-scheduling/execution-order.html [ Skip ]
 
 # Sheriff 2022-07-21
 crbug.com/1346158 crbug.com/1346158 external/wpt/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-window.html [ Failure Pass ]
@@ -6986,3 +6909,10 @@ crbug.com/1352545 [ Linux ] external/wpt/html/interaction/focus/chrome-object-ta
 crbug.com/1352566 [ Mac ] external/wpt/html/browsers/browsing-the-web/history-traversal/event-order/before-load-hash-twice.html [ Failure Pass ]
 crbug.com/1352576 [ Linux ] external/wpt/content-security-policy/media-src/media-src-7_2_2.sub.html [ Failure Pass ]
 crbug.com/1352607 external/wpt/css/css-transitions/transition-base-response-002.html [ Failure Pass ]
+
+# Sheriff 2022-08-17
+crbug.com/1342623 [ Win ] virtual/scroll-unification/fast/events/mouseenter-mouseleave-on-drag.html [ Failure Pass ]
+crbug.com/1340167 fast/loader/iframe-navigation-stealing-focus.html [ Pass Timeout ]
+
+# Sheriff 2022-08-18
+crbug.com/1354013 virtual/threaded-no-composited-antialiasing/animations/sample-on-last-keyframe.html [ Skip ]

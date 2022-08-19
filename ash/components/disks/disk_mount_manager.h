@@ -20,12 +20,19 @@
 namespace ash {
 namespace disks {
 
-// Condition of mounted filesystem.
-enum MountCondition {
-  MOUNT_CONDITION_NONE,
-  MOUNT_CONDITION_UNKNOWN_FILESYSTEM,
-  MOUNT_CONDITION_UNSUPPORTED_FILESYSTEM,
+// State of a mounted filesystem.
+// This enum is a subset of ash::MountError (but with different numeric values).
+// This enum matches extensions::api::file_manager_private::MountCondition (but
+// with different names).
+enum class MountCondition {
+  kNone,
+  kUnknownFilesystem,
+  kUnsupportedFilesystem,
 };
+
+// Output operator for logging.
+COMPONENT_EXPORT(ASH_DISKS)
+std::ostream& operator<<(std::ostream& out, MountCondition condition);
 
 // Possible filesystem types that can be passed to FormatMountedDevice.
 // These values are persisted to logs. Entries should not be renumbered and
@@ -98,22 +105,10 @@ class COMPONENT_EXPORT(ASH_DISKS) DiskMountManager {
     // Mounted path.
     std::string mount_path;
     // Type of mount.
-    MountType mount_type;
+    MountType mount_type = MountType::kInvalid;
     // Condition of mount.
-    MountCondition mount_condition;
-
-    MountPoint(const std::string& source,
-               const std::string& mount,
-               const MountType type,
-               MountCondition condition = MOUNT_CONDITION_NONE)
-        : source_path(source),
-          mount_path(mount),
-          mount_type(type),
-          mount_condition(condition) {}
+    MountCondition mount_condition = MountCondition::kNone;
   };
-
-  // TODO Remove once the transition to plain MountPoint is finished.
-  using MountPointInfo = MountPoint;
 
   // Comparator sorting MountPoint objects by mount_path.
   struct SortByMountPath {

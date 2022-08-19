@@ -5,12 +5,14 @@
 package org.chromium.chrome.browser.history_clusters;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.AdditionalMatchers.geq;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -25,6 +27,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
@@ -50,6 +53,7 @@ import org.mockito.junit.MockitoRule;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLooper;
 
+import org.chromium.base.Callback;
 import org.chromium.base.ContextUtils;
 import org.chromium.base.IntentUtils;
 import org.chromium.base.Promise;
@@ -59,6 +63,7 @@ import org.chromium.base.test.BaseRobolectricTestRunner;
 import org.chromium.chrome.browser.history_clusters.HistoryCluster.MatchPosition;
 import org.chromium.chrome.browser.history_clusters.HistoryClusterView.ClusterViewAccessibilityState;
 import org.chromium.chrome.browser.history_clusters.HistoryClustersItemProperties.ItemType;
+import org.chromium.chrome.browser.history_clusters.HistoryClustersMetricsLogger.VisitAction;
 import org.chromium.chrome.browser.tab.Tab;
 import org.chromium.chrome.browser.tab.TabLaunchType;
 import org.chromium.chrome.browser.tabmodel.TabCreator;
@@ -129,11 +134,15 @@ public class HistoryClustersMediatorTest {
     @Mock
     private TabCreator mTabCreator;
     @Mock
+    private TabCreator mIncognitoTabCreator;
+    @Mock
     private HistoryClustersMetricsLogger mMetricsLogger;
     @Mock
     private AccessibilityUtil mAccessibilityUtil;
     @Mock
     private Configuration mConfiguration;
+    @Mock
+    private Callback<String> mAnnounceCallback;
 
     private ClusterVisit mVisit1;
     private ClusterVisit mVisit2;
@@ -205,7 +214,7 @@ public class HistoryClustersMediatorTest {
 
             @Override
             public TabCreator getTabCreator(boolean isIncognito) {
-                return mTabCreator;
+                return isIncognito ? mIncognitoTabCreator : mTabCreator;
             }
 
             @Nullable
@@ -249,7 +258,7 @@ public class HistoryClustersMediatorTest {
 
         mMediator = new HistoryClustersMediator(mBridge, mLargeIconBridge, mContext, mResources,
                 mModelList, mToolbarModel, mHistoryClustersDelegate, mClock, mTemplateUrlService,
-                mSelectionDelegate, mMetricsLogger, mAccessibilityUtil);
+                mSelectionDelegate, mMetricsLogger, mAccessibilityUtil, mAnnounceCallback);
         mVisit1 = new ClusterVisit(1.0F, mGurl1, "Title 1", "url1.com/", new ArrayList<>(),
                 new ArrayList<>(), mGurl1, 123L, new ArrayList<>());
         mVisit2 = new ClusterVisit(1.0F, mGurl2, "Title 2", "url2.com/", new ArrayList<>(),
@@ -335,7 +344,7 @@ public class HistoryClustersMediatorTest {
         mConfiguration.keyboard = Configuration.KEYBOARD_12KEY;
         mMediator = new HistoryClustersMediator(mBridge, mLargeIconBridge, mContext, mResources,
                 mModelList, mToolbarModel, mHistoryClustersDelegate, mClock, mTemplateUrlService,
-                mSelectionDelegate, mMetricsLogger, mAccessibilityUtil);
+                mSelectionDelegate, mMetricsLogger, mAccessibilityUtil, mAnnounceCallback);
 
         Promise<HistoryClustersResult> promise = new Promise<>();
         doReturn(promise).when(mBridge).queryClusters("query");
@@ -646,13 +655,18 @@ public class HistoryClustersMediatorTest {
         mMediator.startQuery("query");
         fulfillPromise(promise, mHistoryClustersResultWithQuery);
         int initialSize = mModelList.size();
+        doReturn("multiple")
+                .when(mResources)
+                .getString(eq(R.string.multiple_history_items_deleted), anyInt());
+        Mockito.doAnswer(invocation -> "single " + invocation.getArgument(1).toString())
+                .when(mResources)
+                .getString(eq(R.string.delete_message), anyString());
 
         mMediator.deleteVisits(Arrays.asList(mVisit1, mVisit3));
         assertThat(mVisitsForRemoval, Matchers.containsInAnyOrder(mVisit1, mVisit3));
-        verify(mMetricsLogger)
-                .recordVisitAction(HistoryClustersMetricsLogger.VisitAction.DELETED, mVisit1);
-        verify(mMetricsLogger)
-                .recordVisitAction(HistoryClustersMetricsLogger.VisitAction.DELETED, mVisit3);
+        verify(mMetricsLogger).recordVisitAction(VisitAction.DELETED, mVisit1);
+        verify(mMetricsLogger).recordVisitAction(VisitAction.DELETED, mVisit3);
+        verify(mAnnounceCallback).onResult("multiple");
         // Deleting all of the visits in a cluster should also delete the ModelList entry for the
         // cluster itself.
         assertEquals(initialSize - 3, mModelList.size());
@@ -676,6 +690,7 @@ public class HistoryClustersMediatorTest {
                 relatedSearchesModel.get(HistoryClustersItemProperties.RELATED_SEARCHES));
 
         mMediator.deleteVisits(Arrays.asList(mVisit2));
+        verify(mAnnounceCallback).onResult("single " + mVisit2.getTitle());
         // Deleting the final visit should result in an entirely empty list.
         assertEquals(0, mModelList.size());
     }
@@ -703,6 +718,15 @@ public class HistoryClustersMediatorTest {
         verify(mTabCreator)
                 .createNewTab(argThat(hasSameUrl(mGurl2.getSpec())),
                         eq(TabLaunchType.FROM_CHROME_UI), eq(mTab2));
+
+        doReturn(mTab2).when(mIncognitoTabCreator).createNewTab(any(), anyInt(), any());
+        mMediator.openVisitsInNewTabs(Arrays.asList(mVisit1, mVisit2), true, false);
+        verify(mIncognitoTabCreator)
+                .createNewTab(argThat(hasSameUrl(mGurl1.getSpec())),
+                        eq(TabLaunchType.FROM_CHROME_UI), eq(null));
+        verify(mIncognitoTabCreator)
+                .createNewTab(argThat(hasSameUrl(mGurl2.getSpec())),
+                        eq(TabLaunchType.FROM_CHROME_UI), eq(mTab2));
     }
 
     @Test
@@ -724,7 +748,7 @@ public class HistoryClustersMediatorTest {
                         eq(TabLaunchType.FROM_CHROME_UI), eq(null));
         verify(mTabCreator)
                 .createNewTab(argThat(hasSameUrl(mGurl2.getSpec())),
-                        eq(TabLaunchType.FROM_CHROME_UI), eq(mTab2));
+                        eq(TabLaunchType.FROM_LONGPRESS_BACKGROUND_IN_GROUP), eq(mTab2));
     }
 
     @Test
@@ -740,6 +764,78 @@ public class HistoryClustersMediatorTest {
         assertEquals(ItemType.CLUSTER, mModelList.get(0).type);
         PropertyModel clusterModel = mModelList.get(0).model;
         clusterModel.get(HistoryClustersItemProperties.CLICK_HANDLER).onClick(null);
+    }
+
+    @Test
+    public void testClusterStartIconVisibility() {
+        Promise<HistoryClustersResult> promise = new Promise<>();
+        doReturn(promise).when(mBridge).queryClusters("");
+
+        mMediator.setQueryState(QueryState.forQueryless());
+        mMediator.startQuery("");
+        fulfillPromise(promise, mHistoryClustersResultEmptyQuery);
+
+        assertEquals(mModelList.size(), mHistoryClustersResultEmptyQuery.getClusters().size() + 3);
+        ListItem item = mModelList.get(3);
+        PropertyModel clusterModel = item.model;
+        assertEquals(View.VISIBLE,
+                clusterModel.get(HistoryClustersItemProperties.START_ICON_VISIBILITY));
+
+        promise = new Promise<>();
+        doReturn(promise).when(mBridge).queryClusters("query");
+        mMediator.setQueryState(QueryState.forQuery("query", ""));
+        mMediator.onSearchTextChanged("query");
+        fulfillPromise(promise, mHistoryClustersResultWithQuery);
+
+        item = mModelList.get(0);
+        assertEquals(ItemType.CLUSTER, item.type);
+        assertEquals(
+                View.GONE, item.model.get(HistoryClustersItemProperties.START_ICON_VISIBILITY));
+    }
+
+    @Test
+    public void testDividers() {
+        Promise<HistoryClustersResult> promise = new Promise<>();
+        doReturn(promise).when(mBridge).queryClusters("query");
+
+        mMediator.setQueryState(QueryState.forQuery("query", ""));
+        mMediator.startQuery("query");
+        fulfillPromise(promise, mHistoryClustersResultWithQuery);
+
+        assertEquals(ItemType.CLUSTER, mModelList.get(0).type);
+        assertEquals(ItemType.VISIT, mModelList.get(1).type);
+        assertEquals(ItemType.VISIT, mModelList.get(2).type);
+        assertEquals(ItemType.RELATED_SEARCHES, mModelList.get(3).type);
+
+        PropertyModel clusterModel = mModelList.get(0).model;
+        assertFalse(clusterModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
+        PropertyModel visitModel = mModelList.get(1).model;
+        assertFalse(visitModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
+        visitModel = mModelList.get(2).model;
+        assertFalse(visitModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
+        PropertyModel relatedSearchesModel = mModelList.get(3).model;
+        assertTrue(relatedSearchesModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
+
+        // Hide the first cluster.
+        clusterModel.get(HistoryClustersItemProperties.CLICK_HANDLER).onClick(null);
+
+        assertTrue(clusterModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
+        assertEquals(ItemType.CLUSTER, mModelList.get(1).type);
+        assertEquals(ItemType.VISIT, mModelList.get(2).type);
+
+        clusterModel = mModelList.get(1).model;
+        assertFalse(clusterModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
+        visitModel = mModelList.get(2).model;
+        assertTrue(visitModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
+
+        // Show the first cluster again.
+        clusterModel = mModelList.get(0).model;
+        clusterModel.get(HistoryClustersItemProperties.CLICK_HANDLER).onClick(null);
+        assertFalse(clusterModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
+        assertEquals(ItemType.RELATED_SEARCHES, mModelList.get(3).type);
+
+        relatedSearchesModel = mModelList.get(3).model;
+        assertTrue(relatedSearchesModel.get(HistoryClustersItemProperties.DIVIDER_VISIBLE));
     }
 
     private <T> void fulfillPromise(Promise<T> promise, T result) {

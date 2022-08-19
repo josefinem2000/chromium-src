@@ -19,10 +19,12 @@ import org.chromium.chrome.browser.flags.CachedFlag;
 import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.notifications.chime.ChimeFeatures;
 import org.chromium.chrome.browser.omaha.VersionNumberGetter;
+import org.chromium.chrome.browser.omnibox.OmniboxFeatures;
 import org.chromium.chrome.browser.optimization_guide.OptimizationGuidePushNotificationManager;
 import org.chromium.chrome.browser.page_annotations.PageAnnotationsServiceConfig;
 import org.chromium.chrome.browser.paint_preview.StartupPaintPreviewHelper;
 import org.chromium.chrome.browser.paint_preview.services.PaintPreviewTabService;
+import org.chromium.chrome.browser.tabmodel.TabPersistentStore;
 import org.chromium.chrome.browser.tasks.ConditionalTabStripUtils;
 import org.chromium.chrome.browser.tasks.ReturnToChromeUtil;
 import org.chromium.chrome.browser.tasks.tab_management.TabUiFeatureUtilities;
@@ -104,6 +106,7 @@ public class ChromeCachedFlags {
                 add(ChromeFeatureList.sNewWindowAppMenu);
                 add(ChromeFeatureList.sOmniboxModernizeVisualUpdate);
                 add(ChromeFeatureList.sOptimizationGuidePushNotifications);
+                add(ChromeFeatureList.sOSKResizesVisualViewport);
                 add(ChromeFeatureList.sPaintPreviewDemo);
                 add(ChromeFeatureList.sPaintPreviewShowOnStartup);
                 add(ChromeFeatureList.sQueryTiles);
@@ -140,6 +143,7 @@ public class ChromeCachedFlags {
                         add(ConditionalTabStripUtils.CONDITIONAL_TAB_STRIP_SESSION_TIME_MS);
                         add(FeedPlaceholderLayout.ENABLE_INSTANT_START_ANIMATION);
                         add(OptimizationGuidePushNotificationManager.MAX_CACHE_SIZE);
+                        add(OmniboxFeatures.ENABLE_MODERNIZE_VISUAL_UPDATE_ON_TABLET);
                         add(PageAnnotationsServiceConfig.PAGE_ANNOTATIONS_BASE_URL);
                         add(ReturnToChromeUtil.TAB_SWITCHER_ON_RETURN_MS);
                         add(CustomTabIntentDataProvider.THIRD_PARTIES_DEFAULT_POLICY);
@@ -168,6 +172,7 @@ public class ChromeCachedFlags {
                         add(StartupPaintPreviewHelper.ACCESSIBILITY_SUPPORT_PARAM);
                         add(PaintPreviewTabService.ALLOW_SRP);
                         add(TabContentManager.ALLOW_TO_REFETCH_TAB_THUMBNAIL_VARIATION);
+                        add(TabPersistentStore.CRITICAL_PERSISTED_TAB_DATA_SAVE_ONLY_PARAM);
                         add(TabUiFeatureUtilities.ENABLE_LAUNCH_BUG_FIX);
                         add(TabUiFeatureUtilities.ENABLE_LAUNCH_POLISH);
                         add(TabUiFeatureUtilities.DELAY_GTS_CREATION);
