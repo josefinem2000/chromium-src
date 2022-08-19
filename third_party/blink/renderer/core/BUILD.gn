@@ -188,10 +188,7 @@ component("core") {
   output_name = "blink_core"
 
   visibility = []  # Allow re-assignment of list.
-  visibility = [
-    "//third_party/blink/*",
-    "//content/browser/*"
-  ]
+  visibility = [ "//third_party/blink/*" ]
 
   sources = [
     "core_initializer.cc",

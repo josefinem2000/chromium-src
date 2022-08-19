@@ -58,11 +58,6 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/blink/public/common/manifest/manifest_util.h"
 #include "third_party/blink/public/mojom/manifest/manifest.mojom.h"
-#include "third_party/blink/renderer/core/frame/frame.h"
-#include "third_party/blink/renderer/core/frame/local_frame.h"
-#include "third_party/blink/renderer/core/page/chrome_client.h"
-#include "third_party/blink/renderer/core/page/page.h"
-#include "third_party/blink/renderer/core/scroll/scrollable_area.h"
 #include "third_party/skia/include/core/SkBitmap.h"
 #include "ui/base/page_transition_types.h"
 #include "ui/gfx/codec/jpeg_codec.h"
@@ -842,19 +837,14 @@ void PageHandler::CaptureScreenshotBeyondViewport(
     clip->SetScale(maybe_clip.fromJust()->GetScale());
   } else {
     // get full page dimensions for clip, TBD
-    blink::LocalFrame* main_frame =
-        (blink::LocalFrame*)host_->GetOutermostMainFrameOrEmbedder()
-            ->GetAssociatedLocalFrame()
-            .get();
-    gfx::Size full_page_size =
-        main_frame->View()->GetScrollableArea()->ContentsSize();
-    gfx::Rect css_full_page_size =
-        main_frame->GetPage()->GetChromeClient().ViewportToScreen(
-            gfx::Rect(full_page_size), main_frame->View());
+    ResponseOrWebContents result = GetWebContentsForTopLevelActiveFrame();
+    DCHECK(absl::holds_alternative<WebContentsImpl*>(result));
+    WebContentsImpl* web_contents = absl::get<WebContentsImpl*>(result);
+    gfx::Size full_page_size = web_contents->GetSize();
     clip->SetX(0);
     clip->SetY(0);
-    clip->SetWidth(css_full_page_size.width());
-    clip->SetHeight(css_full_page_size.height());
+    clip->SetWidth(full_page_size.width());
+    clip->SetHeight(full_page_size.height());
     clip->SetScale(1);
   }
 
