@@ -125,9 +125,6 @@ include_rules = [
   # DO NOT ADD ANY CHROME OR COMPONENTS INCLUDES HERE!!!
   # See https://sites.google.com/a/chromium.org/dev/developers/content-module
   # for more information.
-
-  # Needed in content/browser/devtools/protocol/page_handler.cc to get full page size
-  "+third_party/blink/renderer/core",
 ]
 
 specific_include_rules = {
